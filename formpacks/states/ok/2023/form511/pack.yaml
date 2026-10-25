@@ -23,7 +23,7 @@
 #             Three lines 19-29 (19 + no-use-tax box; 22 qualified-farmer box).
 #   page 44 = Form 511 Page 3  -- Part Three 30-32, Part Four refund 33-37 +
 #             direct-deposit block, Part Five amount-you-owe 38-41 (40 penalty
-#             split 40a/40b), signature block (discuss box, occupations, phones,
+#             + interest $ sub-amounts 40.penalty / 40.interest), signature block (discuss box, occupations, phones,
 #             preparer). Mailing address printed here: PO Box 26800, OKC.
 #   page 45 = Schedule 511-A (Subtractions 1-16) + Schedule 511-B (Additions 1-9)
 #   page 46 = Schedule 511-C (Adjustments 1-6) + Schedule 511-D (Itemized 1-11)
@@ -37,7 +37,8 @@
 #             Credit; mapped here under the f538s.* namespace.
 #
 # Line-id scheme. The CORE Form 511 numbered lines keep their bare printed labels
-# (1..41, with .a/.b column splits e.g. 4a/4b, 14a/14b, 40a/40b). The attached
+# (1..41, with a printed letter where the face prints one, e.g. 14a/14b; an unlettered
+# box of line N is "N.<what>", e.g. 4.description, 40.penalty). The attached
 # 511 schedules are namespaced sch_511a.* .. sch_511i.* and Form 538-S as f538s.*
 # so their own line numbers do not collide with the core return's lines.
 #
@@ -322,10 +323,12 @@ fields:
   - line: "3"                              # 3 Line 1 minus line 2
     field: "511 Part 1 3"
     type: money
-  - line: 4a                               # 4 Out-of-state income, except wages. Describe:
+  # Phase K JK10 (2026-10-24), P-031: the face prints one line 4 (no 4a / 4b): the Describe box is "4.description" (was "4a"),
+  # the amount column is "4" (was "4b").
+  - line: 4.description                    # 4 Out-of-state income, except wages. Describe:
     field: "511 Part 1 4a"
     type: text
-  - line: 4b                               # 4 (amount column)
+  - line: "4"                              # 4 (amount column)
     field: "511 Part 1 4b"
     type: money
   - line: "5"                              # 5 Line 3 minus line 4
@@ -515,10 +518,12 @@ fields:
   - line: "39"                             # 39 Underpayment of estimated tax interest
     field: "511 Part 5 39"
     type: money
-  - line: 40a                              # 40 For delinquent payment add penalty of 5% ... $
+  # Phase K JK10 (2026-10-24), P-031: the face prints one line 40 (no 40a / 40b): its two "$" sub-amounts are "40.penalty"
+  # (was "40a") and "40.interest" (was "40b"); the right-column amount is "40".
+  - line: 40.penalty                       # 40 For delinquent payment add penalty of 5% ... $
     field: "511 Part 5 40a"
     type: money
-  - line: 40b                              # 40 plus interest of 1.25% per month ... $
+  - line: 40.interest                      # 40 plus interest of 1.25% per month ... $
     field: "511 Part 5 40b"
     type: money
   - line: "40"                             # 40 (combined penalty + interest amount column)
@@ -1217,7 +1222,7 @@ fields:
 relations:
   # Core Form 511 on-face arithmetic (every operand mapped, unconditional).
   - "3 == 1 - 2"                            # 3 "Line 1 minus line 2"
-  - "5 == 3 - 4b"                           # 5 "Line 3 minus line 4"
+  - "5 == 3 - 4"                            # 5 "Line 3 minus line 4"
   - "7 == 5 + 6"                            # 7 "line 5 plus line 6"
   - "9 == 7 - 8"                            # 9 "line 7 minus line 8"
   - "12 == 10 + 11"                         # 12 "add lines 10 and 11" (resident, no out-of-state income)
@@ -1227,7 +1232,7 @@ relations:
   - "32 == 30 - 31"                         # 32 "line 30 minus 31"
   - "36 == 34 + 35"                         # 36 "add lines 34 and 35"
   - "41 == 38 + 39 + 40"                    # 41 "Total tax, penalty and interest (add lines 38-40)"
-  - "40 == 40a + 40b"                       # 40 penalty (40a) plus interest (40b)
+  - "40 == 40.penalty + 40.interest"        # 40 penalty plus interest
   # NOTE: schedule totals (511-B/C/D/E/H sums) are NOT declared as relations: the
   # relations evaluator only accepts bare digit+letter line ids (e.g. "3", "14a"),
   # not the dotted namespaced ids used for the attached schedules. Those on-face

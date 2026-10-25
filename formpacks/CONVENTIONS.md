@@ -165,7 +165,11 @@ enforced by `test_year_bearing_line_keys_keep_their_offset_from_tax_year`
   ported from an older face can carry the old numbering one line off, and its
   relations — written against the same keys — still pass, so verify cannot see
   the shift. Read the printed number beside every numbered widget on the
-  year's own blank.
+  year's own blank. A letter is part of a key only where the face prints it:
+  a second box on line N that the face does not number (a "Describe:" box, a
+  "$" sub-amount, an input the line multiplies) is keyed "N.<what>" named for
+  what it holds ("4.description", "40.penalty", "17.spouse_vagi"), never "Na",
+  and the box the face numbers N keeps the bare "N" (Phase K JK10, 2026-10-24).
 - **Bind each option widget to the label printed beside it, never by the
   widgets' order (P-030).** A row can print an option that has no widget — NJ-1040
   line 6 prints its "Self" oval solid black because every filer takes it — and
@@ -180,6 +184,95 @@ enforced by `test_year_bearing_line_keys_keep_their_offset_from_tax_year`
   the widget rect against the printed line number before trusting a
   descriptive name, and when the name and the row disagree, say so in the
   field's comment ("the widget NAMED X sits on this row").
+- **The label-adjacency gate holds every pack to P-031 and P-032 (Phase K JK10,
+  2026-10-24).** packages/core/tests/test_label_adjacency.py (network) runs
+  scripts/label_adjacency.py on every shipped pack: each numbered key must equal
+  the line the pack-blind anchor reads beside its widget on the pack's own blank.
+  A key whose trailing letter names a COLUMN of printed line N rather than a
+  sub-line (Delaware's "1a" / "1b" = line 1, Column A / Column B; Form 8962's
+  monthly columns; Schedule NEC's rate columns) is declared once in
+  formpacks/column_keys.yaml — the packs, the line range, what each letter
+  means and the column header the face prints — never by renaming keys; the
+  gate checks the header against the blank and refuses a covered line the
+  blank prints as a sub-line. A disagreement that a blind vision check of the
+  row finds is not a pack defect goes in formpacks/label_adjacency_exceptions.yaml
+  as one row per widget naming exactly that disagreement (pack, field, widget
+  index, the key's line, the anchor's line) in a family that carries the
+  adjudicated reason; every other one is fixed in the pack. The table clears
+  itself: a row that matches no live disagreement any more fails the gate as
+  stale, and a second row for one widget is refused.
+  `scripts/scaffold_state_year.py --triage` runs the same gate on the base
+  pack a port starts from (BASE-MISBOUND) and turns a PORTABLE verdict into
+  RE-MAP when a mapped widget's /Rect moved.
+  A family keyed in a shape KEY_RULE does not read ("1_wages_fed",
+  "line19_d01", "A1a_A") declares one regex in formpacks/key_shapes.yaml
+  (named groups `n` = the printed line number, `x` = its sub-line letter),
+  checked on each listed pack's own face: every line it maps a key to is
+  printed there; a column shape also names the column headings its faces print
+  (`header`, checked like a convention's). formpacks/label_adjacency_coverage.yaml
+  records, per pack, the line-bearing keys, how many a rule or shape maps and how
+  many the gate compared. LINE-BEARING is not "what the gate can map" (that
+  denominator was circular: MS 80-105's "13.a" keys reported OK 26/26 with every
+  main line unchecked): a key is line-bearing when it carries a line-like token
+  (a 1-3 digit run with at most two letters, "line"/"ln" + digits; not an age
+  threshold) outside the ledger's short `not_lines` list (identity values,
+  household-member rows, rows numbered by position), or when a rule maps it. A
+  pack below its floor names the reason (no text layer, the anchor reads no
+  designators, a key shape not declared, no numbered lines), no pack at or above
+  it has more undeclared line-like keys than checked ones, and the gate fails
+  when a pack's coverage drops below its row (a regression) or rises past it (a
+  stale row: update it with `--write-ledger`). A fraction cannot see a whole
+  schedule left dark (OH's Schedule of Business Income, 22 undeclared keys, read
+  OK at 121/152), so a DARK key family — the key with its line tokens as "#"
+  ("schedITbus_#"), holding 5+ undeclared keys or 5+ line-bearing keys none of
+  which is checked — puts the pack below the floor whatever its fraction; its
+  ledger row names the family (`dark`) and the reason (Phase K JK10, fixer round
+  4). THE DECLARE-ME RULE (fixer round 5, 2026-10-24): an undeclared line-like
+  key beside one of whose widgets the anchor reads a printed line puts its pack
+  below the floor whatever its family's size, until a shape or convention
+  declares it or `not_lines` lists it with its reason; the row names those
+  families (`declare`), and no row at or above the floor holds such a key (a
+  test holds it over every pack). AZ 140's seven-key charitable worksheet
+  ("ws3_1c_..." ... "ws3_7c_..."; the anchor reads 1c-7c) and MT 2023's four
+  LTC-rent rows ("ltc.1"-"ltc.4") had reported OK. A key's FAMILY is the key up
+  to and including its first line token, the descriptive tail dropped, digit
+  runs as "#" ("ws#_#"); the 5-key DARK threshold governs only the families the
+  anchor reads no line beside. A `not_lines` family that holds on one form only
+  lists its `packs`. Keys of a named block that carry no line number ("age65_blind.*" on MS
+  line 8) are declared with the block's printed `line`. Triage calls a base below the
+  floor UNCHECKED or PARTIAL n/m, never OK, and the row BASE-UNCHECKED: check its
+  line binding by hand (a handfill.yaml base has no binding to check and keeps
+  its port status; vision-check its overlay boxes on port). A new pack keyed "N.<what>" ("4c.rollover", "9.primary")
+  joins the generic `line-boxes` shape once its face check passes.
+  **What the gate cannot see** (fixer round 6, 2026-10-24; the same list as
+  scripts/label_adjacency.py's docstring and the ledger header). A line-number
+  check stops at four blind spots; the ledger COUNTS each one per pack, and the
+  gate fails when a count goes stale (`--write-ledger` re-measures it):
+  (a) `same_row` — a SAME-ROW COLUMN SWAP: two boxes of one printed row claim
+  the row's one line (federal <-> state amount, Column A <-> Column B, dollars
+  <-> cents, two digit cells of one comb); (b) `unread` — a box the anchor
+  reads NO line beside, inside any family, declared or not (Form 8962's monthly
+  rows, AZ 140's page-4/5 rows); (c) `cross_section` — a swap between SECTIONS
+  THAT PRINT THE SAME LINE NUMBER (OK 511 / 511-A / 511-B line 1, OH IT 1040 /
+  Schedule A / Schedule of Business Income, MT Form 2's tax calculation /
+  Schedule I Part II, WI Schedules 1 / 2, NY IT-201 items D2 / E / F, CA
+  Schedule CA's B7_A / 7_A / II7_A, Schedule 1-A 2026's 1 / 28a / 28b): each box
+  reads the line its key claims, so a swap between sections passes — a
+  section-aware comparison is an open item; (d) `descriptive` — a box the
+  anchor reads a line beside whose key the gate compares nothing for: it
+  carries no line token (UT TC-40's withholding_*, IA 1040's
+  spouse_net_income, NY IT-203's D2_months_you_yonkers, VA 760's
+  exemptions_section_a_total_count), or a `not_lines` family leaves it out
+  (MT Form 2's dd529 item boxes, AZ 140's *_more_space, RI-1040's Schedule W
+  rows). Keys on boxes the exceptions table excuses count in (a) and (c) too:
+  an exception matches the widget and the lines, so another key claiming the
+  same line passes at that box. On round 1's planted swaps the gate caught 238 of 249
+  and its 11 misses were all same-row column swaps; the later re-verifier
+  rounds' planted misses fell in (b), (c) and `not_lines` families and their
+  census found (d), which is why the list is counted rather than chased. A line that is only a letter
+  (MT Form 2 2023's exemption rows a-d) is in no shape the gate can express:
+  its pack reads PARTIAL with that reason. Every counted key is the vision
+  audit's and the relations' to check.
 - **The pack-blind anchor is a second reader, not a binding (Phase K JK15,
   2026-10-24).** `taxfill_core.anchor` reads each widget's printed line from
   the blank alone, for forms with no pack. scripts/anchor_benchmark.py scores

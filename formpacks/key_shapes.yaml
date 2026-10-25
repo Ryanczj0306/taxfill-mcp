@@ -1,0 +1,500 @@
+# Phase K JK10 (2026-10-24): declared key shapes for the label-adjacency gate (scripts/label_adjacency.py,
+# packages/core/tests/test_label_adjacency.py).
+#
+# KEY_RULE (scripts/anchor_benchmark.py) reads a printed line only from keys shaped "21", "5a", "line_21" and
+# "21.col_b"; a pack family keyed in any other shape was checked on no widget at all. Each shape below is a regex for
+# one family's keys: its named group `n` is the printed line number and the optional group `x` its sub-line letter,
+# so the gate compares "1_wages_fed" (NY IT-203) with the line printed beside its widget as line 1. The gate tries
+# the column conventions (column_keys.yaml) first, then these shapes, then KEY_RULE. No pack key is renamed.
+#
+# Each shape names its packs (explicit pack ids: a new year joins only after its own face is checked), the regex,
+# what it means and examples (each example key must map to its line). The network gate checks every shape on every
+# listed pack's own pinned blank: the shape maps at least one of the pack's keys, and EVERY line it maps a key to is
+# printed on that face as a line designator. A column shape also lists `header`, the column headings each listed
+# face must print (fixer round 3). A key the regex does not match stays unchecked, and the coverage ledger
+# (label_adjacency_coverage.yaml) counts it as undeclared when it carries a line-like token.
+#
+# The limit a line check cannot pass (measured on planted swaps, 2026-10-24: 238 of 249 caught, the 11 misses all
+# same-row column swaps): two boxes of ONE printed row claim the same line, so a swap between the row's columns
+# ("1_wages_fed" <-> "1_wages_ny", "A1a_A" <-> "A1a_B", "line19_d01" <-> "line19_d02") is invisible here. Column
+# order is the vision audit's and the relations' to catch — except where the face labels each column's box with
+# its own designator (MS 80-105 "13A"/"13B", MO-1040 "1Y"/"1S"): those shapes map the key to that designator,
+# so a swap between the two columns disagrees too.
+#
+# Blanks (each the pack's pinned source_url; first 16 hex of the sha256 the pack pins and the cached file matches):
+#   states/ny/2023/it203             923aaeb0881da8e8    states/ny/2024/it203             a9d30c46b4504851
+#   states/ny/2025/it203             a3ded3e726ef2565    states/nj/2023/nj1040            77ec771e83a38be1
+#   states/nj/2024/nj1040            ea42e8d33faa16b7    states/nj/2025/nj1040            3d15ad99f3ced62a
+#   states/ca/2023/sched_ca_540nr    ab1b132208f1c143    states/ca/2024/sched_ca_540nr    42d85891e6ee6159
+#   states/ca/2025/sched_ca_540nr    b9a0db9f466b8090    states/ca/2023/sched_ca_540      e831c9801446fcf1
+#   states/ca/2024/sched_ca_540      e6efd18c0b45a097    states/ca/2025/sched_ca_540      0927485bff61e49f
+#   federal/2025/f2210               6899ce672648b280    federal/2026/f2210               d195d1eb96f53224
+#   federal/2023/sched_e             5252b9584187a583    federal/2024/sched_e             92b044d286bae28a
+#   federal/2025/sched_e             c5e2c8fa0ec5ee91    federal/2026/sched_e             0bee231f1ecb2470
+#   states/oh/2023/it1040_oh         c8d35ebb84d5bf48    states/oh/2024/it1040_oh         123ef74533bb449f
+#   states/oh/2025/it1040_oh         4e6432e23df3bf18    states/ga/2023/ga500             3f7d6e068976d865
+#   states/ga/2024/ga500             56251bd42f103e63    states/ga/2025/ga500             c7d56d972dab40bc
+shapes:
+  - id: ny-it203-line-boxes
+    packs: [states/ny/2023/it203, states/ny/2024/it203, states/ny/2025/it203]
+    pattern: '^0*(?P<n>\d{1,3})(?P<x>[a-z])?_[a-z][a-z0-9_]*$'
+    means: >-
+      a box of printed line N: its Federal amount column (_fed), its New York State amount column (_ny), or another
+      box of that row (9_lump_sum_box, 45_income_percentage, 68a_amount_refund_direct_deposit)
+    examples: {1_wages_fed: "1", 1_wages_ny: "1", 52a_subtract_52_from_51: "52a", 9_lump_sum_box: "9"}
+
+  - id: nj1040-amount-digit-cells
+    packs: [states/nj/2023/nj1040, states/nj/2024/nj1040, states/nj/2025/nj1040]
+    pattern: '^(?:line)?0*(?P<n>\d{1,3})(?P<x>[a-z])?_(?:[a-z][a-z0-9_]*_)?d\d{2}$'
+    means: >-
+      one digit cell (d01, d02, ...) of printed line N's amount comb ("line19_d01", "line15a_d03",
+      "13_total_exemption_amount_d01"); a code comb's single-digit cells (_d1, _d2) are not matched
+    examples: {line19_d01: "19", line15a_d03: "15a", 13_total_exemption_amount_d07: "13", line44_credit_other_jurisdictions_d10: "44"}
+
+  - id: ca-sched-ca-540nr-columns
+    packs: [states/ca/2023/sched_ca_540nr, states/ca/2024/sched_ca_540nr, states/ca/2025/sched_ca_540nr]
+    pattern: '^(?:A|B|C|III|IV)0*(?P<n>\d{1,3})(?P<x>[a-z])?(?P<d>(?<=[a-z])\d)?(?:_(?:[A-E]|desc|date|lastname))?$'
+    means: >-
+      Part I Section A/B/C or Part III/IV line N (the prefix names the section) and, after "_", its column A-E or its
+      description box ("A1a_A", "B8z_desc", "III5a_B", "IV2"); fixer round 4: a sub-line's date or last-name box
+      ("B2b_date", "C19b_lastname"); fixer round 5: the entry rows the face prints "9b1", "9b2", "9b3" ("B9b2_B" = 9b2, group
+      d), declared though the anchor reads no such designator (the ledger counts them unread)
+    examples: {A1a_A: "1a", B10_E: "10", C24z_desc: "24z", III30: "30", IV2: "2", B9b2_B: "9b2"}
+
+  - id: ca-sched-ca-540-columns
+    packs: [states/ca/2023/sched_ca_540, states/ca/2024/sched_ca_540, states/ca/2025/sched_ca_540]
+    pattern: '^(?:B|C|II)?0*(?P<n>\d{1,3})(?P<x>[a-z])?(?P<d>(?<=[a-z])\d)?(?:_(?:[A-C]|desc|date|lastname))?$'
+    means: >-
+      Part I Section A (no prefix), Section B/C or Part II line N and, after "_", its column A-C or its description
+      box ("1a_A", "B8z_desc", "II5a_B", "II30"); fixer round 4: a sub-line's date or last-name box ("B2b_date",
+      "C19b_lastname"); fixer round 5: the entry rows the face prints "9b1", "9b2", "9b3" ("B9b2_B" = 9b2, group
+      d), declared though the anchor reads no such designator (the ledger counts them unread)
+    examples: {1a_A: "1a", B10_C: "10", C24z_desc: "24z", II30: "30", 2a: "2a", B9b1_B: "9b1"}
+
+  - id: f2210-installment-columns
+    packs: [federal/2025/f2210, federal/2026/f2210]
+    pattern: '^(?:ai\.)?0*(?P<n>\d{1,3})(?P<x>[a-z])?\.[a-d]$'
+    means: >-
+      line N's installment column (a)-(d), in Part III ("10.a") or in Schedule AI ("ai.1.a")
+    examples: {10.a: "10", 18.c: "18", ai.1.d: "1"}
+
+  - id: sched-e-property-columns
+    packs: [federal/2023/sched_e, federal/2024/sched_e, federal/2025/sched_e, federal/2026/sched_e]
+    pattern: '^0*(?P<n>[1-9]|1\d|2[0-2])(?P<x>[ab])?\.[a-c]$'
+    means: >-
+      Part I line N (1-22)'s property column A-C ("3.a" = line 3, property A). Part III's "34b.c" (line 34b, column
+      (c)) is another kind of column and is left out
+    examples: {3.a: "3", 1b.c: "1b", 22.b: "22"}
+
+  - id: oh-it1040-schedule-lines
+    packs: [states/oh/2023/it1040_oh, states/oh/2024/it1040_oh, states/oh/2025/it1040_oh]
+    pattern: '^sched[AC]_0*(?P<n>\d{1,3})(?P<x>[a-z])?(?:_jfc)?$'
+    means: >-
+      line N of Ohio Schedule of Adjustments (schedA_) or Schedule of Credits (schedC_); fixer round 5: line 12's
+      joint filing credit percentage box ("schedC_12_jfc", the anchor reads 12 beside it)
+    examples: {schedA_1: "1", schedC_12: "12", schedC_12_jfc: "12"}
+
+  - id: ga500-schedule-lines
+    packs: [states/ga/2023/ga500, states/ga/2024/ga500, states/ga/2025/ga500]
+    pattern: '^s\d{1,2}[a-z]?\.0*(?P<n>\d{1,3})(?P<x>[a-z])?(?:_[a-z][a-z_]*(?:\.[a-z]+)?)?$'
+    means: >-
+      line N of Form 500 Schedule 1, 2, 3 ... ("s1.7a" = Schedule 1 line 7a); fixer round 5 (the declare-me rule): a
+      second box of line N named by what it holds ("s1.5_specify", "s2.1_credit_code", "s3.10_deduction.standard")
+    examples: {s1.7a: "7a", s3.12: "12", s1.12_specify: "12", s3.10_deduction.standard: "10"}
+
+  # ── fixer round 3 (Phase K JK10, 2026-10-24): shapes for the families the non-circular denominator exposed ──
+  # (the coverage ledger now counts every key with a line-like token, so a family keyed in an undeclared shape
+  # shows up as undeclared; these declare the ones one regex maps cleanly, each checked on every listed face).
+  # Column headings quoted below are printed on these blanks (first 16 hex of the sha256 each pack pins, matched by
+  # the cached file):
+  #   states/ms/2023/f80105             67d15cc2c7adb6e3    states/ms/2024/f80105             10a2f6bf680cc196
+  #   states/ms/2025/f80105             57fa91016bf72d1a    states/ky/2023/form740            50341c1bc4731233
+  #   states/ky/2024/form740            987ef28607dc5fa8    states/ky/2025/form740            cb68242eb8351dcd
+  #   states/ar/2023/ar1000f            5d592aac8695131a    states/ar/2024/ar1000f            e36f388c53c1a72f
+  #   states/ar/2025/ar1000f            b8165006622e4960    states/ar/2023/ar1000nr           be12df06b15ac06d
+  #   states/mt/2023/form2              13f2a0e05c0fa278    states/wv/2023/it140              3bdf69eefcdd5425
+  #   states/wv/2024/it140              1b9a3c71c6372630    states/ia/2023/ia1040             32db1d8cbce527d4
+  #   states/ia/2024/ia1040             5d7589750974cb56    states/ia/2025/ia1040             623a3d5afbcec87d
+  # and the schedule shapes' blanks:
+  #   states/mt/2024/form2              126be01d436a0b6e    states/mt/2025/form2              4671aef667749732
+  #   states/mo/2023/mo1040             589940ef12527b44    states/mo/2024/mo1040             8a16adf7e840fd5b
+  #   states/mo/2025/mo1040             912b43015ea273d9    states/ok/2023/form511            b43e8c810d4a4647
+  #   states/ok/2024/form511            570f7186c1f03a4c    states/ok/2025/form511            c90cf30381cca626
+  #   states/wi/2023/wi_form1           61851bb8671db185    states/wi/2024/wi_form1           dee31c2b21427a05
+  #   states/wi/2025/wi_form1           a9b0d9b75bcb55ec
+  # The line-boxes shape at the end lists many packs; each is checked on the blank its pack.yaml pins.
+
+  - id: ms-80-105-columns
+    packs: [states/ms/2023/f80105, states/ms/2024/f80105, states/ms/2025/f80105]
+    pattern: '^0*(?P<n>\d{1,3})\.(?P<x>[ab])$'
+    header: [Column A (Taxpayer), Column B (Spouse)]
+    means: >-
+      line N's Column A (Taxpayer) or Column B (Spouse) box; the face labels each box "13A" / "13B", so "13.a" maps
+      to the box's own designator 13a (a swap between the two columns is then visible too)
+    examples: {13.a: "13a", 66.b: "66b"}
+
+  - id: ky-740-columns
+    packs: [states/ky/2023/form740, states/ky/2024/form740, states/ky/2025/form740]
+    pattern: '^0*(?P<n>\d{1,3})(?P<x>[a-z])?[._][ab]$'
+    header: [Columns A and B]
+    means: >-
+      line N's Column A (spouse) or Column B (yourself or joint) amount ("5.a", "5_b")
+    examples: {5.a: "5", 5_b: "5", 18.b: "18"}
+
+  - id: ar-1000-columns
+    packs: [states/ar/2023/ar1000f, states/ar/2024/ar1000f, states/ar/2025/ar1000f, states/ar/2023/ar1000nr]
+    pattern: '^0*(?P<n>\d{1,3})(?P<x>[a-z])?\.[a-c]$'
+    header: [(A) Primary/Joint Income, (B) Spouse]
+    means: >-
+      line N's column (A) primary/joint, (B) spouse or, on AR1000NR, (C) amount ("8.a", "18b.b", "29.c")
+    examples: {8.a: "8", 18b.b: "18b"}
+
+  - id: mt-form2-2023-columns
+    packs: [states/mt/2023/form2]
+    pattern: '^(?!16[a-d]\.)(?:(?:sub|benefits|add|itemized|ratio|recovery|nrcredits|msa|payments|othertax|stdded|cpi|liability|refund|pension|sch\d)\.)?0*(?P<n>\d{1,3})(?P<x>[a-z])?\.[ab]$'
+    header: [Column A, Column B]
+    means: >-
+      line N's Column A or Column B box on Form 2 or one of its schedules (the prefix names the schedule:
+      "sub.3.b" = Subtractions line 3, Column B). The exemption rows 16a-16d are left out: they are rows a-d of
+      line 16 (you, spouse, dependents ...), not printed sub-lines, so "16a.a" names no line printed beside its box
+    examples: {1.a: "1", sub.3.b: "3", itemized.5a.a: "5a"}
+
+  - id: mt-form2-schedule-lines
+    packs: [states/mt/2024/form2, states/mt/2025/form2]
+    pattern: '^(?:sched\d(?:ec|_part\d)?|tax_calc|transition(?:_part\d)?)\.0*(?P<n>\d{1,3})(?P<x>[a-z])?$'
+    means: >-
+      line N of a Form 2 schedule or worksheet; the prefix names it ("sched1.5" = Schedule I line 5,
+      "sched2ec.3", "sched1_part2.4", "tax_calc.7"; fixer round 4: the 2024 Transition Schedule's Part I and Part II,
+      "transition.3", "transition_part2.5")
+    examples: {sched1.5: "5", sched2ec.3: "3", tax_calc.7: "7"}
+
+  - id: mo-1040-yourself-spouse
+    packs: [states/mo/2023/mo1040, states/mo/2024/mo1040, states/mo/2025/mo1040]
+    pattern: '^(?:line-?|moa_(?:pt\d_)?)0*(?P<n>\d{1,3})-?(?P<x>[YSys])$'
+    means: >-
+      line N's Yourself or Spouse box on MO-1040 or Form MO-A; the face labels each box "1Y" / "1S", so the key
+      maps to that designator ("line27Y" -> 27y, "moa_3s" -> 3s)
+    examples: {line27Y: "27y", line1-S: "1s", moa_3s: "3s", moa_pt2_4y: "4y"}
+
+  - id: ok-511-schedule-lines
+    packs: [states/ok/2023/form511, states/ok/2024/form511, states/ok/2025/form511]
+    pattern: '^(?:sch_511[a-h]|f538s)\.0*(?P<n>\d{1,3})(?P<x>[a-z])?(?:\.[a-z][a-z0-9_]*)?$'
+    means: >-
+      line N of Schedule 511-A ... 511-H or of Form 538-S ("sch_511a.1", "f538s.4"); fixer round 5 (the declare-me
+      rule): a second box of line N named by what it holds ("sch_511a.17.type_code", "f538s.15.count",
+      "sch_511h.1.amount_option_5")
+    examples: {sch_511a.1: "1", f538s.4: "4", sch_511b.9.type_code: "9", f538s.10.description: "10"}
+
+  - id: wv-it140-schedule-lines
+    packs: [states/wv/2023/it140, states/wv/2024/it140]
+    pattern: '^(?:recap|sch_e|sch_f|heptc|ftc|sch_ut)\.0*(?P<n>\d{1,3})(?P<x>[a-z])?(?:\.state(?:_\d)?|\.yes|\.no)?$'
+    means: >-
+      line N of a schedule (tax credit recap, Schedule E, HEPTC, FTC, Schedule UT): "recap.4", "sch_ut.6a"; fixer
+      round 4: the recap's line-1 state boxes ("recap.1.state_2"); fixer round 5 (the declare-me rule): Schedule E
+      line 1's state box ("sch_e.1.state") and Schedule F's question N Yes / No boxes ("sch_f.2a.yes")
+    examples: {recap.4: "4", sch_ut.6a: "6a", sch_e.1.state: "1", sch_f.2a.no: "2a"}
+
+  - id: wv-it140-schedule-m-columns
+    packs: [states/wv/2023/it140, states/wv/2024/it140]
+    pattern: '^sch_m\.0*(?P<n>\d{1,3})[ab]?$'
+    header: [Column A (You), Column B (Spouse)]
+    means: >-
+      Schedule M line N, Column A (You) "sch_m.29a" or Column B (Spouse) "sch_m.29b", or a one-box line "sch_m.52"
+    examples: {sch_m.29a: "29", sch_m.29b: "29", sch_m.52: "52"}
+
+  - id: ia-1040-schedule-1-columns
+    packs: [states/ia/2023/ia1040, states/ia/2024/ia1040, states/ia/2025/ia1040]
+    pattern: '^s1\.0*(?P<n>\d{1,3})[ab]?(?:\.(?:cents|code))?$'
+    header: [A Additions, B Subtractions]
+    means: >-
+      Schedule 1 line N's column A (Additions) "s1.1a" or B (Subtractions) "s1.1b", a one-box line "s1.7", and
+      each one's cents box (".cents") or code box (".code")
+    examples: {s1.1a: "1", s1.1b.cents: "1", s1.7: "7", s1.11.code: "11"}
+
+  - id: ia-1040-cents
+    packs: [states/ia/2023/ia1040, states/ia/2024/ia1040, states/ia/2025/ia1040]
+    pattern: '^0*(?P<n>\d{1,3})(?P<x>[a-z])?(?:\.[a-z][a-z_]*)?\.cents$'
+    means: >-
+      the cents box of IA 1040 line N ("2.cents", "36a.cents"), or of a named box of line N (fixer round 5: line
+      21's Fish and Wildlife check-off "21.fish_wildlife.cents", the anchor reads 21 beside it)
+    examples: {2.cents: "2", 36a.cents: "36a", 21.fish_wildlife.cents: "21"}
+
+  - id: wi-form1-schedule-lines
+    packs: [states/wi/2023/wi_form1, states/wi/2024/wi_form1, states/wi/2025/wi_form1]
+    pattern: '^sch\d_0*(?P<n>\d{1,3})(?P<x>[a-z])?(?:_(?:yourself|spouse))?$'
+    means: >-
+      line N of Schedule 1 / 2 ... of Form 1, and on Schedule 2 its yourself / spouse box ("sch1_3",
+      "sch2_1_spouse")
+    examples: {sch1_3: "3", sch2_1_spouse: "1"}
+
+  - id: ga500-schedule-part-lines
+    packs: [states/ga/2023/ga500, states/ga/2024/ga500, states/ga/2025/ga500]
+    pattern: '^(?:s\d+\.p\d|s\dret\.(?:tp|sp)|s\dmil\.(?:tp|sp)|indcr_summary|indcr\d{3}(?:\.[a-c])?)\.0*(?P<n>\d{1,3})(?P<x>[a-z])?(?:_[a-z][a-z_]*)?$'
+    means: >-
+      line N of a part of a Form 500 schedule ("s4.p1.3" = Schedule 4 Part 1 line 3), of the Schedule 1
+      retirement or military worksheets for the taxpayer / spouse ("s1ret.tp.2", "s1mil.sp.4"), or of the
+      individual credit summary ("indcr_summary.5"); fixer round 5 (the declare-me rule): line N of an individual
+      credit form IND-CR NNN ("indcr201.3"; "indcr212.a.2" = part a line 2, its "_rotations" box), and a named box
+      of line N ("s4.p2.16_specify")
+    examples: {s4.p1.3: "3", s1ret.tp.2: "2", indcr_summary.5: "5", indcr201.4: "4", indcr212.b.2_rotations: "2"}
+
+  # ── fixer round 4 (Phase K JK10, 2026-10-24): whole schedules the dark-family rule found undeclared ──
+  # A family of 5+ undeclared keys (label_adjacency.dark_families) made its pack PARTIAL; these declare the ones the
+  # face numbers. Blanks (first 16 hex of the sha256 each pack pins, matched by the cached file): OH, MT, WV, NJ, CA
+  # and MS as listed above, and
+  #   states/ri/2023/ri1040             db8606dabba92f15    states/ri/2024/ri1040             0e11ff46b02730b0
+  #   states/ri/2025/ri1040             ac024a0d865fd08c
+  - id: oh-it1040-business-income
+    packs: [states/oh/2023/it1040_oh, states/oh/2024/it1040_oh, states/oh/2025/it1040_oh]
+    pattern: '^schedITbus_0*(?P<n>\d{1,3})(?:_neg)?$'
+    means: >-
+      line N of the Ohio Schedule of Business Income (Parts 1-3, lines 1-16) and, "_neg", the "-" sign box the face
+      prints on that row for a negative amount ("schedITbus_2_neg")
+    examples: {schedITbus_1: "1", schedITbus_2_neg: "2", schedITbus_16: "16"}
+
+  - id: mt-form2-2023-ehrc-upint
+    packs: [states/mt/2023/form2]
+    pattern: '^(?:ehrc|upint)\.0*(?P<n>\d{1,3})(?P<x>[a-z])?(?:\.decimal)?$'
+    means: >-
+      line N of the Elderly Homeowner/Renter Credit Schedule ("ehrc.15"; "ehrc.13.decimal" is line 13's multiplier
+      box) or of the Calculation of Interest on Underpayment of Estimated Taxes ("upint.10")
+    examples: {ehrc.1: "1", ehrc.13.decimal: "13", upint.10: "10"}
+
+  - id: mt-form2-2023-credit-boxes
+    packs: [states/mt/2023/form2]
+    pattern: '^nrcredits\.0*(?P<n>\d{1,3})(?P<x>[a-z])?\.(?:cert(?:_\d)?|ucrn_\d|year|cgr_flag|cgr_account_id)$'
+    means: >-
+      a box of Nonrefundable Credits line N beside its amount columns: a credit certificate number
+      ("nrcredits.8.cert_1", "nrcredits.14.cert"), a UCRN ("nrcredits.13.ucrn_1"), a repealed credit's year
+      ("nrcredits.15a.year") or the CGR account box and flag of line 10
+    examples: {nrcredits.8.cert_1: "8", nrcredits.15a.year: "15a", nrcredits.10.cgr_account_id: "10"}
+
+  - id: mt-form2-schedule-boxes
+    packs: [states/mt/2024/form2, states/mt/2025/form2]
+    pattern: '^sched\d(?:_part\d)?\.0*(?P<n>\d{1,3})(?P<x>[a-z])?\.[a-z][a-z0-9_]*$'
+    means: >-
+      a box of Form 2 schedule line N named by what it holds: Schedule IV's check-off amounts ("sched4.1a.usd5",
+      "sched4.1c.other_amount" = line 1c), a code box ("sched1.6.code_1"), an account named on the row
+      ("sched1.3.medical_savings_account", "sched3.8.cgr_account_id")
+    examples: {sched4.1a.usd5: "1a", sched1.6.code_1: "6", sched3.8.cgr_account_id: "8",
+               sched3_part2.12.state: "12"}
+
+  - id: wv-it140-schedule-m-items
+    packs: [states/wv/2023/it140, states/wv/2024/it140]
+    pattern: '^sch_m\.0*(?P<n>\d{1,3})(?:[ab]\.(?=[a-c]$)|(?=[cd]\.[ab]$)|[ab]\.year_of_(?:birth|disability)$)(?P<x>[a-d])?(?:\.[ab])?$'
+    means: >-
+      an item box of Schedule M line N: the face prints the line's number once ("46. PBGC Modification") and its
+      items "(a) ...", "(b) ..." below it, and the anchor reads "46a" beside the (a) boxes, so a key maps to its
+      item's designator. Three spellings: column first, then the item ("sch_m.46a.b" = 46(b), Column A (You);
+      "sch_m.34b.c" = 34(c), Column B (Spouse)); on the senior citizen / disability line (47 on the 2023 face, 49 on
+      2024's) items (c) and (d) item first, then You / Spouse ("sch_m.49c.b" = 49(c), Spouse); and that line's
+      year-of-birth (item a) and year-of-disability (item b) boxes, named rather than lettered, which claim the line
+      ("sch_m.49a.year_of_birth")
+    examples: {sch_m.46a.b: "46b", sch_m.34b.c: "34c", sch_m.49c.b: "49c", sch_m.47d.a: "47d",
+               sch_m.49a.year_of_birth: "49", sch_m.47b.year_of_disability: "47"}
+
+  - id: ri1040-schedule-e-lines
+    packs: [states/ri/2023/ri1040, states/ri/2024/ri1040, states/ri/2025/ri1040]
+    pattern: '^schedule_e\.0*(?P<n>\d{1,3})(?P<x>[a-z])?(?:\.(?:yourself|spouse))?$'
+    means: >-
+      line N of RI Schedule E (exemptions): the "1a Yourself" / "1b Spouse" boxes and summary lines 3-5
+      ("schedule_e.4b"); the dependent rows (schedule_e.dependent_N.*) are household-member rows
+    examples: {schedule_e.1a.yourself: "1a", schedule_e.4c: "4c", schedule_e.5: "5"}
+
+  - id: nj1040-exemption-lines
+    packs: [states/nj/2023/nj1040, states/nj/2024/nj1040, states/nj/2025/nj1040]
+    pattern: '^exemption_0*(?P<n>\d{1,3})_[a-z][a-z0-9_]*$'
+    means: >-
+      a box of exemption line N (6-12: "6. Regular ... x $1,000 =", "11. Other Dependents ... x $1,500 ="): its
+      Self / Spouse ovals, its count cells and its amount ("exemption_11_other_dependents_amount")
+    examples: {exemption_6_regular_count: "6", exemption_11_other_dependents_amount: "11"}
+
+  - id: ms-80-105-line-8-boxes
+    packs: [states/ms/2023/f80105, states/ms/2024/f80105, states/ms/2025/f80105]
+    pattern: '^age65_blind\.(?:taxpayer|spouse)_(?:over_65|blind)$'
+    line: "8"
+    means: >-
+      a named block: line 8's four boxes "Taxpayer Age 65 or Over", "Taxpayer Blind", "Spouse Age 65 or Over" and
+      "Spouse Blind" (line 9 counts "boxes checked line 8"); the keys carry no line number of their own
+    examples: {age65_blind.taxpayer_blind: "8", age65_blind.spouse_over_65: "8"}
+
+  # Fixer round 5 (Phase K JK10, 2026-10-24): THE DECLARE-ME RULE — every undeclared key the anchor reads a printed
+  # line beside puts its pack below the floor until a shape declares it (or the ledger's not_lines names why it is
+  # no line). The shapes below declare the families the rule turned up in packs that reported OK; each was
+  # vision-read on its own face (work crops, not shipped). Blanks (first 16 hex of the sha256 each pack pins, matched
+  # by the cached file; the others are listed above):
+  #   states/az/2023/az140   6ac62b1984154d2a    states/az/2023/az140py 082ee7ac0e2b9a50    states/az/2023/az140nr c7b67205786808aa
+  #   states/az/2024/az140   3bcbe35485f97d52    states/az/2025/az140   91722910a79a8ec5    states/md/2023/md502   0f690e03e385c768
+  #   states/md/2024/md502   e72500955f3c032c    states/md/2025/md502   4f4d604f27cf6995    states/ny/2023/it201   b0c12743b32fb723
+  #   states/ny/2024/it201   dc1562c7b4ddbf40    states/ny/2025/it201   cfe63039ffa4374f    federal/2026/sched_1a  e22aec7feb2f5b73
+  #   federal/2023/f8863     dae8814d278f144b    federal/2024/f8863     71644cc3a12e89de    federal/2025/f8863     a251a1cfbd613d5d
+  #   federal/2019/f8843     d5d66a664defad8d    federal/2020/f8843     b4f0feb8735537b0    federal/2021/f8843     1a96573dd5179b94
+  #   federal/2022/f8843     23e9e02f763c7216    federal/2023/f8843     b70a3950b138a515    federal/2024/f8843     41f1a4ba4227a9b5
+  #   federal/2025/f8843     b685fcb296ae6a86    federal/2026/f8843     fa350c49d804c21e
+  - id: az140-charitable-worksheet
+    packs: [states/az/2023/az140, states/az/2023/az140py, states/az/2024/az140, states/az/2025/az140,
+            states/az/2023/az140nr]
+    pattern: '^ws3_(?P<n>\d)(?P<x>c)_'
+    means: >-
+      page 3's Standard Deduction Increase for Charitable Contributions worksheet, lines 1C-7C ("ws3_1c_gifts_cash_or_
+      check" = 1C ... "ws3_7c_multiply_by_31pct" = 7C; 140NR runs to 9C); the face prints "1C" ... "7C" beside the
+      boxes
+    examples: {ws3_1c_gifts_cash_or_check: "1c", ws3_4c_add_1c_3c: "4c", ws3_7c_multiply_by_31pct: "7c"}
+
+  - id: az140-lettered-boxes
+    packs: [states/az/2023/az140, states/az/2023/az140py, states/az/2024/az140, states/az/2025/az140,
+            states/az/2023/az140nr]
+    pattern: '^0*(?P<n>\d{1,3})(?:(?P<x>[EF])|[CS])(?:_[a-z][a-z0-9_]*)?$'
+    means: >-
+      a box the face labels with its line number and a capital: "40E" (Other Exemptions count) and "82F" (filed
+      under extension) are designators of their own (the anchor reads 40e / 82f); "44C" (charitable contributions
+      with the standard deduction) and "13S" / "28S" (Form 140-SBI) are check boxes inside line 44 / 13 / 28, whose
+      designator is the row's number
+    examples: {40E: "40e", 82F_extension: "82f", 44C_charitable_with_standard: "44", 13S_filing_140sbi: "13"}
+
+  - id: md502-filing-status
+    packs: [states/md/2023/md502, states/md/2024/md502, states/md/2025/md502]
+    pattern: '^filing_status_(?P<n>[1-6])_(?:single|mfj|mfs|hoh|qss|dependent)$'
+    means: >-
+      filing status box N: the face numbers the six boxes "1." Single ... "6." dependent taxpayer, so a swap between
+      two status boxes disagrees with the number printed beside one
+    examples: {filing_status_1_single: "1", filing_status_2_mfj: "2", filing_status_6_dependent: "6"}
+
+  - id: mt-form2-2023-worksheet-rows
+    packs: [states/mt/2023/form2]
+    pattern: '^(?:ltc|status2a)\.0*(?P<n>\d{1,3})(?:\.b)?$'
+    means: >-
+      line N of a numbered worksheet block: the Long-Term Care Facility Rent Calculation ("ltc.2" = line 2, board
+      services) and the filing status 2a net amount block ("status2a.2.b" = line 2, tax overpaid, Column B)
+    examples: {ltc.1: "1", ltc.4: "4", status2a.2.b: "2"}
+
+  - id: mt-form2-2023-line-boxes
+    packs: [states/mt/2023/form2]
+    pattern: '^(?:(?:add|itemized|othertax|ratio|sch\d)\.)?0*(?P<n>\d{1,3})(?P<x>[a-z])?\.(?:description|state|date|not_required|itemize_elect|decimal\.[ab])$'
+    means: >-
+      a second box of printed line N named by what it holds: a description, state or date box ("add.15.description",
+      "itemized.18.description",
+      "othertax.2.state", "sch1.2b.date"), a ratio's decimal box ("ratio.18.decimal.a"), or the line 7 / line 15
+      election boxes ("7.not_required", "15.itemize_elect")
+    examples: {add.15.description: "15", othertax.6.decimal.a: "6", sch1.19c.date: "19c", 7.not_required: "7"}
+
+  - id: mt-form2-2023-recapture-code
+    packs: [states/mt/2023/form2]
+    pattern: '^liability\.recapture_code_[12]$'
+    line: "2"
+    means: >-
+      a named block: the two "Code" boxes of the Tax liability section's line 2 "Recapture taxes" (the trailing digit
+      is the box's position, not a line)
+    examples: {liability.recapture_code_1: "2", liability.recapture_code_2: "2"}
+
+  - id: ny-it201-residency-items
+    packs: [states/ny/2023/it201, states/ny/2024/it201, states/ny/2025/it201]
+    pattern: '^(?:D2|E|F)_(?P<n>[1-3])_[a-z][a-z_]*(?:::(?:yes|no))?$'
+    means: >-
+      question (N) of item D2 (Yonkers living quarters and months), E (NYC living quarters and days) or F (NYC months
+      for you and your spouse): the face prints "(1)", "(2)", "(3)" beside each box, and the item letter is no line
+    examples: {D2_2_months_you_in_yonkers: "2", E_2_days_in_nyc: "2", F_1_months_you_in_nyc: "1"}
+
+  - id: sched1a-2026-vehicle-questions-1
+    packs: [federal/2026/sched_1a]
+    pattern: '^28[ab]\.original_use\.(?:yes|no)$'
+    line: "1"
+    means: >-
+      a named block: question (1) of line 28a / 28b ("Did the original use of this vehicle start with you ...?");
+      the face prints "(1)" beside its Yes box, which the anchor reads
+    examples: {28a.original_use.yes: "1", 28b.original_use.no: "1"}
+
+  - id: sched1a-2026-vehicle-questions-2
+    packs: [federal/2026/sched_1a]
+    pattern: '^28[ab]\.us_final_assembly\.(?:yes|no)$'
+    line: "2"
+    means: >-
+      a named block: question (2) of line 28a / 28b ("Did final assembly of this vehicle occur within the United
+      States ...?"); the face prints "(2)" beside its Yes box
+    examples: {28a.us_final_assembly.yes: "2", 28b.us_final_assembly.no: "2"}
+
+  - id: f8843-year-columns
+    packs: [federal/2019/f8843, federal/2020/f8843, federal/2021/f8843, federal/2022/f8843, federal/2023/f8843,
+            federal/2024/f8843, federal/2025/f8843, federal/2026/f8843]
+    pattern: '^0*(?P<n>\d{1,3})(?P<x>[a-z])?\.(?:19|20)\d{2}$'
+    means: >-
+      the year column of line N ("4a.2023" = line 4a, the days present in the United States in 2023; "7.2018" = line
+      7's 2018 box): the four-digit token is the year the face prints over the box, not a line
+    examples: {4a.2023: "4a", 7.2018: "7", 11.2017: "11"}
+
+  - id: f8863-line-22-questions
+    packs: [federal/2023/f8863, federal/2024/f8863, federal/2025/f8863]
+    pattern: '^22[ab]\.q(?P<n>[1-9])\.(?:yes|no)$'
+    means: >-
+      question (N) of line 22a / 22b's institution block ("22a.q2.yes" = "(2) Did the student receive Form 1098-T
+      from this institution ...?" Yes); the face prints "(2)", "(3)" beside the boxes, which the anchor reads (the
+      generic line-boxes shape, broadened in fixer round 5, mapped them to 22a and disagreed with every Yes box).
+      The 2026 face is left out: the anchor reads no line beside its boxes (a shape must compare a widget)
+    examples: {22a.q2.yes: "2", 22b.q3.no: "3"}
+
+  # Generic: a key that starts with line N (optionally "line"/"line_") and then names the box ("4c.rollover",
+  # "9.primary", "18a.gross", "1.original", "line10b_count", "11_filing_status::single"). Continuation rows
+  # ("1.cont2") are left out (a not_lines family of the coverage ledger). Listed packs are those where every line it
+  # maps a key to is printed and where it brings at least one widget into the gate (a pack whose line-box keys the
+  # anchor reads nothing beside stays out; its keys stay undeclared in the ledger); the disagreements it brought in
+  # were vision-read (exceptions table, the r3-* families).
+  - id: line-boxes
+    packs: [federal/2019/f8843, federal/2020/f8843, federal/2021/f8843, federal/2022/f1040nr, federal/2022/f8843,
+            federal/2022/sched_c, federal/2023/f1040, federal/2023/f1040nr, federal/2023/f1040x, federal/2023/f1116,
+            federal/2023/f2555, federal/2023/f5329, federal/2023/f843, federal/2023/f8606, federal/2023/f8833,
+            federal/2023/f8843, federal/2023/f8863, federal/2023/f8889, federal/2023/f8938, federal/2023/f8962,
+            federal/2023/sched_2, federal/2023/sched_8812, federal/2023/sched_a, federal/2023/sched_a_nr,
+            federal/2023/sched_c, federal/2023/sched_d, federal/2023/sched_e, federal/2023/sched_nec,
+            federal/2024/f1040, federal/2024/f1040nr, federal/2024/f1040x, federal/2024/f1116, federal/2024/f2555,
+            federal/2024/f5329, federal/2024/f843, federal/2024/f8606, federal/2024/f8833, federal/2024/f8843,
+            federal/2024/f8863, federal/2024/f8889, federal/2024/f8938, federal/2024/f8962, federal/2024/sched_2,
+            federal/2024/sched_3, federal/2024/sched_8812, federal/2024/sched_a, federal/2024/sched_c,
+            federal/2024/sched_d, federal/2024/sched_e, federal/2024/sched_nec, federal/2025/f1040,
+            federal/2025/f1040nr, federal/2025/f1040x, federal/2025/f1116, federal/2025/f2555, federal/2025/f5329,
+            federal/2025/f843, federal/2025/f8606, federal/2025/f8833, federal/2025/f8843, federal/2025/f8863,
+            federal/2025/f8889, federal/2025/f8938, federal/2025/f8962, federal/2025/sched_1, federal/2025/sched_2,
+            federal/2025/sched_8812, federal/2025/sched_a, federal/2025/sched_c, federal/2025/sched_d,
+            federal/2025/sched_e, federal/2025/sched_nec, federal/2026/f1040, federal/2026/f1040nr,
+            federal/2026/f1040x, federal/2026/f1116, federal/2026/f2555, federal/2026/f4868, federal/2026/f5329,
+            federal/2026/f843, federal/2026/f8606, federal/2026/f8833, federal/2026/f8843, federal/2026/f8863,
+            federal/2026/f8889, federal/2026/f8938, federal/2026/f8962, federal/2026/sched_1, federal/2026/sched_1a,
+            federal/2026/sched_2, federal/2026/sched_8812, federal/2026/sched_a, federal/2026/sched_c,
+            federal/2026/sched_d, federal/2026/sched_e, states/al/2023/al40nr, states/ar/2023/ar1000f,
+            states/ar/2023/ar1000nr, states/ar/2024/ar1000f, states/ar/2025/ar1000f, states/az/2023/az140,
+            states/az/2023/az140nr, states/az/2023/az140py, states/az/2024/az140, states/az/2025/az140,
+            states/ca/2023/form540,
+            states/ca/2023/form540nr, states/ca/2023/sched_ca_540nr, states/ca/2024/form540,
+            states/ca/2024/form540nr, states/ca/2024/sched_ca_540nr, states/ca/2025/form540,
+            states/ca/2025/form540nr, states/ca/2025/sched_ca_540nr, states/co/2023/dr0104, states/co/2023/dr0104pn,
+            states/co/2024/dr0104, states/co/2025/dr0104, states/dc/2024/d40, states/dc/2025/d40,
+            states/de/2023/pit_non, states/de/2023/pit_res, states/de/2024/pit_res, states/de/2025/pit_res,
+            states/ga/2023/ga500, states/ga/2024/ga500, states/ga/2025/ga500, states/ia/2023/ia1040,
+            states/ia/2024/ia1040, states/ia/2025/ia1040, states/id/2023/form40, states/id/2024/form40,
+            states/id/2025/form40, states/il/2023/il1040, states/il/2024/il1040, states/il/2025/il1040,
+            states/in/2023/it40, states/in/2024/it40, states/in/2025/it40, states/ks/2023/k40, states/ks/2024/k40,
+            states/ks/2025/k40, states/ky/2023/form740, states/ky/2024/form740, states/ky/2025/form740,
+            states/la/2023/it540, states/la/2024/it540, states/la/2025/it540, states/ma/2023/form1,
+            states/ma/2025/form1, states/md/2023/md502, states/md/2024/md502, states/md/2025/md502,
+            states/me/2023/f1040me, states/me/2024/f1040me, states/me/2025/f1040me, states/mi/2023/mi1040,
+            states/mi/2024/mi1040, states/mi/2025/mi1040, states/mo/2023/mo1040, states/mo/2024/mo1040,
+            states/mo/2025/mo1040, states/mt/2024/form2, states/mt/2025/form2, states/nc/2023/d400,
+            states/nc/2024/d400, states/nc/2025/d400, states/nd/2023/nd1, states/nd/2024/nd1, states/nd/2025/nd1,
+            states/ne/2023/f1040n, states/ne/2024/f1040n, states/ne/2025/f1040n, states/nj/2023/nj1040,
+            states/nj/2024/nj1040, states/nj/2025/nj1040, states/ny/2023/it201, states/ny/2024/it201,
+            states/ny/2025/it201, states/oh/2023/it1040_oh, states/oh/2024/it1040_oh, states/oh/2025/it1040_oh,
+            states/ok/2023/form511, states/ok/2024/form511, states/ok/2025/form511, states/or/2023/or40,
+            states/or/2024/or40, states/or/2025/or40, states/pa/2023/pa40, states/pa/2024/pa40, states/pa/2025/pa40,
+            states/ri/2023/ri1040, states/ri/2024/ri1040, states/ri/2025/ri1040, states/va/2023/va760,
+            states/va/2024/va760, states/va/2025/va760, states/vt/2023/in111, states/vt/2024/in111,
+            states/vt/2025/in111, states/wi/2023/wi_form1, states/wi/2024/wi_form1, states/wi/2025/wi_form1,
+            states/wv/2023/it140, states/wv/2024/it140]
+    pattern: '^(?:line_?)?0*(?P<n>\d{1,3})(?P<x>[a-z])?(?:[._]|::)(?!cont\d)(?:[a-z][a-z0-9_:]*(?:\.(?:yes|no|cents))?|65_(?:or_)?older[a-z_:]*|\d{3}[a-z][a-z0-9_:]*)$'
+    means: >-
+      a box of printed line N named by what it holds: a checkbox or a second box of the row ("4c.rollover",
+      "13.form_4972k", "7a.yourself"), a column of the row ("1.original", "15.federal", "4.d"), or a WI / VA
+      "line18_loss::yes"; fixer round 5 (the declare-me rule): a named box's yes / no / cents box
+      ("54.outside_us.yes", OR 40), an age box ("10b_65_or_older::you", "6a.65_older") and a box named after the
+      forms it encloses ("line32_760c_760f_enclosed::on") — never a positional row or an identity value (".r2.a",
+      ".row1.a", ".ein.3" stay out: the tail after N's box name is only .yes, .no or .cents)
+    examples: {4c.rollover: "4c", 9.primary: "9", line10b_count: "10b", 11_filing_status::single: "11",
+               54.outside_us.yes: "54", 6a.65_older: "6a", line32_760c_760f_enclosed::on: "32"}

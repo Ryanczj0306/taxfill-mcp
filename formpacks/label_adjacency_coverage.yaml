@@ -1,0 +1,445 @@
+# Phase K JK10 (2026-10-24): the label-adjacency coverage ledger. The gate (scripts/label_adjacency.py,
+# packages/core/tests/test_label_adjacency.py) compares a key with the line printed beside its widget only when a
+# rule maps the key to a line (KEY_RULE, a column convention of column_keys.yaml or a declared shape of
+# key_shapes.yaml) AND the pack-blind anchor reads a printed line beside one of its widgets. Every other key passes
+# unseen, so this ledger records, per shipped pack:
+#
+#   checked  the line-bearing keys the gate compared on at least one widget
+#   lines    the pack's LINE-BEARING keys (below)
+#   mapped   the line-bearing keys a rule or shape maps; lines - mapped are UNDECLARED (no rule reads them)
+#   unread   (fixer round 5) the line-bearing keys beside none of whose widgets the anchor reads a printed line —
+#            blind spot (b) below
+#   same_row, cross_section, descriptive
+#            (fixer round 6) blind spots (a), (c) and (d) below, counted; like `unread`, every row carries them and
+#            the gate fails on a stale count
+#   dark     (fixer round 4; only when the fraction is at or above the floor) the DARK key families below
+#   declare  (fixer round 5; at any fraction) the families of undeclared keys the anchor reads a line beside
+#   reason   (only below the floor) why the rest are unchecked, one of `reasons`
+#   note     (only below the floor) which keys, in a sentence
+#
+# LINE-BEARING (fixer round 3, 2026-10-24; round 2 counted only the keys a rule could already map, a circular
+# denominator under which a pack keyed mostly in an undeclared shape reported "OK 26/26"): a key the gate maps, or
+# a key that carries a LINE-LIKE TOKEN and belongs to no `not_lines` family below. THE TOKEN RULE
+# (label_adjacency.line_like): split the key into its letter-and-digit runs; it is line-like when one run is a line
+# number — 1-3 digits with at most two trailing letters ("21", "5a", "13A", "12yb": "1.cents", "13.a", "7.2019",
+# "sch_1a.3", "moa_12y", "12-Y") that is not an age threshold (right after over/under/age/ages, or right before
+# older/or/younger: "you_65_or_older") — or contains "line"/"ln" directly followed by 1-3 digits ("line21",
+# "SCHAACPRTILN5"). A digit run glued to other letters ("d01", "s1", "sched3", "pt2", "w2") is a cell, schedule,
+# part or row index, and four or more digits are a form number or a year; neither is a line.
+#
+# A pack is BELOW THE FLOOR when it has no line-bearing key or checks fewer than `floor` of them; scaffold_state_year
+# --triage then calls a base pack UNCHECKED or PARTIAL n/m (never OK), the row BASE-UNCHECKED, and the port needs a
+# manual check of the base's line binding. A pack whose line-bearing keys are mostly undeclared is below the floor
+# with reason shape-not-declared; no row at or above the floor has more undeclared keys than checked ones (a test
+# holds it). DARK FAMILIES (fixer round 4, 2026-10-24; a fraction could not see a whole schedule left unchecked —
+# OH Schedule of Business Income, MT 2023's EHRC and UPINT schedules — and a 3-cycle planted inside one passed): a
+# key's family is the key with each line token replaced by "#" ("schedITbus_#", "sch_m.#.b"); a family holding 5 or
+# more undeclared keys, or 5 or more line-bearing keys none of which the gate checks, is dark and puts the pack
+# below the floor whatever its fraction. Its row lists the families (`dark`) with the reason (shape-not-declared
+# for an undeclared family, anchor-reads-no-designators for a declared one); a test holds that no row at or above
+# the floor holds an undeclared dark family, and the gate that the measured dark families equal the row's.
+# FIXER ROUND 5 (2026-10-24): round 4's family kept the descriptive tail, so AZ 140's charitable worksheet
+# ("ws3_1c_gifts_cash_or_check" ... "ws3_7c_multiply_by_31pct") made seven one-key families and a 3-cycle among them
+# passed with the pack OK. A key's FAMILY is now the key up to and including its first line token, the tail dropped
+# ("ws#_#"); the none-checked half also groups round 4's uniform-tail families ("#.no"). THE DECLARE-ME RULE: an
+# undeclared key beside one of whose widgets the anchor reads a printed line puts the pack below the floor whatever
+# its family's size (MT 2023's four "ltc.N" rows), until a shape or convention declares it or not_lines lists it;
+# the row lists those families (`declare`) with a reason, and a network test holds that no row at or above the
+# floor holds such a key. The 5-key DARK threshold now governs only the families the anchor reads no line beside.
+# WHAT THE GATE CANNOT SEE (fixer round 6, 2026-10-24; the same list as scripts/label_adjacency.py's docstring and
+# formpacks/CONVENTIONS.md). A line-number check compares a key with the line printed beside its box; it stops
+# chasing instances here and COUNTS, per pack, the keys each blind spot covers:
+#   (a) same_row       a SAME-ROW COLUMN SWAP: checked keys whose line another checked key of a different field
+#                      claims on the same printed row (federal <-> state amount, Column A <-> Column B, dollars <->
+#                      cents, two cells of one comb); the anchor reads that line beside both, so a swap passes
+#   (b) unread         a box the anchor reads NO line beside, inside any family, declared or not (Form 8962's
+#                      monthly rows, AZ 140's page-4/5 rows): a 3-cycle among those passes
+#   (c) cross_section  a swap between SECTIONS THAT PRINT THE SAME LINE NUMBER: checked keys whose line another
+#                      checked key of a different field claims on a different printed row (OK 511 / 511-A / 511-B
+#                      line 1; OH IT 1040 / Schedule A / Schedule of Business Income; MT Form 2's tax calculation /
+#                      Schedule I Part II; WI Schedules 1 / 2; NY IT-201 items D2 / E / F; CA Schedule CA's B7_A /
+#                      7_A / II7_A; Schedule 1-A 2026's 1 / 28a / 28b). A section-aware comparison is an open item
+#   (d) descriptive    a box the anchor reads a line beside whose key the gate compares NOTHING for: no line
+#                      token and no rule maps it (UT TC-40's withholding_*, IA 1040's spouse_net_income, NY IT-203's
+#                      D2_months_you_yonkers, VA 760's exemptions_section_a_total_count), or a not_lines family
+#                      leaves it out (MT Form 2's dd529 item boxes, AZ 140's *_more_space, RI-1040's Schedule W)
+#   Keys on boxes the exceptions table excuses count in (a) and (c) like agreeing ones (the final review)
+# Those keys are the vision audit's and the relations' to check.
+# The gate fails when a pack's measured coverage differs from its row: fewer checked keys is a
+# REGRESSION (restore what the gate relied on, or record the drop with its reason); more checked keys, or a changed
+# line-bearing or mapped count, is a STALE row (`scripts/label_adjacency.py --pack <id> --write-ledger` rewrites
+# it, keeping a recorded reason while the undeclared count is unchanged). A shipped pack without a row, or a row
+# for no shipped pack, fails too.
+floor: 0.7
+reasons:
+  no-text-layer: >-
+    the pages carrying the unchecked widgets have no text layer (an image-only page): the anchor has nothing to read
+  anchor-reads-no-designators: >-
+    the face prints the lines, but the pack-blind anchor reads no printed line beside the unchecked widgets (digit
+    cells after a comb's first, boxes far from their row's number, rows numbered only in a caption)
+  shape-not-declared: >-
+    the keys name what each box holds (name.first, reason.a) or a table cell (short_term.1.row01.a), in no shape the
+    gate reads and with no regex in key_shapes.yaml that maps them to the face's printed lines
+  no-line-designators: >-
+    the boxes the keys bind sit on no numbered line of the face (vouchers, identity blocks), so there is no line to
+    compare
+# Keys that carry a line-like token but name no printed line, left out of `lines` (a key a rule maps is counted
+# whatever family it matches). Each family: a case-insensitive regex searched in the key, the reason, and example
+# keys (each must be line-like and match). Keep this list short: a family of main lines does not belong here, it
+# belongs in key_shapes.yaml or in a ledger note.
+not_lines:
+  - id: identity
+    pattern: 'ssn|itin|(?<![a-z])f?ein(?![a-z])|(?<![a-z])tin(?![a-z])|phone|zip|routing|(?:^|\.)account(?:_number|_type|\.\d|$)|account_?number|account_type|license|(?<![a-z])pin(?![a-z])|identifying|identity|birth|(?<![a-z])dob(?![a-z])|certificate_number|district_code|direct_deposit'
+    reason: >-
+      an identity or account value (SSN, EIN, routing and account numbers, PIN, phone, ZIP, birth date, certificate
+      or district code): its digits index the value's own cells or slots ("direct_deposit_1.account.3",
+      "dependent_2_ssn_d4"), and a line number in such a key ("23.account_number") names the refund or identity
+      block, which the identity fields' format checks cover, not a numbered amount line
+    examples: [direct_deposit_1.account.3, 23.account_number, dependent_2_ssn_d4, your_wi_identity_protection_pin_1,
+               dd529.4.account, accountnumber-3]
+    # fixer round 4 (2026-10-24): a bare "account" hid the MT Form 2 lines that NAME an account (line 3's medical
+    # savings account distribution, line 8's CGR account box); the pattern now takes only an account value
+    not_examples: [sched1.3.medical_savings_account, sched4.6.first_time_homebuyer_account, sched3.8.cgr_account_id]
+  - id: household-members
+    pattern: '(?<![a-z])dependent_?\d|(?<![a-z])dependents?$|(?<![a-z])dep_?\d|_dep\d|(?<![a-z])oe_\d|sch_dp|deceased_\d|qualifying_person|care_provider|first_name|last_name|relationship'
+    reason: >-
+      a row of a dependents, household-member, care-provider or qualifying-person table, numbered by its position
+      (dependent 1, 2, 3 ...; AZ's 8c, 8d ... rows), not by a printed amount line
+    examples: [dependent_3.relationship, oe_2_first_name, deceased_1.name, 8c_first_name, care_provider_2.name,
+               dependent_1_no_health_insurance, H_more_than_7_dependents]
+    # fixer round 4 (2026-10-24): a bare "dependent" hid NJ-1040's exemption lines 11 and 12 (the amount and count
+    # boxes of "11. Other Dependents" and "12. Dependents Attending Colleges"); the pattern now takes a numbered row
+    not_examples: [exemption_11_other_dependents_amount, exemption_12_dependents_college_amount,
+                   exemption_11_other_dependents_count_d1]
+  - id: positional-rows
+    pattern: 'row\d|(?<![a-z])r\d+\.|amended\.table\.\d|cont\d|voucher_\d|visit_\d|treaty_\d|(?:interest|dividend)_\d|expense_\d|schedule_w\.\d|schedw_|(?<![a-z])schw\d|transition_ws|_ws\.\d|page\d|address_line|explanation|(?<![a-z])change_\d'
+    reason: >-
+      a row numbered by its position in a table or a text block — Form 8949 / 2555 table rows, continuation lines
+      of a text answer (1.cont2), the rows of MT Form 2's amended-return reason table (amended.table.2.line),
+      estimated-tax vouchers, visit and treaty rows, Schedule B payer rows, W-2 / 1099 rows, worksheet rows, page
+      numbers, address and explanation lines (fixer round 5: OK Schedule 511-I's "Explain the changes" text lines,
+      sch_511i.change_N) — not by a printed amount line
+    examples: [short_term.1.row01.a, 18.r2.a, amended.table.3.reason, 1.cont2, voucher_2.amount, interest_3.payer,
+               schedule_w.4.code, SCHW2ALN5, mailing_address_line1, amended_explanation.line_3,
+               sch_511i.change_2]
+  # Fixer round 5 (Phase K JK10, 2026-10-24): the declare-me rule (an undeclared key the anchor reads a line beside
+  # puts its pack below the floor) and the round-4 re-verifier's census turned up these keys, whose digits name no
+  # printed line; each family was vision-read on its pack's own face (work crops, not shipped).
+  - id: check-off-amounts
+    pattern: '^volcontrib\.[a-z]\.[a-z]\.\d+$'
+    reason: >-
+      a dollar check-off box of MT Form 2 2023's voluntary contributions block: the boxes sit on the lettered rows
+      1a-1d of line 1 ("1 Voluntary Contributions", rows a-d, one per fund, in Column A and Column B), and the
+      key's digits are the printed amount of the box ($5, $10, $20) the filer marks, not a line number. Fixer round
+      6 (2026-10-24): the gate has no shape for a check-off box of a lettered row, so the family stays here.
+    examples: [volcontrib.a.a.5, volcontrib.b.b.10, volcontrib.d.a.20]
+  - id: direct-deposit-529
+    pattern: '^dd529\.\d+\.(?:529a?|deposit_amount)$'
+    reason: >-
+      a box of MT Form 2's 529/529A direct-deposit block, the 529 counterpart of the identity family's
+      direct_deposit_N: the face prints N as the direct-deposit item number ("2 Account Type", "3 Account Type" on
+      the 2023 form, after item 1's ordinary direct deposit; "4 Account Type" and "5 Account Type" on 2024's,
+      after items 1-3), an item of the refund block, not an amount line; "529" / "529a" are the account-type boxes ("529 Qualified Tuition Program", "529A Achieving a
+      Better Life Experience" — the Internal Revenue Code section, not a line); its routing and account boxes are
+      identity values
+    examples: [dd529.2.529, dd529.3.529a, dd529.4.deposit_amount]
+  - id: positional-codes
+    pattern: '(?<![a-z])code_number_\d|special_condition_code_\d|(?<![a-z])more_space'
+    reason: >-
+      a box numbered by its position or flagging a continuation, not by a printed line: MD 502's three "CODE NUMBERS
+      (3 digits per line)" boxes beside the telephone numbers, NY IT-201 item G's special condition code boxes 1-2,
+      and AZ 140's "For more space, check the box" flags under the dependents (box 10a and 10b) and qualifying-parents
+      tables
+    examples: [code_number_1, G_special_condition_code_2, 10ab_more_space, 11a_more_space]
+  - id: filing-status-reference
+    pattern: 'if_filing_status_\d'
+    reason: >-
+      the digit names the filing status a box applies to (VA 760's Exemptions Section A column "Spouse if Filing
+      Status 2"), not a line; the anchor read the pre-printed "1" of the "You" box beside it
+    examples: [exemptions_section_a_spouse_if_filing_status_2]
+  # Fixer round 6 (2026-10-24): the mt-2023-exemption-rows family (MT Form 2 2023's "16a.a" ... "16d.b") is gone —
+  # the face prints rows a-d in the line gutter and row d reads "Add lines a through c", so they are lines; the gate
+  # cannot express a line that is only a letter, and the pack's row reads PARTIAL with that reason instead.
+
+packs:
+  federal/2019/f8843: {checked: 24, lines: 40, mapped: 40, unread: 16, same_row: 7, cross_section: 0, descriptive: 0, reason: anchor-reads-no-designators, note: "24/40 checked; the 16 unchecked: 16 anchor-reads-no-designators"}
+  federal/2020/f8843: {checked: 24, lines: 40, mapped: 40, unread: 16, same_row: 7, cross_section: 0, descriptive: 0, reason: anchor-reads-no-designators, note: "24/40 checked; the 16 unchecked: 16 anchor-reads-no-designators"}
+  federal/2021/f8843: {checked: 24, lines: 40, mapped: 40, unread: 16, same_row: 7, cross_section: 0, descriptive: 0, reason: anchor-reads-no-designators, note: "24/40 checked; the 16 unchecked: 16 anchor-reads-no-designators"}
+  federal/2022/f1040nr: {checked: 67, lines: 71, mapped: 71, unread: 4, same_row: 9, cross_section: 0, descriptive: 0}
+  federal/2022/f8843: {checked: 24, lines: 40, mapped: 40, unread: 16, same_row: 7, cross_section: 0, descriptive: 0, reason: anchor-reads-no-designators, note: "24/40 checked; the 16 unchecked: 16 anchor-reads-no-designators"}
+  federal/2022/sched_1: {checked: 60, lines: 65, mapped: 61, unread: 5, same_row: 0, cross_section: 0, descriptive: 0}
+  federal/2022/sched_c: {checked: 59, lines: 67, mapped: 67, unread: 8, same_row: 5, cross_section: 2, descriptive: 3, dark: ["#.no"], reason: anchor-reads-no-designators, note: "59/67 checked, but whole families go unchecked: #.no x5 (no line read beside them)"}
+  federal/2022/sched_oi: {checked: 1, lines: 1, mapped: 1, unread: 0, same_row: 0, cross_section: 0, descriptive: 6}
+  federal/2023/f1040: {checked: 61, lines: 68, mapped: 66, unread: 7, same_row: 8, cross_section: 0, descriptive: 0}
+  federal/2023/f1040es: {checked: 0, lines: 0, mapped: 0, unread: 0, same_row: 0, cross_section: 0, descriptive: 0, reason: no-line-designators, note: "every key binds a box of the four payment vouchers (voucher_N.amount, voucher_N.name.first, voucher_N.mailing_address.street ...); the vouchers print no line numbers"}
+  federal/2023/f1040nr: {checked: 66, lines: 70, mapped: 70, unread: 4, same_row: 9, cross_section: 0, descriptive: 0}
+  federal/2023/f1040x: {checked: 62, lines: 71, mapped: 71, unread: 9, same_row: 53, cross_section: 4, descriptive: 10, dark: ["#.form_#"], reason: anchor-reads-no-designators, note: "62/71 checked, but whole families go unchecked: #.form_# x5 (no line read beside them)"}
+  federal/2023/f1116: {checked: 65, lines: 77, mapped: 75, unread: 12, same_row: 34, cross_section: 2, descriptive: 2}
+  federal/2023/f2441: {checked: 31, lines: 33, mapped: 31, unread: 2, same_row: 0, cross_section: 0, descriptive: 1}
+  federal/2023/f2555: {checked: 74, lines: 102, mapped: 102, unread: 28, same_row: 4, cross_section: 8, descriptive: 0, dark: ["#.desc#", "#.no"], reason: anchor-reads-no-designators, note: "74/102 checked, but whole families go unchecked: #.desc# x6 (no line read beside them), #.no x8 (no line read beside them)"}
+  federal/2023/f4868: {checked: 6, lines: 6, mapped: 6, unread: 0, same_row: 0, cross_section: 0, descriptive: 0}
+  federal/2023/f5329: {checked: 57, lines: 57, mapped: 57, unread: 0, same_row: 2, cross_section: 2, descriptive: 0}
+  federal/2023/f8316: {checked: 4, lines: 14, mapped: 5, unread: 10, same_row: 0, cross_section: 0, descriptive: 0, reason: shape-not-declared, note: "4/14 checked; the 10 unchecked: 9 shape-not-declared, 1 anchor-reads-no-designators; undeclared families: #.no x4, #.yes x4, #.do_not_know x1"}
+  federal/2023/f843: {checked: 40, lines: 44, mapped: 43, unread: 4, same_row: 0, cross_section: 0, descriptive: 0}
+  federal/2023/f8606: {checked: 30, lines: 30, mapped: 30, unread: 0, same_row: 2, cross_section: 0, descriptive: 0}
+  federal/2023/f8833: {checked: 6, lines: 9, mapped: 9, unread: 3, same_row: 0, cross_section: 2, descriptive: 0, reason: anchor-reads-no-designators, note: "lines 2 and 3: the anchor reads no printed line beside their boxes; measured (fixer round 3): 6/9 checked; the 3 unchecked: 3 anchor-reads-no-designators"}
+  federal/2023/f8843: {checked: 24, lines: 40, mapped: 40, unread: 16, same_row: 7, cross_section: 0, descriptive: 0, reason: anchor-reads-no-designators, note: "24/40 checked; the 16 unchecked: 16 anchor-reads-no-designators"}
+  federal/2023/f8863: {checked: 33, lines: 51, mapped: 51, unread: 18, same_row: 10, cross_section: 6, descriptive: 0, reason: anchor-reads-no-designators, note: "33/51 checked; the 18 unchecked: 18 anchor-reads-no-designators"}
+  federal/2023/f8889: {checked: 24, lines: 25, mapped: 25, unread: 1, same_row: 0, cross_section: 0, descriptive: 0}
+  federal/2023/f8938: {checked: 50, lines: 122, mapped: 120, unread: 72, same_row: 15, cross_section: 0, descriptive: 0, reason: anchor-reads-no-designators, note: "15 numbered keys in Parts IV-VI (2025: 4b, 20b, 21, 22c, 22d, 26a, 27-30, 35a, 35d, 35e, 36d, 36e): the anchor reads no printed line beside their boxes; measured (fixer round 3): 50/122 checked; the 72 unchecked: 70 anchor-reads-no-designators, 2 shape-not-declared; undeclared families: #a.information_for.counterparty x1, #a.information_for.issuer x1"}
+  federal/2023/f8949: {checked: 0, lines: 8, mapped: 0, unread: 8, same_row: 0, cross_section: 0, descriptive: 0, reason: shape-not-declared, note: "the keys name Part I/II table cells (short_term.1.row01.a ... long_term.1.row11.h), the totals cells and the box checkboxes; no key family here has a regex in key_shapes.yaml, and a row or column swap inside one printed line's table is invisible to a line check anyway; measured (fixer round 3): 0/8 checked; the 8 unchecked: 8 shape-not-declared; undeclared families: long_term.#.d x1, long_term.#.e x1, long_term.#.g x1, long_term.#.h x1, short_term.#.d x1"}
+  federal/2023/f8959: {checked: 24, lines: 24, mapped: 24, unread: 0, same_row: 0, cross_section: 0, descriptive: 0}
+  federal/2023/f8960: {checked: 33, lines: 34, mapped: 33, unread: 1, same_row: 0, cross_section: 0, descriptive: 0}
+  federal/2023/f8962: {checked: 104, lines: 138, mapped: 138, unread: 34, same_row: 90, cross_section: 0, descriptive: 0}
+  federal/2023/fw7: {checked: 0, lines: 0, mapped: 0, unread: 0, same_row: 0, cross_section: 0, descriptive: 6, reason: shape-not-declared, note: "the keys name what each box holds (application_type.new, reason.a, name.first, mailing_address.street ...); no one regex maps them to the W-7's printed lines"}
+  federal/2023/sched_1: {checked: 60, lines: 65, mapped: 61, unread: 5, same_row: 0, cross_section: 0, descriptive: 0}
+  federal/2023/sched_2: {checked: 38, lines: 41, mapped: 41, unread: 3, same_row: 2, cross_section: 0, descriptive: 0}
+  federal/2023/sched_3: {checked: 32, lines: 35, mapped: 32, unread: 3, same_row: 0, cross_section: 0, descriptive: 0}
+  federal/2023/sched_8812: {checked: 33, lines: 39, mapped: 39, unread: 6, same_row: 0, cross_section: 2, descriptive: 0}
+  federal/2023/sched_a: {checked: 27, lines: 34, mapped: 34, unread: 7, same_row: 0, cross_section: 4, descriptive: 0}
+  federal/2023/sched_a_nr: {checked: 10, lines: 18, mapped: 18, unread: 8, same_row: 0, cross_section: 2, descriptive: 0, reason: anchor-reads-no-designators, note: "10/18 checked; the 8 unchecked: 8 anchor-reads-no-designators"}
+  federal/2023/sched_b: {checked: 4, lines: 12, mapped: 5, unread: 8, same_row: 0, cross_section: 0, descriptive: 5, reason: shape-not-declared, note: "4/12 checked; the 8 unchecked: 7 shape-not-declared, 1 anchor-reads-no-designators; undeclared families: #.no x1, #.yes x1, #a.fincen.no x1, #a.fincen.yes x1, #a.no x1"}
+  federal/2023/sched_c: {checked: 60, lines: 68, mapped: 68, unread: 8, same_row: 5, cross_section: 2, descriptive: 3, dark: ["#.no"], reason: anchor-reads-no-designators, note: "60/68 checked, but whole families go unchecked: #.no x5 (no line read beside them)"}
+  federal/2023/sched_d: {checked: 37, lines: 49, mapped: 49, unread: 12, same_row: 24, cross_section: 0, descriptive: 0}
+  federal/2023/sched_e: {checked: 85, lines: 161, mapped: 102, unread: 76, same_row: 64, cross_section: 0, descriptive: 1, reason: shape-not-declared, note: "85/161 checked; the 76 unchecked: 59 shape-not-declared, 17 anchor-reads-no-designators; undeclared families: #.a.name x2, #.b.name x2, #.a.basis_required x1, #.a.c x1, #.a.d x1"}
+  federal/2023/sched_nec: {checked: 90, lines: 93, mapped: 93, unread: 3, same_row: 85, cross_section: 6, descriptive: 0}
+  federal/2023/sched_oi: {checked: 1, lines: 1, mapped: 1, unread: 0, same_row: 0, cross_section: 0, descriptive: 6}
+  federal/2023/sched_se: {checked: 21, lines: 22, mapped: 22, unread: 1, same_row: 0, cross_section: 0, descriptive: 0}
+  federal/2024/f1040: {checked: 61, lines: 68, mapped: 66, unread: 7, same_row: 8, cross_section: 0, descriptive: 0}
+  federal/2024/f1040es: {checked: 0, lines: 0, mapped: 0, unread: 0, same_row: 0, cross_section: 0, descriptive: 0, reason: no-line-designators, note: "every key binds a box of the four payment vouchers (voucher_N.amount, voucher_N.name.first, voucher_N.mailing_address.street ...); the vouchers print no line numbers"}
+  federal/2024/f1040nr: {checked: 66, lines: 70, mapped: 70, unread: 4, same_row: 9, cross_section: 0, descriptive: 0}
+  federal/2024/f1040x: {checked: 62, lines: 71, mapped: 71, unread: 9, same_row: 53, cross_section: 4, descriptive: 10, dark: ["#.form_#"], reason: anchor-reads-no-designators, note: "62/71 checked, but whole families go unchecked: #.form_# x5 (no line read beside them)"}
+  federal/2024/f1116: {checked: 66, lines: 77, mapped: 75, unread: 11, same_row: 36, cross_section: 2, descriptive: 2}
+  federal/2024/f2441: {checked: 31, lines: 33, mapped: 31, unread: 2, same_row: 0, cross_section: 0, descriptive: 1}
+  federal/2024/f2555: {checked: 74, lines: 102, mapped: 102, unread: 28, same_row: 4, cross_section: 8, descriptive: 0, dark: ["#.desc#", "#.no"], reason: anchor-reads-no-designators, note: "74/102 checked, but whole families go unchecked: #.desc# x6 (no line read beside them), #.no x8 (no line read beside them)"}
+  federal/2024/f4868: {checked: 6, lines: 6, mapped: 6, unread: 0, same_row: 0, cross_section: 0, descriptive: 0}
+  federal/2024/f5329: {checked: 59, lines: 59, mapped: 59, unread: 0, same_row: 2, cross_section: 0, descriptive: 0}
+  federal/2024/f8316: {checked: 4, lines: 14, mapped: 5, unread: 10, same_row: 0, cross_section: 0, descriptive: 0, reason: shape-not-declared, note: "4/14 checked; the 10 unchecked: 9 shape-not-declared, 1 anchor-reads-no-designators; undeclared families: #.no x4, #.yes x4, #.do_not_know x1"}
+  federal/2024/f843: {checked: 40, lines: 44, mapped: 43, unread: 4, same_row: 0, cross_section: 0, descriptive: 0}
+  federal/2024/f8606: {checked: 30, lines: 30, mapped: 30, unread: 0, same_row: 2, cross_section: 0, descriptive: 0}
+  federal/2024/f8833: {checked: 6, lines: 9, mapped: 9, unread: 3, same_row: 0, cross_section: 2, descriptive: 0, reason: anchor-reads-no-designators, note: "lines 2 and 3: the anchor reads no printed line beside their boxes; measured (fixer round 3): 6/9 checked; the 3 unchecked: 3 anchor-reads-no-designators"}
+  federal/2024/f8843: {checked: 24, lines: 40, mapped: 40, unread: 16, same_row: 7, cross_section: 0, descriptive: 0, reason: anchor-reads-no-designators, note: "24/40 checked; the 16 unchecked: 16 anchor-reads-no-designators"}
+  federal/2024/f8863: {checked: 33, lines: 51, mapped: 51, unread: 18, same_row: 10, cross_section: 6, descriptive: 0, reason: anchor-reads-no-designators, note: "33/51 checked; the 18 unchecked: 18 anchor-reads-no-designators"}
+  federal/2024/f8889: {checked: 24, lines: 25, mapped: 25, unread: 1, same_row: 0, cross_section: 0, descriptive: 0}
+  federal/2024/f8938: {checked: 50, lines: 122, mapped: 120, unread: 72, same_row: 15, cross_section: 0, descriptive: 0, reason: anchor-reads-no-designators, note: "15 numbered keys in Parts IV-VI (2025: 4b, 20b, 21, 22c, 22d, 26a, 27-30, 35a, 35d, 35e, 36d, 36e): the anchor reads no printed line beside their boxes; measured (fixer round 3): 50/122 checked; the 72 unchecked: 70 anchor-reads-no-designators, 2 shape-not-declared; undeclared families: #a.information_for.counterparty x1, #a.information_for.issuer x1"}
+  federal/2024/f8949: {checked: 0, lines: 8, mapped: 0, unread: 8, same_row: 0, cross_section: 0, descriptive: 0, reason: shape-not-declared, note: "the keys name Part I/II table cells (short_term.1.row01.a ... long_term.1.row11.h), the totals cells and the box checkboxes; no key family here has a regex in key_shapes.yaml, and a row or column swap inside one printed line's table is invisible to a line check anyway; measured (fixer round 3): 0/8 checked; the 8 unchecked: 8 shape-not-declared; undeclared families: long_term.#.d x1, long_term.#.e x1, long_term.#.g x1, long_term.#.h x1, short_term.#.d x1"}
+  federal/2024/f8959: {checked: 24, lines: 24, mapped: 24, unread: 0, same_row: 0, cross_section: 0, descriptive: 0}
+  federal/2024/f8960: {checked: 33, lines: 34, mapped: 33, unread: 1, same_row: 0, cross_section: 0, descriptive: 0}
+  federal/2024/f8962: {checked: 104, lines: 138, mapped: 138, unread: 34, same_row: 90, cross_section: 0, descriptive: 0}
+  federal/2024/fw7: {checked: 0, lines: 0, mapped: 0, unread: 0, same_row: 0, cross_section: 0, descriptive: 6, reason: shape-not-declared, note: "the keys name what each box holds (application_type.new, reason.a, name.first, mailing_address.street ...); no one regex maps them to the W-7's printed lines"}
+  federal/2024/sched_1: {checked: 62, lines: 66, mapped: 62, unread: 4, same_row: 0, cross_section: 0, descriptive: 0}
+  federal/2024/sched_2: {checked: 46, lines: 58, mapped: 58, unread: 12, same_row: 2, cross_section: 0, descriptive: 0}
+  federal/2024/sched_3: {checked: 33, lines: 36, mapped: 36, unread: 3, same_row: 0, cross_section: 2, descriptive: 0}
+  federal/2024/sched_8812: {checked: 33, lines: 39, mapped: 39, unread: 6, same_row: 0, cross_section: 2, descriptive: 0}
+  federal/2024/sched_a: {checked: 27, lines: 34, mapped: 34, unread: 7, same_row: 0, cross_section: 4, descriptive: 0}
+  federal/2024/sched_a_nr: {checked: 9, lines: 10, mapped: 9, unread: 1, same_row: 0, cross_section: 0, descriptive: 0}
+  federal/2024/sched_b: {checked: 4, lines: 12, mapped: 5, unread: 8, same_row: 0, cross_section: 0, descriptive: 5, reason: shape-not-declared, note: "4/12 checked; the 8 unchecked: 7 shape-not-declared, 1 anchor-reads-no-designators; undeclared families: #.no x1, #.yes x1, #a.fincen.no x1, #a.fincen.yes x1, #a.no x1"}
+  federal/2024/sched_c: {checked: 60, lines: 68, mapped: 68, unread: 8, same_row: 5, cross_section: 2, descriptive: 3, dark: ["#.no"], reason: anchor-reads-no-designators, note: "60/68 checked, but whole families go unchecked: #.no x5 (no line read beside them)"}
+  federal/2024/sched_d: {checked: 37, lines: 49, mapped: 49, unread: 12, same_row: 24, cross_section: 0, descriptive: 0}
+  federal/2024/sched_e: {checked: 85, lines: 161, mapped: 102, unread: 76, same_row: 64, cross_section: 0, descriptive: 1, reason: shape-not-declared, note: "85/161 checked; the 76 unchecked: 59 shape-not-declared, 17 anchor-reads-no-designators; undeclared families: #.a.name x2, #.b.name x2, #.a.basis_required x1, #.a.c x1, #.a.d x1"}
+  federal/2024/sched_nec: {checked: 90, lines: 93, mapped: 93, unread: 3, same_row: 85, cross_section: 6, descriptive: 0}
+  federal/2024/sched_oi: {checked: 1, lines: 1, mapped: 1, unread: 0, same_row: 0, cross_section: 0, descriptive: 6}
+  federal/2024/sched_se: {checked: 21, lines: 22, mapped: 22, unread: 1, same_row: 0, cross_section: 0, descriptive: 0}
+  federal/2025/f1040: {checked: 75, lines: 97, mapped: 94, unread: 22, same_row: 17, cross_section: 0, descriptive: 10}
+  federal/2025/f1040es: {checked: 0, lines: 0, mapped: 0, unread: 0, same_row: 0, cross_section: 0, descriptive: 0, reason: no-line-designators, note: "every key binds a box of the four payment vouchers (voucher_N.amount, voucher_N.name.first, voucher_N.mailing_address.street ...); the vouchers print no line numbers"}
+  federal/2025/f1040nr: {checked: 83, lines: 93, mapped: 90, unread: 10, same_row: 19, cross_section: 0, descriptive: 13}
+  federal/2025/f1040x: {checked: 62, lines: 71, mapped: 71, unread: 9, same_row: 53, cross_section: 4, descriptive: 10, dark: ["#.form_#"], reason: anchor-reads-no-designators, note: "62/71 checked, but whole families go unchecked: #.form_# x5 (no line read beside them)"}
+  federal/2025/f1116: {checked: 65, lines: 75, mapped: 73, unread: 10, same_row: 36, cross_section: 0, descriptive: 2}
+  federal/2025/f2210: {checked: 154, lines: 160, mapped: 158, unread: 6, same_row: 144, cross_section: 98, descriptive: 0}
+  federal/2025/f2441: {checked: 31, lines: 33, mapped: 31, unread: 2, same_row: 0, cross_section: 0, descriptive: 1}
+  federal/2025/f2555: {checked: 74, lines: 102, mapped: 102, unread: 28, same_row: 4, cross_section: 8, descriptive: 0, dark: ["#.desc#", "#.no"], reason: anchor-reads-no-designators, note: "74/102 checked, but whole families go unchecked: #.desc# x6 (no line read beside them), #.no x8 (no line read beside them)"}
+  federal/2025/f4868: {checked: 6, lines: 6, mapped: 6, unread: 0, same_row: 0, cross_section: 0, descriptive: 0}
+  federal/2025/f5329: {checked: 59, lines: 59, mapped: 59, unread: 0, same_row: 2, cross_section: 0, descriptive: 0}
+  federal/2025/f8316: {checked: 4, lines: 14, mapped: 5, unread: 10, same_row: 0, cross_section: 0, descriptive: 0, reason: shape-not-declared, note: "4/14 checked; the 10 unchecked: 9 shape-not-declared, 1 anchor-reads-no-designators; undeclared families: #.no x4, #.yes x4, #.do_not_know x1"}
+  federal/2025/f843: {checked: 40, lines: 44, mapped: 43, unread: 4, same_row: 0, cross_section: 0, descriptive: 0}
+  federal/2025/f8606: {checked: 30, lines: 30, mapped: 30, unread: 0, same_row: 2, cross_section: 0, descriptive: 0}
+  federal/2025/f8833: {checked: 6, lines: 9, mapped: 9, unread: 3, same_row: 0, cross_section: 2, descriptive: 0, reason: anchor-reads-no-designators, note: "lines 2 and 3: the anchor reads no printed line beside their boxes; measured (fixer round 3): 6/9 checked; the 3 unchecked: 3 anchor-reads-no-designators"}
+  federal/2025/f8843: {checked: 16, lines: 40, mapped: 40, unread: 24, same_row: 7, cross_section: 0, descriptive: 0, reason: anchor-reads-no-designators, note: "16/40 checked; the 24 unchecked: 24 anchor-reads-no-designators"}
+  federal/2025/f8863: {checked: 33, lines: 51, mapped: 51, unread: 18, same_row: 10, cross_section: 6, descriptive: 0, reason: anchor-reads-no-designators, note: "33/51 checked; the 18 unchecked: 18 anchor-reads-no-designators"}
+  federal/2025/f8889: {checked: 24, lines: 25, mapped: 25, unread: 1, same_row: 0, cross_section: 0, descriptive: 0}
+  federal/2025/f8938: {checked: 50, lines: 122, mapped: 120, unread: 72, same_row: 15, cross_section: 0, descriptive: 0, reason: anchor-reads-no-designators, note: "15 numbered keys in Parts IV-VI (2025: 4b, 20b, 21, 22c, 22d, 26a, 27-30, 35a, 35d, 35e, 36d, 36e): the anchor reads no printed line beside their boxes; measured (fixer round 3): 50/122 checked; the 72 unchecked: 70 anchor-reads-no-designators, 2 shape-not-declared; undeclared families: #a.information_for.counterparty x1, #a.information_for.issuer x1"}
+  federal/2025/f8949: {checked: 0, lines: 8, mapped: 0, unread: 8, same_row: 0, cross_section: 0, descriptive: 0, reason: shape-not-declared, note: "the keys name Part I/II table cells (short_term.1.row01.a ... long_term.1.row11.h), the totals cells and the box checkboxes; no key family here has a regex in key_shapes.yaml, and a row or column swap inside one printed line's table is invisible to a line check anyway; measured (fixer round 3): 0/8 checked; the 8 unchecked: 8 shape-not-declared; undeclared families: long_term.#.d x1, long_term.#.e x1, long_term.#.g x1, long_term.#.h x1, short_term.#.d x1"}
+  federal/2025/f8959: {checked: 24, lines: 24, mapped: 24, unread: 0, same_row: 0, cross_section: 0, descriptive: 0}
+  federal/2025/f8960: {checked: 33, lines: 34, mapped: 33, unread: 1, same_row: 0, cross_section: 0, descriptive: 0}
+  federal/2025/f8962: {checked: 104, lines: 138, mapped: 138, unread: 34, same_row: 90, cross_section: 0, descriptive: 0}
+  federal/2025/fw7: {checked: 0, lines: 0, mapped: 0, unread: 0, same_row: 0, cross_section: 0, descriptive: 6, reason: shape-not-declared, note: "the keys name what each box holds (application_type.new, reason.a, name.first, mailing_address.street ...); no one regex maps them to the W-7's printed lines"}
+  federal/2025/sched_1: {checked: 67, lines: 70, mapped: 70, unread: 3, same_row: 7, cross_section: 2, descriptive: 0}
+  federal/2025/sched_1a: {checked: 46, lines: 52, mapped: 46, unread: 6, same_row: 0, cross_section: 0, descriptive: 0, dark: ["#"], reason: shape-not-declared, note: "46/52 checked; the six boxes of line 22a / 22b's vehicle table (22a.i-iii, 22b.i-iii) are undeclared and the anchor reads no line beside them: 6 undeclared keys in family # (keys starting with a line number), dark at 5"}
+  federal/2025/sched_2: {checked: 50, lines: 61, mapped: 61, unread: 11, same_row: 7, cross_section: 0, descriptive: 0}
+  federal/2025/sched_3: {checked: 32, lines: 34, mapped: 32, unread: 2, same_row: 0, cross_section: 0, descriptive: 0}
+  federal/2025/sched_8812: {checked: 33, lines: 39, mapped: 39, unread: 6, same_row: 0, cross_section: 2, descriptive: 0}
+  federal/2025/sched_a: {checked: 26, lines: 31, mapped: 31, unread: 5, same_row: 0, cross_section: 0, descriptive: 0}
+  federal/2025/sched_a_nr: {checked: 9, lines: 10, mapped: 9, unread: 1, same_row: 0, cross_section: 0, descriptive: 0}
+  federal/2025/sched_b: {checked: 4, lines: 12, mapped: 5, unread: 8, same_row: 0, cross_section: 0, descriptive: 5, reason: shape-not-declared, note: "4/12 checked; the 8 unchecked: 7 shape-not-declared, 1 anchor-reads-no-designators; undeclared families: #.no x1, #.yes x1, #a.fincen.no x1, #a.fincen.yes x1, #a.no x1"}
+  federal/2025/sched_c: {checked: 60, lines: 68, mapped: 68, unread: 8, same_row: 5, cross_section: 2, descriptive: 3, dark: ["#.no"], reason: anchor-reads-no-designators, note: "60/68 checked, but whole families go unchecked: #.no x5 (no line read beside them)"}
+  federal/2025/sched_d: {checked: 37, lines: 49, mapped: 49, unread: 12, same_row: 24, cross_section: 0, descriptive: 0}
+  federal/2025/sched_e: {checked: 85, lines: 161, mapped: 102, unread: 76, same_row: 64, cross_section: 0, descriptive: 1, reason: shape-not-declared, note: "85/161 checked; the 76 unchecked: 59 shape-not-declared, 17 anchor-reads-no-designators; undeclared families: #.a.name x2, #.b.name x2, #.a.basis_required x1, #.a.c x1, #.a.d x1"}
+  federal/2025/sched_nec: {checked: 90, lines: 93, mapped: 93, unread: 3, same_row: 85, cross_section: 6, descriptive: 0}
+  federal/2025/sched_oi: {checked: 1, lines: 1, mapped: 1, unread: 0, same_row: 0, cross_section: 0, descriptive: 6}
+  federal/2025/sched_se: {checked: 21, lines: 22, mapped: 22, unread: 1, same_row: 0, cross_section: 0, descriptive: 0}
+  federal/2026/f1040: {checked: 87, lines: 101, mapped: 98, unread: 14, same_row: 17, cross_section: 0, descriptive: 10}
+  federal/2026/f1040es: {checked: 0, lines: 0, mapped: 0, unread: 0, same_row: 0, cross_section: 0, descriptive: 0, reason: no-line-designators, note: "every key binds a box of the four payment vouchers (voucher_N.amount, voucher_N.name.first, voucher_N.mailing_address.street ...); the vouchers print no line numbers"}
+  federal/2026/f1040nr: {checked: 89, lines: 97, mapped: 94, unread: 8, same_row: 17, cross_section: 0, descriptive: 9}
+  federal/2026/f1040x: {checked: 74, lines: 87, mapped: 84, unread: 13, same_row: 63, cross_section: 4, descriptive: 8}
+  federal/2026/f1116: {checked: 68, lines: 75, mapped: 73, unread: 7, same_row: 39, cross_section: 0, descriptive: 0}
+  federal/2026/f2210: {checked: 158, lines: 164, mapped: 162, unread: 6, same_row: 148, cross_section: 93, descriptive: 0}
+  federal/2026/f2441: {checked: 31, lines: 33, mapped: 31, unread: 2, same_row: 0, cross_section: 0, descriptive: 5}
+  federal/2026/f2555: {checked: 81, lines: 102, mapped: 102, unread: 21, same_row: 4, cross_section: 8, descriptive: 0, dark: ["#.desc#", "#.no"], reason: anchor-reads-no-designators, note: "81/102 checked, but whole families go unchecked: #.desc# x6 (no line read beside them), #.no x8 (no line read beside them)"}
+  federal/2026/f4868: {checked: 7, lines: 7, mapped: 7, unread: 0, same_row: 0, cross_section: 0, descriptive: 0}
+  federal/2026/f5329: {checked: 67, lines: 67, mapped: 67, unread: 0, same_row: 2, cross_section: 0, descriptive: 0}
+  federal/2026/f8316: {checked: 4, lines: 14, mapped: 5, unread: 10, same_row: 0, cross_section: 0, descriptive: 0, reason: shape-not-declared, note: "4/14 checked; the 10 unchecked: 9 shape-not-declared, 1 anchor-reads-no-designators; undeclared families: #.no x4, #.yes x4, #.do_not_know x1"}
+  federal/2026/f843: {checked: 40, lines: 44, mapped: 43, unread: 4, same_row: 0, cross_section: 0, descriptive: 0}
+  federal/2026/f8606: {checked: 30, lines: 30, mapped: 30, unread: 0, same_row: 2, cross_section: 0, descriptive: 0}
+  federal/2026/f8833: {checked: 6, lines: 9, mapped: 9, unread: 3, same_row: 0, cross_section: 2, descriptive: 0, reason: anchor-reads-no-designators, note: "lines 2 and 3: the anchor reads no printed line beside their boxes; measured (fixer round 3): 6/9 checked; the 3 unchecked: 3 anchor-reads-no-designators"}
+  federal/2026/f8843: {checked: 18, lines: 40, mapped: 40, unread: 22, same_row: 7, cross_section: 0, descriptive: 0, reason: anchor-reads-no-designators, note: "18/40 checked; the 22 unchecked: 22 anchor-reads-no-designators"}
+  federal/2026/f8863: {checked: 29, lines: 51, mapped: 51, unread: 22, same_row: 6, cross_section: 0, descriptive: 0, reason: anchor-reads-no-designators, note: "29/51 checked; the 22 unchecked: 22 anchor-reads-no-designators"}
+  federal/2026/f8889: {checked: 24, lines: 25, mapped: 25, unread: 1, same_row: 0, cross_section: 0, descriptive: 0}
+  federal/2026/f8938: {checked: 51, lines: 122, mapped: 120, unread: 71, same_row: 13, cross_section: 0, descriptive: 0, reason: anchor-reads-no-designators, note: "51/122 checked; the 71 unchecked: 69 anchor-reads-no-designators, 2 shape-not-declared; undeclared families: #a.information_for.counterparty x1, #a.information_for.issuer x1"}
+  federal/2026/f8949: {checked: 0, lines: 8, mapped: 0, unread: 8, same_row: 0, cross_section: 0, descriptive: 0, reason: shape-not-declared, note: "the keys name Part I/II table cells (short_term.1.row01.a ... long_term.1.row11.h), the totals cells and the box checkboxes; no key family here has a regex in key_shapes.yaml, and a row or column swap inside one printed line's table is invisible to a line check anyway; measured (fixer round 3): 0/8 checked; the 8 unchecked: 8 shape-not-declared; undeclared families: long_term.#.d x1, long_term.#.e x1, long_term.#.g x1, long_term.#.h x1, short_term.#.d x1"}
+  federal/2026/f8959: {checked: 24, lines: 24, mapped: 24, unread: 0, same_row: 0, cross_section: 0, descriptive: 0}
+  federal/2026/f8960: {checked: 33, lines: 34, mapped: 33, unread: 1, same_row: 0, cross_section: 0, descriptive: 0}
+  federal/2026/f8962: {checked: 94, lines: 138, mapped: 138, unread: 44, same_row: 82, cross_section: 0, descriptive: 0, reason: anchor-reads-no-designators, note: "94/138 checked; the 44 unchecked: 44 anchor-reads-no-designators"}
+  federal/2026/fw7: {checked: 0, lines: 0, mapped: 0, unread: 0, same_row: 0, cross_section: 0, descriptive: 6, reason: shape-not-declared, note: "the keys name what each box holds (application_type.new, reason.a, name.first, mailing_address.street ...); no one regex maps them to the W-7's printed lines"}
+  federal/2026/sched_1: {checked: 67, lines: 70, mapped: 70, unread: 3, same_row: 7, cross_section: 2, descriptive: 0}
+  federal/2026/sched_1a: {checked: 179, lines: 183, mapped: 183, unread: 4, same_row: 131, cross_section: 70, descriptive: 0}
+  federal/2026/sched_2: {checked: 58, lines: 66, mapped: 66, unread: 8, same_row: 9, cross_section: 4, descriptive: 0}
+  federal/2026/sched_3: {checked: 32, lines: 34, mapped: 32, unread: 2, same_row: 0, cross_section: 0, descriptive: 0}
+  federal/2026/sched_3a: {checked: 8, lines: 14, mapped: 8, unread: 6, same_row: 0, cross_section: 0, descriptive: 0, reason: shape-not-declared, note: "8/14 checked; the 6 unchecked: 6 shape-not-declared; undeclared families: #.no x3, #.yes x3"}
+  federal/2026/sched_8812: {checked: 33, lines: 39, mapped: 39, unread: 6, same_row: 0, cross_section: 2, descriptive: 0}
+  federal/2026/sched_a: {checked: 40, lines: 45, mapped: 45, unread: 5, same_row: 2, cross_section: 0, descriptive: 0}
+  federal/2026/sched_a_nr: {checked: 21, lines: 24, mapped: 21, unread: 3, same_row: 0, cross_section: 0, descriptive: 0}
+  federal/2026/sched_b: {checked: 4, lines: 12, mapped: 5, unread: 8, same_row: 0, cross_section: 0, descriptive: 5, reason: shape-not-declared, note: "4/12 checked; the 8 unchecked: 7 shape-not-declared, 1 anchor-reads-no-designators; undeclared families: #.no x1, #.yes x1, #a.fincen.no x1, #a.fincen.yes x1, #a.no x1"}
+  federal/2026/sched_c: {checked: 64, lines: 69, mapped: 69, unread: 5, same_row: 5, cross_section: 3, descriptive: 3, dark: ["#.no"], reason: anchor-reads-no-designators, note: "64/69 checked, but whole families go unchecked: #.no x5 (no line read beside them)"}
+  federal/2026/sched_d: {checked: 37, lines: 49, mapped: 49, unread: 12, same_row: 24, cross_section: 0, descriptive: 0}
+  federal/2026/sched_e: {checked: 91, lines: 173, mapped: 102, unread: 82, same_row: 70, cross_section: 0, descriptive: 1, reason: shape-not-declared, note: "91/173 checked; the 82 unchecked: 71 shape-not-declared, 11 anchor-reads-no-designators; undeclared families: #.a.name x2, #.b.name x2, #.a.basis_required x1, #.a.c x1, #.a.d x1"}
+  federal/2026/sched_se: {checked: 22, lines: 22, mapped: 22, unread: 0, same_row: 0, cross_section: 0, descriptive: 0}
+  states/al/2023/al40: {checked: 33, lines: 1234, mapped: 33, unread: 516, same_row: 0, cross_section: 0, descriptive: 492, declare: ["ADVERTISINGEXPENSE##", "AUTOTRAVELEXP##", "CLEANINGMAINTEXP##", "COMMISSIONSEXP##", "DEPRECIATION##", "DIVPAYER##", "EXMPINT##", "INSURANCEEXP##", "INTPAYER##", "LEGALEXP##", "MGMTFEESEXP##", "MTGINTEXP##", "OTHERINCEXP##", "OTHERINTEXP##", "OTHEXP###", "PG#LINE#", "RENTSRECEIVED##", "REPAIRSEXP##", "ROYALTIESRECEIVED##", "SCHAACPRTIIILN#", "SCHAACPRTIILN#", "SCHAACPRTILN#", "SCHAATCLN#", "SCHATPPTIILINE#", "SCHATPPTILINE#", "SCHCRWKSHTPTLN#", "SCHCRWKSHTPTLN#A", "SCHCRWKSHTPTLN#B", "SCHCRWKSHTPTLN#C", "SCHCRWKSHTPTLN#D", "SCHCRWKSHTPTLN#E", "SCHEDULEEINCLOSS##", "SCHHBCPTIIILINE#", "SCHHBCPTIILINE#", "SCHHBCPTILINE#", "SCHHBCPTILINE#A", "SCHHBCPTIVLINE#", "SCHKRCCIPTIIILINE#", "SCHKRCCIPTIVLINE#", "SCHRSALN#", "SCHRSDLN#", "SCHRSELN#", "SCHRSGLN#", "SCHRSHLN#", "SCHRSILN#", "SCHRSLN#", "SCHRSPTIIALN#", "SCHRSPTIIDLN#", "SCHRSPTIIELN#", "SCHRSPTIIGLN#", "SCHRSPTIIHLN#", "SCHRSPTIIIALN#", "SCHRSPTIIIDLN#", "SCHRSPTIIIELN#", "SCHRSPTIIIGLN#", "SCHRSPTIIIHLN#", "SCHRSPTIIIILN#", "SCHRSPTIIILN#", "SCHRSPTIILN#", "SCHRSPTIVLN#", "SCHRSPTVLN#", "SUBTOTALEXP##", "SUPPLIESEXP##", "SchNOL#ALN#", "SchNOL#APICKbox-#", "SchNOL#LN#", "SchNOL#LN#Other", "SchNOL#PTIILN#", "TAXDIV##", "TAXES##", "TAXINT##", "TOTALEXPENSES##", "UTILITIES##"], reason: shape-not-declared, note: "33/1234 checked; the 1201 unchecked: 1201 shape-not-declared; undeclared families: SchNOL#ALN#-# x64, SCHAATCLN# x33, SCHAACPRTIILN# x30, SCHAACPRTILN# x30, SCHCRWKSHTPTLN# x27"}
+  states/al/2023/al40nr: {checked: 37, lines: 927, mapped: 37, unread: 343, same_row: 15, cross_section: 0, descriptive: 411, declare: ["#ALINE#", "CKLINE#", "LINE#A", "LINE#B", "PG#PT#LINE#", "PG#PT#LINE#A", "PG#PT#LINE#A#", "PG#PT#LINE#B", "PG#PT#LINE#C", "SCHAACPRTIIILN#", "SCHAACPRTIILN#", "SCHAACPRTILN#", "SCHAATCLN#", "SCHALINE#", "SCHALINE#A", "SCHALINE#B", "SCHALINE#C", "SCHBLINE#", "SCHBLINE#A", "SCHBLINE#A#", "SCHBLINE#B", "SCHBLINE#B#", "SCHBLINE#C", "SCHBLINE#C#", "SCHBLINE#D", "SCHBLINE#D#", "SCHDLINE#", "SCHDLINE#B", "SCHDLINE#C", "SCHDLINE#D", "SCHDLINE#E", "SCHDLINE#F", "SCHEPT#LINE#", "SCHEPT#LINE#AB", "SCHEPT#LINE#AC", "SCHEPT#LINE#B", "SCHEPT#LINE#BB", "SCHEPT#LINE#BC", "SCHEPT#LINE#C", "SCHEPT#LINE#CB", "SCHEPT#LINE#CC", "SCHEPT#LINE#D", "SCHEPT#LINE#E", "SCHKRCCIPTIIILINE#", "SCHKRCCIPTIVLINE#", "SCHRSALN#", "SCHRSDLN#", "SCHRSELN#", "SCHRSGLN#", "SCHRSHLN#", "SCHRSILN#", "SCHRSLN#", "SCHRSPTIIALN#", "SCHRSPTIIDLN#", "SCHRSPTIIELN#", "SCHRSPTIIGLN#", "SCHRSPTIIHLN#", "SCHRSPTIIIALN#", "SCHRSPTIIIDLN#", "SCHRSPTIIIELN#", "SCHRSPTIIIGLN#", "SCHRSPTIIIHLN#", "SCHRSPTIIIILN#", "SCHRSPTIIILN#", "SCHRSPTIILN#", "SCHRSPTIVLN#", "SCHRSPTVLN#", "SchNOL#ALN#", "SchNOL#APICKbox-#", "SchNOL#LN#", "SchNOL#LN#Other", "SchNOL#PTIILN#"], reason: shape-not-declared, note: "37/927 checked; the 890 unchecked: 890 shape-not-declared; undeclared families: SchNOL#ALN#-# x64, SCHAATCLN# x33, SCHAACPRTIILN# x30, SCHAACPRTILN# x30, SCHALINE# x27"}
+  states/al/2024/al40: {checked: 32, lines: 1238, mapped: 33, unread: 521, same_row: 0, cross_section: 0, descriptive: 489, declare: ["ADVERTISINGEXPENSE##", "AUTOTRAVELEXP##", "CLEANINGMAINTEXP##", "COMMISSIONSEXP##", "DEPRECIATION##", "DIVPAYER##", "EXMPINT##", "INSURANCEEXP##", "INTPAYER##", "LEGALEXP##", "MGMTFEESEXP##", "MTGINTEXP##", "OTHERINCEXP##", "OTHERINTEXP##", "OTHEXP###", "PG#LINE#", "RENTSRECEIVED##", "REPAIRSEXP##", "ROYALTIESRECEIVED##", "SCHAACPRTIIILN#", "SCHAACPRTIILN#", "SCHAACPRTILN#", "SCHAATCLN#", "SCHATPPTIILINE#", "SCHATPPTILINE#", "SCHCRWKSHTPTLN#", "SCHCRWKSHTPTLN#A", "SCHCRWKSHTPTLN#B", "SCHCRWKSHTPTLN#C", "SCHCRWKSHTPTLN#D", "SCHCRWKSHTPTLN#E", "SCHEDULEEINCLOSS##", "SCHHBCPTIIILINE#", "SCHHBCPTIILINE#", "SCHHBCPTILINE#", "SCHHBCPTILINE#A", "SCHHBCPTIVLINE#", "SCHKRCCIPTIIILINE#", "SCHKRCCIPTIVLINE#", "SCHRSALN#", "SCHRSDLN#", "SCHRSELN#", "SCHRSGLN#", "SCHRSHLN#", "SCHRSILN#", "SCHRSLN#", "SCHRSPTIIALN#", "SCHRSPTIIDLN#", "SCHRSPTIIELN#", "SCHRSPTIIGLN#", "SCHRSPTIIHLN#", "SCHRSPTIIIALN#", "SCHRSPTIIIDLN#", "SCHRSPTIIIELN#", "SCHRSPTIIIGLN#", "SCHRSPTIIIHLN#", "SCHRSPTIIIILN#", "SCHRSPTIIILN#", "SCHRSPTIILN#", "SCHRSPTIVLN#", "SCHRSPTVLN#", "SUBTOTALEXP##", "SUPPLIESEXP##", "SchNOL#ALN#", "SchNOL#APICKbox-#", "SchNOL#LN#", "SchNOL#LN#Other", "SchNOL#PTIILN#", "TAXDIV##", "TAXES##", "TAXINT##", "TOTALEXPENSES##", "UTILITIES##"], reason: shape-not-declared, note: "32/1238 checked; the 1206 unchecked: 1205 shape-not-declared, 1 anchor-reads-no-designators; undeclared families: SchNOL#ALN#-# x64, SCHAATCLN# x33, SCHAACPRTIILN# x30, SCHAACPRTILN# x30, SCHCRWKSHTPTLN# x27"}
+  states/al/2025/al40: {checked: 32, lines: 1457, mapped: 33, unread: 535, same_row: 0, cross_section: 0, descriptive: 563, declare: ["ADVERTISINGEXPENSE##", "AUTOTRAVELEXP##", "CLEANINGMAINTEXP##", "COMMISSIONSEXP##", "DEPRECIATION##", "DIVPAYER##", "EXMPINT##", "INSURANCEEXP##", "INTPAYER##", "LEGALEXP##", "MGMTFEESEXP##", "MTGINTEXP##", "OTHERINCEXP##", "OTHERINTEXP##", "OTHEXP###", "PG#LINE#", "RENTSRECEIVED##", "REPAIRSEXP##", "ROYALTIESRECEIVED##", "SCHAACPRTIIILN#", "SCHAACPRTIILN#", "SCHAACPRTILN#", "SCHAATCLN#", "SCHATPPTIILINE#", "SCHATPPTILINE#", "SCHCRWKSHTPTLN#", "SCHCRWKSHTPTLN#A", "SCHCRWKSHTPTLN#B", "SCHCRWKSHTPTLN#C", "SCHCRWKSHTPTLN#D", "SCHCRWKSHTPTLN#E", "SCHEDULEEINCLOSS##", "SCHHBCPTIIILINE#", "SCHHBCPTIILINE#", "SCHHBCPTILINE#", "SCHHBCPTILINE#A", "SCHHBCPTIVLINE#", "SCHKRCCIPTIIILINE#", "SCHKRCCIPTIVLINE#", "SCHRSALN#", "SCHRSB#-#", "SCHRSC#-#", "SCHRSDLN#", "SCHRSELN#", "SCHRSF#-#", "SCHRSGLN#", "SCHRSHLN#", "SCHRSHSLN#", "SCHRSILN#", "SCHRSLN#", "SCHRSPTIIALN#", "SCHRSPTIIB#-#", "SCHRSPTIIC#-#", "SCHRSPTIIDLN#", "SCHRSPTIIELN#", "SCHRSPTIIF#-#", "SCHRSPTIIGLN#", "SCHRSPTIIHLN#", "SCHRSPTIIHSLN#", "SCHRSPTIIIALN#", "SCHRSPTIIIB#-#", "SCHRSPTIIIC#-#", "SCHRSPTIIIDLN#", "SCHRSPTIIIELN#", "SCHRSPTIIIF#-#", "SCHRSPTIIIGLN#", "SCHRSPTIIIHLN#", "SCHRSPTIIIHSLN#", "SCHRSPTIIIILN#", "SCHRSPTIIIISLN#", "SCHRSPTIIILN#", "SCHRSPTIIISLN#", "SCHRSPTIILN#", "SCHRSPTIVLN#", "SCHRSPTVLN#", "SCHRSYES#-#", "SCHRSYES-#", "SUBTOTALEXP##", "SUPPLIESEXP##", "SchNOL#ALN#", "SchNOL#APICKbox-#", "SchNOL#LN#", "SchNOL#LN#Other", "SchNOL#PTIILN#", "TAXDIV##", "TAXES##", "TAXINT##", "TOTALEXPENSES##", "UTILITIES##"], reason: shape-not-declared, note: "32/1457 checked; the 1425 unchecked: 1424 shape-not-declared, 1 anchor-reads-no-designators; undeclared families: SchNOL#ALN#-# x64, SCHAATCLN# x33, SCHAACPRTIILN# x30, SCHAACPRTILN# x30, SCHCRWKSHTPTLN# x27"}
+  states/ar/2023/ar1000f: {checked: 73, lines: 92, mapped: 92, unread: 19, same_row: 46, cross_section: 8, descriptive: 19}
+  states/ar/2023/ar1000nr: {checked: 91, lines: 113, mapped: 113, unread: 22, same_row: 64, cross_section: 5, descriptive: 22}
+  states/ar/2024/ar1000f: {checked: 73, lines: 92, mapped: 92, unread: 19, same_row: 46, cross_section: 8, descriptive: 22}
+  states/ar/2025/ar1000f: {checked: 74, lines: 93, mapped: 93, unread: 19, same_row: 46, cross_section: 8, descriptive: 22}
+  states/az/2023/az140: {checked: 260, lines: 291, mapped: 287, unread: 31, same_row: 176, cross_section: 2, descriptive: 73}
+  states/az/2023/az140nr: {checked: 224, lines: 244, mapped: 241, unread: 20, same_row: 150, cross_section: 2, descriptive: 71}
+  states/az/2023/az140py: {checked: 266, lines: 288, mapped: 284, unread: 22, same_row: 190, cross_section: 2, descriptive: 73}
+  states/az/2024/az140: {checked: 260, lines: 291, mapped: 287, unread: 31, same_row: 176, cross_section: 2, descriptive: 72}
+  states/az/2025/az140: {checked: 260, lines: 291, mapped: 287, unread: 31, same_row: 176, cross_section: 2, descriptive: 72}
+  states/ca/2023/form540: {checked: 81, lines: 98, mapped: 98, unread: 17, same_row: 16, cross_section: 2, descriptive: 4}
+  states/ca/2023/form540nr: {checked: 91, lines: 107, mapped: 107, unread: 16, same_row: 22, cross_section: 2, descriptive: 7}
+  states/ca/2023/sched_ca_540: {checked: 232, lines: 243, mapped: 243, unread: 11, same_row: 193, cross_section: 121, descriptive: 1}
+  states/ca/2023/sched_ca_540nr: {checked: 360, lines: 381, mapped: 381, unread: 21, same_row: 332, cross_section: 181, descriptive: 15, dark: ["B##"], reason: anchor-reads-no-designators, note: "360/381 checked, but whole families go unchecked: B## x9 (no line read beside them)"}
+  states/ca/2024/form540: {checked: 80, lines: 96, mapped: 96, unread: 16, same_row: 16, cross_section: 2, descriptive: 4}
+  states/ca/2024/form540nr: {checked: 90, lines: 104, mapped: 104, unread: 14, same_row: 22, cross_section: 2, descriptive: 7}
+  states/ca/2024/sched_ca_540: {checked: 235, lines: 246, mapped: 246, unread: 11, same_row: 196, cross_section: 121, descriptive: 1}
+  states/ca/2024/sched_ca_540nr: {checked: 361, lines: 386, mapped: 386, unread: 25, same_row: 337, cross_section: 178, descriptive: 15, dark: ["B##"], reason: anchor-reads-no-designators, note: "361/386 checked, but whole families go unchecked: B## x9 (no line read beside them)"}
+  states/ca/2025/form540: {checked: 81, lines: 97, mapped: 97, unread: 16, same_row: 16, cross_section: 2, descriptive: 4}
+  states/ca/2025/form540nr: {checked: 91, lines: 105, mapped: 105, unread: 14, same_row: 22, cross_section: 2, descriptive: 7}
+  states/ca/2025/sched_ca_540: {checked: 235, lines: 249, mapped: 249, unread: 14, same_row: 196, cross_section: 118, descriptive: 1}
+  states/ca/2025/sched_ca_540nr: {checked: 356, lines: 389, mapped: 389, unread: 33, same_row: 330, cross_section: 172, descriptive: 15, dark: ["B##"], reason: anchor-reads-no-designators, note: "356/389 checked, but whole families go unchecked: B## x9 (no line read beside them)"}
+  states/co/2023/dr0104: {checked: 44, lines: 49, mapped: 47, unread: 5, same_row: 2, cross_section: 0, descriptive: 0}
+  states/co/2023/dr0104pn: {checked: 37, lines: 53, mapped: 53, unread: 16, same_row: 0, cross_section: 0, descriptive: 0, reason: anchor-reads-no-designators, note: "37/53 checked; the 16 unchecked: 16 anchor-reads-no-designators"}
+  states/co/2024/dr0104: {checked: 44, lines: 49, mapped: 47, unread: 5, same_row: 2, cross_section: 0, descriptive: 0}
+  states/co/2025/dr0104: {checked: 46, lines: 51, mapped: 49, unread: 5, same_row: 2, cross_section: 0, descriptive: 0}
+  states/dc/2023/d40: {checked: 0, lines: 60, mapped: 43, unread: 60, same_row: 0, cross_section: 0, descriptive: 0, reason: anchor-reads-no-designators, note: "every numbered key (lines 4-44): the 2023 blank has a text layer on all three pages, but the anchor reads no printed line beside any of its boxes; measured (fixer round 3): 0/60 checked; the 60 unchecked: 43 anchor-reads-no-designators, 17 shape-not-declared; undeclared families: #.loss x4, #.yes x2, #.calc x1, #.form_d# x1, #.from x1"}
+  states/dc/2024/d40: {checked: 53, lines: 61, mapped: 61, unread: 8, same_row: 12, cross_section: 0, descriptive: 2}
+  states/dc/2025/d40: {checked: 53, lines: 61, mapped: 61, unread: 8, same_row: 12, cross_section: 0, descriptive: 2}
+  states/de/2023/pit_non: {checked: 118, lines: 138, mapped: 138, unread: 20, same_row: 74, cross_section: 10, descriptive: 3}
+  states/de/2023/pit_res: {checked: 118, lines: 141, mapped: 141, unread: 23, same_row: 106, cross_section: 7, descriptive: 3}
+  states/de/2024/pit_res: {checked: 119, lines: 143, mapped: 143, unread: 24, same_row: 107, cross_section: 7, descriptive: 3}
+  states/de/2025/pit_res: {checked: 119, lines: 143, mapped: 143, unread: 24, same_row: 107, cross_section: 7, descriptive: 3}
+  states/ga/2023/ga500: {checked: 134, lines: 379, mapped: 377, unread: 245, same_row: 18, cross_section: 109, descriptive: 20, reason: anchor-reads-no-designators, note: "134/379 checked; the 245 unchecked: 243 anchor-reads-no-designators, 2 shape-not-declared; undeclared families: s#.#b_self_# x1, s#.#b_spouse_# x1"}
+  states/ga/2024/ga500: {checked: 121, lines: 354, mapped: 354, unread: 233, same_row: 18, cross_section: 107, descriptive: 15, reason: anchor-reads-no-designators, note: "121/354 checked; the 233 unchecked: 233 anchor-reads-no-designators"}
+  states/ga/2025/ga500: {checked: 129, lines: 358, mapped: 358, unread: 229, same_row: 20, cross_section: 114, descriptive: 14, reason: anchor-reads-no-designators, note: "129/358 checked; the 229 unchecked: 229 anchor-reads-no-designators"}
+  states/ia/2023/ia1040: {checked: 115, lines: 147, mapped: 147, unread: 32, same_row: 112, cross_section: 64, descriptive: 2}
+  states/ia/2024/ia1040: {checked: 117, lines: 152, mapped: 152, unread: 35, same_row: 112, cross_section: 46, descriptive: 2}
+  states/ia/2025/ia1040: {checked: 119, lines: 158, mapped: 158, unread: 39, same_row: 114, cross_section: 46, descriptive: 2}
+  states/id/2023/form40: {checked: 58, lines: 78, mapped: 78, unread: 20, same_row: 8, cross_section: 0, descriptive: 5}
+  states/id/2024/form40: {checked: 58, lines: 76, mapped: 76, unread: 18, same_row: 8, cross_section: 0, descriptive: 6}
+  states/id/2025/form40: {checked: 60, lines: 76, mapped: 76, unread: 16, same_row: 8, cross_section: 2, descriptive: 5}
+  states/il/2023/il1040: {checked: 51, lines: 58, mapped: 58, unread: 7, same_row: 2, cross_section: 0, descriptive: 0}
+  states/il/2024/il1040: {checked: 52, lines: 59, mapped: 59, unread: 7, same_row: 2, cross_section: 0, descriptive: 0}
+  states/il/2025/il1040: {checked: 52, lines: 62, mapped: 62, unread: 10, same_row: 2, cross_section: 0, descriptive: 0}
+  states/in/2023/it40: {checked: 34, lines: 37, mapped: 37, unread: 3, same_row: 4, cross_section: 0, descriptive: 0}
+  states/in/2024/it40: {checked: 35, lines: 37, mapped: 37, unread: 2, same_row: 4, cross_section: 0, descriptive: 0}
+  states/in/2025/it40: {checked: 35, lines: 37, mapped: 37, unread: 2, same_row: 4, cross_section: 0, descriptive: 0}
+  states/ks/2023/k40: {checked: 48, lines: 51, mapped: 51, unread: 3, same_row: 12, cross_section: 0, descriptive: 0}
+  states/ks/2024/k40: {checked: 50, lines: 51, mapped: 51, unread: 1, same_row: 14, cross_section: 0, descriptive: 0}
+  states/ks/2025/k40: {checked: 48, lines: 50, mapped: 50, unread: 2, same_row: 14, cross_section: 0, descriptive: 0}
+  states/ky/2023/form740: {checked: 77, lines: 81, mapped: 81, unread: 4, same_row: 33, cross_section: 3, descriptive: 10}
+  states/ky/2024/form740: {checked: 78, lines: 82, mapped: 82, unread: 4, same_row: 35, cross_section: 3, descriptive: 10}
+  states/ky/2025/form740: {checked: 78, lines: 82, mapped: 82, unread: 4, same_row: 35, cross_section: 3, descriptive: 10}
+  states/la/2023/it540: {checked: 57, lines: 71, mapped: 71, unread: 14, same_row: 14, cross_section: 0, descriptive: 1}
+  states/la/2024/it540: {checked: 54, lines: 71, mapped: 71, unread: 17, same_row: 10, cross_section: 0, descriptive: 1}
+  states/la/2025/it540: {checked: 44, lines: 63, mapped: 63, unread: 19, same_row: 4, cross_section: 0, descriptive: 1, reason: anchor-reads-no-designators, note: "44/63 checked; the 19 unchecked: 19 anchor-reads-no-designators"}
+  states/ma/2023/form1: {checked: 87, lines: 111, mapped: 111, unread: 24, same_row: 18, cross_section: 0, descriptive: 0}
+  states/ma/2025/form1: {checked: 86, lines: 111, mapped: 111, unread: 25, same_row: 18, cross_section: 0, descriptive: 0}
+  states/md/2023/md502: {checked: 90, lines: 100, mapped: 99, unread: 10, same_row: 38, cross_section: 19, descriptive: 1}
+  states/md/2024/md502: {checked: 88, lines: 99, mapped: 98, unread: 11, same_row: 34, cross_section: 19, descriptive: 1}
+  states/md/2025/md502: {checked: 89, lines: 108, mapped: 107, unread: 19, same_row: 32, cross_section: 16, descriptive: 1}
+  states/me/2023/f1040me: {checked: 47, lines: 57, mapped: 57, unread: 10, same_row: 2, cross_section: 0, descriptive: 11}
+  states/me/2024/f1040me: {checked: 48, lines: 57, mapped: 57, unread: 9, same_row: 4, cross_section: 0, descriptive: 11}
+  states/me/2025/f1040me: {checked: 42, lines: 50, mapped: 50, unread: 8, same_row: 4, cross_section: 0, descriptive: 11}
+  states/mi/2023/mi1040: {checked: 43, lines: 56, mapped: 56, unread: 13, same_row: 6, cross_section: 0, descriptive: 2}
+  states/mi/2024/mi1040: {checked: 43, lines: 56, mapped: 56, unread: 13, same_row: 6, cross_section: 0, descriptive: 2}
+  states/mi/2025/mi1040: {checked: 48, lines: 63, mapped: 63, unread: 15, same_row: 6, cross_section: 0, descriptive: 2}
+  states/mn/2023/m1: {checked: 31, lines: 34, mapped: 31, unread: 3, same_row: 0, cross_section: 0, descriptive: 3}
+  states/mn/2024/m1: {checked: 31, lines: 35, mapped: 31, unread: 4, same_row: 0, cross_section: 0, descriptive: 3}
+  states/mn/2025/m1: {checked: 31, lines: 36, mapped: 32, unread: 5, same_row: 0, cross_section: 0, descriptive: 3}
+  states/mo/2023/mo1040: {checked: 129, lines: 490, mapped: 152, unread: 149, same_row: 0, cross_section: 47, descriptive: 93, declare: ["#", "adjLine#", "c.crp_#a", "c.crp_#b", "c.crp_#c", "c.crp_#d", "c.crp_#e", "d.crp_#r", "moa_#", "moa_pt#_#", "mocr_#", "mocr_#b", "mocr_st-#", "mocrsch#_#", "n.crp_#", "n.pts_#", "n.tc_c#_#", "nri_line#S", "nri_line#Y"], reason: shape-not-declared, note: "129/490 checked; the 361 unchecked: 338 shape-not-declared, 23 anchor-reads-no-designators; undeclared families: moa_pt#_# x31, n.tc_c#_# x25, #-S x20, #-Y x20, n.pts_# x14"}
+  states/mo/2024/mo1040: {checked: 129, lines: 492, mapped: 152, unread: 155, same_row: 0, cross_section: 43, descriptive: 93, declare: ["#", "adjLine#", "c.crp_#a", "c.crp_#b", "c.crp_#c", "c.crp_#d", "c.crp_#e", "d.crp_#r", "moa_#", "moa_pt#_#", "mocr_#", "mocr_#b", "mocr_st-#", "mocrsch#_#", "n.crp_#", "n.pts_#", "n.tc_c#_#", "nri_line#S", "nri_line#Y", "wftc_line#"], reason: shape-not-declared, note: "129/492 checked; the 363 unchecked: 340 shape-not-declared, 23 anchor-reads-no-designators; undeclared families: n.tc_c#_# x25, moa_pt#_# x21, #-S x20, #-Y x20, n.pts_# x14"}
+  states/mo/2025/mo1040: {checked: 130, lines: 487, mapped: 152, unread: 154, same_row: 0, cross_section: 43, descriptive: 91, declare: ["#", "adjLine#", "c.crp_#a", "c.crp_#b", "c.crp_#c", "c.crp_#d", "c.crp_#e", "d.crp_#r", "moa_#", "moa_pt#_#", "mocr_#", "mocr_#b", "mocr_st-#", "mocrsch#-#", "mocrsch#_#", "n.crp_#", "n.pts_#", "n.tc_c#_#", "nri_line#S", "nri_line#Y", "wftc_line#"], reason: shape-not-declared, note: "130/487 checked; the 357 unchecked: 335 shape-not-declared, 22 anchor-reads-no-designators; undeclared families: n.tc_c#_# x25, moa_pt#_# x21, n.pts_# x14, #-S x13, #-Y x13"}
+  states/ms/2023/f80105: {checked: 93, lines: 96, mapped: 96, unread: 3, same_row: 0, cross_section: 0, descriptive: 9}
+  states/ms/2024/f80105: {checked: 93, lines: 96, mapped: 96, unread: 3, same_row: 0, cross_section: 0, descriptive: 9}
+  states/ms/2025/f80105: {checked: 93, lines: 96, mapped: 96, unread: 3, same_row: 0, cross_section: 0, descriptive: 9}
+  states/mt/2023/form2: {checked: 619, lines: 649, mapped: 642, unread: 27, same_row: 566, cross_section: 555, descriptive: 30, dark: ["#"], declare: ["#"], reason: shape-not-declared, note: "the Exemptions block's rows a-d (16a.a ... 16d.b, Column A / Column B, 7 keys): the face prints the rows' letters a-d in the line gutter with no number and row d reads 'Add lines a through c', so they are lines, but the gate cannot express a line that is only a letter (no shape maps them), and the anchor misreads 65a / 65b there (the '65 or older' box text beside rows a and b: 16a.a -> 65a, 16b.a -> 65b, 16b.b -> 65b). Their family is # (the first line token of 16a.a is 16a), so the dark and declare lists name #; 619/649 line-bearing keys checked"}
+  states/mt/2024/form2: {checked: 244, lines: 265, mapped: 265, unread: 21, same_row: 32, cross_section: 217, descriptive: 6}
+  states/mt/2025/form2: {checked: 213, lines: 233, mapped: 233, unread: 20, same_row: 32, cross_section: 185, descriptive: 6}
+  states/nc/2023/d400: {checked: 36, lines: 43, mapped: 43, unread: 7, same_row: 4, cross_section: 2, descriptive: 6}
+  states/nc/2024/d400: {checked: 36, lines: 43, mapped: 43, unread: 7, same_row: 4, cross_section: 2, descriptive: 6}
+  states/nc/2025/d400: {checked: 36, lines: 43, mapped: 43, unread: 7, same_row: 4, cross_section: 2, descriptive: 6}
+  states/nd/2023/nd1: {checked: 41, lines: 47, mapped: 47, unread: 6, same_row: 2, cross_section: 2, descriptive: 3}
+  states/nd/2024/nd1: {checked: 40, lines: 47, mapped: 47, unread: 7, same_row: 2, cross_section: 0, descriptive: 3}
+  states/nd/2025/nd1: {checked: 40, lines: 47, mapped: 47, unread: 7, same_row: 2, cross_section: 0, descriptive: 3}
+  states/ne/2023/f1040n: {checked: 72, lines: 84, mapped: 80, unread: 12, same_row: 16, cross_section: 16, descriptive: 12}
+  states/ne/2024/f1040n: {checked: 84, lines: 95, mapped: 91, unread: 11, same_row: 24, cross_section: 16, descriptive: 8}
+  states/ne/2025/f1040n: {checked: 92, lines: 102, mapped: 102, unread: 10, same_row: 31, cross_section: 16, descriptive: 8}
+  states/nj/2023/nj1040: {checked: 200, lines: 672, mapped: 672, unread: 472, same_row: 183, cross_section: 3, descriptive: 6, reason: anchor-reads-no-designators, note: "the amount combs' digit cells (line19_d03 ... line19_d10): the anchor reads the printed line beside few cells of each comb; measured (fixer round 4): 200/672 checked; the 472 unchecked: 472 anchor-reads-no-designators"}
+  states/nj/2024/nj1040: {checked: 200, lines: 672, mapped: 672, unread: 472, same_row: 183, cross_section: 3, descriptive: 6, reason: anchor-reads-no-designators, note: "the amount combs' digit cells (line19_d03 ... line19_d10): the anchor reads the printed line beside few cells of each comb; measured (fixer round 4): 200/672 checked; the 472 unchecked: 472 anchor-reads-no-designators"}
+  states/nj/2025/nj1040: {checked: 205, lines: 672, mapped: 672, unread: 467, same_row: 188, cross_section: 3, descriptive: 6, reason: anchor-reads-no-designators, note: "the amount combs' digit cells (line19_d03 ... line19_d10): the anchor reads the printed line beside few cells of each comb; measured (fixer round 4): 205/672 checked; the 467 unchecked: 467 anchor-reads-no-designators"}
+  states/ny/2023/it201: {checked: 109, lines: 121, mapped: 121, unread: 12, same_row: 12, cross_section: 10, descriptive: 1}
+  states/ny/2023/it203: {checked: 123, lines: 134, mapped: 131, unread: 11, same_row: 69, cross_section: 2, descriptive: 9}
+  states/ny/2024/it201: {checked: 109, lines: 121, mapped: 121, unread: 12, same_row: 12, cross_section: 10, descriptive: 1}
+  states/ny/2024/it203: {checked: 123, lines: 134, mapped: 131, unread: 11, same_row: 69, cross_section: 2, descriptive: 9}
+  states/ny/2025/it201: {checked: 109, lines: 121, mapped: 121, unread: 12, same_row: 12, cross_section: 10, descriptive: 1}
+  states/ny/2025/it203: {checked: 123, lines: 134, mapped: 131, unread: 11, same_row: 69, cross_section: 2, descriptive: 9}
+  states/oh/2023/it1040_oh: {checked: 144, lines: 152, mapped: 152, unread: 8, same_row: 20, cross_section: 137, descriptive: 1}
+  states/oh/2024/it1040_oh: {checked: 148, lines: 156, mapped: 156, unread: 8, same_row: 20, cross_section: 141, descriptive: 1}
+  states/oh/2025/it1040_oh: {checked: 149, lines: 157, mapped: 157, unread: 8, same_row: 20, cross_section: 142, descriptive: 1}
+  states/ok/2023/form511: {checked: 148, lines: 165, mapped: 163, unread: 17, same_row: 44, cross_section: 120, descriptive: 6}
+  states/ok/2024/form511: {checked: 149, lines: 166, mapped: 164, unread: 17, same_row: 41, cross_section: 122, descriptive: 6}
+  states/ok/2025/form511: {checked: 141, lines: 160, mapped: 158, unread: 19, same_row: 34, cross_section: 112, descriptive: 6}
+  states/or/2023/or40: {checked: 64, lines: 76, mapped: 74, unread: 12, same_row: 0, cross_section: 0, descriptive: 5}
+  states/or/2024/or40: {checked: 62, lines: 73, mapped: 71, unread: 11, same_row: 0, cross_section: 0, descriptive: 5}
+  states/or/2025/or40: {checked: 64, lines: 76, mapped: 74, unread: 12, same_row: 0, cross_section: 0, descriptive: 5}
+  states/pa/2023/pa40: {checked: 50, lines: 50, mapped: 50, unread: 0, same_row: 23, cross_section: 0, descriptive: 1}
+  states/pa/2024/pa40: {checked: 50, lines: 50, mapped: 50, unread: 0, same_row: 23, cross_section: 0, descriptive: 1}
+  states/pa/2025/pa40: {checked: 50, lines: 50, mapped: 50, unread: 0, same_row: 23, cross_section: 0, descriptive: 1}
+  states/ri/2023/ri1040: {checked: 63, lines: 66, mapped: 66, unread: 3, same_row: 4, cross_section: 6, descriptive: 81}
+  states/ri/2024/ri1040: {checked: 64, lines: 67, mapped: 67, unread: 3, same_row: 4, cross_section: 6, descriptive: 81}
+  states/ri/2025/ri1040: {checked: 64, lines: 67, mapped: 67, unread: 3, same_row: 4, cross_section: 6, descriptive: 81}
+  states/ut/2023/tc40: {checked: 40, lines: 45, mapped: 45, unread: 5, same_row: 0, cross_section: 0, descriptive: 9}
+  states/ut/2024/tc40: {checked: 40, lines: 45, mapped: 45, unread: 5, same_row: 0, cross_section: 0, descriptive: 6}
+  states/ut/2025/tc40: {checked: 19, lines: 45, mapped: 45, unread: 26, same_row: 0, cross_section: 0, descriptive: 0, reason: no-text-layer, note: "page 2 (lines 23-43) has no text layer; on page 1 the anchor reads no printed line beside lines 1 and 2a-2d"}
+  states/va/2023/va760: {checked: 48, lines: 51, mapped: 50, unread: 3, same_row: 21, cross_section: 0, descriptive: 4}
+  states/va/2024/va760: {checked: 48, lines: 51, mapped: 50, unread: 3, same_row: 21, cross_section: 0, descriptive: 4}
+  states/va/2025/va760: {checked: 48, lines: 51, mapped: 50, unread: 3, same_row: 21, cross_section: 0, descriptive: 4}
+  states/vt/2023/in111: {checked: 36, lines: 46, mapped: 46, unread: 10, same_row: 0, cross_section: 0, descriptive: 0}
+  states/vt/2024/in111: {checked: 38, lines: 48, mapped: 48, unread: 10, same_row: 2, cross_section: 0, descriptive: 0}
+  states/vt/2025/in111: {checked: 37, lines: 48, mapped: 48, unread: 11, same_row: 2, cross_section: 0, descriptive: 0}
+  states/wi/2023/wi_form1: {checked: 81, lines: 95, mapped: 94, unread: 14, same_row: 22, cross_section: 33, descriptive: 1}
+  states/wi/2024/wi_form1: {checked: 83, lines: 96, mapped: 95, unread: 13, same_row: 25, cross_section: 34, descriptive: 1}
+  states/wi/2025/wi_form1: {checked: 83, lines: 96, mapped: 95, unread: 13, same_row: 25, cross_section: 34, descriptive: 1}
+  states/wv/2023/it140: {checked: 162, lines: 206, mapped: 203, unread: 44, same_row: 52, cross_section: 90, descriptive: 7, dark: ["recap.#.state_#", "sch_m.#.b"], reason: anchor-reads-no-designators, note: "162/206 checked, but whole families go unchecked: recap.#.state_# x5 (no line read beside them), sch_m.#.b x8 (no line read beside them)"}
+  states/wv/2024/it140: {checked: 165, lines: 211, mapped: 208, unread: 46, same_row: 54, cross_section: 93, descriptive: 7, dark: ["recap.#.state_#", "sch_m.#.b"], reason: anchor-reads-no-designators, note: "165/211 checked, but whole families go unchecked: recap.#.state_# x5 (no line read beside them), sch_m.#.b x8 (no line read beside them)"}

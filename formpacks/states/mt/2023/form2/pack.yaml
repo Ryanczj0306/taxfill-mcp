@@ -815,10 +815,13 @@ fields:
   - line: sch1.8d.b
     field: Schedule 1 Col B Line 8d
     type: money
-  - line: sch1.8o.a
+  # Phase K JK10 (2026-10-24), fixer round 3: the face prints this row "8p Section 461(l) excess business loss
+  # adjustment" (there is no 8o on the 2023 Schedule 1); the AcroForm /T names say "Line 8o", so the keys were
+  # sch1.8o.*. Re-keyed to the printed line after the label-adjacency gate read 8p beside both boxes.
+  - line: sch1.8p.a
     field: Schedule 1 Col A Line 8o
     type: money
-  - line: sch1.8o.b
+  - line: sch1.8p.b
     field: Schedule 1 Col B Line 8o
     type: money
   - line: sch1.8x.a

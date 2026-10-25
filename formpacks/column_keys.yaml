@@ -1,0 +1,103 @@
+# Phase K JK10 (2026-10-24): column conventions for the label-adjacency gate (scripts/label_adjacency.py,
+# packages/core/tests/test_label_adjacency.py).
+#
+# A numbered key "Na" usually names printed sub-line Na. In the packs below the trailing letter names a COLUMN of
+# printed line N instead: the face prints "N." once on the row and heads its amount columns (a), (b), ... or
+# "COLUMN A" / "COLUMN B". The gate maps such a key to its row's line N before comparing it with the line the
+# pack-blind anchor reads beside the widget. No pack key is renamed.
+#
+# Each convention names its packs (explicit pack ids: a new year joins only after its own face is checked), the
+# printed lines it covers, what each letter means, and `header`: strings the face prints, each of which the network
+# gate finds in the text of every listed pack's own pinned blank. The gate also refuses a covered line N for which
+# the blank prints a lower-case sub-line designator "N<letter>" (Delaware PIT-RES 2023 prints "8a"/"8b" and
+# "26a"/"26b", so lines 8 and 26 are real sub-lines there and are left out).
+#
+# The limit of a line check (measured 2026-10-24 on planted swaps: 238 of 249 caught; all 11 misses were swaps
+# between two columns of one printed row): every column a convention maps claims the row's ONE line N, so a swap
+# between "1a" and "1b" (Column A <-> Column B) or between two of Form 8962's monthly columns passes the gate. Column
+# order is the vision audit's and the relations' to catch. Key families in other shapes are declared in
+# key_shapes.yaml; per-pack coverage is recorded in label_adjacency_coverage.yaml.
+#
+# Blanks (each the pack's pinned source_url; first 16 hex of the sha256 the pack pins and the cached file matches):
+#   states/de/2023/pit_res   448045f09af6c9b3    states/de/2024/pit_res   8c98cff70f22addb
+#   states/de/2025/pit_res   7b7ae51e2ede9141    states/de/2023/pit_non   0646ee65db626f71
+#   federal/2023/f8962       74c8dae38348e523    federal/2024/f8962       9a422c51981856da
+#   federal/2025/f8962       dc7d2c6b566cac66    federal/2026/f8962       5b692171ee43a459
+#   federal/2023/sched_nec   a821d10fb9b332e0    federal/2024/sched_nec   58d024881987afca
+#   federal/2025/sched_nec   07d08b371a8c09de
+conventions:
+  - id: de-pit-res-2023
+    packs: [states/de/2023/pit_res]
+    lines: "1-7, 9-25, 27-58"
+    letters:
+      a: "Column A (the spouse; filing status 4 only)"
+      b: "Column B (every other filer)"
+    header:
+      - "Column A is for Spouse information, Filing status 4 only. All other filing status use Column B."
+      - "COLUMN A COLUMN B"
+
+  - id: de-pit-res-2024
+    packs: [states/de/2024/pit_res, states/de/2025/pit_res]
+    lines: "1-7, 9-26, 28-59"
+    letters:
+      a: "Column A (the spouse; filing status 4 only)"
+      b: "Column B (every other filer)"
+    header:
+      - "Column A is for Spouse information, Filing status 4 only. All other filing status use Column B."
+      - "COLUMN A COLUMN B"
+
+  - id: de-pit-non-2023
+    packs: [states/de/2023/pit_non]
+    lines: "1-6, 8-25, 27-29"
+    letters:
+      a: "Column A, headed FEDERAL"
+      b: "Column B, headed DELAWARE SOURCE INCOME/LOSS"
+    header:
+      - "COLUMN A"
+      - "COLUMN B"
+      - "FEDERAL"
+      - "DELAWARE SOURCE"
+
+  - id: f8962-part2-columns
+    packs: [federal/2023/f8962, federal/2024/f8962, federal/2025/f8962, federal/2026/f8962]
+    lines: "11-23"
+    letters:
+      a: "(a) enrollment premiums"
+      b: "(b) applicable SLCSP premium"
+      c: "(c) contribution amount"
+      d: "(d) maximum premium assistance"
+      e: "(e) PTC allowed"
+      f: "(f) advance payment of PTC"
+    header:
+      - "(a) Annual enrollment"
+      - "(b) Annual applicable"
+      - "(d) Annual maximum"
+      - "(e) Annual"                  # 2023: "premium tax credit allowed"; 2024 on: "PTC allowed"
+      - "(smaller of (a) or (d))"
+      - "(f) Annual advance"
+      - "(a) Monthly enrollment"
+      - "(f) Monthly advance"
+
+  - id: f8962-part5-columns
+    packs: [federal/2023/f8962, federal/2024/f8962, federal/2025/f8962]
+    lines: "35-36"
+    letters:
+      a: "(a) alternative family size"
+      b: "(b) alternative monthly contribution amount"
+      c: "(c) alternative start month"
+      d: "(d) alternative stop month"
+    header:
+      - "(a) Alternative family size (b) Alternative monthly"
+      - "(c) Alternative start month (d) Alternative stop month"
+
+  - id: sched-nec-rate-columns
+    packs: [federal/2023/sched_nec, federal/2024/sched_nec, federal/2025/sched_nec]
+    lines: "3-9, 11-14"
+    letters:
+      a: "(a) 10%"
+      b: "(b) 15%"
+      c: "(c) 30%"
+      d: "(d) Other (specify), the first of its two rate sub-columns"
+      e: "(d) Other (specify), the second of its two rate sub-columns"
+    header:
+      - "Nature of Income (a) 10% (b) 15% (c) 30% (d) Other (specify)"

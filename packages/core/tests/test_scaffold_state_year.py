@@ -146,3 +146,212 @@ def test_the_triage_reproduces_every_recorded_row():
         if any("URL-DEAD" in b[2] for b in bad):
             pytest.skip(f"a recorded blank could not be fetched: {bad}")
         assert not bad, bad
+
+
+# ── Phase K JK10 (2026-10-24): the label-adjacency guard on the base pack, and the /Rect diff ──
+
+def _rows_pdf(path: Path, order: list[str], *, extra: str = "") -> Path:
+    """Rows "1".."3" printed IRS-style (gutter number, caption, leaders, the number again beside the box); the box on
+    row i is the field order[i]."""
+    texts, fields = [], []
+    for i, (num, caption) in enumerate((("1", "Wages and salaries"), ("2", "Taxable interest"),
+                                        ("3", "Ordinary dividends"))):
+        y = 700.0 - 24.0 * i
+        texts += [(1, 40, y, num), (1, 60, y, caption), (1, 160, y, "." * 50), (1, 452, y, num)]
+        fields.append({"name": order[i], "page": 1, "x": 470.0, "y": y - 4, "width": 90, "height": 14})
+    if extra:
+        texts.append((1, 40, 100, extra))
+    return make_acroform_pdf(path, fields, texts=texts, draw_labels=False)
+
+
+def _ported(tmp: Path, monkeypatch, keys: dict[str, str], candidate_order: list[str]) -> tuple[Path, Path]:
+    """A 2024 base pack (its blank seeded into a scratch shared cache) and a cached 2025 candidate blank."""
+    from taxfill_core.fetch import seed_blank
+
+    monkeypatch.setenv("TAXFILL_BLANKS_CACHE", str(tmp / "shared"))
+    base_url = "https://tax.example.gov/forms/2024/zz-f1.pdf"
+    base_pdf = _rows_pdf(tmp / "src" / "base.pdf", ["A1", "A2", "A3"])
+    digest = hashlib.sha256(base_pdf.read_bytes()).hexdigest()
+    seed_blank(base_pdf, base_url, digest)
+    pack = tmp / "states" / "zz" / "2024" / "f1" / "pack.yaml"
+    pack.parent.mkdir(parents=True)
+    pack.write_text(yaml.safe_dump({"source_url": base_url, "pdf_sha256": digest,
+                                    "fields": [{"line": k, "field": f} for k, f in keys.items()]}))
+    cache = tmp / "cache"
+    _rows_pdf(cache / "zz-f1-2025.pdf", candidate_order, extra="Rev. 2025")
+    return tmp / "states", cache
+
+
+def test_jk10_a_rotated_base_pack_is_base_misbound_even_when_the_names_port(tmp_path: Path, monkeypatch):
+    # P-032's shape: the base binds line 2 to the widget on row 3 and line 3 to the one on row 2, and the next
+    # year's blank carries the same names on the same rows, so a name (or /Rect) diff calls it PORTABLE.
+    states, cache = _ported(tmp_path, monkeypatch, {"1": "A1", "2": "A3", "3": "A2"}, ["A1", "A2", "A3"])
+    [row] = sc.scaffold(2025, "newest", triage=True, offline=True, cache_dir=cache, states_dir=states)
+    assert row["names_status"].startswith("PORTABLE") and row["moved"] == 0
+    assert row["base_label_adjacency"].startswith("OFF (2 key(s)") and "2, 3" in row["base_label_adjacency"]
+    assert row["status"].startswith("BASE-MISBOUND (fix the 2024 pack first")
+    # the recorded verdicts were measured by names: a recorded PORTABLE row still reproduces
+    rows = tmp_path / "rows.json"
+    cand = cache / "zz-f1-2025.pdf"
+    rows.write_text(json.dumps({"rows": [{"state": "zz", "form_dir": "f1", "year": 2025, "verdict": "PORTABLE",
+                                          "url": "https://tax.example.gov/forms/2025/zz-f1.pdf",
+                                          "sha256": hashlib.sha256(cand.read_bytes()).hexdigest()}]}))
+    [row] = sc.scaffold(2025, "newest", rows_path=rows, triage=True, offline=True, cache_dir=cache, states_dir=states)
+    assert row["status"].startswith("BASE-MISBOUND") and row["reproduces"] is True
+
+
+def test_jk10_a_correct_base_with_unmoved_widgets_stays_portable(tmp_path: Path, monkeypatch):
+    states, cache = _ported(tmp_path, monkeypatch, {"1": "A1", "2": "A2", "3": "A3"}, ["A1", "A2", "A3"])
+    [row] = sc.scaffold(2025, "newest", triage=True, offline=True, cache_dir=cache, states_dir=states)
+    assert row["status"].startswith("PORTABLE"), row
+    assert row["base_label_adjacency"] == "OK (3/3 line-bearing keys checked)" and row["moved"] == 0
+
+
+def test_jk10_a_mapped_widget_that_moved_forces_a_re_map(tmp_path: Path, monkeypatch):
+    # the same names on the next year's blank, but A2 and A3 traded rows: identical topology, different binding
+    states, cache = _ported(tmp_path, monkeypatch, {"1": "A1", "2": "A2", "3": "A3"}, ["A1", "A3", "A2"])
+    [row] = sc.scaffold(2025, "newest", triage=True, offline=True, cache_dir=cache, states_dir=states)
+    assert row["names_status"].startswith("PORTABLE")
+    assert row["status"] == "RE-MAP (2 mapped widgets moved on the page)" and row["moved_sample"] == ["A2", "A3"]
+
+
+def test_jk10_the_rect_diff_rule():
+    base = {"r.A": [(1, (10.0, 10.0, 50.0, 20.0))], "r.B": [(1, (10.0, 30.0, 50.0, 40.0))],
+            "r.C": [(1, (0.0, 0.0, 1.0, 1.0)), (2, (0.0, 0.0, 1.0, 1.0))], "r.D": [(1, (0.0, 0.0, 9.0, 9.0))]}
+    cand = {"r.A": [(1, (10.9, 10.0, 50.0, 20.0))],                     # within the tolerance
+            "r.B": [(2, (10.0, 30.0, 50.0, 40.0))],                     # another page
+            "r.C": [(1, (0.0, 0.0, 1.0, 1.0))]}                         # one widget fewer; D is gone (not a move)
+    assert sc.moved_widgets({"A", "B", "C", "D"}, base, cand) == ["B", "C"]
+    cand["r.A"] = [(1, (11.5, 10.0, 50.0, 20.0))]
+    assert sc.moved_widgets({"A"}, base, cand) == ["A"]
+
+
+def test_jk10_offline_triage_reports_an_uncached_base_blank(tmp_path: Path, monkeypatch):
+    monkeypatch.setenv("TAXFILL_BLANKS_CACHE", str(tmp_path / "empty"))
+    states = _mini_states(tmp_path, "https://tax.example.gov/forms/2024/zz-f1.pdf")
+    pack = states / "zz" / "2024" / "f1" / "pack.yaml"
+    pack.write_text(yaml.safe_dump({**yaml.safe_load(pack.read_text()), "pdf_sha256": "0" * 64}))
+    [row] = sc.scaffold(2025, "newest", triage=True, offline=True, cache_dir=tmp_path / "c", states_dir=states)
+    assert row["base_label_adjacency"] == "NOT-CACHED (offline)"
+
+
+# ── Phase K JK10 (2026-10-24), fixer round 2: overrides whatever the candidate's state; never OK at 0 checked ──
+
+def _base_only(tmp: Path, monkeypatch, keys: dict[str, str], url: str) -> Path:
+    """A 2024 base pack at ``url`` whose blank (rows 1-3, boxes A1-A3) is seeded into a scratch shared cache."""
+    from taxfill_core.fetch import seed_blank
+
+    monkeypatch.setenv("TAXFILL_BLANKS_CACHE", str(tmp / "shared"))
+    base_pdf = _rows_pdf(tmp / "src" / "base.pdf", ["A1", "A2", "A3"])
+    digest = hashlib.sha256(base_pdf.read_bytes()).hexdigest()
+    seed_blank(base_pdf, url, digest)
+    pack = tmp / "states" / "zz" / "2024" / "f1" / "pack.yaml"
+    pack.parent.mkdir(parents=True)
+    pack.write_text(yaml.safe_dump({"source_url": url, "pdf_sha256": digest,
+                                    "fields": [{"line": k, "field": f} for k, f in keys.items()]}))
+    return tmp / "states"
+
+
+ROTATED = {"1": "A1", "2": "A3", "3": "A2"}
+
+
+def test_jk10_a_misbound_base_overrides_a_no_year_token_row(tmp_path: Path, monkeypatch):
+    states = _base_only(tmp_path, monkeypatch, ROTATED, "https://tax.example.gov/forms/zz-f1.pdf")
+    [row] = sc.scaffold(2025, "newest", triage=True, offline=True, cache_dir=tmp_path / "c", states_dir=states)
+    assert row["base_label_adjacency"].startswith("OFF (2 key(s)")
+    assert row["status"].startswith("BASE-MISBOUND (fix the 2024 pack first") and row["port_status"] == "no-year-token"
+
+
+def test_jk10_a_misbound_base_overrides_an_uncached_candidate(tmp_path: Path, monkeypatch):
+    states = _base_only(tmp_path, monkeypatch, ROTATED, "https://tax.example.gov/forms/2024/zz-f1.pdf")
+    [row] = sc.scaffold(2025, "newest", triage=True, offline=True, cache_dir=tmp_path / "c", states_dir=states)
+    assert row["status"].startswith("BASE-MISBOUND") and row["port_status"] == "NOT-CACHED (offline)"
+
+
+def test_jk10_a_base_the_gate_cannot_check_is_unchecked_never_ok(tmp_path: Path, monkeypatch):
+    # keys in no line-bearing shape: the guard compares nothing, so the base is UNCHECKED, not "OK (0 checked)"
+    named = {"wages": "A1", "interest": "A3", "dividends": "A2"}
+    states, cache = _ported(tmp_path, monkeypatch, named, ["A1", "A2", "A3"])
+    [row] = sc.scaffold(2025, "newest", triage=True, offline=True, cache_dir=cache, states_dir=states)
+    assert row["base_label_adjacency"] == "UNCHECKED (0/0 line-bearing keys checked)"
+    assert row["names_status"].startswith("PORTABLE") and row["port_status"].startswith("PORTABLE")
+    assert row["status"].startswith("BASE-UNCHECKED (check the 2024 pack's line binding by hand")
+
+
+def test_jk10_a_base_below_the_floor_is_partial(tmp_path: Path, monkeypatch):
+    # one of three line-bearing keys binds a field the blank lacks: 2/3 checked is below the 70% floor
+    states, cache = _ported(tmp_path, monkeypatch, {"1": "A1", "2": "A2", "3": "GONE"}, ["A1", "A2", "A3"])
+    [row] = sc.scaffold(2025, "newest", triage=True, offline=True, cache_dir=cache, states_dir=states)
+    assert row["base_label_adjacency"].startswith("PARTIAL 2/3")
+    assert row["status"].startswith("BASE-UNCHECKED") and "PARTIAL 2/3" in row["status"]
+
+
+# ── Phase K JK10 (2026-10-24), fixer round 3: the non-circular denominator; handfill bases ──
+
+def test_jk10_undeclared_line_keys_count_against_the_base(tmp_path: Path, monkeypatch):
+    # rows 2 and 3 are keyed "2.a" / "3.a" (rotated), a shape no rule maps for this pack: round 2 counted only the
+    # keys a rule maps (1 of 1 -> OK); every line-like key now counts, so 1/3 checked is PARTIAL, never OK
+    states, cache = _ported(tmp_path, monkeypatch, {"1": "A1", "2.a": "A3", "3.a": "A2"}, ["A1", "A2", "A3"])
+    [row] = sc.scaffold(2025, "newest", triage=True, offline=True, cache_dir=cache, states_dir=states)
+    assert row["base_label_adjacency"].startswith("PARTIAL 1/3"), row["base_label_adjacency"]
+    assert row["status"].startswith("BASE-UNCHECKED") and row["port_status"].startswith("PORTABLE")
+
+
+def test_jk10_a_handfill_base_is_not_label_checked_and_keeps_its_port_status(tmp_path: Path, monkeypatch):
+    from taxfill_core.fetch import seed_blank
+
+    monkeypatch.setenv("TAXFILL_BLANKS_CACHE", str(tmp_path / "shared"))
+    url = "https://tax.example.gov/forms/2024/zz-f1.pdf"
+    base_pdf = _rows_pdf(tmp_path / "src" / "base.pdf", ["A1", "A2", "A3"])
+    digest = hashlib.sha256(base_pdf.read_bytes()).hexdigest()
+    seed_blank(base_pdf, url, digest)
+    hf = tmp_path / "states" / "zz" / "2024" / "f1" / "handfill.yaml"
+    hf.parent.mkdir(parents=True)
+    hf.write_text(yaml.safe_dump({"source_url": url, "pdf_sha256": digest, "render_mode": "hand_fill",
+                                  "lines": [{"line": "1", "label": "Wages", "type": "money",
+                                             "overlay": {"page": 1, "x": 470, "y": 696, "w": 90}}]}))
+    cache = tmp_path / "cache"
+    _rows_pdf(cache / "zz-f1-2025.pdf", ["A1", "A2", "A3"], extra="Rev. 2025")
+    [row] = sc.scaffold(2025, "newest", triage=True, offline=True, cache_dir=cache, states_dir=tmp_path / "states")
+    assert row["kind"] == "handfill.yaml"
+    assert row["base_label_adjacency"] == sc.HANDFILL_BASE
+    assert not row["status"].startswith(("BASE-UNCHECKED", "BASE-MISBOUND")) and "port_status" not in row
+
+
+# ── Phase K JK10 (2026-10-24), fixer round 4: a dark key family; the handfill verdict's wording ──
+
+def test_jk10_a_base_with_a_dark_family_is_base_unchecked_whatever_its_fraction(tmp_path: Path, monkeypatch):
+    # rows 1-3 checked, one more line-like key ("sx_9") no rule maps, on a widget the blank lacks (so the anchor
+    # reads no line beside it): 3/4 is above the floor (OK). A family of DARK_FAMILY_MIN undeclared keys is a whole
+    # schedule the gate cannot compare (round 3: OH Schedule of Business Income, 22 keys, OK at 121/152), so the
+    # base is PARTIAL — shown here with the minimum lowered to one key.
+    states, cache = _ported(tmp_path, monkeypatch, {"1": "A1", "2": "A2", "3": "A3", "sx_9": "GONE"},
+                            ["A1", "A2", "A3"])
+    [row] = sc.scaffold(2025, "newest", triage=True, offline=True, cache_dir=cache, states_dir=states)
+    assert row["base_label_adjacency"].startswith("OK (3/4"), row["base_label_adjacency"]
+    la = sc._label_adjacency()
+    monkeypatch.setattr(la, "DARK_FAMILY_MIN", 1)
+    [row] = sc.scaffold(2025, "newest", triage=True, offline=True, cache_dir=cache, states_dir=states)
+    assert row["base_label_adjacency"].startswith("PARTIAL 3/4") and "sx_#" in row["base_label_adjacency"]
+    assert row["status"].startswith("BASE-UNCHECKED") and "port_status" in row
+
+
+# ── Phase K JK10 (2026-10-24), fixer round 5: the declare-me rule ──
+
+def test_jk10_an_undeclared_key_the_anchor_reads_makes_the_base_unchecked_whatever_its_family_size(
+        tmp_path: Path, monkeypatch):
+    # rows 1-3 checked (3/4, above the floor) and one undeclared key "sx_9" on row A3's box: the anchor reads line 3
+    # beside it, so the gate could compare it and compares nothing — a 1-key family, far under DARK_FAMILY_MIN (the
+    # round-4 verifier's AZ 140 worksheet and MT 2023 LTC rows read OK this way). The base is PARTIAL, the family
+    # named, until a shape declares it.
+    states, cache = _ported(tmp_path, monkeypatch, {"1": "A1", "2": "A2", "3": "A3", "sx_9": "A3"},
+                            ["A1", "A2", "A3"])
+    [row] = sc.scaffold(2025, "newest", triage=True, offline=True, cache_dir=cache, states_dir=states)
+    verdict = row["base_label_adjacency"]
+    assert verdict.startswith("PARTIAL 3/4") and "declare them): sx_#" in verdict, verdict
+    assert row["status"].startswith("BASE-UNCHECKED") and row["port_status"].startswith("PORTABLE")
+
+
+def test_jk10_the_handfill_verdict_asks_for_a_vision_check_of_the_overlay_boxes():
+    assert sc.HANDFILL_BASE == ("NOT-APPLICABLE (handfill base: no AcroForm binding; vision-check the overlay boxes "
+                                "on port)")

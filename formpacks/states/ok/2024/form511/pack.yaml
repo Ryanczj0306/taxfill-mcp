@@ -67,7 +67,7 @@
 # NEW widgets, all 14 mapped: "511 Part 3 29 Number of Eligible Students"
 # (29.eligible_students), "511 Part 3 33" (33), "511 Part 4 35a"
 # (36.line_number), "511 Part 4 38" (38), "511 Line 40 Check"
-# (40.annualized_installment), "511 Part 5 41a" / "41b" / "42" (41a, 41b, 42),
+# (40.annualized_installment), "511 Part 5 41a" / "41b" / "42" (41.penalty, 41.interest, 42),
 # "511A 17 Other" / "511A 17" / "511A 18" (sch_511a.17.type_code, .17, .18),
 # "511B 9 Other Additions" / "511B 10" (sch_511b.9.type_code, .10), "511C 7"
 # (sch_511c.7).
@@ -203,7 +203,7 @@
 #             qualified-farmer box; 29 + eligible-students count box).
 #   page 44 = Form 511 Page 3  -- Part Three 31-33, Part Four refund 34-38 +
 #             direct-deposit block, Part Five amount-you-owe 39-42 (40 + the
-#             annualized-installment box; 41 penalty/interest $ blanks 41a/41b
+#             annualized-installment box; 41 penalty/interest $ blanks 41.penalty/41.interest
 #             beside the line-41 amount), signature block (discuss box,
 #             occupations, phones, preparer). Mailing address printed here:
 #             PO Box 26800, Oklahoma City, OK 73126-0800.
@@ -220,7 +220,8 @@
 #             Credit; mapped here under the f538s.* namespace.
 #
 # Line-id scheme. The CORE Form 511 numbered lines keep their bare printed labels
-# (1..42, with .a/.b column splits e.g. 4a/4b, 14a/14b, 41a/41b). The attached
+# (1..42, with a printed letter where the face prints one, e.g. 14a/14b; an unlettered
+# box of line N is "N.<what>", e.g. 4.description, 41.penalty). The attached
 # 511 schedules are namespaced sch_511a.* .. sch_511i.* and Form 538-S as f538s.*
 # so their own line numbers do not collide with the core return's lines. Keys
 # follow THIS year's printed numbers, so a key whose number survived from 2023
@@ -494,10 +495,12 @@ fields:
   - line: "3"                              # 3 Line 1 minus line 2
     field: "511 Part 1 3"
     type: money
-  - line: 4a                               # 4 Out-of-state income, except wages. Describe:
+  # Phase K JK10 (2026-10-24), P-031: the face prints one line 4 (no 4a / 4b): the Describe box is "4.description" (was "4a"),
+  # the amount column is "4" (was "4b").
+  - line: 4.description                    # 4 Out-of-state income, except wages. Describe:
     field: "511 Part 1 4a"
     type: text
-  - line: 4b                               # 4 (amount column)
+  - line: "4"                              # 4 (amount column)
     field: "511 Part 1 4b"
     type: money
   - line: "5"                              # 5 Line 3 minus line 4
@@ -704,10 +707,12 @@ fields:
   - line: "40"                             # 40 Underpayment of estimated tax interest
     field: "511 Part 5 40"
     type: money
-  - line: 41a                              # 41 "For delinquent payment add penalty of 5% ... $" -- NEW widget (2023: "511 Part 5 40a")
+  # Phase K JK10 (2026-10-24), P-031: the face prints one line 41 (no 41a / 41b): its two "$" sub-amounts are "41.penalty"
+  # (was "41a") and "41.interest" (was "41b"); the right-column amount is "41". (2025 prints 41(a) / 41(b).)
+  - line: 41.penalty                       # 41 "For delinquent payment add penalty of 5% ... $" -- NEW widget (2023: "511 Part 5 40a")
     field: "511 Part 5 41a"
     type: money
-  - line: 41b                              # 41 "plus interest of 1.25% per month ... $" -- NEW widget (2023: "511 Part 5 40b")
+  - line: 41.interest                      # 41 "plus interest of 1.25% per month ... $" -- NEW widget (2023: "511 Part 5 40b")
     field: "511 Part 5 41b"
     type: money
   - line: "41"                             # 41 (the line's one amount column: penalty plus interest)
@@ -1416,7 +1421,7 @@ fields:
 relations:
   # Core Form 511 on-face arithmetic (every operand mapped, unconditional).
   - "3 == 1 - 2"                            # 3 "Line 1 minus line 2"
-  - "5 == 3 - 4b"                           # 5 "Line 3 minus line 4"
+  - "5 == 3 - 4"                            # 5 "Line 3 minus line 4"
   - "7 == 5 + 6"                            # 7 "line 5 plus line 6"
   - "9 == 7 - 8"                            # 9 "line 7 minus line 8"
   - "12 == 10 + 11 + sch_511e.5"            # 12 "add lines 10 and 11 or amount from Sch. 511-E, line 5" (511-E line 5
@@ -1429,7 +1434,7 @@ relations:
   - "11 == 11.count * 1000"                 # 11 "total number of exemptions claimed on page 1 ... X $1,000" (a whole count: exact)
   - "37 == 35 + 36"                         # 37 "add lines 35 and 36"
   - "38 == 34 - 37"                         # 38 "Amount to be refunded to you (line 34 minus line 37)"; a tax-due return leaves all three blank
-  - "41 == 41a + 41b"                       # 41 penalty (41a) plus interest (41b), carried to the line's amount column
+  - "41 == 41.penalty + 41.interest"        # 41 penalty plus interest, carried to the line's amount column
   - "42 == 39 + 40 + 41"                    # 42 "Total tax, penalty and interest (add lines 39-41)"
   # Schedule totals printed as plain sums (dotted line ids are accepted by the relation grammar).
   - "sch_511a.18 == sch_511a.1 + sch_511a.2 + sch_511a.3 + sch_511a.4 + sch_511a.5 + sch_511a.6 + sch_511a.7 + sch_511a.8 + sch_511a.9 + sch_511a.10 + sch_511a.11 + sch_511a.12 + sch_511a.13 + sch_511a.14 + sch_511a.15 + sch_511a.16 + sch_511a.17"   # "add lines 1-17"

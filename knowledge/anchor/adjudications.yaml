@@ -13,6 +13,8 @@
 # retired_unscored_sample: sample entries of earlier runs (methods jk15-v1 to jk15-v3) whose ids the current method no longer samples;
 # kept for the record, never joined. items may hold verdicts for ids that are not disagreements in the current
 # run (an id the method no longer anchors differently); --finalize joins only the current disagreements.
+# retired_items: verdicts on disagreements a later pack fix removed (Phase K JK10, 2026-10-24: the pack re-keyed to
+# the line the verdict saw, so the widget now agrees and is scored like any other agreement); kept, never joined.
 items:
 - id: federal/2026/f8938:p3:topmostSubform[0].Page2[0].c2_2[0]:w0
   seen_line: 22a
@@ -775,10 +777,6 @@ items:
   seen_line: 36a
   ambiguous: false
   reason: outlined box immediately right of printed label 36a. Penalty under line 36 Penalty and Interest
-- id: states/va/2025/va760:p2:17a Spouse Tax Adjustment Dollar Amount:w0
-  seen_line: '17'
-  ambiguous: false
-  reason: outlined box covers right-column comb cells at row printed 17 (STA amount), not the spouse VAGI box; no 17a printed
 unscored_sample:
 - id: states/al/2023/al40nr:p14:SCHAATCLN8:w0
   seen_line: '8'
@@ -1536,3 +1534,8 @@ retired_unscored_sample:
   ambiguous: false
   reason: Applicable-credit box next to printed '9' Qualified Residential Rehabilitated Buildings credit (RBIC-A); only
     entry box on its row
+retired_items:
+- id: states/va/2025/va760:p2:17a Spouse Tax Adjustment Dollar Amount:w0
+  seen_line: '17'
+  ambiguous: false
+  reason: outlined box covers right-column comb cells at row printed 17 (STA amount), not the spouse VAGI box; no 17a printed

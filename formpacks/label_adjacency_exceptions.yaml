@@ -1,0 +1,770 @@
+# Phase K JK10 (2026-10-24): label-adjacency exceptions. The gate (packages/core/tests/test_label_adjacency.py,
+# scripts/label_adjacency.py) fails on every widget whose numbered key (after formpacks/column_keys.yaml) is not the
+# line the pack-blind anchor reads beside it, unless a row here names exactly that disagreement.
+#
+# Every row comes from a blind vision adjudication of the row (a crop of the row band with the box outlined and the
+# candidate lines sorted, never which side claims which) that read the KEY's line printed on the box's row: the
+# anchor misread the row, or (al40) the widget is a second box of the same field. A pack defect is fixed in the pack
+# (with a test), never listed here. Format:
+#
+#   families:
+#     - family: <id>            # rows that share one adjudicated reason
+#       reason: >-              # what the adjudicator saw and why the key is right
+#       adjudication: <who, when>
+#       rows:                   # one per disagreeing widget; a row may carry its own `reason`
+#         - {pack: <pack id>, field: "<AcroForm field>", widget: <widget index>, line: "<the key's line>",
+#            anchor: "<the line the anchor reads>"}
+#
+# SELF-CLEARING: a row matches only while the anchor still reads `anchor` beside that widget AND the pack still binds
+# it to a key of line `line`. A row that matches no live disagreement (the pack re-keyed or re-bound the widget, or
+# the anchor now reads the key's line or another line) fails the gate as stale and must be removed; a second row for
+# the same widget is refused when the table loads.
+families:
+  - family: f8843-3b-passport
+    reason: >-
+      the passport-number entry sits on printed line 3b; the anchor read 2b from the row above
+    adjudication: JK10 blind vision read of the row crop, 2026-10-24
+    rows:
+      - {pack: federal/2019/f8843, field: "topmostSubform[0].Page1[0].f1_13[0]", widget: 0, line: "3b", anchor: "2b"}
+      - {pack: federal/2020/f8843, field: "topmostSubform[0].Page1[0].f1_13[0]", widget: 0, line: "3b", anchor: "2b"}
+      - {pack: federal/2021/f8843, field: "topmostSubform[0].Page1[0].f1_13[0]", widget: 0, line: "3b", anchor: "2b"}
+      - {pack: federal/2022/f8843, field: "topmostSubform[0].Page1[0].f1_13[0]", widget: 0, line: "3b", anchor: "2b"}
+      - {pack: federal/2023/f8843, field: "topmostSubform[0].Page1[0].f1_13[0]", widget: 0, line: "3b", anchor: "2b"}
+      - {pack: federal/2024/f8843, field: "topmostSubform[0].Page1[0].f1_13[0]", widget: 0, line: "3b", anchor: "2b"}
+      - {pack: federal/2025/f8843, field: "topmostSubform[0].Page1[0].f1_13[0]", widget: 0, line: "3b", anchor: "2b"}
+  - family: f8843-4b-days-excluded
+    reason: >-
+      the days-excluded entry sits at the right of printed line 4b; the anchor read 2b from a row above
+    adjudication: JK10 blind vision read of the row crop, 2026-10-24
+    rows:
+      - {pack: federal/2019/f8843, field: "topmostSubform[0].Page1[0].f1_17[0]", widget: 0, line: "4b", anchor: "2b"}
+      - {pack: federal/2020/f8843, field: "topmostSubform[0].Page1[0].f1_17[0]", widget: 0, line: "4b", anchor: "2b"}
+      - {pack: federal/2021/f8843, field: "topmostSubform[0].Page1[0].f1_17[0]", widget: 0, line: "4b", anchor: "2b"}
+      - {pack: federal/2022/f8843, field: "topmostSubform[0].Page1[0].f1_17[0]", widget: 0, line: "4b", anchor: "2b"}
+      - {pack: federal/2023/f8843, field: "topmostSubform[0].Page1[0].f1_17[0]", widget: 0, line: "4b", anchor: "2b"}
+      - {pack: federal/2024/f8843, field: "topmostSubform[0].Page1[0].f1_17[0]", widget: 0, line: "4b", anchor: "2b"}
+      - {pack: federal/2025/f8843, field: "topmostSubform[0].Page1[0].f1_17[0]", widget: 0, line: "4b", anchor: "2b"}
+  - family: f8843-2026-17b
+    reason: >-
+      the date-intended-to-leave entry sits on printed line 17b of the 2026 draft; the anchor read the line's number
+      17
+    adjudication: JK10 blind vision read of the row crop, 2026-10-24
+    rows:
+      - {pack: federal/2026/f8843, field: "topmostSubform[0].Page2[0].f2_4[0]", widget: 0, line: "17b", anchor: "17"}
+  - family: f1040-35d-account-number
+    reason: >-
+      the account-number comb sits on line d under 35a (35d); the anchor read 34d from the row above
+    adjudication: JK10 blind vision read of the row crop, 2026-10-24
+    rows:
+      - {pack: federal/2022/f1040nr, field: "topmostSubform[0].Page2[0].AccountNo[0].f2_32[0]", widget: 0,
+         line: "35d", anchor: "34d"}
+      - {pack: federal/2023/f1040, field: "topmostSubform[0].Page2[0].AccountNo[0].f2_26[0]", widget: 0,
+         line: "35d", anchor: "34d"}
+      - {pack: federal/2023/f1040nr, field: "topmostSubform[0].Page2[0].AccountNo[0].f2_32[0]", widget: 0,
+         line: "35d", anchor: "34d"}
+      - {pack: federal/2024/f1040, field: "topmostSubform[0].Page2[0].AccountNo[0].f2_26[0]", widget: 0,
+         line: "35d", anchor: "34d"}
+      - {pack: federal/2024/f1040nr, field: "topmostSubform[0].Page2[0].AccountNo[0].f2_32[0]", widget: 0,
+         line: "35d", anchor: "34d"}
+      - {pack: federal/2025/f1040, field: "topmostSubform[0].Page2[0].AccountNo[0].f2_33[0]", widget: 0,
+         line: "35d", anchor: "34d"}
+      - {pack: federal/2025/f1040nr, field: "topmostSubform[0].Page2[0].AccountNo[0].f2_39[0]", widget: 0,
+         line: "35d", anchor: "34d"}
+  - family: f1040nr-2026-35e
+    reason: >-
+      the foreign mailing address entry sits on printed line 35e (the box spans the 'enter it here' row); the anchor
+      read the line's number 35
+    adjudication: JK10 blind vision read of the row crop, 2026-10-24
+    rows:
+      - {pack: federal/2026/f1040nr, field: "topmostSubform[0].Page2[0].f2_45[0]", widget: 0, line: "35e", anchor: "35"}
+  - family: f1040-2025-27c
+    reason: >-
+      the 'If you do not want to claim the EIC, check here' checkbox sits on line c under 27a (27c); the anchor read
+      26c from the row above
+    adjudication: JK10 blind vision read of the row crop, 2026-10-24
+    rows:
+      - {pack: federal/2025/f1040, field: "topmostSubform[0].Page2[0].c2_13[0]", widget: 0, line: "27c", anchor: "26c"}
+  - family: sched-1-2b-19b-19c
+    reason: >-
+      the date-of-divorce (2b, 19c) and recipient's SSN (19b) entries sit on their own printed sub-lines; the anchor
+      read the line one row above (1b, 18b, 18c)
+    adjudication: JK10 blind vision read of the row crop, 2026-10-24
+    rows:
+      - {pack: federal/2022/sched_1, field: "form1[0].Page1[0].f1_05[0]", widget: 0, line: "2b", anchor: "1b"}
+      - {pack: federal/2022/sched_1, field: "form1[0].Page2[0].Line19b_CombField[0].f2_10[0]", widget: 0,
+         line: "19b", anchor: "18b"}
+      - {pack: federal/2022/sched_1, field: "form1[0].Page2[0].f2_11[0]", widget: 0, line: "19c", anchor: "18c"}
+      - {pack: federal/2023/sched_1, field: "form1[0].Page1[0].f1_05[0]", widget: 0, line: "2b", anchor: "1b"}
+      - {pack: federal/2023/sched_1, field: "form1[0].Page2[0].Line19b_CombField[0].f2_10[0]", widget: 0,
+         line: "19b", anchor: "18b"}
+      - {pack: federal/2023/sched_1, field: "form1[0].Page2[0].f2_11[0]", widget: 0, line: "19c", anchor: "18c"}
+      - {pack: federal/2024/sched_1, field: "form1[0].Page1[0].f1_06[0]", widget: 0, line: "2b", anchor: "1b"}
+      - {pack: federal/2024/sched_1, field: "form1[0].Page2[0].Line19b_CombField[0].f2_10[0]", widget: 0,
+         line: "19b", anchor: "18b"}
+      - {pack: federal/2024/sched_1, field: "form1[0].Page2[0].f2_11[0]", widget: 0, line: "19c", anchor: "18c"}
+      - {pack: federal/2025/sched_1, field: "topmostSubform[0].Page1[0].f1_06[0]", widget: 0, line: "2b", anchor: "1b"}
+      - {pack: federal/2025/sched_1, field: "topmostSubform[0].Page2[0].Line19b_CombField[0].f2_10[0]", widget: 0,
+         line: "19b", anchor: "18b"}
+      - {pack: federal/2025/sched_1, field: "topmostSubform[0].Page2[0].f2_11[0]", widget: 0,
+         line: "19c", anchor: "18c"}
+  - family: sched-1-8s
+    reason: >-
+      the line 8s amount box (in parentheses) sits next to the printed '8s' Medicaid waiver payments label; the
+      anchor read 1a
+    adjudication: JK10 blind vision read of the row crop, 2026-10-24
+    rows:
+      - {pack: federal/2024/sched_1, field: "form1[0].Page1[0].f1_30[0]", widget: 0, line: "8s", anchor: "1a"}
+      - {pack: federal/2025/sched_1, field: "topmostSubform[0].Page1[0].f1_31[0]", widget: 0, line: "8s", anchor: "1a"}
+      - {pack: federal/2026/sched_1, field: "topmostSubform[0].Page1[0].f1_31[0]", widget: 0, line: "8s", anchor: "1a"}
+  - family: sched-c-33a-cost
+    reason: >-
+      the checkbox printed 'a Cost' on line 33 (method of valuing inventory); the 'a' designator labels this one
+      checkbox and the anchor read the line's number 33
+    adjudication: JK10 blind vision read of the row crop, 2026-10-24
+    rows:
+      - {pack: federal/2022/sched_c, field: "topmostSubform[0].Page2[0].c2_1[0]", widget: 0, line: "33a", anchor: "33"}
+      - {pack: federal/2023/sched_c, field: "topmostSubform[0].Page2[0].c2_1[0]", widget: 0, line: "33a", anchor: "33"}
+      - {pack: federal/2024/sched_c, field: "topmostSubform[0].Page2[0].c2_1[0]", widget: 0, line: "33a", anchor: "33"}
+      - {pack: federal/2025/sched_c, field: "topmostSubform[0].Page2[0].c2_1[0]", widget: 0, line: "33a", anchor: "33"}
+  - family: f1116-line-2-columns
+    reason: >-
+      line 2 'Expenses definitely related' in column A, B or C (Foreign Country or U.S. Possession / Territory); the
+      anchor read 1a from the row above
+    adjudication: JK10 blind vision read of the row crop, 2026-10-24
+    rows:
+      - {pack: federal/2023/f1116, field: "topmostSubform[0].Page1[0].Part1Table[0].Line2[0].f1_14[0]", widget: 0,
+         line: "2", anchor: "1a"}
+      - {pack: federal/2023/f1116, field: "topmostSubform[0].Page1[0].Part1Table[0].Line2[0].f1_15[0]", widget: 0,
+         line: "2", anchor: "1a"}
+      - {pack: federal/2023/f1116, field: "topmostSubform[0].Page1[0].Part1Table[0].Line2[0].f1_16[0]", widget: 0,
+         line: "2", anchor: "1a"}
+      - {pack: federal/2024/f1116, field: "topmostSubform[0].Page1[0].Table_Part1_Lines2-6[0].Line2[0].f1_14[0]", widget: 0,
+         line: "2", anchor: "1a"}
+      - {pack: federal/2024/f1116, field: "topmostSubform[0].Page1[0].Table_Part1_Lines2-6[0].Line2[0].f1_15[0]", widget: 0,
+         line: "2", anchor: "1a"}
+      - {pack: federal/2024/f1116, field: "topmostSubform[0].Page1[0].Table_Part1_Lines2-6[0].Line2[0].f1_16[0]", widget: 0,
+         line: "2", anchor: "1a"}
+      - {pack: federal/2025/f1116, field: "topmostSubform[0].Page1[0].Table_Part1_Lines2-6[0].Line2[0].f1_14[0]", widget: 0,
+         line: "2", anchor: "1a"}
+      - {pack: federal/2025/f1116, field: "topmostSubform[0].Page1[0].Table_Part1_Lines2-6[0].Line2[0].f1_15[0]", widget: 0,
+         line: "2", anchor: "1a"}
+      - {pack: federal/2025/f1116, field: "topmostSubform[0].Page1[0].Table_Part1_Lines2-6[0].Line2[0].f1_16[0]", widget: 0,
+         line: "2", anchor: "1a"}
+  - family: f1116-4a-columns
+    reason: >-
+      line 4a 'Home mortgage interest' in column A, B or C; the anchor read the row's number 4
+    adjudication: JK10 blind vision read of the row crop, 2026-10-24
+    rows:
+      - {pack: federal/2023/f1116, field: "topmostSubform[0].Page1[0].Part1Table[0].Line4a[0].f1_38[0]", widget: 0,
+         line: "4a", anchor: "4"}
+      - {pack: federal/2023/f1116, field: "topmostSubform[0].Page1[0].Part1Table[0].Line4a[0].f1_39[0]", widget: 0,
+         line: "4a", anchor: "4"}
+      - {pack: federal/2023/f1116, field: "topmostSubform[0].Page1[0].Part1Table[0].Line4a[0].f1_40[0]", widget: 0,
+         line: "4a", anchor: "4"}
+      - {pack: federal/2024/f1116, field: "topmostSubform[0].Page1[0].Table_Part1_Lines2-6[0].Line4a[0].f1_38[0]", widget: 0,
+         line: "4a", anchor: "4"}
+      - {pack: federal/2024/f1116, field: "topmostSubform[0].Page1[0].Table_Part1_Lines2-6[0].Line4a[0].f1_39[0]", widget: 0,
+         line: "4a", anchor: "4"}
+      - {pack: federal/2024/f1116, field: "topmostSubform[0].Page1[0].Table_Part1_Lines2-6[0].Line4a[0].f1_40[0]", widget: 0,
+         line: "4a", anchor: "4"}
+      - {pack: federal/2025/f1116, field: "topmostSubform[0].Page1[0].Table_Part1_Lines2-6[0].Line4a[0].f1_38[0]", widget: 0,
+         line: "4a", anchor: "4"}
+      - {pack: federal/2025/f1116, field: "topmostSubform[0].Page1[0].Table_Part1_Lines2-6[0].Line4a[0].f1_39[0]", widget: 0,
+         line: "4a", anchor: "4"}
+      - {pack: federal/2025/f1116, field: "topmostSubform[0].Page1[0].Table_Part1_Lines2-6[0].Line4a[0].f1_40[0]", widget: 0,
+         line: "4a", anchor: "4"}
+  - family: f2441-line-8
+    reason: >-
+      the line 8 decimal amount box ('X . __') in the line-8 amount column; the anchor read 35 from elsewhere on the
+      page
+    adjudication: JK10 blind vision read of the row crop, 2026-10-24
+    rows:
+      - {pack: federal/2023/f2441, field: "topmostSubform[0].Page1[0].f1_35[0]", widget: 0, line: "8", anchor: "35"}
+      - {pack: federal/2024/f2441, field: "topmostSubform[0].Page1[0].f1_35[0]", widget: 0, line: "8", anchor: "35"}
+      - {pack: federal/2025/f2441, field: "topmostSubform[0].Page1[0].f1_32[0]", widget: 0, line: "8", anchor: "35"}
+  - family: f2555-12b-15b
+    reason: >-
+      the 'If Yes, who and for what period?' (12b) and type-of-visa (15b) entries sit on their own printed sub-lines;
+      the anchor read the line one row above (11b, 14b)
+    adjudication: JK10 blind vision read of the row crop, 2026-10-24
+    rows:
+      - {pack: federal/2023/f2555, field: "topmostSubform[0].Page1[0].f1_17[0]", widget: 0, line: "12b", anchor: "11b"}
+      - {pack: federal/2023/f2555, field: "topmostSubform[0].Page1[0].f1_52[0]", widget: 0, line: "15b", anchor: "14b"}
+      - {pack: federal/2024/f2555, field: "topmostSubform[0].Page1[0].f1_17[0]", widget: 0, line: "12b", anchor: "11b"}
+      - {pack: federal/2024/f2555, field: "topmostSubform[0].Page1[0].f1_52[0]", widget: 0, line: "15b", anchor: "14b"}
+      - {pack: federal/2025/f2555, field: "topmostSubform[0].Page1[0].f1_17[0]", widget: 0, line: "12b", anchor: "11b"}
+      - {pack: federal/2025/f2555, field: "topmostSubform[0].Page1[0].f1_52[0]", widget: 0, line: "15b", anchor: "14b"}
+  - family: f8316-amount-cells
+    reason: >-
+      the dollar amount under the cell header 'N. If yes, show amount'; the anchor read N-1, the Yes/No question
+      printed to its left
+    adjudication: JK10 blind vision read of the row crop, 2026-10-24
+    rows:
+      - {pack: federal/2023/f8316, field: "FillText01", widget: 0, line: "2", anchor: "1"}
+      - {pack: federal/2023/f8316, field: "FillText03", widget: 0, line: "4", anchor: "3"}
+      - {pack: federal/2023/f8316, field: "FillText05", widget: 0, line: "6", anchor: "5"}
+      - {pack: federal/2023/f8316, field: "FillText10", widget: 0, line: "8", anchor: "7"}
+      - {pack: federal/2024/f8316, field: "FillText01", widget: 0, line: "2", anchor: "1"}
+      - {pack: federal/2024/f8316, field: "FillText03", widget: 0, line: "4", anchor: "3"}
+      - {pack: federal/2024/f8316, field: "FillText05", widget: 0, line: "6", anchor: "5"}
+      - {pack: federal/2024/f8316, field: "FillText10", widget: 0, line: "8", anchor: "7"}
+      - {pack: federal/2025/f8316, field: "FillText01", widget: 0, line: "2", anchor: "1"}
+      - {pack: federal/2025/f8316, field: "FillText03", widget: 0, line: "4", anchor: "3"}
+      - {pack: federal/2025/f8316, field: "FillText05", widget: 0, line: "6", anchor: "5"}
+      - {pack: federal/2025/f8316, field: "FillText10", widget: 0, line: "8", anchor: "7"}
+      - {pack: federal/2026/f8316, field: "FillText01", widget: 0, line: "2", anchor: "1"}
+      - {pack: federal/2026/f8316, field: "FillText03", widget: 0, line: "4", anchor: "3"}
+      - {pack: federal/2026/f8316, field: "FillText05", widget: 0, line: "6", anchor: "5"}
+      - {pack: federal/2026/f8316, field: "FillText10", widget: 0, line: "8", anchor: "7"}
+  - family: f8889-17a
+    reason: >-
+      the exceptions checkbox ('check here') sits on printed line 17a; the anchor read the line's number 17
+    adjudication: JK10 blind vision read of the row crop, 2026-10-24
+    rows:
+      - {pack: federal/2023/f8889, field: "topmostSubform[0].Page1[0].c1_2[0]", widget: 0, line: "17a", anchor: "17"}
+      - {pack: federal/2024/f8889, field: "topmostSubform[0].Page1[0].c1_2[0]", widget: 0, line: "17a", anchor: "17"}
+      - {pack: federal/2025/f8889, field: "topmostSubform[0].Page1[0].c1_2[0]", widget: 0, line: "17a", anchor: "17"}
+  - family: f8962-8a
+    reason: >-
+      the annual contribution amount box labeled '8a' (8b is a separate box to its right); the anchor read the line's
+      number 8
+    adjudication: JK10 blind vision read of the row crop, 2026-10-24
+    rows:
+      - {pack: federal/2024/f8962, field: "topmostSubform[0].Page1[0].f1_10[0]", widget: 0, line: "8a", anchor: "8"}
+      - {pack: federal/2025/f8962, field: "topmostSubform[0].Page1[0].f1_10[0]", widget: 0, line: "8a", anchor: "8"}
+  - family: sched-1a-2025-14a
+    reason: >-
+      the inner amount box labeled '14a' (qualified overtime from W-2; 14c is the outer total column); the anchor
+      read the line's number 14
+    adjudication: JK10 blind vision read of the row crop, 2026-10-24
+    rows:
+      - {pack: federal/2025/sched_1a, field: "form1[0].Page1[0].f1_22[0]", widget: 0, line: "14a", anchor: "14"}
+  - family: f8938-2026-22a
+    reason: >-
+      the checkbox printed '22a Account opened during tax year' (each of 22a-22d has its own printed designator); the
+      anchor read the line's number 22
+    adjudication: JK10 blind vision read of the row crop, 2026-10-24
+    rows:
+      - {pack: federal/2026/f8938, field: "topmostSubform[0].Page2[0].c2_2[0]", widget: 0, line: "22a", anchor: "22"}
+  - family: al40-schedule-a-line-2-carry
+    reason: >-
+      carry-forward widget: the second widget of the Form 40 line-10 field is Schedule A's line-2 inner box ('Enter
+      amount from Form 40, line 10'); one field fills both, so the key 10 is right for the field and the anchor reads
+      the box's own row 2
+    adjudication: JK10 blind vision read of the row crop, 2026-10-24
+    rows:
+      - {pack: states/al/2023/al40, field: "ADJGRSINC", widget: 1, line: "10", anchor: "2"}
+      - {pack: states/al/2024/al40, field: "ADJGRSINC", widget: 1, line: "10", anchor: "2"}
+      - {pack: states/al/2025/al40, field: "ADJGRSINC", widget: 1, line: "10", anchor: "2"}
+  - family: az-inline-a-boxes
+    reason: >-
+      the inline box after the printed 'Na' (529 College Savings Plans, estimated tax payments) on row N, whose
+      right-column total is Nc; the anchor read the row's number N
+    adjudication: JK10 blind vision read of the row crop, 2026-10-24
+    rows:
+      - {pack: states/az/2023/az140, field: "34a", widget: 0, line: "34a", anchor: "34"}
+      - {pack: states/az/2023/az140, field: "54a", widget: 0, line: "54a", anchor: "54"}
+      - {pack: states/az/2023/az140nr, field: "63a", widget: 0, line: "63a", anchor: "63"}
+      - {pack: states/az/2023/az140py, field: "41a", widget: 0, line: "41a", anchor: "41"}
+      - {pack: states/az/2023/az140py, field: "64a", widget: 0, line: "64a", anchor: "64"}
+      - {pack: states/az/2024/az140, field: "34a", widget: 0, line: "34a", anchor: "34"}
+      - {pack: states/az/2024/az140, field: "54a", widget: 0, line: "54a", anchor: "54"}
+      - {pack: states/az/2025/az140, field: "34a", widget: 0, line: "34a", anchor: "34"}
+      - {pack: states/az/2025/az140, field: "54a", widget: 0, line: "54a", anchor: "54"}
+  - family: ca-sched-ca-inline-a
+    reason: >-
+      the inline box after the printed 'a' on row N (dividends, IRA distributions, pensions, social security); Nb
+      labels the column A/B/C row; the anchor read the row's number N
+    adjudication: JK10 blind vision read of the row crop, 2026-10-24
+    rows:
+      - {pack: states/ca/2023/sched_ca_540, field: "1034", widget: 0, line: "3a", anchor: "3"}
+      - {pack: states/ca/2023/sched_ca_540, field: "1042", widget: 0, line: "5a", anchor: "5"}
+      - {pack: states/ca/2024/sched_ca_540, field: "540ca_form - 1034", widget: 0, line: "3a", anchor: "3"}
+      - {pack: states/ca/2024/sched_ca_540, field: "540ca_form - 1042", widget: 0, line: "5a", anchor: "5"}
+      - {pack: states/ca/2025/sched_ca_540, field: "540ca_form - 1034", widget: 0, line: "3a", anchor: "3"}
+      - {pack: states/ca/2025/sched_ca_540, field: "540ca_form - 1038", widget: 0, line: "4a", anchor: "4"}
+      - {pack: states/ca/2025/sched_ca_540, field: "540ca_form - 1042", widget: 0, line: "5a", anchor: "5"}
+      - {pack: states/ca/2025/sched_ca_540, field: "540ca_form - 1046", widget: 0, line: "6a", anchor: "6"}
+  - family: ia1040-36a-penalty
+    reason: >-
+      the box after the printed '36a. Penalty' (the dollars part; line 36's total is at the right); the anchor read
+      the line's number 36
+    adjudication: JK10 blind vision read of the row crop, 2026-10-24
+    rows:
+      - {pack: states/ia/2023/ia1040, field: "36 a Penalty", widget: 0, line: "36a", anchor: "36"}
+      - {pack: states/ia/2024/ia1040, field: "36 a Penalty", widget: 0, line: "36a", anchor: "36"}
+      - {pack: states/ia/2025/ia1040, field: "36 a Penalty", widget: 0, line: "36a", anchor: "36"}
+  - family: ma-form1-2023-43a
+    reason: >-
+      the small box after the printed 'a. Number of qualifying children' on row 43 (a count, 43a's only box); the
+      anchor read the row's number 43
+    adjudication: JK10 blind vision read of the row crop, 2026-10-24
+    rows:
+      - {pack: states/ma/2023/form1, field: "line 43a. number of qualifying children for earned income credit", widget: 0,
+         line: "43a", anchor: "43"}
+  - family: mo1040-22a
+    reason: >-
+      the box after the printed 'A.' on row 22 (a sibling 'B.' box follows; line 22's own amount is the right
+      column); the anchor read the row's number 22
+    adjudication: JK10 blind vision read of the row crop, 2026-10-24
+    rows:
+      - {pack: states/mo/2023/mo1040, field: "line22a", widget: 0, line: "22a", anchor: "22"}
+      - {pack: states/mo/2024/mo1040, field: "line22a", widget: 0, line: "22a", anchor: "22"}
+  - family: nc-d400-20a-20b
+    reason: >-
+      the boxes under the printed 'a. Your tax withheld' and 'b. Spouse's tax withheld' on row 20 (line 20 has no
+      total box); the anchor read the row's number 20
+    adjudication: JK10 blind vision read of the row crop, 2026-10-24
+    rows:
+      - {pack: states/nc/2023/d400, field: "y_d400wf_li20a_pg2_good", widget: 0, line: "20a", anchor: "20"}
+      - {pack: states/nc/2023/d400, field: "y_d400wf_li20b_pg2_good", widget: 0, line: "20b", anchor: "20"}
+      - {pack: states/nc/2024/d400, field: "y_d400wf_li20a_pg2_good", widget: 0, line: "20a", anchor: "20"}
+      - {pack: states/nc/2024/d400, field: "y_d400wf_li20b_pg2_good", widget: 0, line: "20b", anchor: "20"}
+      - {pack: states/nc/2025/d400, field: "y_d400wf_li20a_pg2_good", widget: 0, line: "20a", anchor: "20"}
+      - {pack: states/nc/2025/d400, field: "y_d400wf_li20b_pg2_good", widget: 0, line: "20b", anchor: "20"}
+  - family: nd1-28-32
+    reason: >-
+      the total-payments entry after '(AJ) 28' and the refund entry after '(SR) 32'; the anchor read the line above
+      (27, 31)
+    adjudication: JK10 blind vision read of the row crop, 2026-10-24
+    rows:
+      - {pack: states/nd/2023/nd1, field: "AJ 28", widget: 0, line: "28", anchor: "27"}
+      - {pack: states/nd/2023/nd1, field: "SR 32", widget: 0, line: "32", anchor: "31"}
+      - {pack: states/nd/2024/nd1, field: "AJ 28", widget: 0, line: "28", anchor: "27"}
+  - family: vt-in111-18
+    reason: >-
+      the box after the printed '18.' under the header 'Vermont Tax Credits' (the 17 + 18 = 19 row); the anchor read
+      17
+    adjudication: JK10 blind vision read of the row crop, 2026-10-24
+    rows:
+      - {pack: states/vt/2023/in111, field: "Line18", widget: 0, line: "18", anchor: "17"}
+      - {pack: states/vt/2024/in111, field: "Line18", widget: 0, line: "18", anchor: "17"}
+  - family: wv-it140-2023-24a
+    reason: >-
+      the box beside the printed '24A. CHILDREN'S TRUST FUND' (line 24's sum is the separate right-column box); the
+      anchor read the line's number 24
+    adjudication: JK10 blind vision read of the row crop, 2026-10-24
+    rows:
+      - {pack: states/wv/2023/it140, field: "it140_24A", widget: 0, line: "24a", anchor: "24"}
+  # Phase K JK10 (2026-10-25), fixer round 2: three families the declared key shapes (key_shapes.yaml) brought
+  # into the gate. Read on the row crops by the round-2 fixer (not blind: the two candidate lines were known).
+  - family: nj1040-undefined-114-twin
+    reason: >-
+      the blank names two widgets "undefined_114": widget 0 is line 42's third digit cell (the pack binds it) and
+      widget 1 is line 55's second digit cell, a mirror twin that always shows line 42's digit (the pack banner's
+      UNRESOLVED item); the anchor reads 55 beside the twin
+    adjudication: JK10 fixer round 2, vision read of the row crop, 2026-10-25
+    rows:
+      - {pack: states/nj/2023/nj1040, field: "undefined_114", widget: 1, line: "42", anchor: "55"}
+      - {pack: states/nj/2024/nj1040, field: "undefined_114", widget: 1, line: "42", anchor: "55"}
+      - {pack: states/nj/2025/nj1040, field: "undefined_114", widget: 1, line: "42", anchor: "55"}
+  - family: ca-sched-ca-540-part2-5a
+    reason: >-
+      the boxes sit on Part II's printed row "5 a State and local income tax or general sales taxes . 5a" (columns A
+      and B); the anchor read 4a from the row above
+    adjudication: JK10 fixer round 2, vision read of the row crop, 2026-10-25
+    rows:
+      - {pack: states/ca/2023/sched_ca_540, field: "5006", widget: 0, line: "5a", anchor: "4a"}
+      - {pack: states/ca/2023/sched_ca_540, field: "5007", widget: 0, line: "5a", anchor: "4a"}
+      - {pack: states/ca/2025/sched_ca_540, field: "540ca_form - 5006", widget: 0, line: "5a", anchor: "4a"}
+      - {pack: states/ca/2025/sched_ca_540, field: "540ca_form - 5007", widget: 0, line: "5a", anchor: "4a"}
+  - family: ca-sched-ca-540nr-2023-5a
+    reason: >-
+      the inline box after "5 Pensions and annuities. See instructions. a" (the 5b amount columns follow it); the
+      anchor read the row's number 5 without its letter
+    adjudication: JK10 fixer round 2, vision read of the row crop, 2026-10-25
+    rows:
+      - {pack: states/ca/2023/sched_ca_540nr, field: "1096", widget: 0, line: "5a", anchor: "5"}
+  - family: r3-numbered-options
+    reason: >-
+      the box is one of line N's numbered options ("1 [ ] 8814  2 [ ] 4972  3 [ ]", "(1) Partnership (2) Corporation",
+      family size "1 [ ] 2 [ ] 3 [ ] 4 [ ]", "(1) 65 or older (2) Blind") or the entry after the last one, on line N's
+      printed row; the anchor read the option's number as a line
+    adjudication: JK10 fixer round 3, vision read of the row crop, 2026-10-25
+    rows:
+      - {pack: federal/2022/f1040nr, field: "topmostSubform[0].Page2[0].c2_1[0]", widget: 0, line: "16", anchor: "1"}  # 16.form_8814
+      - {pack: federal/2022/f1040nr, field: "topmostSubform[0].Page2[0].c2_2[0]", widget: 0, line: "16", anchor: "2"}  # 16.form_4972
+      - {pack: federal/2022/f1040nr, field: "topmostSubform[0].Page2[0].c2_3[0]", widget: 0, line: "16", anchor: "3"}  # 16.form_other
+      - {pack: federal/2022/f1040nr, field: "topmostSubform[0].Page2[0].f2_1[0]", widget: 0, line: "16", anchor: "3"}  # 16.form_other_number
+      - {pack: federal/2023/f1040, field: "topmostSubform[0].Page2[0].c2_2[0]", widget: 0, line: "16", anchor: "2"}  # 16.form_4972
+      - {pack: federal/2023/f1040, field: "topmostSubform[0].Page2[0].c2_3[0]", widget: 0, line: "16", anchor: "3"}  # 16.form_other
+      - {pack: federal/2023/f1040, field: "topmostSubform[0].Page2[0].f2_01[0]", widget: 0, line: "16", anchor: "3"}  # 16.form_other_number
+      - {pack: federal/2023/f1040nr, field: "topmostSubform[0].Page2[0].c2_1[0]", widget: 0, line: "16", anchor: "1"}  # 16.form_8814
+      - {pack: federal/2023/f1040nr, field: "topmostSubform[0].Page2[0].c2_2[0]", widget: 0, line: "16", anchor: "2"}  # 16.form_4972
+      - {pack: federal/2023/f1040nr, field: "topmostSubform[0].Page2[0].c2_3[0]", widget: 0, line: "16", anchor: "3"}  # 16.form_other
+      - {pack: federal/2023/f1040nr, field: "topmostSubform[0].Page2[0].f2_1[0]", widget: 0, line: "16", anchor: "3"}  # 16.form_other_number
+      - {pack: federal/2023/f8938, field: "topmostSubform[0].Page2[0].c2_11[0]", widget: 0, line: "35c", anchor: "1"}  # 35c.partnership
+      - {pack: federal/2023/f8938, field: "topmostSubform[0].Page2[0].c2_11[1]", widget: 0, line: "35c", anchor: "2"}  # 35c.corporation
+      - {pack: federal/2023/f8938, field: "topmostSubform[0].Page2[0].c2_11[2]", widget: 0, line: "35c", anchor: "3"}  # 35c.trust
+      - {pack: federal/2023/f8938, field: "topmostSubform[0].Page2[0].c2_11[3]", widget: 0, line: "35c", anchor: "4"}  # 35c.estate
+      - {pack: federal/2023/f8938, field: "topmostSubform[0].Page2[0].c2_13[0]", widget: 0, line: "36b", anchor: "1"}  # 36b.individual
+      - {pack: federal/2023/f8938, field: "topmostSubform[0].Page2[0].c2_13[1]", widget: 0, line: "36b", anchor: "2"}  # 36b.partnership
+      - {pack: federal/2023/f8938, field: "topmostSubform[0].Page2[0].c2_13[2]", widget: 0, line: "36b", anchor: "3"}  # 36b.corporation
+      - {pack: federal/2023/f8938, field: "topmostSubform[0].Page2[0].c2_13[3]", widget: 0, line: "36b", anchor: "4"}  # 36b.trust
+      - {pack: federal/2023/f8938, field: "topmostSubform[0].Page2[0].c2_13[4]", widget: 0, line: "36b", anchor: "5"}  # 36b.estate
+      - {pack: federal/2024/f1040, field: "topmostSubform[0].Page2[0].c2_2[0]", widget: 0, line: "16", anchor: "2"}  # 16.form_4972
+      - {pack: federal/2024/f1040, field: "topmostSubform[0].Page2[0].c2_3[0]", widget: 0, line: "16", anchor: "3"}  # 16.form_other
+      - {pack: federal/2024/f1040, field: "topmostSubform[0].Page2[0].f2_01[0]", widget: 0, line: "16", anchor: "3"}  # 16.form_other_number
+      - {pack: federal/2024/f1040nr, field: "topmostSubform[0].Page2[0].c2_1[0]", widget: 0, line: "16", anchor: "1"}  # 16.form_8814
+      - {pack: federal/2024/f1040nr, field: "topmostSubform[0].Page2[0].c2_2[0]", widget: 0, line: "16", anchor: "2"}  # 16.form_4972
+      - {pack: federal/2024/f1040nr, field: "topmostSubform[0].Page2[0].c2_3[0]", widget: 0, line: "16", anchor: "3"}  # 16.form_other
+      - {pack: federal/2024/f1040nr, field: "topmostSubform[0].Page2[0].f2_1[0]", widget: 0, line: "16", anchor: "3"}  # 16.form_other_number
+      - {pack: federal/2024/f8938, field: "topmostSubform[0].Page2[0].c2_11[0]", widget: 0, line: "35c", anchor: "1"}  # 35c.partnership
+      - {pack: federal/2024/f8938, field: "topmostSubform[0].Page2[0].c2_11[1]", widget: 0, line: "35c", anchor: "2"}  # 35c.corporation
+      - {pack: federal/2024/f8938, field: "topmostSubform[0].Page2[0].c2_11[2]", widget: 0, line: "35c", anchor: "3"}  # 35c.trust
+      - {pack: federal/2024/f8938, field: "topmostSubform[0].Page2[0].c2_11[3]", widget: 0, line: "35c", anchor: "4"}  # 35c.estate
+      - {pack: federal/2024/f8938, field: "topmostSubform[0].Page2[0].c2_13[0]", widget: 0, line: "36b", anchor: "1"}  # 36b.individual
+      - {pack: federal/2024/f8938, field: "topmostSubform[0].Page2[0].c2_13[1]", widget: 0, line: "36b", anchor: "2"}  # 36b.partnership
+      - {pack: federal/2024/f8938, field: "topmostSubform[0].Page2[0].c2_13[2]", widget: 0, line: "36b", anchor: "3"}  # 36b.corporation
+      - {pack: federal/2024/f8938, field: "topmostSubform[0].Page2[0].c2_13[3]", widget: 0, line: "36b", anchor: "4"}  # 36b.trust
+      - {pack: federal/2024/f8938, field: "topmostSubform[0].Page2[0].c2_13[4]", widget: 0, line: "36b", anchor: "5"}  # 36b.estate
+      - {pack: federal/2025/f1040, field: "topmostSubform[0].Page1[0].c1_34[0]", widget: 0, line: "3c", anchor: "2"}  # 3c.line_3b
+      - {pack: federal/2025/f1040, field: "topmostSubform[0].Page1[0].c1_35[0]", widget: 0, line: "4c", anchor: "1"}  # 4c.rollover
+      - {pack: federal/2025/f1040, field: "topmostSubform[0].Page1[0].c1_36[0]", widget: 0, line: "4c", anchor: "2"}  # 4c.qcd
+      - {pack: federal/2025/f1040, field: "topmostSubform[0].Page1[0].c1_37[0]", widget: 0, line: "4c", anchor: "3"}  # 4c.other
+      - {pack: federal/2025/f1040, field: "topmostSubform[0].Page1[0].c1_38[0]", widget: 0, line: "5c", anchor: "1"}  # 5c.rollover
+      - {pack: federal/2025/f1040, field: "topmostSubform[0].Page1[0].c1_39[0]", widget: 0, line: "5c", anchor: "2"}  # 5c.pso
+      - {pack: federal/2025/f1040, field: "topmostSubform[0].Page1[0].c1_40[0]", widget: 0, line: "5c", anchor: "3"}  # 5c.other
+      - {pack: federal/2025/f1040, field: "topmostSubform[0].Page1[0].f1_64[0]", widget: 0, line: "4c", anchor: "3"}  # 4c.other_text
+      - {pack: federal/2025/f1040, field: "topmostSubform[0].Page1[0].f1_67[0]", widget: 0, line: "5c", anchor: "3"}  # 5c.other_text
+      - {pack: federal/2025/f1040, field: "topmostSubform[0].Page2[0].c2_10[0]", widget: 0, line: "16", anchor: "2"}  # 16.form_4972
+      - {pack: federal/2025/f1040, field: "topmostSubform[0].Page2[0].c2_11[0]", widget: 0, line: "16", anchor: "3"}  # 16.form_other
+      - {pack: federal/2025/f1040, field: "topmostSubform[0].Page2[0].c2_9[0]", widget: 0, line: "16", anchor: "1"}  # 16.form_8814
+      - {pack: federal/2025/f1040, field: "topmostSubform[0].Page2[0].f2_07[0]", widget: 0, line: "16", anchor: "3"}  # 16.form_other_number
+      - {pack: federal/2025/f1040nr, field: "topmostSubform[0].Page1[0].c1_17[0]", widget: 0, line: "3c", anchor: "2"}  # 3c.line_3b
+      - {pack: federal/2025/f1040nr, field: "topmostSubform[0].Page1[0].c1_18[0]", widget: 0, line: "4c", anchor: "1"}  # 4c.rollover
+      - {pack: federal/2025/f1040nr, field: "topmostSubform[0].Page1[0].c1_19[0]", widget: 0, line: "4c", anchor: "2"}  # 4c.qcd
+      - {pack: federal/2025/f1040nr, field: "topmostSubform[0].Page1[0].c1_20[0]", widget: 0, line: "4c", anchor: "3"}  # 4c.other
+      - {pack: federal/2025/f1040nr, field: "topmostSubform[0].Page1[0].c1_21[0]", widget: 0, line: "5c", anchor: "1"}  # 5c.rollover
+      - {pack: federal/2025/f1040nr, field: "topmostSubform[0].Page1[0].c1_22[0]", widget: 0, line: "5c", anchor: "2"}  # 5c.pso
+      - {pack: federal/2025/f1040nr, field: "topmostSubform[0].Page1[0].c1_23[0]", widget: 0, line: "5c", anchor: "3"}  # 5c.other
+      - {pack: federal/2025/f1040nr, field: "topmostSubform[0].Page1[0].f1_61[0]", widget: 0, line: "4c", anchor: "3"}  # 4c.other_text
+      - {pack: federal/2025/f1040nr, field: "topmostSubform[0].Page1[0].f1_64[0]", widget: 0, line: "5c", anchor: "3"}  # 5c.other_text
+      - {pack: federal/2025/f1040nr, field: "topmostSubform[0].Page2[0].c2_1[0]", widget: 0, line: "16", anchor: "1"}  # 16.form_8814
+      - {pack: federal/2025/f1040nr, field: "topmostSubform[0].Page2[0].c2_2[0]", widget: 0, line: "16", anchor: "2"}  # 16.form_4972
+      - {pack: federal/2025/f1040nr, field: "topmostSubform[0].Page2[0].c2_3[0]", widget: 0, line: "16", anchor: "3"}  # 16.form_other
+      - {pack: federal/2025/f1040nr, field: "topmostSubform[0].Page2[0].f2_08[0]", widget: 0, line: "16", anchor: "3"}  # 16.form_other_number
+      - {pack: federal/2025/f8938, field: "topmostSubform[0].Page2[0].c2_11[0]", widget: 0, line: "35c", anchor: "1"}  # 35c.partnership
+      - {pack: federal/2025/f8938, field: "topmostSubform[0].Page2[0].c2_11[1]", widget: 0, line: "35c", anchor: "2"}  # 35c.corporation
+      - {pack: federal/2025/f8938, field: "topmostSubform[0].Page2[0].c2_11[2]", widget: 0, line: "35c", anchor: "3"}  # 35c.trust
+      - {pack: federal/2025/f8938, field: "topmostSubform[0].Page2[0].c2_11[3]", widget: 0, line: "35c", anchor: "4"}  # 35c.estate
+      - {pack: federal/2025/f8938, field: "topmostSubform[0].Page2[0].c2_13[0]", widget: 0, line: "36b", anchor: "1"}  # 36b.individual
+      - {pack: federal/2025/f8938, field: "topmostSubform[0].Page2[0].c2_13[1]", widget: 0, line: "36b", anchor: "2"}  # 36b.partnership
+      - {pack: federal/2025/f8938, field: "topmostSubform[0].Page2[0].c2_13[2]", widget: 0, line: "36b", anchor: "3"}  # 36b.corporation
+      - {pack: federal/2025/f8938, field: "topmostSubform[0].Page2[0].c2_13[3]", widget: 0, line: "36b", anchor: "4"}  # 36b.trust
+      - {pack: federal/2025/f8938, field: "topmostSubform[0].Page2[0].c2_13[4]", widget: 0, line: "36b", anchor: "5"}  # 36b.estate
+      - {pack: federal/2025/sched_2, field: "form1[0].Page1[0].Line4_ReadOrder[0].c1_3[0]", widget: 0, line: "4", anchor: "1"}  # 4.exempt_4361
+      - {pack: federal/2025/sched_2, field: "form1[0].Page1[0].Line4_ReadOrder[0].c1_4[0]", widget: 0, line: "4", anchor: "2"}  # 4.exempt_4029
+      - {pack: federal/2025/sched_2, field: "form1[0].Page1[0].Line4_ReadOrder[0].c1_5[0]", widget: 0, line: "4", anchor: "3"}  # 4.exempt_other
+      - {pack: federal/2025/sched_2, field: "form1[0].Page1[0].Line4_ReadOrder[0].f1_14[0]", widget: 0, line: "4", anchor: "3"}  # 4.exempt_other_type
+      - {pack: federal/2026/f1040, field: "topmostSubform[0].Page1[0].c1_36[0]", widget: 0, line: "3c", anchor: "2"}  # 3c.line_3b
+      - {pack: federal/2026/f1040, field: "topmostSubform[0].Page1[0].c1_37[0]", widget: 0, line: "4c", anchor: "1"}  # 4c.rollover
+      - {pack: federal/2026/f1040, field: "topmostSubform[0].Page1[0].c1_38[0]", widget: 0, line: "4c", anchor: "2"}  # 4c.qcd
+      - {pack: federal/2026/f1040, field: "topmostSubform[0].Page1[0].c1_39[0]", widget: 0, line: "4c", anchor: "3"}  # 4c.other
+      - {pack: federal/2026/f1040, field: "topmostSubform[0].Page1[0].c1_40[0]", widget: 0, line: "5c", anchor: "1"}  # 5c.rollover
+      - {pack: federal/2026/f1040, field: "topmostSubform[0].Page1[0].c1_41[0]", widget: 0, line: "5c", anchor: "2"}  # 5c.pso
+      - {pack: federal/2026/f1040, field: "topmostSubform[0].Page1[0].c1_42[0]", widget: 0, line: "5c", anchor: "3"}  # 5c.other
+      - {pack: federal/2026/f1040, field: "topmostSubform[0].Page1[0].f1_64[0]", widget: 0, line: "4c", anchor: "3"}  # 4c.other_text
+      - {pack: federal/2026/f1040, field: "topmostSubform[0].Page1[0].f1_67[0]", widget: 0, line: "5c", anchor: "3"}  # 5c.other_text
+      - {pack: federal/2026/f1040, field: "topmostSubform[0].Page2[0].c2_10[0]", widget: 0, line: "16", anchor: "2"}  # 16.form_4972
+      - {pack: federal/2026/f1040, field: "topmostSubform[0].Page2[0].c2_11[0]", widget: 0, line: "16", anchor: "3"}  # 16.form_other
+      - {pack: federal/2026/f1040, field: "topmostSubform[0].Page2[0].c2_9[0]", widget: 0, line: "16", anchor: "1"}  # 16.form_8814
+      - {pack: federal/2026/f1040, field: "topmostSubform[0].Page2[0].f2_08[0]", widget: 0, line: "16", anchor: "3"}  # 16.form_other_number
+      - {pack: federal/2026/f1040nr, field: "topmostSubform[0].Page1[0].c1_18[0]", widget: 0, line: "3c", anchor: "2"}  # 3c.line_3b
+      - {pack: federal/2026/f1040nr, field: "topmostSubform[0].Page1[0].c1_19[0]", widget: 0, line: "4c", anchor: "1"}  # 4c.rollover
+      - {pack: federal/2026/f1040nr, field: "topmostSubform[0].Page1[0].c1_20[0]", widget: 0, line: "4c", anchor: "2"}  # 4c.qcd
+      - {pack: federal/2026/f1040nr, field: "topmostSubform[0].Page1[0].c1_21[0]", widget: 0, line: "4c", anchor: "3"}  # 4c.other
+      - {pack: federal/2026/f1040nr, field: "topmostSubform[0].Page1[0].c1_22[0]", widget: 0, line: "5c", anchor: "1"}  # 5c.rollover
+      - {pack: federal/2026/f1040nr, field: "topmostSubform[0].Page1[0].c1_23[0]", widget: 0, line: "5c", anchor: "2"}  # 5c.pso
+      - {pack: federal/2026/f1040nr, field: "topmostSubform[0].Page1[0].c1_24[0]", widget: 0, line: "5c", anchor: "3"}  # 5c.other
+      - {pack: federal/2026/f1040nr, field: "topmostSubform[0].Page1[0].f1_61[0]", widget: 0, line: "4c", anchor: "3"}  # 4c.other_text
+      - {pack: federal/2026/f1040nr, field: "topmostSubform[0].Page1[0].f1_64[0]", widget: 0, line: "5c", anchor: "3"}  # 5c.other_text
+      - {pack: federal/2026/f1040nr, field: "topmostSubform[0].Page2[0].c2_2[0]", widget: 0, line: "16", anchor: "2"}  # 16.form_4972
+      - {pack: federal/2026/f1040nr, field: "topmostSubform[0].Page2[0].c2_3[0]", widget: 0, line: "16", anchor: "3"}  # 16.form_other
+      - {pack: federal/2026/f1040nr, field: "topmostSubform[0].Page2[0].f2_09[0]", widget: 0, line: "16", anchor: "3"}  # 16.form_other_number
+      - {pack: federal/2026/f8938, field: "topmostSubform[0].Page2[0].c2_11[1]", widget: 0, line: "35c", anchor: "2"}  # 35c.corporation
+      - {pack: federal/2026/f8938, field: "topmostSubform[0].Page2[0].c2_11[2]", widget: 0, line: "35c", anchor: "3"}  # 35c.trust
+      - {pack: federal/2026/f8938, field: "topmostSubform[0].Page2[0].c2_11[3]", widget: 0, line: "35c", anchor: "4"}  # 35c.estate
+      - {pack: federal/2026/f8938, field: "topmostSubform[0].Page2[0].c2_13[1]", widget: 0, line: "36b", anchor: "2"}  # 36b.partnership
+      - {pack: federal/2026/f8938, field: "topmostSubform[0].Page2[0].c2_13[2]", widget: 0, line: "36b", anchor: "3"}  # 36b.corporation
+      - {pack: federal/2026/sched_2, field: "form1[0].Page1[0].c1_3[0]", widget: 0, line: "4", anchor: "1"}  # 4.exempt_4361
+      - {pack: federal/2026/sched_2, field: "form1[0].Page1[0].c1_4[0]", widget: 0, line: "4", anchor: "2"}  # 4.exempt_4029
+      - {pack: federal/2026/sched_2, field: "form1[0].Page1[0].c1_5[0]", widget: 0, line: "4", anchor: "3"}  # 4.exempt_other
+      - {pack: federal/2026/sched_2, field: "form1[0].Page1[0].f1_14[0]", widget: 0, line: "4", anchor: "3"}  # 4.exempt_other_type
+      - {pack: states/ga/2023/ga500, field: "L4_DATE1", widget: 0, line: "4", anchor: "1"}  # 4.part_year_from
+      - {pack: states/ga/2024/ga500, field: "L4_DATE1", widget: 0, line: "4", anchor: "1"}  # 4.part_year_from
+      - {pack: states/ga/2025/ga500, field: "L4_DATE1", widget: 0, line: "4", anchor: "1"}  # 4.part_year_from
+      - {pack: states/ky/2023/form740, field: "740FSCheckbox", widget: 1, line: "20", anchor: "2"}  # 20.family_size_2
+      - {pack: states/ky/2023/form740, field: "740FSCheckbox", widget: 2, line: "20", anchor: "3"}  # 20.family_size_3
+      - {pack: states/ky/2023/form740, field: "740FSCheckbox", widget: 3, line: "20", anchor: "4"}  # 20.family_size_4
+      - {pack: states/ky/2024/form740, field: "740FSCheckbox", widget: 1, line: "20", anchor: "2"}  # 20.family_size_2
+      - {pack: states/ky/2024/form740, field: "740FSCheckbox", widget: 2, line: "20", anchor: "3"}  # 20.family_size_3
+      - {pack: states/ky/2024/form740, field: "740FSCheckbox", widget: 3, line: "20", anchor: "4"}  # 20.family_size_4
+      - {pack: states/ky/2025/form740, field: "740FSCheckbox", widget: 1, line: "20", anchor: "2"}  # 20.family_size_2
+      - {pack: states/ky/2025/form740, field: "740FSCheckbox", widget: 2, line: "20", anchor: "3"}  # 20.family_size_3
+      - {pack: states/ky/2025/form740, field: "740FSCheckbox", widget: 3, line: "20", anchor: "4"}  # 20.family_size_4
+      - {pack: states/la/2023/it540, field: "REF2ST", widget: 0, line: "14", anchor: "2"}  # 14_code_2
+      - {pack: states/la/2023/it540, field: "REF3ST", widget: 0, line: "14", anchor: "3"}  # 14_code_3
+      - {pack: states/la/2023/it540, field: "REF4ST", widget: 0, line: "14", anchor: "4"}  # 14_code_4
+      - {pack: states/la/2023/it540, field: "REF5ST", widget: 0, line: "14", anchor: "5"}  # 14_code_5
+      - {pack: states/ne/2023/f1040n, field: "You 65 or older", widget: 0, line: "2a", anchor: "1"}  # 2a.you_65_or_older
+      - {pack: states/ne/2023/f1040n, field: "part year", widget: 0, line: "3", anchor: "2"}  # 3.part_year_resident
+      - {pack: states/ne/2023/f1040n, field: "resident", widget: 0, line: "3", anchor: "1"}  # 3.resident
+      - {pack: states/ne/2023/f1040n, field: "spouse", widget: 0, line: "2b", anchor: "2"}  # 2b.spouse
+      - {pack: states/ne/2023/f1040n, field: "spouse 65 or older", widget: 0, line: "2a", anchor: "3"}  # 2a.spouse_65_or_older
+      - {pack: states/ne/2023/f1040n, field: "spouse blind", widget: 0, line: "2a", anchor: "4"}  # 2a.spouse_blind
+      - {pack: states/ne/2023/f1040n, field: "you blind", widget: 0, line: "2a", anchor: "2"}  # 2a.you_blind
+      - {pack: states/ne/2024/f1040n, field: "You 65 or older", widget: 0, line: "2a", anchor: "1"}  # 2a.you_65_or_older
+      - {pack: states/ne/2024/f1040n, field: "dependent spouse", widget: 0, line: "2b", anchor: "2"}  # 2b.spouse
+      - {pack: states/ne/2024/f1040n, field: "partial year", widget: 0, line: "3", anchor: "2"}  # 3.part_year_resident
+      - {pack: states/ne/2024/f1040n, field: "resident", widget: 0, line: "3", anchor: "1"}  # 3.resident
+      - {pack: states/ne/2024/f1040n, field: "spouse 65 or older", widget: 0, line: "2a", anchor: "3"}  # 2a.spouse_65_or_older
+      - {pack: states/ne/2024/f1040n, field: "spouse blind", widget: 0, line: "2a", anchor: "4"}  # 2a.spouse_blind
+      - {pack: states/ne/2024/f1040n, field: "you blind", widget: 0, line: "2a", anchor: "2"}  # 2a.you_blind
+      - {pack: states/ne/2025/f1040n, field: "2a_65 or older", widget: 0, line: "2a", anchor: "1"}  # 2a.you_65_or_older
+      - {pack: states/ne/2025/f1040n, field: "2a_Blind", widget: 0, line: "2a", anchor: "2"}  # 2a.you_blind
+      - {pack: states/ne/2025/f1040n, field: "2a_Spouse_65 or older", widget: 0, line: "2a", anchor: "3"}  # 2a.spouse_65_or_older
+      - {pack: states/ne/2025/f1040n, field: "2a_Spouse_Blind", widget: 0, line: "2a", anchor: "4"}  # 2a.spouse_blind
+      - {pack: states/ne/2025/f1040n, field: "2b_Spouse", widget: 0, line: "2b", anchor: "2"}  # 2b.spouse
+      - {pack: states/ne/2025/f1040n, field: "3_Partial-year resident", widget: 0, line: "3", anchor: "2"}  # 3.part_year_resident
+      - {pack: states/ne/2025/f1040n, field: "3_Resident", widget: 0, line: "3", anchor: "1"}  # 3.resident
+  - family: r3-age-65-label
+    reason: >-
+      the box is a checkbox on line N's row; the anchor read the "65" of its "65 Special" / "65 or older" label as a
+      line
+    adjudication: JK10 fixer round 3, vision read of the row crop, 2026-10-25
+    rows:
+      - {pack: states/ar/2023/ar1000f, field: "F_NR-1-39", widget: 0, line: "7a", anchor: "65"}  # 7a.yourself_65_special
+      - {pack: states/ar/2023/ar1000f, field: "F_NR-1-45", widget: 0, line: "7a", anchor: "65"}  # 7a.spouse_65_special
+      - {pack: states/ar/2023/ar1000nr, field: "ARNR-42", widget: 0, line: "7a", anchor: "65"}  # 7a.yourself_65_special
+      - {pack: states/ar/2023/ar1000nr, field: "ARNR-43", widget: 0, line: "7a", anchor: "65"}  # 7a.spouse_65_special
+      - {pack: states/ar/2024/ar1000f, field: "F_NR-1-39", widget: 0, line: "7a", anchor: "65"}  # 7a.yourself_65_special
+      - {pack: states/ar/2024/ar1000f, field: "F_NR-1-45", widget: 0, line: "7a", anchor: "65"}  # 7a.spouse_65_special
+      - {pack: states/ar/2025/ar1000f, field: "F_NR-1-39", widget: 0, line: "7a", anchor: "65"}  # 7a.yourself_65_special
+      - {pack: states/ar/2025/ar1000f, field: "F_NR-1-45", widget: 0, line: "7a", anchor: "65"}  # 7a.spouse_65_special
+      - {pack: states/la/2023/it540, field: "EXMBA", widget: 0, line: "6a", anchor: "65"}  # 6a.blind
+      - {pack: states/la/2023/it540, field: "EXMBB", widget: 0, line: "6b", anchor: "65"}  # 6b.blind
+      - {pack: states/la/2024/it540, field: "EXMBA", widget: 0, line: "6a", anchor: "65"}  # 6a.blind
+      - {pack: states/la/2024/it540, field: "EXMBB", widget: 0, line: "6b", anchor: "65"}  # 6b.blind
+  - family: r3-lettered-item-of-line
+    reason: >-
+      the box is a lettered item (a., b., c., (b), (i)) printed inside line N's row, and the key names line N; the
+      anchor read the item letter as a sub-line
+    adjudication: JK10 fixer round 3, vision read of the row crop, 2026-10-25
+    rows:
+      - {pack: federal/2023/f8962, field: "topmostSubform[0].Page1[0].c1_2[1]", widget: 0, line: "4", anchor: "4b"}  # 4.hawaii
+      - {pack: federal/2023/f8962, field: "topmostSubform[0].Page1[0].c1_2[2]", widget: 0, line: "4", anchor: "4c"}  # 4.other_48_states
+      - {pack: federal/2024/f8962, field: "topmostSubform[0].Page1[0].c1_2[1]", widget: 0, line: "4", anchor: "4b"}  # 4.hawaii
+      - {pack: federal/2024/f8962, field: "topmostSubform[0].Page1[0].c1_2[2]", widget: 0, line: "4", anchor: "4c"}  # 4.other_48_states
+      - {pack: federal/2025/f8962, field: "topmostSubform[0].Page1[0].c1_2[1]", widget: 0, line: "4", anchor: "4b"}  # 4.hawaii
+      - {pack: federal/2025/f8962, field: "topmostSubform[0].Page1[0].c1_2[2]", widget: 0, line: "4", anchor: "4c"}  # 4.other_48_states
+      - {pack: federal/2026/f8962, field: "topmostSubform[0].Page1[0].Line4_ReadOrder[0].c1_2[1]", widget: 0, line: "4", anchor: "4b"}  # 4.hawaii
+      - {pack: federal/2026/f8962, field: "topmostSubform[0].Page1[0].Line4_ReadOrder[0].c1_2[2]", widget: 0, line: "4", anchor: "4c"}  # 4.other_48_states
+      - {pack: federal/2026/sched_2, field: "form1[0].Page1[0].Line1e_ReadOrder[0].c1_1[0]", widget: 0, line: "1e", anchor: "1i"}  # 1e.i
+      - {pack: federal/2026/sched_2, field: "form1[0].Page1[0].Line1f_ReadOrder[0].c1_2[0]", widget: 0, line: "1f", anchor: "1i"}  # 1f.i
+      - {pack: federal/2026/sched_c, field: "topmostSubform[0].Page1[0].Line30_ReadOrder[0].f1_49[0]", widget: 0, line: "30", anchor: "30b"}  # 30.business_sqft
+      - {pack: states/de/2023/pit_res, field: "ln19DeductionType", widget: 0, line: "19", anchor: "19b"}  # 19.itemized
+      - {pack: states/de/2023/pit_res, field: "ln19DeductionType", widget: 1, line: "19", anchor: "19a"}  # 19.standard
+      - {pack: states/de/2024/pit_res, field: "ln20DeductionType", widget: 0, line: "20", anchor: "20a"}  # 20.standard
+      - {pack: states/de/2024/pit_res, field: "ln20DeductionType", widget: 1, line: "20", anchor: "20b"}  # 20.itemized
+      - {pack: states/de/2025/pit_res, field: "ln20DeductionType", widget: 0, line: "20", anchor: "20a"}  # 20.standard
+      - {pack: states/de/2025/pit_res, field: "ln20DeductionType", widget: 1, line: "20", anchor: "20b"}  # 20.itemized
+      - {pack: states/ga/2023/ga500, field: "L11_TP65", widget: 0, line: "11", anchor: "11b"}  # 11_self_65
+      - {pack: states/ma/2023/form1, field: "line 46b. amount of child and family tax credit. see instructions", widget: 0, line: "46", anchor: "46x"}  # 46_multiplier
+      - {pack: states/ma/2025/form1, field: "line 46b. amount of child and family tax credit. see instructions", widget: 0, line: "46", anchor: "46x"}  # 46_multiplier
+      - {pack: states/ne/2023/f1040n, field: "30a", widget: 0, line: "30", anchor: "30a"}  # 30.a
+      - {pack: states/ne/2023/f1040n, field: "30c", widget: 0, line: "30", anchor: "30c"}  # 30.c
+      - {pack: states/ne/2024/f1040n, field: "line 37a", widget: 0, line: "37", anchor: "37a"}  # 37.a
+      - {pack: states/ne/2024/f1040n, field: "line 37c", widget: 0, line: "37", anchor: "37c"}  # 37.c
+      - {pack: states/ne/2025/f1040n, field: "39a", widget: 0, line: "39", anchor: "39a"}  # 39.a
+      - {pack: states/ne/2025/f1040n, field: "39c", widget: 0, line: "39", anchor: "39c"}  # 39.c
+  - family: r3-row-number-without-letter
+    reason: >-
+      the box sits on printed sub-line N (its letter printed beside the box or in the row's label); the anchor read
+      the row's number without its letter
+    adjudication: JK10 fixer round 3, vision read of the row crop, 2026-10-25
+    rows:
+      - {pack: federal/2023/f8938, field: "topmostSubform[0].Page1[0].Table_Part3[0].BodyRow13a[0].f1_17[0]", widget: 0, line: "13a", anchor: "13"}  # 13a.c
+      - {pack: federal/2023/f8938, field: "topmostSubform[0].Page1[0].Table_Part3[0].BodyRow13a[0].f1_18[0]", widget: 0, line: "13a", anchor: "13"}  # 13a.d
+      - {pack: federal/2023/f8938, field: "topmostSubform[0].Page1[0].Table_Part3[0].BodyRow13a[0].f1_19[0]", widget: 0, line: "13a", anchor: "13"}  # 13a.e
+      - {pack: federal/2023/f8938, field: "topmostSubform[0].Page1[0].Table_Part3[0].BodyRow14a[0].f1_38[0]", widget: 0, line: "14a", anchor: "14"}  # 14a.c
+      - {pack: federal/2023/f8938, field: "topmostSubform[0].Page1[0].Table_Part3[0].BodyRow14a[0].f1_39[0]", widget: 0, line: "14a", anchor: "14"}  # 14a.d
+      - {pack: federal/2023/f8938, field: "topmostSubform[0].Page1[0].Table_Part3[0].BodyRow14a[0].f1_40[0]", widget: 0, line: "14a", anchor: "14"}  # 14a.e
+      - {pack: federal/2024/f8938, field: "topmostSubform[0].Page1[0].Table_Part3[0].BodyRow13a[0].f1_17[0]", widget: 0, line: "13a", anchor: "13"}  # 13a.c
+      - {pack: federal/2024/f8938, field: "topmostSubform[0].Page1[0].Table_Part3[0].BodyRow13a[0].f1_18[0]", widget: 0, line: "13a", anchor: "13"}  # 13a.d
+      - {pack: federal/2024/f8938, field: "topmostSubform[0].Page1[0].Table_Part3[0].BodyRow13a[0].f1_19[0]", widget: 0, line: "13a", anchor: "13"}  # 13a.e
+      - {pack: federal/2024/f8938, field: "topmostSubform[0].Page1[0].Table_Part3[0].BodyRow14a[0].f1_38[0]", widget: 0, line: "14a", anchor: "14"}  # 14a.c
+      - {pack: federal/2024/f8938, field: "topmostSubform[0].Page1[0].Table_Part3[0].BodyRow14a[0].f1_39[0]", widget: 0, line: "14a", anchor: "14"}  # 14a.d
+      - {pack: federal/2024/f8938, field: "topmostSubform[0].Page1[0].Table_Part3[0].BodyRow14a[0].f1_40[0]", widget: 0, line: "14a", anchor: "14"}  # 14a.e
+      - {pack: federal/2025/f8938, field: "topmostSubform[0].Page1[0].Table_Part3[0].BodyRow13a[0].f1_17[0]", widget: 0, line: "13a", anchor: "13"}  # 13a.c
+      - {pack: federal/2025/f8938, field: "topmostSubform[0].Page1[0].Table_Part3[0].BodyRow13a[0].f1_18[0]", widget: 0, line: "13a", anchor: "13"}  # 13a.d
+      - {pack: federal/2025/f8938, field: "topmostSubform[0].Page1[0].Table_Part3[0].BodyRow13a[0].f1_19[0]", widget: 0, line: "13a", anchor: "13"}  # 13a.e
+      - {pack: federal/2025/f8938, field: "topmostSubform[0].Page1[0].Table_Part3[0].BodyRow14a[0].f1_38[0]", widget: 0, line: "14a", anchor: "14"}  # 14a.c
+      - {pack: federal/2025/f8938, field: "topmostSubform[0].Page1[0].Table_Part3[0].BodyRow14a[0].f1_39[0]", widget: 0, line: "14a", anchor: "14"}  # 14a.d
+      - {pack: federal/2025/f8938, field: "topmostSubform[0].Page1[0].Table_Part3[0].BodyRow14a[0].f1_40[0]", widget: 0, line: "14a", anchor: "14"}  # 14a.e
+      - {pack: federal/2026/f2555, field: "topmostSubform[0].Page1[0].f1_53[0]", widget: 0, line: "15e", anchor: "15"}  # 15e.desc
+      - {pack: federal/2026/f8938, field: "topmostSubform[0].Page1[0].Table_Part3[0].BodyRow13a[0].f1_17[0]", widget: 0, line: "13a", anchor: "13"}  # 13a.c
+      - {pack: federal/2026/f8938, field: "topmostSubform[0].Page1[0].Table_Part3[0].BodyRow13a[0].f1_18[0]", widget: 0, line: "13a", anchor: "13"}  # 13a.d
+      - {pack: federal/2026/f8938, field: "topmostSubform[0].Page1[0].Table_Part3[0].BodyRow13a[0].f1_19[0]", widget: 0, line: "13a", anchor: "13"}  # 13a.e
+      - {pack: federal/2026/f8938, field: "topmostSubform[0].Page1[0].Table_Part3[0].BodyRow14a[0].f1_38[0]", widget: 0, line: "14a", anchor: "14"}  # 14a.c
+      - {pack: federal/2026/f8938, field: "topmostSubform[0].Page1[0].Table_Part3[0].BodyRow14a[0].f1_39[0]", widget: 0, line: "14a", anchor: "14"}  # 14a.d
+      - {pack: federal/2026/f8938, field: "topmostSubform[0].Page1[0].Table_Part3[0].BodyRow14a[0].f1_40[0]", widget: 0, line: "14a", anchor: "14"}  # 14a.e
+      - {pack: federal/2026/sched_a, field: "form1[0].Page1[0].c1_1[0]", widget: 0, line: "5a", anchor: "5"}  # 5a.general_sales_tax
+      - {pack: states/ga/2023/ga500, field: "L6A", widget: 0, line: "6a", anchor: "6"}  # 6a_yourself
+      - {pack: states/ia/2023/ia1040, field: "36 a Penalty (cents)", widget: 0, line: "36a", anchor: "36"}  # 36a.cents
+      - {pack: states/ia/2024/ia1040, field: "36 a Penalty (cents)", widget: 0, line: "36a", anchor: "36"}  # 36a.cents
+      - {pack: states/ia/2025/ia1040, field: "36 a Penalty (cents)", widget: 0, line: "36a", anchor: "36"}  # 36a.cents
+      - {pack: states/in/2023/it40, field: "Spouse County Code", widget: 0, line: "19b", anchor: "19"}  # 19b_spouse_county_code
+      - {pack: states/in/2023/it40, field: "Your County Code", widget: 0, line: "19a", anchor: "19"}  # 19a_your_county_code
+      - {pack: states/mi/2023/mi1040, field: "Check Box4", widget: 0, line: "5a", anchor: "5"}  # 5a_campaign_fund_filer
+      - {pack: states/mi/2023/mi1040, field: "Check Box5", widget: 0, line: "5b", anchor: "5"}  # 5b_campaign_fund_spouse
+      - {pack: states/mi/2024/mi1040, field: "5b Checkbox Spouse", widget: 0, line: "5b", anchor: "5"}  # 5b_campaign_fund_spouse
+      - {pack: states/mi/2024/mi1040, field: "Check Box4", widget: 0, line: "5a", anchor: "5"}  # 5a_campaign_fund_filer
+      - {pack: states/mi/2025/mi1040, field: "Line 5a Filer Checkbox", widget: 0, line: "5a", anchor: "5"}  # 5a_campaign_fund_filer
+      - {pack: states/mi/2025/mi1040, field: "Line 5b Spouse Checkbox", widget: 0, line: "5b", anchor: "5"}  # 5b_campaign_fund_spouse
+      - {pack: states/mo/2023/mo1040, field: "line32Y", widget: 0, line: "32y", anchor: "32"}  # line32Y
+      - {pack: states/mo/2024/mo1040, field: "line32Y", widget: 0, line: "32y", anchor: "32"}  # line32Y
+      - {pack: states/mo/2025/mo1040, field: "line32Y", widget: 0, line: "32y", anchor: "32"}  # line32Y
+      - {pack: states/ms/2023/f80105, field: "15A", widget: 0, line: "15a", anchor: "15"}  # 15.a
+      - {pack: states/ms/2023/f80105, field: "51A", widget: 0, line: "51a", anchor: "51"}  # 51.a
+      - {pack: states/ms/2023/f80105, field: "66A", widget: 0, line: "66a", anchor: "66"}  # 66.a
+      - {pack: states/ms/2024/f80105, field: "15A", widget: 0, line: "15a", anchor: "15"}  # 15.a
+      - {pack: states/ms/2024/f80105, field: "51A", widget: 0, line: "51a", anchor: "51"}  # 51.a
+      - {pack: states/ms/2024/f80105, field: "66A", widget: 0, line: "66a", anchor: "66"}  # 66.a
+      - {pack: states/ms/2025/f80105, field: "15A", widget: 0, line: "15a", anchor: "15"}  # 15.a
+      - {pack: states/ms/2025/f80105, field: "51A", widget: 0, line: "51a", anchor: "51"}  # 51.a
+      - {pack: states/ms/2025/f80105, field: "66A", widget: 0, line: "66a", anchor: "66"}  # 66.a
+      - {pack: states/mt/2023/form2, field: "Itemized Col A Line 5a", widget: 0, line: "5a", anchor: "5"}  # itemized.5a.a
+      - {pack: states/mt/2023/form2, field: "Itemized Col B Line 5a", widget: 0, line: "5a", anchor: "5"}  # itemized.5a.b
+      - {pack: states/wi/2023/wi_form1, field: "15aa", widget: 0, line: "15a", anchor: "15"}  # line15a_rent_heat_not_included
+      - {pack: states/wi/2024/wi_form1, field: "16aa", widget: 0, line: "16a", anchor: "16"}  # line16a_rent_heat_not_included
+      - {pack: states/wi/2025/wi_form1, field: "16aa", widget: 0, line: "16a", anchor: "16"}  # line16a_rent_heat_not_included
+  - family: r3-row-above
+    reason: >-
+      the box sits on printed line N; the anchor read the line of the row above
+    adjudication: JK10 fixer round 3, vision read of the row crop, 2026-10-25
+    rows:
+      - {pack: federal/2022/sched_c, field: "topmostSubform[0].Page2[0].c2_8[0]", widget: 0, line: "47b", anchor: "46b"}  # 47b.yes
+      - {pack: federal/2023/f2555, field: "topmostSubform[0].Page1[0].c1_19[0]", widget: 0, line: "13b", anchor: "11b"}  # 13b.yes
+      - {pack: federal/2023/sched_8812, field: "topmostSubform[0].Page2[0].f2_2[0]", widget: 0, line: "16b", anchor: "15b"}  # 16b.num_children
+      - {pack: federal/2023/sched_c, field: "topmostSubform[0].Page2[0].c2_8[0]", widget: 0, line: "47b", anchor: "46b"}  # 47b.yes
+      - {pack: federal/2023/sched_e, field: "topmostSubform[0].Page2[0].f2_64[0]", widget: 0, line: "34b", anchor: "33b"}  # 34b.c
+      - {pack: federal/2023/sched_e, field: "topmostSubform[0].Page2[0].f2_66[0]", widget: 0, line: "34b", anchor: "33b"}  # 34b.e
+      - {pack: federal/2024/f2555, field: "topmostSubform[0].Page1[0].c1_19[0]", widget: 0, line: "13b", anchor: "11b"}  # 13b.yes
+      - {pack: federal/2024/sched_8812, field: "topmostSubform[0].Page2[0].f2_2[0]", widget: 0, line: "16b", anchor: "15b"}  # 16b.num_children
+      - {pack: federal/2024/sched_c, field: "topmostSubform[0].Page2[0].c2_8[0]", widget: 0, line: "47b", anchor: "46b"}  # 47b.yes
+      - {pack: federal/2024/sched_e, field: "topmostSubform[0].Page2[0].f2_64[0]", widget: 0, line: "34b", anchor: "33b"}  # 34b.c
+      - {pack: federal/2024/sched_e, field: "topmostSubform[0].Page2[0].f2_66[0]", widget: 0, line: "34b", anchor: "33b"}  # 34b.e
+      - {pack: federal/2025/f1040nr, field: "topmostSubform[0].Page1[0].c1_24[0]", widget: 0, line: "7b", anchor: "6b"}  # 7b.schedule_d_not_required
+      - {pack: federal/2025/f2555, field: "topmostSubform[0].Page1[0].c1_19[0]", widget: 0, line: "13b", anchor: "11b"}  # 13b.yes
+      - {pack: federal/2025/sched_8812, field: "topmostSubform[0].Page2[0].f2_3[0]", widget: 0, line: "16b", anchor: "15b"}  # 16b.num_children
+      - {pack: federal/2025/sched_c, field: "topmostSubform[0].Page2[0].c2_8[0]", widget: 0, line: "47b", anchor: "46b"}  # 47b.yes
+      - {pack: federal/2025/sched_e, field: "topmostSubform[0].Page2[0].f2_64[0]", widget: 0, line: "34b", anchor: "33b"}  # 34b.c
+      - {pack: federal/2025/sched_e, field: "topmostSubform[0].Page2[0].f2_66[0]", widget: 0, line: "34b", anchor: "33b"}  # 34b.e
+      - {pack: states/mt/2024/form2, field: "Schedule II Line 16", widget: 0, line: "16", anchor: "15"}  # sched2.16
+  - family: r3-ga500-s4-part2
+    reason: >-
+      Schedule 4 Part 2 prints the row number N beside the box (lines 11-18); the anchor read a lone digit instead
+    adjudication: JK10 fixer round 3, vision read of the row crop, 2026-10-25
+    rows:
+      - {pack: states/ga/2023/ga500, field: "S4P2L11", widget: 0, line: "11", anchor: "1"}  # s4.p2.11
+      - {pack: states/ga/2023/ga500, field: "S4P2L12", widget: 0, line: "12", anchor: "2"}  # s4.p2.12
+      - {pack: states/ga/2023/ga500, field: "S4P2L13", widget: 0, line: "13", anchor: "3"}  # s4.p2.13
+      - {pack: states/ga/2023/ga500, field: "S4P2L14", widget: 0, line: "14", anchor: "4"}  # s4.p2.14
+      - {pack: states/ga/2023/ga500, field: "S4P2L15", widget: 0, line: "15", anchor: "5"}  # s4.p2.15
+      - {pack: states/ga/2023/ga500, field: "S4P2L16", widget: 0, line: "16", anchor: "6"}  # s4.p2.16
+      - {pack: states/ga/2023/ga500, field: "S4P2L17", widget: 0, line: "17", anchor: "7"}  # s4.p2.17
+      - {pack: states/ga/2023/ga500, field: "S4P2L18", widget: 0, line: "18", anchor: "8"}  # s4.p2.18
+      - {pack: states/ga/2024/ga500, field: "S4P2L11", widget: 0, line: "11", anchor: "1"}  # s4.p2.11
+      - {pack: states/ga/2024/ga500, field: "S4P2L12", widget: 0, line: "12", anchor: "2"}  # s4.p2.12
+      - {pack: states/ga/2024/ga500, field: "S4P2L13", widget: 0, line: "13", anchor: "3"}  # s4.p2.13
+      - {pack: states/ga/2024/ga500, field: "S4P2L14", widget: 0, line: "14", anchor: "4"}  # s4.p2.14
+      - {pack: states/ga/2024/ga500, field: "S4P2L15", widget: 0, line: "15", anchor: "5"}  # s4.p2.15
+      - {pack: states/ga/2024/ga500, field: "S4P2L16", widget: 0, line: "16", anchor: "6"}  # s4.p2.16
+      - {pack: states/ga/2024/ga500, field: "S4P2L17", widget: 0, line: "17", anchor: "7"}  # s4.p2.17
+      - {pack: states/ga/2024/ga500, field: "S4P2L18", widget: 0, line: "18", anchor: "8"}  # s4.p2.18
+      - {pack: states/ga/2025/ga500, field: "S4P2L11", widget: 0, line: "11", anchor: "1"}  # s4.p2.11
+      - {pack: states/ga/2025/ga500, field: "S4P2L12", widget: 0, line: "12", anchor: "2"}  # s4.p2.12
+      - {pack: states/ga/2025/ga500, field: "S4P2L13", widget: 0, line: "13", anchor: "3"}  # s4.p2.13
+      - {pack: states/ga/2025/ga500, field: "S4P2L14", widget: 0, line: "14", anchor: "4"}  # s4.p2.14
+      - {pack: states/ga/2025/ga500, field: "S4P2L15", widget: 0, line: "15", anchor: "5"}  # s4.p2.15
+      - {pack: states/ga/2025/ga500, field: "S4P2L16", widget: 0, line: "16", anchor: "6"}  # s4.p2.16
+      - {pack: states/ga/2025/ga500, field: "S4P2L17", widget: 0, line: "17", anchor: "7"}  # s4.p2.17
+      - {pack: states/ga/2025/ga500, field: "S4P2L18", widget: 0, line: "18", anchor: "8"}  # s4.p2.18
+  - family: r3-mt-form2-2023-msa-part2
+    reason: >-
+      the pack numbers the Medical Savings Account schedule 1-11 straight through its two sub-parts (documented in the
+      pack header); the box is printed line N-5 of the second sub-part, the pack's line N
+    adjudication: JK10 fixer round 3, vision read of the row crop, 2026-10-25
+    rows:
+      - {pack: states/mt/2023/form2, field: "MSA Col A Line 10", widget: 0, line: "10", anchor: "5"}  # msa.10.a
+      - {pack: states/mt/2023/form2, field: "MSA Col A Line 11", widget: 0, line: "11", anchor: "6"}  # msa.11.a
+      - {pack: states/mt/2023/form2, field: "MSA Col A Line 6", widget: 0, line: "6", anchor: "1"}  # msa.6.a
+      - {pack: states/mt/2023/form2, field: "MSA Col A Line 7", widget: 0, line: "7", anchor: "2"}  # msa.7.a
+      - {pack: states/mt/2023/form2, field: "MSA Col A Line 8", widget: 0, line: "8", anchor: "3"}  # msa.8.a
+      - {pack: states/mt/2023/form2, field: "MSA Col A Line 9", widget: 0, line: "9", anchor: "4"}  # msa.9.a
+      - {pack: states/mt/2023/form2, field: "MSA Col B Line 10", widget: 0, line: "10", anchor: "5"}  # msa.10.b
+      - {pack: states/mt/2023/form2, field: "MSA Col B Line 11", widget: 0, line: "11", anchor: "6"}  # msa.11.b
+      - {pack: states/mt/2023/form2, field: "MSA Col B Line 6", widget: 0, line: "6", anchor: "1"}  # msa.6.b
+      - {pack: states/mt/2023/form2, field: "MSA Col B Line 7", widget: 0, line: "7", anchor: "2"}  # msa.7.b
+      - {pack: states/mt/2023/form2, field: "MSA Col B Line 8", widget: 0, line: "8", anchor: "3"}  # msa.8.b
+      - {pack: states/mt/2023/form2, field: "MSA Col B Line 9", widget: 0, line: "9", anchor: "4"}  # msa.9.b
+  - family: r3-box-code-or-shared-widget
+    reason: >-
+      the box belongs to line N: a box code printed inside the row (AZ "98" savings box, NE "95 Local code"), a box
+      drawn beside another row but labelled for line N (RI 12a certify, NC 26e exception letter), the second widget of
+      a shared field that repeats line N on another row (WV Schedule UT lines 9/10 = lines 3/8), or the exemption-box
+      count on line N (WV 6, "Exemption Box (e)")
+    adjudication: JK10 fixer round 3, vision read of the row crop, 2026-10-25
+    rows:
+      - {pack: states/az/2023/az140, field: "Refund", widget: 1, line: "79", anchor: "98"}  # 79_account_type::savings
+      - {pack: states/az/2023/az140py, field: "Refund", widget: 1, line: "88", anchor: "98"}  # 88_account_type::savings
+      - {pack: states/az/2024/az140, field: "Refund", widget: 1, line: "79", anchor: "98"}  # 79_account_type::savings
+      - {pack: states/az/2025/az140, field: "Refund", widget: 1, line: "79", anchor: "98"}  # 79_account_type::savings
+      - {pack: states/nc/2023/d400, field: "y_d400wf_Ex_good", widget: 0, line: "26e", anchor: "28"}  # 26e_exception
+      - {pack: states/nc/2024/d400, field: "y_d400wf_Ex_good", widget: 0, line: "26e", anchor: "28"}  # 26e_exception
+      - {pack: states/nc/2025/d400, field: "y_d400wf_Ex_good", widget: 0, line: "26e", anchor: "28"}  # 26e_exception
+      - {pack: states/ne/2023/f1040n, field: "total tax", widget: 0, line: "43", anchor: "95"}  # 43.local_code
+      - {pack: states/ne/2024/f1040n, field: "95 total tax", widget: 0, line: "52", anchor: "95"}  # 52.local_code
+      - {pack: states/ne/2025/f1040n, field: "Local Code", widget: 0, line: "58", anchor: "95"}  # 58.local_code
+      - {pack: states/ri/2023/ri1040, field: "topmostSubform[0].Page1[0].UseTax[0]", widget: 0, line: "12a", anchor: "9b"}  # 12a.certify
+      - {pack: states/ri/2024/ri1040, field: "topmostSubform[0].Page1[0].UseTax[0]", widget: 0, line: "12a", anchor: "9b"}  # 12a.certify
+      - {pack: states/ri/2025/ri1040, field: "topmostSubform[0].Page1[0].UseTax[0]", widget: 0, line: "12a", anchor: "9b"}  # 12a.certify
+      - {pack: states/wv/2023/it140, field: "it140_ex6", widget: 0, line: "6", anchor: "6e"}  # 6.count
+      - {pack: states/wv/2023/it140, field: "total3", widget: 1, line: "3", anchor: "9"}  # sch_ut.3
+      - {pack: states/wv/2023/it140, field: "totalmuni", widget: 1, line: "8", anchor: "10"}  # sch_ut.8
+      - {pack: states/wv/2024/it140, field: "it140_ex6", widget: 0, line: "6", anchor: "6e"}  # 6.count
+      - {pack: states/wv/2024/it140, field: "total3", widget: 1, line: "3", anchor: "9"}  # sch_ut.3
+      - {pack: states/wv/2024/it140, field: "totalmuni", widget: 1, line: "8", anchor: "10"}  # sch_ut.8
+  # ── fixer round 4 (Phase K JK10, 2026-10-24): disagreements the round-4 shapes brought into the gate ──
+  - family: r4-sub-line-letter-mid-row
+    reason: >-
+      the box sits on sub-line Nx whose letter is printed inside the row, not in the gutter: RI Schedule E prints
+      "b" / "c" at the left of rows 4b and 4c and "4b" / "4c" again beside their boxes (the anchor joined the row
+      above's "3" with the letter), and CA Schedule CA (540NR) prints "19 a Alimony paid. b Enter recipient's: ...
+      Last name", the box on item 19b (the anchor read the row's number 19 alone)
+    adjudication: JK10 fixer round 4, vision read of the row crop, 2026-10-25
+    rows:
+      - {pack: states/ri/2023/ri1040, field: "topmostSubform[0].Page5[0].SummaryLine4b[0]", widget: 0, line: "4b", anchor: "3b"}  # schedule_e.4b
+      - {pack: states/ri/2023/ri1040, field: "topmostSubform[0].Page5[0].SummaryLine4c[0]", widget: 0, line: "4c", anchor: "3c"}  # schedule_e.4c
+      - {pack: states/ri/2024/ri1040, field: "topmostSubform[0].Page5[0].SummaryLine4b[0]", widget: 0, line: "4b", anchor: "3b"}  # schedule_e.4b
+      - {pack: states/ri/2024/ri1040, field: "topmostSubform[0].Page5[0].SummaryLine4c[0]", widget: 0, line: "4c", anchor: "3c"}  # schedule_e.4c
+      - {pack: states/ri/2025/ri1040, field: "topmostSubform[0].Page5[0].SummaryLine4b[0]", widget: 0, line: "4b", anchor: "3b"}  # schedule_e.4b
+      - {pack: states/ri/2025/ri1040, field: "topmostSubform[0].Page5[0].SummaryLine4c[0]", widget: 0, line: "4c", anchor: "3c"}  # schedule_e.4c
+      - {pack: states/ca/2023/sched_ca_540nr, field: "3049", widget: 0, line: "19b", anchor: "19"}  # C19b_lastname
+      - {pack: states/ca/2024/sched_ca_540nr, field: "540NR CA - 3049", widget: 0, line: "19b", anchor: "19"}  # C19b_lastname
+      - {pack: states/ca/2025/sched_ca_540nr, field: "540NR CA - 3049", widget: 0, line: "19b", anchor: "19"}  # C19b_lastname
+  # ── fixer round 5 (Phase K JK10, 2026-10-24): disagreements the declare-me rule's shapes brought into the gate ──
+  - family: r5-specify-box-and-boxed-code
+    reason: >-
+      the box sits on the key's printed row and the anchor read another number: GA Form 500 Schedule 4 Part 2 prints
+      "9. Other (specify) [box] ...... 9." and "16. Other (specify) [box] ...... 16." with the specify box in the
+      middle of the row (the anchor read a far number, or the "6" of "16"), and AZ 140NR line 86's direct-deposit
+      Savings box sits under "86 REFUND" beside the boxed office code "98" (not a line)
+    adjudication: JK10 fixer round 5, vision read of the row crop, 2026-10-25
+    rows:
+      - {pack: states/az/2023/az140nr, field: "Refund", widget: 1, line: "86", anchor: "98"}  # 86_account_type::savings
+      - {pack: states/ga/2023/ga500, field: "S4P2L9_OTHER", widget: 0, line: "9", anchor: "35"}  # s4.p2.9_specify
+      - {pack: states/ga/2023/ga500, field: "S4P2L16_OTHER", widget: 0, line: "16", anchor: "53"}  # s4.p2.16_specify
+      - {pack: states/ga/2024/ga500, field: "S4P2L16_OTHER", widget: 0, line: "16", anchor: "6"}  # s4.p2.16_specify
+      - {pack: states/ga/2025/ga500, field: "S4P2L16_OTHER", widget: 0, line: "16", anchor: "6"}  # s4.p2.16_specify

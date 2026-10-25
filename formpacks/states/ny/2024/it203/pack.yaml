@@ -1013,7 +1013,9 @@ fields:
     field: account number
     type: text
     maxlen: 17
-  - line: 73_electronic_funds_withdrawal_date  # line 73 — Electronic funds withdrawal: Date
+  # Phase K JK10 (2026-10-24): the face prints the Date box on line 74 ("74 Electronic funds withdrawal ... Date
+  # ... Amount"); was keyed 73_ (the label-adjacency gate, once NY's key shape was declared).
+  - line: 74_electronic_funds_withdrawal_date  # line 74 — Electronic funds withdrawal: Date
     field: electronic funds withdrawal
     type: text
     maxlen: 10

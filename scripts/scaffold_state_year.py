@@ -52,6 +52,26 @@ Usage:
 Phase K JK9 (2026-10-24) added ``--tier1 [PATH]``: only the tier-1 states of ``scripts/tier1_states.yaml`` (the
 income-tax jurisdictions ranked by IRS SOI return count, cut to 12). JS7a's TY2026 sprint and JK8's state-blank watch
 work from that list; dated work-lists go in ``scripts/worklists/``.
+
+Phase K JK10 (2026-10-24) added two checks to ``--triage``, because identical field NAMES carried two base-pack
+mis-binds forward (P-031: AL Form 40 2023 keyed one line high; P-032: ME 1040ME 2023's lines 21-23 rotated):
+
+* primary — the label-adjacency guard (scripts/label_adjacency.py) on the BASE pack a port starts from: every
+  numbered key must equal the line printed beside its widget on the base pack's own blank. A base with an unexcused
+  disagreement is ``BASE-MISBOUND``: fix the base before porting it (``base_label_adjacency`` says which keys).
+  The guard checks only line-bearing keys the anchor can read beside their widget, so the verdict carries the
+  coverage: ``OK (n/m ...)`` at or above the floor of formpacks/label_adjacency_coverage.yaml, else ``UNCHECKED``
+  (none checked) or ``PARTIAL n/m`` and the row is ``BASE-UNCHECKED``: vision-check the base's line binding by hand
+  (``base_label_reason`` gives the ledger's reason). Both overrides apply whatever the candidate blank's state
+  (no-year-token, NOT-CACHED, URL-DEAD ...); ``port_status`` keeps the status they replaced. A handfill.yaml base
+  binds no AcroForm field, so it is ``NOT-APPLICABLE`` and keeps its port status (vision-check its overlay boxes on
+  port: the gate reads none of them);
+* secondary — each mapped widget's /Rect on the candidate blank against the base blank: a widget that moved (another
+  page, or any edge more than MOVE_TOLERANCE pt away) turns a PORTABLE or NEAR-PORT verdict into ``RE-MAP``
+  (``moved`` / ``moved_sample``).
+
+``names_status`` keeps the field-name verdict alone, and a recorded row's ``reproduces`` compares that (the recorded
+verdicts were measured by names).
 """
 from __future__ import annotations
 
@@ -71,6 +91,12 @@ REPO = Path(__file__).resolve().parents[1]
 STATES = REPO / "formpacks" / "states"
 DEFAULT_ROWS = REPO / "scripts" / "state_discovery_rows.json"
 DEFAULT_TIER1 = REPO / "scripts" / "tier1_states.yaml"
+# Phase K JK10 (2026-10-24): a mapped widget whose /Rect edge moved by more than this (pt) between the base blank
+# and the candidate forces a re-map; a whole-point rounding difference does not.
+MOVE_TOLERANCE = 1.0
+# Phase K JK10 (2026-10-24), fixer round 3: the label-adjacency verdict of a handfill.yaml base (never BASE-UNCHECKED)
+# (fixer round 4 wording: the overlay boxes are not checked by the gate either, so the port's vision check covers them)
+HANDFILL_BASE = "NOT-APPLICABLE (handfill base: no AcroForm binding; vision-check the overlay boxes on port)"
 
 # A revision DATE in a basename: MMDDYY / MMDDYYYY / MM-DD-YYYY (DC 01222024, 011525; ID 08-23-2023). Month and day
 # are range-checked so a form number next to a year (SC1040_2023) is not mistaken for one.
@@ -135,7 +161,7 @@ def _cached_blank(url: str, cache: Path, sha256: str | None) -> tuple[bytes | No
 
 
 def _triage(url: str, mapped: set[str], cache: Path, timeout: float = 45.0, *, sha256: str | None = None,
-            offline: bool = False, base_sha256: str | None = None) -> tuple[str, dict]:
+            offline: bool = False, base_sha256: str | None = None, base_blank: Path | None = None) -> tuple[str, dict]:
     """Classify the port cost of the candidate blank against the base pack — cache first, digest-checked.
 
     This is the measurement that string-derivation alone CANNOT give (and whose
@@ -182,10 +208,129 @@ def _triage(url: str, mapped: set[str], cache: Path, timeout: float = 45.0, *, s
     detail = {"blank_fields": len(names), "mapped": len(mapped), "missing": len(missing),
               "missing_sample": sorted(missing)[:5]}
     if not missing:
-        return "PORTABLE (identical topology)", detail
-    if len(missing) <= max(2, 0.05 * len(mapped)):
-        return f"NEAR-PORT ({len(missing)} fields moved)", detail
-    return f"RE-MAP ({len(missing)}/{len(mapped)} fields gone)", detail
+        status = "PORTABLE (identical topology)"
+    elif len(missing) <= max(2, 0.05 * len(mapped)):
+        status = f"NEAR-PORT ({len(missing)} fields moved)"
+    else:
+        status = f"RE-MAP ({len(missing)}/{len(mapped)} fields gone)"
+    detail["names_status"] = status
+    if base_blank is not None:
+        moved = moved_widgets(mapped, widget_rects(base_blank), widget_rects(cache))
+        detail.update({"moved": len(moved), "moved_sample": moved[:5]})
+        if moved and not status.startswith("RE-MAP"):
+            status = f"RE-MAP ({len(moved)} mapped widgets moved on the page)"
+    return status, detail
+
+
+# ── Phase K JK10 (2026-10-24): the secondary signal — a mapped widget that moved ──
+
+
+def widget_rects(pdf: Path) -> dict[str, list[tuple[int, tuple[float, ...]]]]:
+    """Qualified field name -> its widgets' (page, rect), in document order."""
+    sys.path.insert(0, str(REPO / "packages" / "core" / "src"))
+    from taxfill_core.packbuild import extract_fields  # noqa: PLC0415
+
+    out: dict[str, list[tuple[int, tuple[float, ...]]]] = {}
+    for w in extract_fields(pdf):
+        out.setdefault(w["name"], []).append((w["page"], tuple(float(v) for v in w["rect"])))
+    return out
+
+
+def _widgets_of(rects: dict, name: str) -> list | None:
+    if name in rects:
+        return rects[name]
+    hits = [k for k in rects if k.endswith("." + name)]
+    return rects[hits[0]] if len(hits) == 1 else None
+
+
+def moved_widgets(mapped: set[str], base: dict, candidate: dict, tolerance: float = MOVE_TOLERANCE) -> list[str]:
+    """Mapped fields present on both blanks whose widgets changed page, count, or moved an edge > ``tolerance`` pt.
+
+    A field missing from either blank is the name check's finding, not a move."""
+    moved = []
+    for name in sorted(mapped):
+        a, b = _widgets_of(base, name), _widgets_of(candidate, name)
+        if a is None or b is None:
+            continue
+        if len(a) != len(b) or any(pa != pb or max(abs(u - v) for u, v in zip(ra, rb, strict=True)) > tolerance
+                                   for (pa, ra), (pb, rb) in zip(a, b, strict=True)):
+            moved.append(name)
+    return moved
+
+
+# ── Phase K JK10 (2026-10-24): the primary check — the label-adjacency guard on the base pack ──
+
+
+def _label_adjacency():
+    import importlib.util  # noqa: PLC0415
+
+    if "label_adjacency" not in sys.modules:
+        spec = importlib.util.spec_from_file_location("label_adjacency", REPO / "scripts" / "label_adjacency.py")
+        mod = importlib.util.module_from_spec(spec)
+        sys.modules["label_adjacency"] = mod
+        spec.loader.exec_module(mod)
+    return sys.modules["label_adjacency"]
+
+
+def base_blank(raw: dict, *, offline: bool) -> tuple[Path | None, str | None]:
+    """The base pack's own pinned blank (shared cache first; fetched unless ``offline``), or (None, why not)."""
+    url, sha = raw.get("source_url") or "", raw.get("pdf_sha256") or ""
+    if not url or not sha:
+        return None, "NO-BLANK (the base pack pins no source_url + pdf_sha256)"
+    sys.path.insert(0, str(REPO / "packages" / "core" / "src"))
+    from taxfill_core.fetch import cached_blank_path, fetch_blank  # noqa: PLC0415
+
+    path = cached_blank_path(url, sha)
+    if path is not None:
+        return path, None
+    if offline:
+        return None, "NOT-CACHED (offline)"
+    try:
+        return fetch_blank(url, sha256=sha, mirrors=raw.get("mirror_urls") or ()), None
+    except Exception as exc:  # noqa: BLE001 — a work-list row, not a crash
+        return None, f"NO-BLANK ({type(exc).__name__})"
+
+
+def base_label_check(pack_id: str, raw: dict, blank: Path) -> dict:
+    """The label-adjacency guard on the base pack: {"checked", "lines", "off" (unexcused keys), "verdict"}.
+
+    Phase K JK10 (2026-10-24): the verdict is OK only at or above the coverage ledger's floor
+    (formpacks/label_adjacency_coverage.yaml): a base whose line-bearing keys the gate mostly cannot compare is
+    ``UNCHECKED`` (none checked) or ``PARTIAL n/m``, never OK — 0 checked is not a pass; so is a base with an
+    undeclared key family of 5+ keys the gate compares on no widget (fixer round 4), and so is one holding an
+    undeclared key the anchor reads a printed line beside (fixer round 5, the declare-me rule). ``reason`` is the
+    ledger's recorded reason for a shipped base below the floor."""
+    la = _label_adjacency()
+    keys = [{"key": e["line"], "field": e["field"], "on_state": e.get("on_state")}
+            for e in (raw.get("fields") or []) if isinstance(e, dict) and "line" in e and "field" in e]
+    res = la.check_blank(pack_id, blank, keys, raw.get("acroform_root") or "")
+    bad = res.unexcused(la.load_exceptions())
+    off = sorted({k for r in bad for k in r.claims}, key=la.B.line_sort_key)
+    checked, lines = res.coverage
+    ledger = la.load_ledger()
+    verdict = la.coverage_verdict(checked, lines, ledger.floor, res.dark, res.declare) if not off else (
+        f"OFF ({len(off)} key(s) off the line printed beside their widget: {', '.join(off[:8])}"
+        f"{', ...' if len(off) > 8 else ''})")
+    row = ledger.rows.get(pack_id)
+    reason = f"{row.reason}: {row.note}" if row is not None and row.reason else ""
+    return {"checked": checked, "lines": lines, "off": off, "verdict": verdict, "reason": reason}
+
+
+def base_override(status: str, detail: dict, base_year: int) -> str:
+    """Phase K JK10 (2026-10-24): the base pack's label-adjacency verdict overrides the port status, whatever the
+    candidate blank's state (no-year-token, NOT-CACHED, URL-DEAD, revision-dated ...): ``OFF`` makes the row
+    ``BASE-MISBOUND`` (fix the base first) and ``UNCHECKED`` / ``PARTIAL`` makes it ``BASE-UNCHECKED`` (check the
+    base's line binding by hand: the gate could not). The status it replaced is kept as ``port_status``."""
+    verdict = str(detail.get("base_label_adjacency") or "")
+    if verdict.startswith("OFF ("):
+        new = f"BASE-MISBOUND (fix the {base_year} pack first: {verdict[5:-1]})"
+    elif verdict.startswith(("UNCHECKED", "PARTIAL")):
+        new = (f"BASE-UNCHECKED (check the {base_year} pack's line binding by hand before porting; the "
+               f"label-adjacency gate could not: {verdict})")
+    else:
+        return status
+    detail["port_status"] = status
+    return new
 
 
 # The browser User-Agent taxfill_core.fetch uses: CO's host 403s a non-browser agent (JS3a, 2026-09-28).
@@ -275,31 +420,48 @@ def scaffold(target_year: int, base: str, *, rows_path: Path | None = None, prob
             # Nothing to port: the newest-base work-list is the OPEN work (a fixed --base keeps the old census).
             out.append({**row, "status": f"shipped ({target_year} pack exists)", "candidate_url": ""})
             continue
+        # Phase K JK10 (2026-10-24): the label-adjacency guard on the base pack, for every form a port starts from
+        base_detail: dict = {}
+        base_pdf = None
+        if triage and pack_path.name == "handfill.yaml":
+            # fixer round 3: a handfill base binds no AcroForm field (its lines carry overlay coordinates), so there
+            # is no binding for the gate to check and the port is a fresh map; its port status stands
+            base_detail["base_label_adjacency"] = HANDFILL_BASE
+        elif triage:
+            base_pdf, why = base_blank(raw, offline=offline)
+            check = base_label_check(f"states/{state}/{base_year}/{form}", raw, base_pdf) if base_pdf else None
+            base_detail["base_label_adjacency"] = check["verdict"] if check else why
+            if check and check["reason"]:
+                base_detail["base_label_reason"] = check["reason"]
         recorded = rows.get((state, form, target_year))
         if recorded:
             candidate, changed, source = recorded["url"], True, "recorded"
         elif not url:
-            out.append({**row, "status": "no-source-url", "candidate_url": ""})
+            out.append({**row, "status": base_override("no-source-url", base_detail, base_year), "candidate_url": "",
+                        **base_detail})
             continue
         else:
             candidate, changed = _candidate_url(url, base_year, target_year)
             source = "derived"
         if source == "derived" and changed and _revision_dated(url):
-            out.append({**row, "status": "revision-dated (needs a recorded row)", "candidate_url": candidate,
-                        "source": source})
+            out.append({**row, "status": base_override("revision-dated (needs a recorded row)", base_detail, base_year),
+                        "candidate_url": candidate, "source": source, **base_detail})
             continue
         status = "candidate" if changed else "no-year-token"
-        detail: dict = {}
+        detail: dict = dict(base_detail)
         if changed and triage:
             mapped = {e["field"] for e in (raw.get("fields") or []) if isinstance(e, dict) and "field" in e}
-            status, detail = _triage(candidate, mapped, cache_dir / f"{state}-{form}-{target_year}.pdf",
-                                     sha256=(recorded or {}).get("sha256"), offline=offline,
-                                     base_sha256=raw.get("pdf_sha256"))
+            status, more = _triage(candidate, mapped, cache_dir / f"{state}-{form}-{target_year}.pdf",
+                                   sha256=(recorded or {}).get("sha256"), offline=offline,
+                                   base_sha256=raw.get("pdf_sha256"), base_blank=base_pdf)
+            detail.update(more)
         elif changed and probe and not offline:
             status = _probe(candidate)
+        status = base_override(status, detail, base_year)
         if recorded:
             detail["recorded_verdict"] = recorded["verdict"]
-            detail["reproduces"] = status.split(" (")[0] == recorded["verdict"] if triage else None
+            names = detail.get("names_status", detail.get("port_status", status))
+            detail["reproduces"] = names.split(" (")[0] == recorded["verdict"] if triage else None
         out.append({**row, "candidate_url": candidate if changed else "", "source": source, "status": status,
                     **detail})
     return out
@@ -351,6 +513,14 @@ def main() -> int:
         recorded = [r for r in rows if r.get("recorded_verdict")]
         if recorded:
             print(f"  recorded rows reproduced: {sum(1 for r in recorded if r['reproduces'])}/{len(recorded)}")
+        off = [f"{r['state']}/{r['form']} {r['base_year']}" for r in rows
+               if str(r.get("base_label_adjacency", "")).startswith("OFF")]
+        print(f"  base packs with a key off its printed line (label-adjacency, P-031/P-032): {len(off)}"
+              + (f" — {', '.join(off)}" if off else ""))
+        unchecked = [f"{r['state']}/{r['form']} {r['base_year']} ({r['base_label_adjacency'].split(' (')[0]})"
+                     for r in rows if str(r.get("base_label_adjacency", "")).startswith(("UNCHECKED", "PARTIAL"))]
+        print(f"  base packs the label-adjacency gate mostly cannot check (BASE-UNCHECKED: vision-check the base's "
+              f"line binding by hand): {len(unchecked)}" + (f" — {', '.join(unchecked)}" if unchecked else ""))
         print("  PORTABLE/NEAR-PORT = the cheap path (swap URL+digest, then STILL vision-audit every "
               "page: identical field NAMES do not prove the state kept its line NUMBERING).")
     if args.out:

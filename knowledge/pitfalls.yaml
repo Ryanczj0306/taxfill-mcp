@@ -2082,7 +2082,21 @@ pitfalls:
       number printed on its row; relations cannot catch a consistent shift".
       Tests, P-031-tagged, in packages/core/tests/test_al40_line_designators.py:
       on every shipped AL Form 40 year's own blank, each numbered page-1 key
-      equals the number printed in the gutter beside its widget.
+      equals the number printed in the gutter beside its widget. Phase K JK10
+      (2026-10-24) generalised it into the label-adjacency gate
+      (packages/core/tests/test_label_adjacency.py, scripts/label_adjacency.py):
+      every numbered key of every shipped pack against the line the pack-blind
+      anchor reads beside its widget, and the gutter read above moved there;
+      the offline pinned map stays in test_al40_line_designators.py. Its blind
+      adjudication found five packs keying an unnumbered box of line N "Na" /
+      "Nb"; CONVENTIONS.md now keys such a box "N.<what>" and the box the face
+      numbers N the bare "N", and the packs were re-keyed: OK Form 511
+      2023-2025 "4a" -> "4.description", "4b" -> "4"; OK 511 2023 "40a" /
+      "40b" -> "40.penalty" / "40.interest" and 2024 "41a" / "41b" ->
+      "41.penalty" / "41.interest" (2025 prints 41(a) / 41(b) and keeps them);
+      VA 760 2023-2025 "17a" -> "17" (the STA amount) and "17" ->
+      "17.spouse_vagi"; WI Form 1 2023 "14a" -> "14" (the "x 50% = 14" credit)
+      and "14" -> "14.federal_credit".
   - id: P-032
     incident: >-
       Widget names rotated against their printed captions. Page 2 of the Form
@@ -2110,7 +2124,9 @@ pitfalls:
       packages/core/tests/test_me1040_lines_21_23.py: every shipped 1040ME
       year pins the (key, widget) map and the two relations offline, and
       (network) reads the number printed left of each bound widget on the
-      year's own blank.
+      year's own blank — that network read moved into the Phase K JK10
+      label-adjacency gate (packages/core/tests/test_label_adjacency.py), which
+      also catches this 3-cycle on 063f293's map.
   - id: P-033
     incident: >-
       SSN digits crossed by their box's own printed separators. A comb widget

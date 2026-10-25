@@ -59,7 +59,7 @@
 # ("If line X is larger than line Y, fill in 0": lines 9, 21, Sch1 line 7,
 # Sch2 line 5) or branches on a comparison (lines 39, 42, 36's "Add lines 27
 # through 35" where 27-35 span ambiguous sub-lines, 20's "Add lines 13 through
-# 19" likewise) or apply a constant multiplier (14a = 14 x 50%, 24 = base x
+# 19" likewise) or apply a constant multiplier (14 = 14.federal_credit x 50%, 24 = base x
 # .33, Sch1 line 9, Sch2 line 8) are OMITTED per the conservative house style.
 #
 # Cross_form. Line 1's printed label is "Federal adjusted gross income from
@@ -314,10 +314,12 @@ fields:
   - line: "13"                         # Itemized deduction credit (Schedule 1, page 4)
     field: "13"
     type: money
-  - line: "14"                         # Federal child and dependent care credit (Form 2441)
+  # Phase K JK10 (2026-10-24), P-031: the face prints one line 14 (no 14a): the credit after "x 50% = 14" is "14" (was
+  # "14a") and the inline "Federal credit from Form 2441" input is "14.federal_credit" (was "14").
+  - line: 14.federal_credit             # Federal child and dependent care credit (Form 2441)
     field: "14"
     type: money
-  - line: 14a                          # line 14 x 50%
+  - line: "14"                         # line 14 x 50%
     field: 14a
     type: money
   - line: line15a_rent_heat_included      # 15a worksheet: rent paid 2023 — heat included

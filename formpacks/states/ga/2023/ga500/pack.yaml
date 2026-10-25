@@ -1524,22 +1524,28 @@ fields:
     field: S3L9
     type: text
     maxlen: 6
-  - line: s3.10_deduction.itemized  # Line 10a — Itemized deduction
+  # Phase K JK10 (2026-10-24), fixer round 5: the deduction-type boxes sit on the same printed row "10a. Itemized
+  # [] or Standard Deduction" (the label-adjacency gate read 10a once GA's named-box shape was declared); keyed
+  # s3.10_deduction.* before, like the 2024-on faces that print one line 10.
+  - line: s3.10a_deduction.itemized  # Line 10a — Itemized deduction
     field: CB_DEDUCTION_TYPE
     type: checkbox
     on_state: /I
     group: s3_deduction_type
-  - line: s3.10_deduction.standard  # Line 10a — Standard deduction
+  - line: s3.10a_deduction.standard # Line 10a — Standard deduction
     field: CB_DEDUCTION_TYPE
     type: checkbox
     on_state: /S
     group: s3_deduction_type
-  - line: s3.10_deduction.georgia   # Line 10a — Georgia deduction option
+  - line: s3.10a_deduction.georgia  # Line 10a — Georgia deduction option
     field: CB_DEDUCTION_TYPE
     type: checkbox
     on_state: /G
     group: s3_deduction_type
-  - line: s3.10                     # Line 10a amount
+  # Phase K JK10 (2026-10-24): the 2023 face prints this box's row as "10a. Itemized or Standard Deduction" (10b
+  # is the additional standard deduction); was keyed s3.10 (the label-adjacency gate, once GA's key shape was
+  # declared). 2024 on print one line 10 and keep s3.10.
+  - line: s3.10a                    # Line 10a amount
     field: S3L10
     type: money
   - line: s3.10b_self_65            # Line 10b — Self: 65 or over?

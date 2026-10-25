@@ -65,7 +65,7 @@
 # AFSpecial on Zip Code / Preparer Phone Number) are the same 45 as in 2024.
 #
 # FACE DELTAS vs 2024 (the complete printed-text diff, both pages). Line numbering 1-36
-# with 17a / 19a / 19b is UNCHANGED, and every caption is unchanged except the
+# with 19a / 19b is UNCHANGED, and every caption is unchanged except the
 # years and one comma: "File by May 1, 2025" -> "May 1, 2026", "Rev. 11/24" ->
 # "Rev. 04/26", line 19 "withheld for 2024" -> "2025", line 20 "taxable year
 # 2024" -> "2025", line 21 "Amount of 2023 overpayment applied toward 2024"
@@ -146,7 +146,7 @@
 #   * Page 2 — the header "Social Security Number" comb shows the
 #     page2_your_ssn sentinel (the NEW "SSN 2"); 321 on 16; on the line-17
 #     row the inline "Enter Spouse's VAGI in box here" box shows 332 (key
-#     "17") and the right-hand column 343 (key "17a"), with the "loss 17"
+#     "17.spouse_vagi" since JK10) and the right-hand column 343 (key "17"), with the "loss 17"
 #     oval marked; then 354, 365, 376, 387, 398, 409, 420, 431, 442, 453,
 #     464, 475, 486, 497, 508, 519, 530, 541, 552, 563 against printed 18,
 #     19a, 19b, 20-36 in order. The three page-2 ovals sit on their own rows
@@ -226,8 +226,8 @@
 # 14=10+11+12+13, 15=9-14, 26=19a+19b+20..25, 34=29+30+31+32+33). Lines whose
 # printed instruction is conditional / branchy — 4 (age-deduction sum over
 # you/spouse sub-boxes, not numbered lines), 18 ("Subtract Line 17 from Line
-# 16" where "Line 17" is split across the spouse-VAGI box and the "17a" STA
-# box — operand is ambiguous), 27/28 ("If Line 26 is less/greater than …"),
+# 16"; omitted when the spouse-VAGI box and the STA box were keyed "17" / "17a",
+# and not yet re-declared since JK10 keyed the STA box "17"), 27/28 ("If Line 26 is less/greater than …"),
 # 35/36 (owe/refund branches) — are OMITTED per the conservative house style.
 #
 # Cross_form. Line 1's printed label is "Adjusted Gross Income from federal
@@ -543,10 +543,12 @@ fields:
     field: loss 17                     # 2024: "Check Box8", same rect
     type: checkbox
     on_state: /Yes
-  - line: "17"                         # the INLINE "Enter Spouse's VAGI in box here" box (key kept from 2023/2024) — NOT the STA amount
+  # Phase K JK10 (2026-10-24), P-031: the face prints one line 17 (no 17a): the right-column STA amount is "17" (was
+  # "17a") and the inline "Enter Spouse's VAGI in box here" box is "17.spouse_vagi" (was "17").
+  - line: 17.spouse_vagi                # the INLINE "Enter Spouse's VAGI in box here" box — NOT the STA amount
     field: 17. Spouse Tax Adjustment
     type: money
-  - line: 17a                          # the right-hand column the face numbers "Line 17" — the STA amount that Line 18 subtracts
+  - line: "17"                         # the right-hand column the face numbers "Line 17" — the STA amount that Line 18 subtracts
     field: 17a Spouse Tax Adjustment Dollar Amount
     type: money
   - line: "18"                         # Net Amount of Tax — subtract Line 17 from Line 16
@@ -700,6 +702,9 @@ relations:
   - "9 == 3 - 8"                       # Line 9 "VAGI — Subtract Line 8 from Line 3."
   - "14 == 10 + 11 + 12 + 13"          # Line 14 "Add Lines 10, 11, 12, and 13."
   - "15 == 9 - 14"                     # Line 15 "Virginia Taxable Income — Subtract Line 14 from Line 9."
+  # Phase K JK10 (2026-10-24): line 18 as the face prints it (blank sha256 bb271a15f9ad173e...), now that the STA amount
+  # box is keyed "17": "18. Net Amount of Tax - Subtract Line 17 from Line 16" — no floor printed.
+  - "18 == 16 - 17"                    # Line 18 "Net Amount of Tax - Subtract Line 17 from Line 16"
   - "26 == 19a + 19b + 20 + 21 + 22 + 23 + 24 + 25"  # Line 26 "Add Lines 19a through 25."
   - "34 == 29 + 30 + 31 + 32 + 33"     # Line 34 "Add Lines 29 through 33."
 cross_form:

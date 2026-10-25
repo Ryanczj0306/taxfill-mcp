@@ -13,7 +13,7 @@ thresholds:
 top_tier_kinds:
 - text
 passed: true
-adjudicated: 186
+adjudicated: 185
 test_runs: 4
 history:
 - run: 1
@@ -66,6 +66,11 @@ history:
     box (text, choice or unknown) on its page carries its printed_line at any score, has its designator printed immediately
     before it, or names that line by /TU or field name; else same_line cap at med (WI Form 1 line 30 count box, Form 2555
     description boxes, WI 2023 line 15a rent box); per-form ''any mis-anchored'' rate over the text group only'
+- event: 'Phase K JK10 P-031 re-keys (not a TEST run, no method change): VA 760 2025 keys the STA amount "17" (was "17a";
+    its JK15 verdict saw 17, now retired_items in adjudications.yaml) and the spouse-VAGI box "17.spouse_vagi" (unscored);
+    OK 511 2025 (DEV) keys line 4''s amount "4" (was "4b") and its Describe box "4.description" (unscored). Re-finalized:
+    TEST med scored 561 -> 560, disagreements 186 -> 185; the gate numbers are unchanged'
+  date: '2026-10-24'
 criteria:
   test_packs_at_least_30: true
   test_federal_at_least_10: true
@@ -175,14 +180,14 @@ measured:
         - 0.995
       med:
         emitted: 3334
-        scored: 561
+        scored: 560
         agree: 405
-        disagree: 156
-        unscored: 2773
-        provisional_precision: 0.7219
+        disagree: 155
+        unscored: 2774
+        provisional_precision: 0.7232
         wilson_95:
-        - 0.6834
-        - 0.7574
+        - 0.6847
+        - 0.7587
       low:
         emitted: 3493
         scored: 37
@@ -221,7 +226,7 @@ measured:
     forms_with_a_mis_anchored_top_widget: 1
     per_form_any_mis_anchored_top_rate: 0.0278
     forms_with_top_tier: 36
-    widgets_with_truth: 1825
+    widgets_with_truth: 1824
     widgets_with_truth_but_no_printed_line: 131
   dev:
     packs: 33
@@ -241,14 +246,14 @@ measured:
         - 1.0
       med:
         emitted: 2556
-        scored: 466
-        agree: 330
-        disagree: 136
-        unscored: 2090
-        provisional_precision: 0.7082
+        scored: 465
+        agree: 331
+        disagree: 134
+        unscored: 2091
+        provisional_precision: 0.7118
         wilson_95:
-        - 0.6653
-        - 0.7476
+        - 0.6691
+        - 0.7511
       low:
         emitted: 3065
         scored: 102
@@ -287,7 +292,7 @@ measured:
     forms_with_a_mis_anchored_top_widget: 0
     per_form_any_mis_anchored_top_rate: 0.0
     forms_with_top_tier: 31
-    widgets_with_truth: 1599
+    widgets_with_truth: 1598
     widgets_with_truth_but_no_printed_line: 147
   mandatory:
     al_form40_2023:
@@ -375,16 +380,16 @@ measured:
         anchor:
         - '22'
   disagreements:
-    count: 186
-    test: 166
+    count: 185
+    test: 165
     mandatory: 20
-    ids_sha256: 6b2a16ea6ab421a6
+    ids_sha256: d5bb5d244bb84be3
   unscored_sample:
     size: 48
     seed: 20261024
     ids_sha256: 2e82f0f073834dc3
 adjudication:
-  adjudicated: 186
+  adjudicated: 185
   unadjudicated: 0
   tiers:
     top:
@@ -398,14 +403,14 @@ adjudication:
       - 0.9948
       - 0.9998
     med:
-      scored: 561
-      right: 555
+      scored: 560
+      right: 554
       wrong: 6
       ambiguous: 0
       unadjudicated: 0
       precision: 0.9893
       wilson_95:
-      - 0.9769
+      - 0.9768
       - 0.9951
     low:
       scored: 37
@@ -628,7 +633,6 @@ adjudication:
   - states/de/2025/pit_res:p4:ln57ColB:w0
   - states/de/2025/pit_res:p4:ln58ColB:w0
   - states/de/2025/pit_res:p4:ln59ColB:w0
-  - states/va/2025/va760:p2:17a Spouse Tax Adjustment Dollar Amount:w0
   unscored_sample:
     groups:
     - text

@@ -163,8 +163,12 @@ def test_the_table_and_adjudications_live_where_the_wheel_stages_them_and_no_gat
     assert staged <= {".yaml"}  # scripts/stage_data.py copies .yaml/.yml/.md
     assert not list((REPO / "knowledge" / "anchor").rglob("pack.yaml"))
     adj = yaml.safe_load(B.ADJUDICATIONS.read_text(encoding="utf-8"))
-    # retired_unscored_sample keeps run-1 sample verdicts whose ids the current method no longer samples (never joined)
-    assert {"items", "unscored_sample"} <= set(adj) <= {"items", "unscored_sample", "retired_unscored_sample"}
+    # retired_unscored_sample keeps run-1 sample verdicts whose ids the current method no longer samples (never joined);
+    # retired_items keeps verdicts on disagreements a later pack re-key removed (Phase K JK10, 2026-10-24; never joined)
+    assert {"items", "unscored_sample"} <= set(adj) <= {"items", "unscored_sample", "retired_unscored_sample",
+                                                         "retired_items"}
+    live = {e["id"] for e in adj["items"]}
+    assert not live & {e["id"] for e in adj.get("retired_items") or []}, "a retired verdict is still joined"
 
 
 # ── network: the committed fixtures and tables against the real cached blanks ──
