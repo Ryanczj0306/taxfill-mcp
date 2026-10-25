@@ -1,0 +1,658 @@
+# Phase K JK15 (2026-10-24): the KG6 accuracy table for the pack-blind anchor (taxfill_core.anchor), written by
+# scripts/anchor_benchmark.py; do not edit by hand. taxfill_core.anchor reads `thresholds` from this file ONLY when
+# `passed` is true and `method` matches its METHOD; otherwise it emits nothing above "low". `measured` holds the
+# provisional numbers (a disagreement with a pack counts against the anchor until adjudicated); `adjudication` holds
+# the numbers after the blind vision adjudication in adjudications.yaml (--finalize): one blind read per item,
+# sharded across adjudicators. The gate is the scored top-tier precision; `notes` says what each number covers.
+# A top-tier anchor is worded "anchored (unverified line map)": it is still not a verified line map.
+schema: 1
+method: jk15-v4
+thresholds:
+  top: 3.0
+  med: 2.0
+top_tier_kinds:
+- text
+passed: true
+adjudicated: 186
+test_runs: 4
+history:
+- run: 1
+  date: '2026-10-24'
+  method: jk15-v1
+  thresholds:
+    top: 3.0
+    med: 2.0
+  note: 'first measured TEST run: method jk15-v1 tuned on DEV only (DEV top 937/937), thresholds top 3.0 med 2.0'
+- event: 'finalize join normalisation (commit 92c11ec): an adjudicator''s seen_line is normalised the way the anchor normalises
+    a printed designator before the join, so ''6C'' equals ''6c'' (AZ 140NR line 6C had been scored wrong on the spelling
+    alone); not a TEST run and not a method change'
+  date: '2026-10-24'
+- run: 2
+  date: '2026-10-24'
+  method: jk15-v2
+  thresholds:
+    top: 3.0
+    med: 2.0
+  note: 'method jk15-v2, after the round-1 verifier failed run 1: (1) a box whose row band holds another fillable text box
+    of a different field with no caption words between them is capped below the top tier (multi_column_row) whether or not
+    the neighbour got a line, because a row designator does not identify a box on a multi-column row (DE PIT-RES/PIT-NON Column
+    A, the spouse column, had reached the top tier 80 times while Column B got no line); (2) a cents token (''.00'', ''00'')
+    is a separator, so a second column keeps its own designator; (3) one designator on top-scoring boxes of different fields
+    on one page is capped below the top tier (repeated_line; AL 40NR page 2 prints ''2'' once per Part). The table now reports
+    the scored top tier, the unscored sample and a combined size-weighted estimate with 95% Wilson intervals, checkboxes apart,
+    and words the gate as scored top-tier precision. Thresholds (top 3.0, med 2.0) and the selection (sibling disclosure added)
+    are unchanged.'
+- run: 3
+  date: '2026-10-24'
+  method: jk15-v3
+  thresholds:
+    top: 3.0
+    med: 2.0
+  note: 'method jk15-v3, after the round-2 verifier failed run 2: the row-identification invariant. A widget reaches the top
+    tier only when (i) no fillable text box of any other field shares its row band, or (ii) every fillable text box in that
+    band, its own included, carries its own distinct printed_line read from the designator printed immediately before it (beside
+    evidence; a gutter number or /TU alone does not count), the 1040 2a/2b row; every other widget caps at med with shared_row:<field>
+    evidence (the round-2 cap skipped a pair with caption words between, so GA 500 line 14''s count box, IT-201 line 84''s
+    date box and the 1040-X line 23 year box took their row''s top tier while the amount box got no line). Licensing fails
+    closed (a missing or non-list top_tier_kinds licenses no group); the unscored sample and the combined estimate are computed
+    over the text group only, the only group that can be licensed. Thresholds (top 3.0, med 2.0) and the selection are unchanged.'
+- run: 4
+  date: '2026-10-24'
+  method: jk15-v4
+  thresholds:
+    top: 3.0
+    med: 2.0
+  note: 'method jk15-v4 (round 4): the one-to-one rule — a widget keeps the top tier only when no other field''s fillable
+    box (text, choice or unknown) on its page carries its printed_line at any score, has its designator printed immediately
+    before it, or names that line by /TU or field name; else same_line cap at med (WI Form 1 line 30 count box, Form 2555
+    description boxes, WI 2023 line 15a rent box); per-form ''any mis-anchored'' rate over the text group only'
+criteria:
+  test_packs_at_least_30: true
+  test_federal_at_least_10: true
+  test_state_at_least_20_from_12_states: true
+  mandatory_cases_flagged: true
+  every_disagreement_adjudicated: true
+  scored_top_tier_precision_at_least_0.99: true
+key_rule:
+- '"21", "5a" (1-3 digits, one lowercase letter) score as themselves'
+- '"line_21", "line21a" score as the line after "line"'
+- '"21.col_b" scores as line 21'
+- every other key shape is unscored (see scripts/anchor_benchmark.py)
+notes:
+- 'Known limits (the fourth review, 2026-10-24): a designator that a second schedule on the page prints again with no box
+  beside that copy is not counted, so Wisconsin Form 1 page 4''s Schedule 1 line 7 and Schedule 2 line 8 keep the top tier
+  although the other schedule prints a line 7 and a line 8 as preprinted rates; widgets hidden by their annotation flags (/F
+  Hidden or NoView) are anchored like any other, and the pack-less fill (JK16) must refuse them; text outside a page''s crop
+  box is read (no wrong anchor in the cache comes of it).'
+- 'The gate is the SCORED top-tier precision: top-tier widgets whose pack binds a numbered key, after the blind adjudication
+  of every disagreement (>= 0.99). The unscored top-tier sample and the combined size-weighted estimate (each with a 95% Wilson
+  interval) are reported beside it, not gated; both cover text boxes only (unscored_sample.groups, combined_top_estimate.groups),
+  the only group the table can license.'
+- 'Checkbox and radio widgets are reported apart from text boxes (top_by_kind); the gate covers both, and the top tier is
+  licensed per group: top_tier_kinds lists the text group when its scored top-tier precision is >= 0.99 (checkbox and radio
+  widgets are never licensed: run 2 measured checkboxes 10/11, and the sample does not cover them), and taxfill_core.anchor
+  caps every other group at ''med''. A table of this method whose top_tier_kinds is missing or not a list licenses no group
+  for the top tier.'
+- 'Row identification (method jk15-v3): a printed designator names a row, and a fill by line number needs it to name a box.
+  taxfill_core.anchor gives a widget the top tier only when (i) no fillable text box of any other field shares its row band,
+  or (ii) every fillable text box in that row band, its own included, carries its own printed_line, all distinct, each read
+  from the designator printed immediately before the box (beside evidence, not a gutter number or a /TU alone): the 1040 ''2a
+  [box] b ... 2b [box]'' row. Every other widget caps at ''med'' with a shared_row:<field> evidence entry (Georgia 500 line
+  14''s count box, the 1040-X line 23 year box).'
+- 'The per-form ''any mis-anchored'' rate covers the top tier of the licensable group (text boxes) only, like the sample and
+  the combined estimate: a form counts in the denominator when it has a top-tier text box, and in the numerator when a scored
+  top-tier text box or an unscored-sample widget is adjudicated anchor_wrong.'
+- 'One-to-one rule (method jk15-v4): a designator must map to one box on its page. taxfill_core.anchor gives a widget the
+  top tier only when no other field''s fillable box on the page (text, choice or unknown kind) carries the same printed_line
+  at any score, has that designator printed immediately before it (even when it got no line), or names that line through its
+  /TU or field name; else it caps at ''med'' with same_line:<field> (Wisconsin Form 1 line 30''s count box above the line-30
+  amount box, Form 2555''s description boxes above their amount boxes, Wisconsin 2023 line 15a''s rent box beside the ''15a''
+  credit box).'
+- 'The adjudication is one blind read per item: each crop is read by exactly one adjudicator, sharded across adjudicators,
+  with the candidate lines sorted and never which side claims which.'
+- 'A row designator does not identify a box on a multi-column row (Delaware prints ''N.'' before the spouse''s Column A and
+  again before Column B), nor a designator printed once per Part on one page (Alabama 40NR page 2): taxfill_core.anchor caps
+  those boxes below the top tier.'
+- 'Selection: sibling forms of one return can sit on opposite sides of the DEV/TEST split, and both mandatory cases belong
+  to DEV families; measured.selection_disclosure lists them.'
+measured:
+  selection_sha256: d87d78833018c39c
+  selection_disclosure:
+    siblings_across_split:
+    - dev: states/al/al40
+      test: states/al/al40nr
+      relation: Alabama Form 40 (resident) and Form 40NR (nonresident)
+    - dev: states/ca/form540
+      test: states/ca/form540nr
+      relation: California Form 540 (resident) and Form 540NR (nonresident or part-year)
+    - dev: federal/sched_a
+      test: federal/sched_a_nr
+      relation: Schedule A (Form 1040) and Schedule A (Form 1040-NR)
+    siblings_same_side:
+    - - dev
+      - federal/f1040
+      - federal/f1040nr
+    - - dev
+      - states/ar/ar1000f
+      - states/ar/ar1000nr
+    - - test
+      - states/az/az140
+      - states/az/az140nr
+      - states/az/az140py
+    - - test
+      - states/co/dr0104
+      - states/co/dr0104pn
+    - - test
+      - states/de/pit_res
+      - states/de/pit_non
+    name_similar_not_siblings:
+    - dev: federal/sched_1
+      test: federal/sched_1a
+      relation: Schedule 1 and Schedule 1-A (Form 1040) are different schedules, not versions of one form
+    mandatory_cases_in_dev_families:
+    - case: me_1040me_2023
+      family: states/me/f1040me
+      split: dev
+    - case: al_form40_2023
+      family: states/al/al40
+      split: dev
+      note: its sibling states/al/al40nr is a TEST family
+  test:
+    packs: 38
+    federal: 12
+    state: 26
+    states_distinct: 22
+    tiers:
+      top:
+        emitted: 1457
+        scored: 1096
+        agree: 1086
+        disagree: 10
+        unscored: 361
+        provisional_precision: 0.9909
+        wilson_95:
+        - 0.9833
+        - 0.995
+      med:
+        emitted: 3334
+        scored: 561
+        agree: 405
+        disagree: 156
+        unscored: 2773
+        provisional_precision: 0.7219
+        wilson_95:
+        - 0.6834
+        - 0.7574
+      low:
+        emitted: 3493
+        scored: 37
+        agree: 37
+        disagree: 0
+        unscored: 3456
+        provisional_precision: 1.0
+        wilson_95:
+        - 0.9059
+        - 1.0
+      none:
+        emitted: 922
+        scored: 0
+        agree: 0
+        disagree: 0
+        unscored: 922
+        provisional_precision: null
+        wilson_95: null
+    top_by_kind:
+      text:
+        emitted: 1435
+        scored: 1086
+        agree: 1077
+        provisional_precision: 0.9917
+        wilson_95:
+        - 0.9843
+        - 0.9956
+      checkbox:
+        emitted: 22
+        scored: 10
+        agree: 9
+        provisional_precision: 0.9
+        wilson_95:
+        - 0.5958
+        - 0.9821
+    forms_with_a_mis_anchored_top_widget: 1
+    per_form_any_mis_anchored_top_rate: 0.0278
+    forms_with_top_tier: 36
+    widgets_with_truth: 1825
+    widgets_with_truth_but_no_printed_line: 131
+  dev:
+    packs: 33
+    federal: 15
+    state: 18
+    states_distinct: 17
+    tiers:
+      top:
+        emitted: 1176
+        scored: 884
+        agree: 884
+        disagree: 0
+        unscored: 292
+        provisional_precision: 1.0
+        wilson_95:
+        - 0.9957
+        - 1.0
+      med:
+        emitted: 2556
+        scored: 466
+        agree: 330
+        disagree: 136
+        unscored: 2090
+        provisional_precision: 0.7082
+        wilson_95:
+        - 0.6653
+        - 0.7476
+      low:
+        emitted: 3065
+        scored: 102
+        agree: 99
+        disagree: 3
+        unscored: 2963
+        provisional_precision: 0.9706
+        wilson_95:
+        - 0.9171
+        - 0.9899
+      none:
+        emitted: 1025
+        scored: 0
+        agree: 0
+        disagree: 0
+        unscored: 1025
+        provisional_precision: null
+        wilson_95: null
+    top_by_kind:
+      text:
+        emitted: 1150
+        scored: 872
+        agree: 872
+        provisional_precision: 1.0
+        wilson_95:
+        - 0.9956
+        - 1.0
+      checkbox:
+        emitted: 26
+        scored: 12
+        agree: 12
+        provisional_precision: 1.0
+        wilson_95:
+        - 0.7575
+        - 1.0
+    forms_with_a_mis_anchored_top_widget: 0
+    per_form_any_mis_anchored_top_rate: 0.0
+    forms_with_top_tier: 31
+    widgets_with_truth: 1599
+    widgets_with_truth_but_no_printed_line: 147
+  mandatory:
+    al_form40_2023:
+      must_flag: 15
+      flagged: 15
+      missed: []
+      all_flagged: true
+      detail:
+      - key: 20_amount
+        claims: '20'
+        anchor:
+        - 20a
+      - key: 21_amount
+        claims: '21'
+        anchor:
+        - 20b
+      - key: '22'
+        claims: '22'
+        anchor:
+        - '21'
+      - key: '23'
+        claims: '23'
+        anchor:
+        - '22'
+      - key: '24'
+        claims: '24'
+        anchor:
+        - '23'
+      - key: '25'
+        claims: '25'
+        anchor:
+        - '24'
+      - key: '26'
+        claims: '26'
+        anchor:
+        - '25'
+      - key: '27'
+        claims: '27'
+        anchor:
+        - '26'
+      - key: '28'
+        claims: '28'
+        anchor:
+        - '27'
+      - key: '29'
+        claims: '29'
+        anchor:
+        - '28'
+      - key: '30'
+        claims: '30'
+        anchor:
+        - '29'
+      - key: '31'
+        claims: '31'
+        anchor:
+        - '30'
+      - key: '32'
+        claims: '32'
+        anchor:
+        - '31'
+      - key: '33'
+        claims: '33'
+        anchor:
+        - '32'
+      - key: 34_total_donations
+        claims: '34'
+        anchor:
+        - '33'
+    me_1040me_2023:
+      must_flag: 3
+      flagged: 3
+      missed: []
+      all_flagged: true
+      detail:
+      - key: '21'
+        claims: '21'
+        anchor:
+        - '23'
+      - key: '22'
+        claims: '22'
+        anchor:
+        - '21'
+      - key: '23'
+        claims: '23'
+        anchor:
+        - '22'
+  disagreements:
+    count: 186
+    test: 166
+    mandatory: 20
+    ids_sha256: 6b2a16ea6ab421a6
+  unscored_sample:
+    size: 48
+    seed: 20261024
+    ids_sha256: 2e82f0f073834dc3
+adjudication:
+  adjudicated: 186
+  unadjudicated: 0
+  tiers:
+    top:
+      scored: 1096
+      right: 1095
+      wrong: 1
+      ambiguous: 0
+      unadjudicated: 0
+      precision: 0.9991
+      wilson_95:
+      - 0.9948
+      - 0.9998
+    med:
+      scored: 561
+      right: 555
+      wrong: 6
+      ambiguous: 0
+      unadjudicated: 0
+      precision: 0.9893
+      wilson_95:
+      - 0.9769
+      - 0.9951
+    low:
+      scored: 37
+      right: 37
+      wrong: 0
+      ambiguous: 0
+      unadjudicated: 0
+      precision: 1.0
+      wilson_95:
+      - 0.9059
+      - 1.0
+    none:
+      scored: 0
+      right: 0
+      wrong: 0
+      ambiguous: 0
+      unadjudicated: 0
+      precision: null
+      wilson_95: null
+  top_by_kind:
+    text:
+      scored: 1086
+      right: 1086
+      wrong: 0
+      ambiguous: 0
+      unadjudicated: 0
+      precision: 1.0
+      wilson_95:
+      - 0.9965
+      - 1.0
+    checkbox:
+      scored: 10
+      right: 9
+      wrong: 1
+      ambiguous: 0
+      unadjudicated: 0
+      precision: 0.9
+      wilson_95:
+      - 0.5958
+      - 0.9821
+  per_form_any_mis_anchored_top_rate: 0.0
+  forms_with_top_tier: 36
+  forms_with_a_mis_anchored_top_widget: []
+  pack_keys_not_the_printed_line:
+  - mandatory/al_form40_2023:p1:ADJUSTEDTOTALPAYMENTS:w0
+  - mandatory/al_form40_2023:p1:AMENDEDPAYMENTS:w0
+  - mandatory/al_form40_2023:p1:AMENDEDRETURNONLY:w0
+  - mandatory/al_form40_2023:p1:AMTOWE:w0
+  - mandatory/al_form40_2023:p1:CONTALDEMPTY:w0
+  - mandatory/al_form40_2023:p1:ESTMEXTSIONPMT:w0
+  - mandatory/al_form40_2023:p1:ESTPEN:w0
+  - mandatory/al_form40_2023:p1:OVERPAID:w0
+  - mandatory/al_form40_2023:p1:PG1LINE33:w0
+  - mandatory/al_form40_2023:p1:REFUNDABLERC:w0
+  - mandatory/al_form40_2023:p1:SCHCPPAYMENT:w0
+  - mandatory/al_form40_2023:p1:TOTALREPPTY:w0
+  - mandatory/al_form40_2023:p1:TOTALWH:w0
+  - mandatory/al_form40_2023:p1:TOTPMT:w0
+  - mandatory/al_form40_2023:p1:TOTTAXLIB:w0
+  - mandatory/al_form40_2023:p1:WAGESINC:w0
+  - mandatory/al_form40_2023:p3:ADJGRSINC:w1
+  - mandatory/me_1040me_2023:p2:1040ME Nonresident credit:w0
+  - mandatory/me_1040me_2023:p2:1040ME Tax credits:w0
+  - mandatory/me_1040me_2023:p2:1040ME Total tax:w0
+  - states/de/2023/pit_non:p1:ln01ColA:w0
+  - states/de/2023/pit_non:p1:ln01ColB:w0
+  - states/de/2023/pit_non:p1:ln02ColA:w0
+  - states/de/2023/pit_non:p1:ln02ColB:w0
+  - states/de/2023/pit_non:p1:ln03ColA:w0
+  - states/de/2023/pit_non:p1:ln03ColB:w0
+  - states/de/2023/pit_non:p1:ln04ColA:w0
+  - states/de/2023/pit_non:p1:ln04ColB:w0
+  - states/de/2023/pit_non:p1:ln05ColA:w0
+  - states/de/2023/pit_non:p1:ln05ColB:w0
+  - states/de/2023/pit_non:p1:ln06ColA:w0
+  - states/de/2023/pit_non:p1:ln06ColB:w0
+  - states/de/2023/pit_non:p1:ln08ColA:w0
+  - states/de/2023/pit_non:p1:ln08ColB:w0
+  - states/de/2023/pit_non:p1:ln09ColA:w0
+  - states/de/2023/pit_non:p1:ln09ColB:w0
+  - states/de/2023/pit_non:p1:ln10ColA:w0
+  - states/de/2023/pit_non:p1:ln10ColB:w0
+  - states/de/2023/pit_non:p1:ln11ColA:w0
+  - states/de/2023/pit_non:p1:ln11ColB:w0
+  - states/de/2023/pit_non:p1:ln12ColA:w0
+  - states/de/2023/pit_non:p1:ln12ColB:w0
+  - states/de/2023/pit_non:p1:ln13ColA:w0
+  - states/de/2023/pit_non:p1:ln13ColB:w0
+  - states/de/2023/pit_non:p1:ln14ColA:w0
+  - states/de/2023/pit_non:p1:ln14ColB:w0
+  - states/de/2023/pit_non:p1:ln15ColA:w0
+  - states/de/2023/pit_non:p1:ln15ColB:w0
+  - states/de/2023/pit_non:p1:ln16ColA:w0
+  - states/de/2023/pit_non:p1:ln16ColB:w0
+  - states/de/2023/pit_non:p1:ln17ColA:w0
+  - states/de/2023/pit_non:p1:ln17ColB:w0
+  - states/de/2023/pit_non:p1:ln18ColA:w0
+  - states/de/2023/pit_non:p1:ln18ColB:w0
+  - states/de/2023/pit_non:p1:ln19ColA:w0
+  - states/de/2023/pit_non:p1:ln19ColB:w0
+  - states/de/2023/pit_non:p1:ln20ColA:w0
+  - states/de/2023/pit_non:p1:ln20ColB:w0
+  - states/de/2023/pit_non:p1:ln21ColA:w0
+  - states/de/2023/pit_non:p1:ln21ColB:w0
+  - states/de/2023/pit_non:p1:ln22ColA:w0
+  - states/de/2023/pit_non:p1:ln22ColB:w0
+  - states/de/2023/pit_non:p1:ln23ColA:w0
+  - states/de/2023/pit_non:p1:ln23ColB:w0
+  - states/de/2023/pit_non:p1:ln24ColA:w0
+  - states/de/2023/pit_non:p1:ln24ColB:w0
+  - states/de/2023/pit_non:p1:ln25ColA:w0
+  - states/de/2023/pit_non:p1:ln25ColB:w0
+  - states/de/2023/pit_non:p1:ln27ColA:w0
+  - states/de/2023/pit_non:p1:ln27ColB:w0
+  - states/de/2023/pit_non:p1:ln28ColA:w0
+  - states/de/2023/pit_non:p1:ln28ColB:w0
+  - states/de/2023/pit_non:p1:ln29ColA:w0
+  - states/de/2023/pit_non:p1:ln29ColB:w0
+  - states/de/2025/pit_res:p1:ln01ColA:w0
+  - states/de/2025/pit_res:p1:ln01ColB:w0
+  - states/de/2025/pit_res:p1:ln02ColA:w0
+  - states/de/2025/pit_res:p1:ln02ColB:w0
+  - states/de/2025/pit_res:p1:ln03ColA:w0
+  - states/de/2025/pit_res:p1:ln03ColB:w0
+  - states/de/2025/pit_res:p1:ln04ColA:w0
+  - states/de/2025/pit_res:p1:ln04ColB:w0
+  - states/de/2025/pit_res:p1:ln05ColA:w0
+  - states/de/2025/pit_res:p1:ln05ColB:w0
+  - states/de/2025/pit_res:p1:ln06ColA:w0
+  - states/de/2025/pit_res:p1:ln06ColB:w0
+  - states/de/2025/pit_res:p1:ln07ColA:w0
+  - states/de/2025/pit_res:p1:ln07ColB:w0
+  - states/de/2025/pit_res:p1:ln09ColA:w0
+  - states/de/2025/pit_res:p1:ln09ColB:w0
+  - states/de/2025/pit_res:p1:ln10ColA:w0
+  - states/de/2025/pit_res:p1:ln10ColB:w0
+  - states/de/2025/pit_res:p1:ln11ColA:w0
+  - states/de/2025/pit_res:p1:ln11ColB:w0
+  - states/de/2025/pit_res:p1:ln12ColA:w0
+  - states/de/2025/pit_res:p1:ln12ColB:w0
+  - states/de/2025/pit_res:p1:ln13ColA:w0
+  - states/de/2025/pit_res:p1:ln13ColB:w0
+  - states/de/2025/pit_res:p1:ln14ColA:w0
+  - states/de/2025/pit_res:p1:ln14ColB:w0
+  - states/de/2025/pit_res:p1:ln15ColA:w0
+  - states/de/2025/pit_res:p1:ln15ColB:w0
+  - states/de/2025/pit_res:p1:ln16ColA:w0
+  - states/de/2025/pit_res:p1:ln16ColB:w0
+  - states/de/2025/pit_res:p1:ln17ColA:w0
+  - states/de/2025/pit_res:p1:ln17ColB:w0
+  - states/de/2025/pit_res:p1:ln18ColA:w0
+  - states/de/2025/pit_res:p1:ln18ColB:w0
+  - states/de/2025/pit_res:p1:ln19ColA:w0
+  - states/de/2025/pit_res:p1:ln19ColB:w0
+  - states/de/2025/pit_res:p2:ln20ColA:w0
+  - states/de/2025/pit_res:p2:ln20ColB:w0
+  - states/de/2025/pit_res:p2:ln21ColA:w0
+  - states/de/2025/pit_res:p2:ln21ColB:w0
+  - states/de/2025/pit_res:p2:ln22ColA:w0
+  - states/de/2025/pit_res:p2:ln22ColB:w0
+  - states/de/2025/pit_res:p2:ln23ColA:w0
+  - states/de/2025/pit_res:p2:ln23ColB:w0
+  - states/de/2025/pit_res:p2:ln24ColA:w0
+  - states/de/2025/pit_res:p2:ln24ColB:w0
+  - states/de/2025/pit_res:p2:ln25ColA:w0
+  - states/de/2025/pit_res:p2:ln25ColB:w0
+  - states/de/2025/pit_res:p2:ln26ColA:w0
+  - states/de/2025/pit_res:p2:ln26ColB:w0
+  - states/de/2025/pit_res:p2:ln28ColA:w0
+  - states/de/2025/pit_res:p2:ln28ColB:w0
+  - states/de/2025/pit_res:p2:ln29ColB:w0
+  - states/de/2025/pit_res:p2:ln30ColA:w0
+  - states/de/2025/pit_res:p2:ln30ColB:w0
+  - states/de/2025/pit_res:p2:ln31ColA:w0
+  - states/de/2025/pit_res:p2:ln31ColB:w0
+  - states/de/2025/pit_res:p2:ln32ColA:w0
+  - states/de/2025/pit_res:p2:ln32ColB:w0
+  - states/de/2025/pit_res:p2:ln33ColA:w0
+  - states/de/2025/pit_res:p2:ln33ColB:w0
+  - states/de/2025/pit_res:p2:ln34ColA:w0
+  - states/de/2025/pit_res:p2:ln34ColB:w0
+  - states/de/2025/pit_res:p2:ln35ColA:w0
+  - states/de/2025/pit_res:p2:ln35ColB:w0
+  - states/de/2025/pit_res:p2:ln36ColA:w0
+  - states/de/2025/pit_res:p2:ln36ColB:w0
+  - states/de/2025/pit_res:p2:ln37ColA:w0
+  - states/de/2025/pit_res:p2:ln37ColB:w0
+  - states/de/2025/pit_res:p2:ln38ColA:w0
+  - states/de/2025/pit_res:p2:ln38ColB:w0
+  - states/de/2025/pit_res:p2:ln39ColA:w0
+  - states/de/2025/pit_res:p2:ln39ColB:w0
+  - states/de/2025/pit_res:p2:ln40ColA:w0
+  - states/de/2025/pit_res:p2:ln40ColB:w0
+  - states/de/2025/pit_res:p3:ln41ColA:w0
+  - states/de/2025/pit_res:p3:ln41ColB:w0
+  - states/de/2025/pit_res:p3:ln42ColA:w0
+  - states/de/2025/pit_res:p3:ln42ColB:w0
+  - states/de/2025/pit_res:p3:ln43ColB:w0
+  - states/de/2025/pit_res:p3:ln44ColB:w0
+  - states/de/2025/pit_res:p3:ln45ColB:w0
+  - states/de/2025/pit_res:p3:ln46ColB:w0
+  - states/de/2025/pit_res:p3:ln47ColB:w0
+  - states/de/2025/pit_res:p4:ln48ColA:w0
+  - states/de/2025/pit_res:p4:ln48ColB:w0
+  - states/de/2025/pit_res:p4:ln49ColA:w0
+  - states/de/2025/pit_res:p4:ln49ColB:w0
+  - states/de/2025/pit_res:p4:ln50ColA:w0
+  - states/de/2025/pit_res:p4:ln50ColB:w0
+  - states/de/2025/pit_res:p4:ln51ColA:w0
+  - states/de/2025/pit_res:p4:ln51ColB:w0
+  - states/de/2025/pit_res:p4:ln52ColA:w0
+  - states/de/2025/pit_res:p4:ln52ColB:w0
+  - states/de/2025/pit_res:p4:ln53ColA:w0
+  - states/de/2025/pit_res:p4:ln53ColB:w0
+  - states/de/2025/pit_res:p4:ln54ColA:w0
+  - states/de/2025/pit_res:p4:ln54ColB:w0
+  - states/de/2025/pit_res:p4:ln55ColA:w0
+  - states/de/2025/pit_res:p4:ln55ColB:w0
+  - states/de/2025/pit_res:p4:ln56ColB:w0
+  - states/de/2025/pit_res:p4:ln57ColB:w0
+  - states/de/2025/pit_res:p4:ln58ColB:w0
+  - states/de/2025/pit_res:p4:ln59ColB:w0
+  - states/va/2025/va760:p2:17a Spouse Tax Adjustment Dollar Amount:w0
+  unscored_sample:
+    groups:
+    - text
+    size: 48
+    population: 349
+    right: 48
+    wrong: 0
+    ambiguous: 0
+    unadjudicated: 0
+    precision: 1.0
+    wilson_95:
+    - 0.9259
+    - 1.0
+  combined_top_estimate:
+    groups:
+    - text
+    scored_n: 1086
+    unscored_population: 349
+    weights:
+      scored: 0.7568
+      unscored: 0.2432
+    precision: 1.0
+    wilson_95:
+    - 0.9793
+    - 1.0
+    how: each stratum's precision weighted by its size in the top tier; the interval is the same size-weighted mix of the
+      two strata's 95% Wilson bounds (conservative)

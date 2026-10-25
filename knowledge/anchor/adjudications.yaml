@@ -1,0 +1,1538 @@
+# Phase K JK15 (2026-10-24): the blind vision adjudications that scripts/anchor_benchmark.py --finalize joins onto
+# the benchmark's disagreements (KG6). Written by an independent adjudicator who saw only each item's crop and its
+# candidate lines in sorted order, never which line the pack or the anchor gave. Format (fixed):
+#
+#   items:            # one entry per disagreements.json item (TEST and the two mandatory cases)
+#     - id: "<pack id>:p<page>:<field>:w<widget index>"
+#       seen_line: "21"     # the line printed for the outlined box's row, or null when none is printed
+#       ambiguous: false    # true when the crop cannot settle it; excluded from numerator and denominator
+#       reason: "..."
+#   unscored_sample:  # one entry per unscored_sample.json item (top-tier widgets the packs do not number)
+#     - {id: ..., seen_line: ..., ambiguous: ..., reason: ...}
+#
+# retired_unscored_sample: sample entries of earlier runs (methods jk15-v1 to jk15-v3) whose ids the current method no longer samples;
+# kept for the record, never joined. items may hold verdicts for ids that are not disagreements in the current
+# run (an id the method no longer anchors differently); --finalize joins only the current disagreements.
+items:
+- id: federal/2026/f8938:p3:topmostSubform[0].Page2[0].c2_2[0]:w0
+  seen_line: 22a
+  ambiguous: false
+  reason: outlined checkbox follows printed "22a" (Account opened during tax year) on row 22
+- id: mandatory/al_form40_2023:p1:ADJUSTEDTOTALPAYMENTS:w0
+  seen_line: '29'
+  ambiguous: false
+  reason: outlined box in right column on row printed 29 Adjusted Total Payments
+- id: mandatory/al_form40_2023:p1:AMENDEDPAYMENTS:w0
+  seen_line: '24'
+  ambiguous: false
+  reason: outlined entry box in row printed 24 (Amended Returns Only - Previous payments)
+- id: mandatory/al_form40_2023:p1:AMENDEDRETURNONLY:w0
+  seen_line: '28'
+  ambiguous: false
+  reason: outlined box in right column on row printed 28 Amended Returns Only previous refund
+- id: mandatory/al_form40_2023:p1:AMTOWE:w0
+  seen_line: '30'
+  ambiguous: false
+  reason: outlined box in right column at row printed 30 (AMOUNT YOU OWE)
+- id: mandatory/al_form40_2023:p1:CONTALDEMPTY:w0
+  seen_line: 20a
+  ambiguous: false
+  reason: outlined box on row printed 20a Alabama Democratic Party
+- id: mandatory/al_form40_2023:p1:ESTMEXTSIONPMT:w0
+  seen_line: '23'
+  ambiguous: false
+  reason: outlined box in row printed 23 (2023 estimated tax payments/Automatic Extension Payment)
+- id: mandatory/al_form40_2023:p1:ESTPEN:w0
+  seen_line: '31'
+  ambiguous: false
+  reason: outlined box in middle column on row printed 31 Penalties
+- id: mandatory/al_form40_2023:p1:OVERPAID:w0
+  seen_line: '32'
+  ambiguous: false
+  reason: outlined box in right column at row printed 32 (AMOUNT OVERPAID)
+- id: mandatory/al_form40_2023:p1:PG1LINE33:w0
+  seen_line: '33'
+  ambiguous: false
+  reason: outlined box in middle column on row printed 33 amount applied to 2024 estimated tax
+- id: mandatory/al_form40_2023:p1:REFUNDABLERC:w0
+  seen_line: '25'
+  ambiguous: false
+  reason: outlined box in row printed 25 (Refundable Credits)
+- id: mandatory/al_form40_2023:p1:SCHCPPAYMENT:w0
+  seen_line: '26'
+  ambiguous: false
+  reason: outlined box in middle column on row printed 26 Payments from Schedule CP
+- id: mandatory/al_form40_2023:p1:TOTALREPPTY:w0
+  seen_line: 20b
+  ambiguous: false
+  reason: outlined box after printed 20b (Alabama Republican Party)
+- id: mandatory/al_form40_2023:p1:TOTALWH:w0
+  seen_line: '22'
+  ambiguous: false
+  reason: outlined box in middle column on row printed 22 Alabama income tax withheld
+- id: mandatory/al_form40_2023:p1:TOTPMT:w0
+  seen_line: '27'
+  ambiguous: false
+  reason: outlined box after printed 27 (Total payments)
+- id: mandatory/al_form40_2023:p1:TOTTAXLIB:w0
+  seen_line: '21'
+  ambiguous: false
+  reason: outlined box in right column on row printed 21 Total tax liability
+- id: mandatory/al_form40_2023:p1:WAGESINC:w0
+  seen_line: 5b
+  ambiguous: false
+  reason: outlined box in column B after printed 5b (Wages, salaries, tips)
+- id: mandatory/al_form40_2023:p3:ADJGRSINC:w1
+  seen_line: '2'
+  ambiguous: false
+  reason: Schedule A outlined inline box labelled 2 on row printed 2 Enter amount from Form 40 line 10
+- id: mandatory/me_1040me_2023:p2:1040ME Nonresident credit:w0
+  seen_line: '23'
+  ambiguous: false
+  reason: outlined box in row printed 23 (Nonrefundable tax credits), not line 21
+- id: mandatory/me_1040me_2023:p2:1040ME Tax credits:w0
+  seen_line: '22'
+  ambiguous: false
+  reason: outlined amount box on row printed 22. TOTAL TAX
+- id: mandatory/me_1040me_2023:p2:1040ME Total tax:w0
+  seen_line: '21'
+  ambiguous: false
+  reason: outlined box in row printed 21 (Nonresident credit)
+- id: states/az/2023/az140nr:p2:63a:w0
+  seen_line: 63a
+  ambiguous: false
+  reason: outlined inline box immediately after printed label 63a on row 63 estimated tax payments
+- id: states/az/2023/az140py:p2:41a:w0
+  seen_line: 41a
+  ambiguous: false
+  reason: outlined box right after printed 41a (529 College Savings Plans)
+- id: states/az/2023/az140py:p2:64a:w0
+  seen_line: 64a
+  ambiguous: false
+  reason: outlined inline box immediately after printed label 64a on row 64 estimated tax payments
+- id: states/az/2025/az140:p1:34a:w0
+  seen_line: 34a
+  ambiguous: false
+  reason: outlined box right after printed 34a (529 College Savings Plans)
+- id: states/az/2025/az140:p2:54a:w0
+  seen_line: 54a
+  ambiguous: false
+  reason: outlined inline box immediately after printed label 54a on row 54 estimated tax payments
+- id: states/de/2023/pit_non:p1:ln01ColA:w0
+  seen_line: '1'
+  ambiguous: false
+  reason: outlined Column A box in row printed 1. (Wages, salaries, tips); no 1a printed
+- id: states/de/2023/pit_non:p1:ln01ColB:w0
+  seen_line: '1'
+  ambiguous: false
+  reason: 'right column, under DELAWARE SOURCE INCOME/LOSS COLUMN B (two-column row: Federal Column A | Column B)'
+- id: states/de/2023/pit_non:p1:ln02ColA:w0
+  seen_line: '2'
+  ambiguous: false
+  reason: outlined Federal Column A box on row printed 2. INTEREST (no 2a printed; A is the column)
+- id: states/de/2023/pit_non:p1:ln02ColB:w0
+  seen_line: '2'
+  ambiguous: false
+  reason: 'right column, under DELAWARE SOURCE INCOME/LOSS COLUMN B (two-column row: Federal Column A | Column B)'
+- id: states/de/2023/pit_non:p1:ln03ColA:w0
+  seen_line: '3'
+  ambiguous: false
+  reason: outlined Column A box in row printed 3. (Dividends); no suffix printed
+- id: states/de/2023/pit_non:p1:ln03ColB:w0
+  seen_line: '3'
+  ambiguous: false
+  reason: 'right column, under DELAWARE SOURCE INCOME/LOSS COLUMN B (two-column row: Federal Column A | Column B)'
+- id: states/de/2023/pit_non:p1:ln04ColA:w0
+  seen_line: '4'
+  ambiguous: false
+  reason: outlined Federal Column A box on row printed 4. STATE REFUNDS (no 4a printed; A is the column)
+- id: states/de/2023/pit_non:p1:ln04ColB:w0
+  seen_line: '4'
+  ambiguous: false
+  reason: 'right column, under DELAWARE SOURCE INCOME/LOSS COLUMN B (two-column row: Federal Column A | Column B)'
+- id: states/de/2023/pit_non:p1:ln05ColA:w0
+  seen_line: '5'
+  ambiguous: false
+  reason: outlined Column A box in row printed 5. (Alimony received); no suffix printed
+- id: states/de/2023/pit_non:p1:ln05ColB:w0
+  seen_line: '5'
+  ambiguous: false
+  reason: 'right column, under DELAWARE SOURCE INCOME/LOSS COLUMN B (two-column row: Federal Column A | Column B)'
+- id: states/de/2023/pit_non:p1:ln06ColA:w0
+  seen_line: '6'
+  ambiguous: false
+  reason: outlined Federal Column A box on row printed 6. BUSINESS INCOME (no 6a printed; A is the column)
+- id: states/de/2023/pit_non:p1:ln06ColB:w0
+  seen_line: '6'
+  ambiguous: false
+  reason: right column (Column B, Delaware source; header off-crop but same layout as line 1-5 crops); row has Column A
+    + Column B
+- id: states/de/2023/pit_non:p1:ln08ColA:w0
+  seen_line: '8'
+  ambiguous: false
+  reason: outlined Column A box in row printed 8. (IRA distributions); no suffix printed
+- id: states/de/2023/pit_non:p1:ln08ColB:w0
+  seen_line: '8'
+  ambiguous: false
+  reason: right column (Column B, Delaware source; same layout); row has Column A + Column B
+- id: states/de/2023/pit_non:p1:ln09ColA:w0
+  seen_line: '9'
+  ambiguous: false
+  reason: outlined Federal Column A box on row printed 9. TAXABLE PENSIONS AND ANNUITIES (no 9a printed; A is the column)
+- id: states/de/2023/pit_non:p1:ln09ColB:w0
+  seen_line: '9'
+  ambiguous: false
+  reason: right column (Column B, Delaware source; same layout); row has Column A + Column B
+- id: states/de/2023/pit_non:p1:ln10ColA:w0
+  seen_line: '10'
+  ambiguous: false
+  reason: outlined Column A box in row printed 10. (Rents, royalties...); no suffix printed
+- id: states/de/2023/pit_non:p1:ln10ColB:w0
+  seen_line: '10'
+  ambiguous: false
+  reason: right column (Column B, Delaware source; same layout); row has Column A + Column B
+- id: states/de/2023/pit_non:p1:ln11ColA:w0
+  seen_line: '11'
+  ambiguous: false
+  reason: outlined Federal Column A box on row printed 11. FARM INCOME (no 11a printed; A is the column)
+- id: states/de/2023/pit_non:p1:ln11ColB:w0
+  seen_line: '11'
+  ambiguous: false
+  reason: right column (Column B, Delaware source; header off-crop, same layout as line 1-5 crops); row has Column A + Column
+    B
+- id: states/de/2023/pit_non:p1:ln12ColA:w0
+  seen_line: '12'
+  ambiguous: false
+  reason: outlined Column A box in row printed 12. (Unemployment compensation); no suffix printed
+- id: states/de/2023/pit_non:p1:ln12ColB:w0
+  seen_line: '12'
+  ambiguous: false
+  reason: right column (Column B, Delaware source; header off-crop, same layout as line 1-5 crops); row has Column A + Column
+    B
+- id: states/de/2023/pit_non:p1:ln13ColA:w0
+  seen_line: '13'
+  ambiguous: false
+  reason: outlined Federal Column A box on row printed 13. TAXABLE SOCIAL SECURITY BENEFITS (no 13a printed; A is the column)
+- id: states/de/2023/pit_non:p1:ln13ColB:w0
+  seen_line: '13'
+  ambiguous: false
+  reason: right column (Column B, Delaware source; header off-crop, same layout as line 1-5 crops); row has Column A + Column
+    B
+- id: states/de/2023/pit_non:p1:ln14ColA:w0
+  seen_line: '14'
+  ambiguous: false
+  reason: outlined Column A box in row printed 14. (Other income); no suffix printed
+- id: states/de/2023/pit_non:p1:ln14ColB:w0
+  seen_line: '14'
+  ambiguous: false
+  reason: right column (Column B, Delaware source; header off-crop, same layout as line 1-5 crops); row has Column A + Column
+    B
+- id: states/de/2023/pit_non:p1:ln15ColA:w0
+  seen_line: '15'
+  ambiguous: false
+  reason: outlined Federal Column A box on row printed 15. TOTAL INCOME (no 15a printed; A is the column)
+- id: states/de/2023/pit_non:p1:ln15ColB:w0
+  seen_line: '15'
+  ambiguous: false
+  reason: right column (Column B, Delaware source; header off-crop, same layout as line 1-5 crops); row has Column A + Column
+    B
+- id: states/de/2023/pit_non:p1:ln16ColA:w0
+  seen_line: '16'
+  ambiguous: false
+  reason: outlined Column A box in row printed 16. (Total federal adjustments); no suffix printed
+- id: states/de/2023/pit_non:p1:ln16ColB:w0
+  seen_line: '16'
+  ambiguous: false
+  reason: right column (Column B, Delaware source; header off-crop, same layout as line 1-5 crops); row has Column A + Column
+    B
+- id: states/de/2023/pit_non:p1:ln17ColA:w0
+  seen_line: '17'
+  ambiguous: false
+  reason: outlined Federal Column A box on row printed 17. FEDERAL AGI FOR DELAWARE PURPOSES (no 17a printed; A is the column)
+- id: states/de/2023/pit_non:p1:ln17ColB:w0
+  seen_line: '17'
+  ambiguous: false
+  reason: right column (Column B, Delaware source; header off-crop, same layout as line 1-5 crops); row has Column A + Column
+    B
+- id: states/de/2023/pit_non:p1:ln18ColA:w0
+  seen_line: '18'
+  ambiguous: false
+  reason: outlined Column A box in row printed 18. (Interest on other-state obligations); no suffix printed
+- id: states/de/2023/pit_non:p1:ln18ColB:w0
+  seen_line: '18'
+  ambiguous: false
+  reason: right column (Column B, Delaware source; header off-crop, same layout as line 1-5 crops); row has Column A + Column
+    B
+- id: states/de/2023/pit_non:p1:ln19ColA:w0
+  seen_line: '19'
+  ambiguous: false
+  reason: outlined Federal Column A box on row printed 19. FIDUCIARY ADJUSTMENT (no 19a printed; A is the column)
+- id: states/de/2023/pit_non:p1:ln19ColB:w0
+  seen_line: '19'
+  ambiguous: false
+  reason: right column (Column B, Delaware source; header off-crop, same layout as line 1-5 crops); row has Column A + Column
+    B
+- id: states/de/2023/pit_non:p1:ln20ColA:w0
+  seen_line: '20'
+  ambiguous: false
+  reason: outlined Column A box in row printed 20. (Total - add lines 18 to 19); no suffix printed
+- id: states/de/2023/pit_non:p1:ln20ColB:w0
+  seen_line: '20'
+  ambiguous: false
+  reason: right column (Column B, Delaware source; header off-crop, same layout as line 1-5 crops); row has Column A + Column
+    B
+- id: states/de/2023/pit_non:p1:ln21ColA:w0
+  seen_line: '21'
+  ambiguous: false
+  reason: outlined Federal Column A box on row printed 21 Add Line 17 to Line 20 (no 21a printed; A is the column)
+- id: states/de/2023/pit_non:p1:ln21ColB:w0
+  seen_line: '21'
+  ambiguous: false
+  reason: right column (Column B, Delaware source; header off-crop, same layout as line 1-5 crops); row has Column A + Column
+    B
+- id: states/de/2023/pit_non:p1:ln22ColA:w0
+  seen_line: '22'
+  ambiguous: false
+  reason: outlined Column A box in row printed 22. (Interest on U.S. obligations); no suffix printed
+- id: states/de/2023/pit_non:p1:ln22ColB:w0
+  seen_line: '22'
+  ambiguous: false
+  reason: right column (Column B, Delaware source; header off-crop, same layout as line 1-5 crops); row has Column A + Column
+    B
+- id: states/de/2023/pit_non:p1:ln23ColA:w0
+  seen_line: '23'
+  ambiguous: false
+  reason: outlined Federal Column A box on row printed 23. PENSION/RETIREMENT EXCLUSIONS (no 23a printed; A is the column)
+- id: states/de/2023/pit_non:p1:ln23ColB:w0
+  seen_line: '23'
+  ambiguous: false
+  reason: right column (Column B, Delaware source; header off-crop, same layout as line 1-5 crops); row has Column A + Column
+    B
+- id: states/de/2023/pit_non:p1:ln24ColA:w0
+  seen_line: '24'
+  ambiguous: false
+  reason: outlined Column A box in row printed 24. (Delaware state tax refund); no suffix printed
+- id: states/de/2023/pit_non:p1:ln24ColB:w0
+  seen_line: '24'
+  ambiguous: false
+  reason: right column (Column B, Delaware source; header off-crop, same layout as line 1-5 crops); row has Column A + Column
+    B
+- id: states/de/2023/pit_non:p1:ln25ColA:w0
+  seen_line: '25'
+  ambiguous: false
+  reason: outlined Federal Column A box on row printed 25. Fiduciary Adjustment/NOL (no 25a printed; A is the column)
+- id: states/de/2023/pit_non:p1:ln25ColB:w0
+  seen_line: '25'
+  ambiguous: false
+  reason: right column (Column B, Delaware source; header off-crop, same layout as line 1-5 crops); row has Column A + Column
+    B
+- id: states/de/2023/pit_non:p1:ln27ColA:w0
+  seen_line: '27'
+  ambiguous: false
+  reason: outlined Column A box in row printed 27. (Total add lines 22-26b); no suffix printed
+- id: states/de/2023/pit_non:p1:ln27ColB:w0
+  seen_line: '27'
+  ambiguous: false
+  reason: right column (Column B, Delaware source; header off-crop, same layout as line 1-5 crops); row has Column A + Column
+    B
+- id: states/de/2023/pit_non:p1:ln28ColA:w0
+  seen_line: '28'
+  ambiguous: false
+  reason: outlined Federal Column A box on row printed 28. Subtract Line 27 from Line 21 (no 28a printed; A is the column)
+- id: states/de/2023/pit_non:p1:ln28ColB:w0
+  seen_line: '28'
+  ambiguous: false
+  reason: right column (Column B, Delaware source; header off-crop, same layout as line 1-5 crops); row has Column A + Column
+    B
+- id: states/de/2023/pit_non:p1:ln29ColA:w0
+  seen_line: '29'
+  ambiguous: false
+  reason: outlined Column A box in row printed 29. (Exclusion for persons 60+/disabled); no suffix printed
+- id: states/de/2023/pit_non:p1:ln29ColB:w0
+  seen_line: '29'
+  ambiguous: false
+  reason: right column (Column B, Delaware source; header off-crop, same layout as line 1-5 crops); row has Column A + Column
+    B
+- id: states/de/2025/pit_res:p1:ln01ColA:w0
+  seen_line: '1'
+  ambiguous: false
+  reason: outlined Column A box on row printed 1. FEDERAL AGI AMOUNT (no 1a printed; A is the column)
+- id: states/de/2025/pit_res:p1:ln01ColB:w0
+  seen_line: '1'
+  ambiguous: false
+  reason: right column, under COLUMN B header (row has COLUMN A spouse | COLUMN B)
+- id: states/de/2025/pit_res:p1:ln02ColA:w0
+  seen_line: '2'
+  ambiguous: false
+  reason: outlined Column A box in row printed 2. (Interest on state/local obligations other than DE); no suffix printed
+- id: states/de/2025/pit_res:p1:ln02ColB:w0
+  seen_line: '2'
+  ambiguous: false
+  reason: right column, under COLUMN B header (row has COLUMN A spouse | COLUMN B)
+- id: states/de/2025/pit_res:p1:ln03ColA:w0
+  seen_line: '3'
+  ambiguous: false
+  reason: outlined Column A box on row printed 3. FIDUCIARY ADJUSTMENT (no 3a printed; A is the column)
+- id: states/de/2025/pit_res:p1:ln03ColB:w0
+  seen_line: '3'
+  ambiguous: false
+  reason: right column, under COLUMN B header (row has COLUMN A spouse | COLUMN B)
+- id: states/de/2025/pit_res:p1:ln04ColA:w0
+  seen_line: '4'
+  ambiguous: false
+  reason: outlined Column A box in row printed 4. (Total - add lines 1 through 3); no suffix printed
+- id: states/de/2025/pit_res:p1:ln04ColB:w0
+  seen_line: '4'
+  ambiguous: false
+  reason: right column, under COLUMN B header (row has COLUMN A spouse | COLUMN B)
+- id: states/de/2025/pit_res:p1:ln05ColA:w0
+  seen_line: '5'
+  ambiguous: false
+  reason: outlined Column A box on row printed 5. INTEREST ON U.S. OBLIGATIONS (no 5a printed; A is the column)
+- id: states/de/2025/pit_res:p1:ln05ColB:w0
+  seen_line: '5'
+  ambiguous: false
+  reason: right column (COLUMN B; header off-crop but same layout as lines 1-4); row has Column A + Column B
+- id: states/de/2025/pit_res:p1:ln06ColA:w0
+  seen_line: '6'
+  ambiguous: false
+  reason: outlined Column A box in row printed 6. (Pension/retirement exclusions); no suffix printed
+- id: states/de/2025/pit_res:p1:ln06ColB:w0
+  seen_line: '6'
+  ambiguous: false
+  reason: right column (COLUMN B; header off-crop but same layout as lines 1-4); row has Column A + Column B
+- id: states/de/2025/pit_res:p1:ln07ColA:w0
+  seen_line: '7'
+  ambiguous: false
+  reason: outlined Column A box on row printed 7. DE STATE TAX REFUND/FIDUCIARY/NOL (no 7a printed; A is the column)
+- id: states/de/2025/pit_res:p1:ln07ColB:w0
+  seen_line: '7'
+  ambiguous: false
+  reason: right column (COLUMN B; header off-crop but same layout as lines 1-4); row has Column A + Column B
+- id: states/de/2025/pit_res:p1:ln09ColA:w0
+  seen_line: '9'
+  ambiguous: false
+  reason: outlined Column A box in row printed 9. (Add lines 5 through 8b); no suffix printed
+- id: states/de/2025/pit_res:p1:ln09ColB:w0
+  seen_line: '9'
+  ambiguous: false
+  reason: right column (COLUMN B; header off-crop but same layout as lines 1-4); row has Column A + Column B
+- id: states/de/2025/pit_res:p1:ln10ColA:w0
+  seen_line: '10'
+  ambiguous: false
+  reason: outlined Column A box on row printed 10. Subtract Line 9 from Line 4 (no 10a printed; A is the column)
+- id: states/de/2025/pit_res:p1:ln10ColB:w0
+  seen_line: '10'
+  ambiguous: false
+  reason: right column (COLUMN B; header off-crop but same layout as lines 1-4); row has Column A + Column B
+- id: states/de/2025/pit_res:p1:ln11ColA:w0
+  seen_line: '11'
+  ambiguous: false
+  reason: outlined Column A box in row printed 11. (Exclusion for persons 60+/disabled); no suffix printed
+- id: states/de/2025/pit_res:p1:ln11ColB:w0
+  seen_line: '11'
+  ambiguous: false
+  reason: right column (COLUMN B; header off-crop but same layout as lines 1-4); row has Column A + Column B
+- id: states/de/2025/pit_res:p1:ln12ColA:w0
+  seen_line: '12'
+  ambiguous: false
+  reason: outlined Column A box on row printed 12. DELAWARE ADJUSTED GROSS INCOME (no 12a printed; A is the column)
+- id: states/de/2025/pit_res:p1:ln12ColB:w0
+  seen_line: '12'
+  ambiguous: false
+  reason: right column (COLUMN B; header off-crop but same layout as lines 1-4); row has Column A + Column B
+- id: states/de/2025/pit_res:p1:ln13ColA:w0
+  seen_line: '13'
+  ambiguous: false
+  reason: outlined Column A box in row printed 13. (Total itemized deductions from Schedule A); no suffix printed
+- id: states/de/2025/pit_res:p1:ln13ColB:w0
+  seen_line: '13'
+  ambiguous: false
+  reason: right column (COLUMN B; header off-crop but same layout as lines 1-4); row has Column A + Column B
+- id: states/de/2025/pit_res:p1:ln14ColA:w0
+  seen_line: '14'
+  ambiguous: false
+  reason: outlined Column A box on row printed 14. FOREIGN TAXES PAID (no 14a printed; A is the column)
+- id: states/de/2025/pit_res:p1:ln14ColB:w0
+  seen_line: '14'
+  ambiguous: false
+  reason: right column (COLUMN B; header off-crop but same layout as lines 1-4); row has Column A + Column B
+- id: states/de/2025/pit_res:p1:ln15ColA:w0
+  seen_line: '15'
+  ambiguous: false
+  reason: outlined Column A box in row printed 15. (Charitable mileage deduction); no suffix printed
+- id: states/de/2025/pit_res:p1:ln15ColB:w0
+  seen_line: '15'
+  ambiguous: false
+  reason: right column (COLUMN B; header off-crop but same layout as lines 1-4); row has Column A + Column B
+- id: states/de/2025/pit_res:p1:ln16ColA:w0
+  seen_line: '16'
+  ambiguous: false
+  reason: outlined Column A box on row printed 16. ACTIVE LABOR ORGANIZATION DUES (no 16a printed; A is the column)
+- id: states/de/2025/pit_res:p1:ln16ColB:w0
+  seen_line: '16'
+  ambiguous: false
+  reason: right column (COLUMN B; header off-crop but same layout as lines 1-4); row has Column A + Column B
+- id: states/de/2025/pit_res:p1:ln17ColA:w0
+  seen_line: '17'
+  ambiguous: false
+  reason: outlined Column A box in row printed 17. (Subtotal - add lines 13-16); no suffix printed
+- id: states/de/2025/pit_res:p1:ln17ColB:w0
+  seen_line: '17'
+  ambiguous: false
+  reason: right column (COLUMN B; header off-crop but same layout as lines 1-4); row has Column A + Column B
+- id: states/de/2025/pit_res:p1:ln18ColA:w0
+  seen_line: '18'
+  ambiguous: false
+  reason: outlined Column A box on row printed 18. FORM PIT-CRS TAX CREDIT ADJUSTMENT (no 18a printed; A is the column)
+- id: states/de/2025/pit_res:p1:ln18ColB:w0
+  seen_line: '18'
+  ambiguous: false
+  reason: right column (COLUMN B; header off-crop but same layout as lines 1-4); row has Column A + Column B
+- id: states/de/2025/pit_res:p1:ln19ColA:w0
+  seen_line: '19'
+  ambiguous: false
+  reason: outlined Column A box in row printed 19. (Net itemized deductions); no suffix printed
+- id: states/de/2025/pit_res:p1:ln19ColB:w0
+  seen_line: '19'
+  ambiguous: false
+  reason: right column (COLUMN B; header off-crop but same layout as lines 1-4); row has Column A + Column B
+- id: states/de/2025/pit_res:p2:ln20ColA:w0
+  seen_line: '20'
+  ambiguous: false
+  reason: outlined Column A amount box labelled 20. on line 20 standard/itemized election; the a/b on that row are checkboxes,
+    not the amount box
+- id: states/de/2025/pit_res:p2:ln20ColB:w0
+  seen_line: '20'
+  ambiguous: false
+  reason: right column, under COLUMN B header (page 2); row has COLUMN A + COLUMN B amounts; line 20 also has checkboxes
+    a/b on the left
+- id: states/de/2025/pit_res:p2:ln21ColA:w0
+  seen_line: '21'
+  ambiguous: false
+  reason: outlined Column A box after printed 21. (Additional standard deductions); no suffix printed
+- id: states/de/2025/pit_res:p2:ln21ColB:w0
+  seen_line: '21'
+  ambiguous: false
+  reason: right column (COLUMN B; header off-crop, same p2 layout as line 20 crop); row has Column A + Column B
+- id: states/de/2025/pit_res:p2:ln22ColA:w0
+  seen_line: '22'
+  ambiguous: false
+  reason: outlined Column A box on row printed 22. TOTAL DEDUCTIONS (no 22a printed; A is the column)
+- id: states/de/2025/pit_res:p2:ln22ColB:w0
+  seen_line: '22'
+  ambiguous: false
+  reason: right column (COLUMN B; header off-crop, same p2 layout as line 20 crop); row has Column A + Column B
+- id: states/de/2025/pit_res:p2:ln23ColA:w0
+  seen_line: '23'
+  ambiguous: false
+  reason: outlined Column A box in row printed 23. (Taxable income); no suffix printed
+- id: states/de/2025/pit_res:p2:ln23ColB:w0
+  seen_line: '23'
+  ambiguous: false
+  reason: right column (COLUMN B; header off-crop, same p2 layout as line 20 crop); row has Column A + Column B
+- id: states/de/2025/pit_res:p2:ln24ColA:w0
+  seen_line: '24'
+  ambiguous: false
+  reason: outlined Column A box on row printed 24. TAX LIABILITY FROM TAX RATE TABLE (no 24a printed; A is the column)
+- id: states/de/2025/pit_res:p2:ln24ColB:w0
+  seen_line: '24'
+  ambiguous: false
+  reason: right column (COLUMN B; header off-crop, same p2 layout as line 20 crop); row has Column A + Column B
+- id: states/de/2025/pit_res:p2:ln25ColA:w0
+  seen_line: '25'
+  ambiguous: false
+  reason: outlined Column A box in row printed 25. (Tax on lump sum distribution); no suffix printed
+- id: states/de/2025/pit_res:p2:ln25ColB:w0
+  seen_line: '25'
+  ambiguous: false
+  reason: right column (COLUMN B; header off-crop, same p2 layout as line 20 crop); row has Column A + Column B
+- id: states/de/2025/pit_res:p2:ln26ColA:w0
+  seen_line: '26'
+  ambiguous: false
+  reason: outlined Column A box on row printed 26. TOTAL TAX (no 26a printed; A is the column)
+- id: states/de/2025/pit_res:p2:ln26ColB:w0
+  seen_line: '26'
+  ambiguous: false
+  reason: right column (COLUMN B; header off-crop, same p2 layout as line 20 crop); row has Column A + Column B
+- id: states/de/2025/pit_res:p2:ln28ColA:w0
+  seen_line: '28'
+  ambiguous: false
+  reason: outlined Column A box in row printed 28. (Tax imposed by other states); no suffix printed
+- id: states/de/2025/pit_res:p2:ln28ColB:w0
+  seen_line: '28'
+  ambiguous: false
+  reason: right column (COLUMN B; header off-crop, same p2 layout as line 20 crop); row has Column A + Column B
+- id: states/de/2025/pit_res:p2:ln29ColB:w0
+  seen_line: '29'
+  ambiguous: false
+  reason: right column (COLUMN B; header off-crop, same p2 layout as line 20 crop); row has Column A + Column B
+- id: states/de/2025/pit_res:p2:ln30ColA:w0
+  seen_line: '30'
+  ambiguous: false
+  reason: outlined Column A box on row printed 30. OTHER NON-REFUNDABLE CREDITS (no 30a printed; A is the column)
+- id: states/de/2025/pit_res:p2:ln30ColB:w0
+  seen_line: '30'
+  ambiguous: false
+  reason: right column (COLUMN B; header off-crop, same p2 layout as line 20 crop); row has Column A + Column B
+- id: states/de/2025/pit_res:p2:ln31ColA:w0
+  seen_line: '31'
+  ambiguous: false
+  reason: outlined Column A box in row printed 31. (Child care credit); no suffix printed
+- id: states/de/2025/pit_res:p2:ln31ColB:w0
+  seen_line: '31'
+  ambiguous: false
+  reason: right column (COLUMN B; header off-crop, same p2 layout as line 20 crop); row has Column A + Column B
+- id: states/de/2025/pit_res:p2:ln32ColA:w0
+  seen_line: '32'
+  ambiguous: false
+  reason: outlined Column A box on row printed 32. TOTAL NON-REFUNDABLE CREDITS (no 32a printed; A is the column)
+- id: states/de/2025/pit_res:p2:ln32ColB:w0
+  seen_line: '32'
+  ambiguous: false
+  reason: right column (COLUMN B; header off-crop, same p2 layout as line 20 crop); row has Column A + Column B
+- id: states/de/2025/pit_res:p2:ln33ColA:w0
+  seen_line: '33'
+  ambiguous: false
+  reason: outlined Column A box in row printed 33. (Balance - subtract line 32 from 26); no suffix printed
+- id: states/de/2025/pit_res:p2:ln33ColB:w0
+  seen_line: '33'
+  ambiguous: false
+  reason: right column (COLUMN B; header off-crop, same p2 layout as line 20 crop); row has Column A + Column B
+- id: states/de/2025/pit_res:p2:ln34ColA:w0
+  seen_line: '34'
+  ambiguous: false
+  reason: outlined Column A box on row printed 34. EARNED INCOME TAX CREDIT (no 34a printed; A is the column)
+- id: states/de/2025/pit_res:p2:ln34ColB:w0
+  seen_line: '34'
+  ambiguous: false
+  reason: right column (COLUMN B; header off-crop, same p2 layout as line 20 crop); row has Column A + Column B
+- id: states/de/2025/pit_res:p2:ln35ColA:w0
+  seen_line: '35'
+  ambiguous: false
+  reason: outlined Column A box in row printed 35. (Delaware tax withheld); no suffix printed
+- id: states/de/2025/pit_res:p2:ln35ColB:w0
+  seen_line: '35'
+  ambiguous: false
+  reason: right column (COLUMN B; header off-crop, same p2 layout as line 20 crop); row has Column A + Column B
+- id: states/de/2025/pit_res:p2:ln36ColA:w0
+  seen_line: '36'
+  ambiguous: false
+  reason: outlined Column A box on row printed 36. ESTIMATED TAX PAID (no 36a printed; A is the column)
+- id: states/de/2025/pit_res:p2:ln36ColB:w0
+  seen_line: '36'
+  ambiguous: false
+  reason: right column (COLUMN B; header off-crop, same p2 layout as line 20 crop); row has Column A + Column B
+- id: states/de/2025/pit_res:p2:ln37ColA:w0
+  seen_line: '37'
+  ambiguous: false
+  reason: outlined Column A box in row printed 37. (S corp payments); no suffix printed
+- id: states/de/2025/pit_res:p2:ln37ColB:w0
+  seen_line: '37'
+  ambiguous: false
+  reason: right column (COLUMN B; header off-crop, same p2 layout as line 20 crop); row has Column A + Column B
+- id: states/de/2025/pit_res:p2:ln38ColA:w0
+  seen_line: '38'
+  ambiguous: false
+  reason: outlined Column A box on row printed 38. REFUNDABLE BUSINESS CREDITS (no 38a printed; A is the column)
+- id: states/de/2025/pit_res:p2:ln38ColB:w0
+  seen_line: '38'
+  ambiguous: false
+  reason: right column (COLUMN B; header off-crop, same p2 layout as line 20 crop); row has Column A + Column B
+- id: states/de/2025/pit_res:p2:ln39ColA:w0
+  seen_line: '39'
+  ambiguous: false
+  reason: outlined Column A box in row printed 39. (Capital gains tax payments); no suffix printed
+- id: states/de/2025/pit_res:p2:ln39ColB:w0
+  seen_line: '39'
+  ambiguous: false
+  reason: right column (COLUMN B; header off-crop, same p2 layout as line 20 crop); row has Column A + Column B
+- id: states/de/2025/pit_res:p2:ln40ColA:w0
+  seen_line: '40'
+  ambiguous: false
+  reason: outlined Column A box on row printed 40. TOTAL REFUNDABLE CREDITS (no 40a printed; A is the column)
+- id: states/de/2025/pit_res:p2:ln40ColB:w0
+  seen_line: '40'
+  ambiguous: false
+  reason: right column (COLUMN B; header off-crop, same p2 layout as line 20 crop); row has Column A + Column B
+- id: states/de/2025/pit_res:p3:ln41ColA:w0
+  seen_line: '41'
+  ambiguous: false
+  reason: outlined Column A box in row printed 41. (Balance due); no suffix printed
+- id: states/de/2025/pit_res:p3:ln41ColB:w0
+  seen_line: '41'
+  ambiguous: false
+  reason: right column, under COLUMN B header (page 3); row has COLUMN A + COLUMN B
+- id: states/de/2025/pit_res:p3:ln42ColA:w0
+  seen_line: '42'
+  ambiguous: false
+  reason: outlined Column A box on row printed 42. OVERPAYMENT (no 42a printed; A is the column)
+- id: states/de/2025/pit_res:p3:ln42ColB:w0
+  seen_line: '42'
+  ambiguous: false
+  reason: right column, under COLUMN B header (page 3); row has COLUMN A + COLUMN B
+- id: states/de/2025/pit_res:p3:ln43ColB:w0
+  seen_line: '43'
+  ambiguous: false
+  reason: outlined Column B box in row printed 43. (Contributions to special funds); no suffix printed
+- id: states/de/2025/pit_res:p3:ln44ColB:w0
+  seen_line: '44'
+  ambiguous: false
+  reason: outlined Column B box on row printed 44. AMOUNT OF LINE 42 TO BE APPLIED (no 44b printed; B is the column)
+- id: states/de/2025/pit_res:p3:ln45ColB:w0
+  seen_line: '45'
+  ambiguous: false
+  reason: outlined Column B box in row printed 45. (Penalties and interest due); no suffix printed
+- id: states/de/2025/pit_res:p3:ln46ColB:w0
+  seen_line: '46'
+  ambiguous: false
+  reason: outlined Column B box on row printed 46. NET BALANCE DUE (no 46b printed; B is the column)
+- id: states/de/2025/pit_res:p3:ln47ColB:w0
+  seen_line: '47'
+  ambiguous: false
+  reason: outlined Column B box in row printed 47. (Net refund); no suffix printed
+- id: states/de/2025/pit_res:p4:ln48ColA:w0
+  seen_line: '48'
+  ambiguous: false
+  reason: outlined Column A box on row printed 48. TOTAL REFUNDABLE CREDITS (amended) (no 48a printed; A is the column)
+- id: states/de/2025/pit_res:p4:ln48ColB:w0
+  seen_line: '48'
+  ambiguous: false
+  reason: right column, under COLUMN B header (page 4 amended-returns block); row has COLUMN A + COLUMN B
+- id: states/de/2025/pit_res:p4:ln49ColA:w0
+  seen_line: '49'
+  ambiguous: false
+  reason: outlined Column A box in row printed 49. (Amount paid on original return); no suffix printed
+- id: states/de/2025/pit_res:p4:ln49ColB:w0
+  seen_line: '49'
+  ambiguous: false
+  reason: right column, under COLUMN B header (page 4 amended-returns block); row has COLUMN A + COLUMN B
+- id: states/de/2025/pit_res:p4:ln50ColA:w0
+  seen_line: '50'
+  ambiguous: false
+  reason: outlined Column A box on row printed 50. SUBTOTAL (no 50a printed; A is the column)
+- id: states/de/2025/pit_res:p4:ln50ColB:w0
+  seen_line: '50'
+  ambiguous: false
+  reason: right column, under COLUMN B header (page 4 amended-returns block); row has COLUMN A + COLUMN B
+- id: states/de/2025/pit_res:p4:ln51ColA:w0
+  seen_line: '51'
+  ambiguous: false
+  reason: outlined Column A box in row printed 51. (Refund received); no suffix printed
+- id: states/de/2025/pit_res:p4:ln51ColB:w0
+  seen_line: '51'
+  ambiguous: false
+  reason: right column, under COLUMN B header (page 4 amended-returns block); row has COLUMN A + COLUMN B
+- id: states/de/2025/pit_res:p4:ln52ColA:w0
+  seen_line: '52'
+  ambiguous: false
+  reason: outlined Column A box on row printed 52. Estimated tax carryover (no 52a printed; A is the column)
+- id: states/de/2025/pit_res:p4:ln52ColB:w0
+  seen_line: '52'
+  ambiguous: false
+  reason: right column, under COLUMN B header (page 4 amended-returns block); row has COLUMN A + COLUMN B
+- id: states/de/2025/pit_res:p4:ln53ColA:w0
+  seen_line: '53'
+  ambiguous: false
+  reason: outlined Column A box in row printed 53. (Subtract lines 51 and 52 from 50); no suffix printed
+- id: states/de/2025/pit_res:p4:ln53ColB:w0
+  seen_line: '53'
+  ambiguous: false
+  reason: right column, under COLUMN B header (page 4 amended-returns block); row has COLUMN A + COLUMN B
+- id: states/de/2025/pit_res:p4:ln54ColA:w0
+  seen_line: '54'
+  ambiguous: false
+  reason: outlined Column A box on row printed 54. BALANCE DUE (no 54a printed; A is the column)
+- id: states/de/2025/pit_res:p4:ln54ColB:w0
+  seen_line: '54'
+  ambiguous: false
+  reason: right column, under COLUMN B header (page 4 amended-returns block); row has COLUMN A + COLUMN B
+- id: states/de/2025/pit_res:p4:ln55ColA:w0
+  seen_line: '55'
+  ambiguous: false
+  reason: outlined Column A box in row printed 55. (Overpayment); no suffix printed
+- id: states/de/2025/pit_res:p4:ln55ColB:w0
+  seen_line: '55'
+  ambiguous: false
+  reason: right column, under COLUMN B header (page 4 amended-returns block); row has COLUMN A + COLUMN B
+- id: states/de/2025/pit_res:p4:ln56ColB:w0
+  seen_line: '56'
+  ambiguous: false
+  reason: outlined Column B box on row printed 56. AMOUNT OF LINE 55 TO BE APPLIED (no 56b printed; B is the column)
+- id: states/de/2025/pit_res:p4:ln57ColB:w0
+  seen_line: '57'
+  ambiguous: false
+  reason: outlined Column B box in row printed 57. (Penalties and interest due); no suffix printed
+- id: states/de/2025/pit_res:p4:ln58ColB:w0
+  seen_line: '58'
+  ambiguous: false
+  reason: outlined Column B box on row printed 58. NET BALANCE DUE (no 58b printed; B is the column)
+- id: states/de/2025/pit_res:p4:ln59ColB:w0
+  seen_line: '59'
+  ambiguous: false
+  reason: outlined Column B box in row printed 59. (Net refund); no suffix printed
+- id: states/ia/2025/ia1040:p4:36 a Penalty:w0
+  seen_line: 36a
+  ambiguous: false
+  reason: outlined box immediately right of printed label 36a. Penalty under line 36 Penalty and Interest
+- id: states/va/2025/va760:p2:17a Spouse Tax Adjustment Dollar Amount:w0
+  seen_line: '17'
+  ambiguous: false
+  reason: outlined box covers right-column comb cells at row printed 17 (STA amount), not the spouse VAGI box; no 17a printed
+unscored_sample:
+- id: states/al/2023/al40nr:p14:SCHAATCLN8:w0
+  seen_line: '8'
+  ambiguous: false
+  reason: Right-column amount box next to printed '8' (Actual cost of attending nonfailing school); only entry box on its
+    row
+- id: states/al/2023/al40nr:p19:SchNOL85PTIILN2:w0
+  seen_line: '2'
+  ambiguous: false
+  reason: 'THE entry box for line 2: the inner modifications column (lines 2-5 enter there, line 6 totals in the right column);
+    cents cell to its right'
+- id: states/al/2023/al40nr:p19:SchNOL85PTIILN7:w0
+  seen_line: '7'
+  ambiguous: false
+  reason: THE entry box for line 7 in the right amount column, on the second text row of line 7 next to the arrow; cents
+    cell to its right
+- id: states/al/2023/al40nr:p21:SchNOL85ALN15:w0
+  seen_line: '15'
+  ambiguous: false
+  reason: Box next to printed '15' AGI from all sources (Part III); only entry box on its row
+- id: states/al/2023/al40nr:p21:SchNOL85ALN18:w0
+  seen_line: '18'
+  ambiguous: false
+  reason: THE entry box for line 18 in the right amount column (Part III); cents cell to its right
+- id: states/al/2023/al40nr:p21:SchNOL85ALN8:w0
+  seen_line: '8'
+  ambiguous: false
+  reason: THE entry box for line 8 in the right amount column (Part II); cents cell to its right
+- id: states/al/2023/al40nr:p23:SchNOL85ALN15-1:w0
+  seen_line: '15'
+  ambiguous: false
+  reason: THE entry box for line 15 in the right amount column (Part III), on the second text row of line 15; cents cell
+    to its right
+- id: states/al/2023/al40nr:p23:SchNOL85ALN16-1:w0
+  seen_line: '16'
+  ambiguous: false
+  reason: THE entry box for line 16 in the right amount column (Part III); cents cell to its right
+- id: states/al/2023/al40nr:p24:SchNOL85ALN3-2:w0
+  seen_line: '3'
+  ambiguous: false
+  reason: THE entry box for line 3 in the right amount column (Part I), on the second text row of line 3; 4a/4b go in the
+    inner column
+- id: states/al/2023/al40nr:p29:SchNOL85ALN15-4:w0
+  seen_line: '15'
+  ambiguous: false
+  reason: THE entry box for line 15 in the right amount column (Part III); cents cell to its right
+- id: states/al/2023/al40nr:p29:SchNOL85ALN9-4:w0
+  seen_line: '9'
+  ambiguous: false
+  reason: THE entry box for line 9 in the right amount column (Part II); cents cell to its right
+- id: states/al/2023/al40nr:p35:FITDW4a:w0
+  seen_line: 4a
+  ambiguous: false
+  reason: THE entry box for line 4a in the inner column (4a-4d inner, lines 1-3/5/6 in the right column); preprinted 00
+    cents to its right
+- id: states/al/2023/al40nr:p35:FITDW4d:w0
+  seen_line: 4d
+  ambiguous: false
+  reason: THE entry box for line 4d in the inner column, on the second text row of 4d; preprinted 00 cents to its right
+- id: states/al/2023/al40nr:p3:SCHALINE14:w0
+  seen_line: '14'
+  ambiguous: false
+  reason: THE entry box for line 14 (total of lines 10a-13) in the right amount column; preprinted 00 cents to its right
+- id: states/al/2023/al40nr:p3:SCHALINE16:w0
+  seen_line: '16'
+  ambiguous: false
+  reason: THE entry box for line 16 in the inner column (lines 15-17 inner, line 18 totals in the right column); preprinted
+    00 cents to its right
+- id: states/al/2023/al40nr:p3:SCHALINE4:w0
+  seen_line: '4'
+  ambiguous: false
+  reason: THE entry box for line 4 in the right amount column; lines 1-3 use the inner column; preprinted 00 cents to its
+    right
+- id: states/az/2025/az140:p3:3_5c:w0
+  seen_line: 5C
+  ambiguous: false
+  reason: THE entry box for line 5C (amount column), on the second text row of 5C; preprinted 00 cents to its right
+- id: states/ga/2025/ga500:p11:S2P2L11:w0
+  seen_line: '11'
+  ambiguous: false
+  reason: THE entry box for line 11 (single amount column, no printed box outline on this blank; checked a wider render
+    adj/ga_p11.png)
+- id: states/ga/2025/ga500:p13:CRP1L1:w0
+  seen_line: '1'
+  ambiguous: false
+  reason: THE entry box for line 1 (single amount column, no printed box outline on this blank)
+- id: states/ga/2025/ga500:p13:CRP1L3:w0
+  seen_line: '3'
+  ambiguous: false
+  reason: THE entry box for line 3 (single amount column, no printed outline), on the second text row of line 3
+- id: states/ga/2025/ga500:p15:CRP3L4:w0
+  seen_line: '4'
+  ambiguous: false
+  reason: THE entry box for line 4 (single amount column, no printed outline)
+- id: states/ga/2025/ga500:p18:CRP7L6:w0
+  seen_line: '6'
+  ambiguous: false
+  reason: Aligned with printed '6.' Rural physicians credit ($5,000 per physician); form prints no boxes (fields invisible),
+    red box sits right of the printed line number with no other widget on the row
+- id: states/ga/2025/ga500:p18:CRP7L7:w0
+  seen_line: '7'
+  ambiguous: false
+  reason: THE entry box for line 7 (single amount column, no printed outline), on the second text row of line 7
+- id: states/ga/2025/ga500:p19:CRP8L1:w0
+  seen_line: '1'
+  ambiguous: false
+  reason: THE entry box for line 1 (single amount column, no printed outline)
+- id: states/ga/2025/ga500:p19:CRP8L4:w0
+  seen_line: '4'
+  ambiguous: false
+  reason: THE entry box for line 4 (single amount column, no printed outline)
+- id: states/ga/2025/ga500:p22:CRP13L3:w0
+  seen_line: '3'
+  ambiguous: false
+  reason: THE entry box for line 3 (single amount column, no printed outline); line 2's box above is hatched
+- id: states/ga/2025/ga500:p23:CRP14L1:w0
+  seen_line: '1'
+  ambiguous: false
+  reason: THE entry box for line 1 (single amount column, no printed outline)
+- id: states/ga/2025/ga500:p23:CRP14L5:w0
+  seen_line: '5'
+  ambiguous: false
+  reason: THE entry box for line 5 (single amount column, no printed outline)
+- id: states/ga/2025/ga500:p24:SUML8:w0
+  seen_line: '8'
+  ambiguous: false
+  reason: THE entry box for line 8 (summary worksheet amount column, no printed outline), on the third text row of line
+    8
+- id: states/mt/2025/form2:p10:2EC Line 26:w0
+  seen_line: '26'
+  ambiguous: false
+  reason: THE entry box for line 26 in the amount column; preprinted 00 cents cell to its right
+- id: states/mt/2025/form2:p10:2EC Line 9:w0
+  seen_line: '9'
+  ambiguous: false
+  reason: Dollar box next to printed '9' Alimony; only entry box on its row
+- id: states/mt/2025/form2:p3:Schedule I, Part I, Line 11:w0
+  seen_line: '11'
+  ambiguous: false
+  reason: THE entry box for line 11 in the amount column (Schedule I Part I subtractions); preprinted 00 cents to its right
+- id: states/mt/2025/form2:p4:Schedule II Line 11a:w0
+  seen_line: 11a
+  ambiguous: false
+  reason: THE entry box for line 11a in the inner column (11a/11b inner; line 11 net goes in the right column two rows down);
+    preprinted 00 cents to its right
+- id: states/mt/2025/form2:p4:Schedule II Line 1:w0
+  seen_line: '1'
+  ambiguous: false
+  reason: THE entry box for line 1 in the right amount column; preprinted 00 cents to its right
+- id: states/mt/2025/form2:p4:Schedule II Line 7:w0
+  seen_line: '7'
+  ambiguous: false
+  reason: THE entry box for line 7 in the right amount column; preprinted 00 cents to its right
+- id: states/mt/2025/form2:p6:Schedule III Part I Line 15:w0
+  seen_line: '15'
+  ambiguous: false
+  reason: THE entry box for line 15 in the right amount column (refundable credits); preprinted 00 cents to its right
+- id: states/mt/2025/form2:p6:Schedule III Part I Line 4:w0
+  seen_line: '4'
+  ambiguous: false
+  reason: THE entry box for line 4 in the right amount column (nonrefundable credits); preprinted 00 cents to its right
+- id: states/mt/2025/form2:p7:Schedule III Part II Line 17:w0
+  seen_line: '17'
+  ambiguous: false
+  reason: THE entry box for line 17 in the right amount column; preprinted 00 cents to its right
+- id: states/ri/2025/ri1040:p5:topmostSubform[0].Page5[0].SummaryLine4a[0]:w0
+  seen_line: 4a
+  ambiguous: false
+  reason: 'THE entry box for line 4a: a count (number of children), the only box on the row in the right column'
+- id: states/wi/2025/wi_form1:p4:sch1-7:w0
+  seen_line: '7'
+  ambiguous: false
+  reason: THE entry box for line 7 on the underline amount; preprinted .00 to its right
+- id: states/wv/2024/it140:p13:E2:w0
+  seen_line: '2'
+  ambiguous: false
+  reason: THE entry box for line 2 in the amount column; preprinted .00 to its right
+- id: states/wv/2024/it140:p13:E4:w0
+  seen_line: '4'
+  ambiguous: false
+  reason: THE entry box for line 4 in the amount column; preprinted .00 to its right
+- id: states/wv/2024/it140:p13:E7:w0
+  seen_line: '7'
+  ambiguous: false
+  reason: THE entry box for line 7 in the amount column; preprinted .00 to its right
+- id: states/wv/2024/it140:p4:M60:w0
+  seen_line: '60'
+  ambiguous: false
+  reason: THE entry box for line 60 in the amount column; preprinted .00 to its right
+- id: states/wv/2024/it140:p6:recap22:w0
+  seen_line: '22'
+  ambiguous: false
+  reason: Applicable-credit box next to printed '22' Industrial Advancement Act Tax Credit; only entry box on its row
+- id: states/wv/2024/it140:p6:recap23:w0
+  seen_line: '23'
+  ambiguous: false
+  reason: THE entry box for line 23 in the amount column; the form-name column (WV FIIA-TCS) is printed text to the left;
+    preprinted .00 to its right
+- id: states/wv/2024/it140:p6:recap26:w0
+  seen_line: '26'
+  ambiguous: false
+  reason: THE entry box for line 26 in the amount column, on the second text row of line 26; form-name column (EK-1) to
+    the left; preprinted .00 to its right
+- id: states/wv/2024/it140:p9:homestead06:w0
+  seen_line: '6'
+  ambiguous: false
+  reason: THE entry box for line 6 in the amount column; preprinted .00 to its right
+retired_unscored_sample:
+- id: states/al/2023/al40nr:p14:SCHAATCLN37:w0
+  seen_line: '37'
+  ambiguous: false
+  reason: outlined box on row printed 37 Add amounts from lines 9, 18, 27 and 36
+- id: states/al/2023/al40nr:p19:SchNOL85PTIILN3:w0
+  seen_line: '3'
+  ambiguous: false
+  reason: 'NOL-85 Part II: outlined inner-column box in row printed 3 (Personal exemption claimed on loss year return)'
+- id: states/al/2023/al40nr:p19:SchNOL85PTIILN6:w0
+  seen_line: '6'
+  ambiguous: false
+  reason: outlined right-column box on row printed 6 TOTAL MODIFICATIONS (Part II)
+- id: states/al/2023/al40nr:p21:SchNOL85ALN15:w0
+  seen_line: '15'
+  ambiguous: false
+  reason: 'NOL-85 Part III: outlined box in right column at row printed 15 (AGI from all sources)'
+- id: states/al/2023/al40nr:p22:SchNOL85ALN2-1:w0
+  seen_line: '2'
+  ambiguous: false
+  reason: outlined right-column box on row printed 2 Enter the net operating loss (NOL-85A Part I)
+- id: states/al/2023/al40nr:p23:SchNOL85ALN8-1:w0
+  seen_line: '8'
+  ambiguous: false
+  reason: 'NOL-85A Part II: outlined box in right column at row printed 8 (AGI as shown on the return)'
+- id: states/al/2023/al40nr:p24:SchNOL85ALN5-2:w0
+  seen_line: '5'
+  ambiguous: false
+  reason: outlined right-column box on row printed 5 TOTAL MODIFICATIONS
+- id: states/al/2023/al40nr:p25:SchNOL85ALN12-2:w0
+  seen_line: '12'
+  ambiguous: false
+  reason: 'NOL-85A: outlined box in right column at row printed 12 (Total deductions)'
+- id: states/al/2023/al40nr:p27:SchNOL85ALN18-3:w0
+  seen_line: '18'
+  ambiguous: false
+  reason: outlined box on row printed 18 Modified AGI From Alabama Sources (Part III)
+- id: states/al/2023/al40nr:p27:SchNOL85ALN9-3:w0
+  seen_line: '9'
+  ambiguous: false
+  reason: 'NOL-85A Part II: outlined box at row printed 9 (Net operating loss to be applied)'
+- id: states/al/2023/al40nr:p28:SchNOL85ALN6-4:w0
+  seen_line: '6'
+  ambiguous: false
+  reason: outlined right-column box on row printed 6 MODIFIED TAXABLE INCOME
+- id: states/al/2023/al40nr:p29:SchNOL85ALN9-4:w0
+  seen_line: '9'
+  ambiguous: false
+  reason: 'NOL-85A Part II: outlined box at row printed 9 (Net operating loss to be applied)'
+- id: states/al/2023/al40nr:p2:PG2PT1LINEB2:w0
+  seen_line: '2'
+  ambiguous: false
+  reason: outlined column B (All Sources) box on Part I row printed 2 Alimony received
+- id: states/al/2023/al40nr:p3:SCHALINE12:w0
+  seen_line: '12'
+  ambiguous: false
+  reason: 'Schedule A: outlined inner box at row printed 12 (Points not reported on Form 1098)'
+- id: states/al/2023/al40nr:p4:SCHDLINE1:w0
+  seen_line: '1'
+  ambiguous: false
+  reason: outlined column B box on Schedule D row printed 1 Enter total gain or (loss) not taxable to Alabama
+- id: states/az/2023/az140nr:p3:3_6c:w0
+  seen_line: 6C
+  ambiguous: false
+  reason: outlined box at row printed 6C (Subtract line 5C from line 4C)
+- id: states/de/2025/pit_res:p2:ln27aColA:w0
+  seen_line: 27a
+  ambiguous: false
+  reason: outlined Column A box on row printed 27a. PERSONAL CREDITS
+- id: states/ga/2025/ga500:p10:S2L10:w0
+  seen_line: '10'
+  ambiguous: false
+  reason: outlined box sits in row printed 10. (Amount of the credit sold), right of the 10. label
+- id: states/ga/2025/ga500:p13:CRP1L2:w0
+  seen_line: '2'
+  ambiguous: false
+  reason: outlined box at right of row printed 2. Purchase of a home with accessibility features
+- id: states/ga/2025/ga500:p13:CRP1L4:w0
+  seen_line: '4'
+  ambiguous: false
+  reason: outlined box right of printed 4. (Potential carryover to next tax year)
+- id: states/ga/2025/ga500:p17:CRP6L7:w0
+  seen_line: '7'
+  ambiguous: false
+  reason: outlined box at right of row printed 7. Carryover to next tax year
+- id: states/ga/2025/ga500:p18:CRP7L7:w0
+  seen_line: '7'
+  ambiguous: false
+  reason: outlined box right of printed 7. (Credit used this tax year)
+- id: states/ga/2025/ga500:p26:S4P2L7:w0
+  seen_line: '7'
+  ambiguous: false
+  reason: outlined box (right-hand column area) level with row printed 7. GA adjustment for U.S. Interest
+- id: states/mo/2025/mo1040:p11:n.crp_9a:w0
+  seen_line: '9'
+  ambiguous: false
+  reason: 'MO-CRP: outlined box after printed 9 (Multiply line 8 by 20%); no 9a printed'
+- id: states/mo/2025/mo1040:p27:qh10:w0
+  seen_line: '10'
+  ambiguous: false
+  reason: outlined box labelled 10 on row printed 10. Enter the amount from Federal Schedule A, Line 1
+- id: states/mo/2025/mo1040:p27:qh13:w0
+  seen_line: '13'
+  ambiguous: false
+  reason: outlined box after printed 13 (Multiply line 8 by percent on line 12)
+- id: states/mo/2025/mo1040:p3:line28Y:w0
+  seen_line: '28'
+  ambiguous: false
+  reason: outlined box with printed label 28Y on row printed 28. Enterprise zone modification (Y is the yourself column,
+    not a sub-line)
+- id: states/mo/2025/mo1040:p7:moa_wks5:w0
+  seen_line: '5'
+  ambiguous: false
+  reason: 'MO-A Part 2 worksheet: outlined box after printed 5 (Divide line 4 by line 1, percent)'
+- id: states/mo/2025/mo1040:p7:moa_wks7:w0
+  seen_line: '7'
+  ambiguous: false
+  reason: outlined box labelled 7 on row printed 7. Multiply Line 6 by percentage on Line 5 (MO-A Part 2 worksheet)
+- id: states/mo/2025/mo1040:p8:moa_pt3_5:w0
+  seen_line: '5'
+  ambiguous: false
+  reason: 'public pension calculation: outlined box after printed 5 (Total public pension, add 4Y and 4S)'
+- id: states/mo/2025/mo1040:p8:moa_pt4_8:w0
+  seen_line: '8'
+  ambiguous: false
+  reason: outlined box labelled 8 on row printed 8. Add Lines 7Y and 7S
+- id: states/mt/2025/form2:p10:2EC Line 24:w0
+  seen_line: '24'
+  ambiguous: false
+  reason: '2EC: outlined box at row printed 24 (Rent paid in 2025)'
+- id: states/mt/2025/form2:p10:2EC Line 27:w0
+  seen_line: '27'
+  ambiguous: false
+  reason: outlined box on row printed 27 Subtract line 22 from line 26
+- id: states/mt/2025/form2:p10:2EC Line 9:w0
+  seen_line: '9'
+  ambiguous: false
+  reason: '2EC: outlined box at row printed 9 (Alimony)'
+- id: states/mt/2025/form2:p3:Schedule I, Part I, Line 4:w0
+  seen_line: '4'
+  ambiguous: false
+  reason: outlined box on row printed 4 State income tax deduction included in federal taxable income
+- id: states/mt/2025/form2:p3:Schedule I, Part I, Line 5:w0
+  seen_line: '5'
+  ambiguous: false
+  reason: 'Schedule I: outlined box at row printed 5 (Expenses used to claim a Montana tax credit)'
+- id: states/mt/2025/form2:p5:Schedule II Line 20:w0
+  seen_line: '20'
+  ambiguous: false
+  reason: outlined box on row printed 20 Total net long-term capital gains from page 2, line 2
+- id: states/mt/2025/form2:p6:Schedule III Part I Line 15:w0
+  seen_line: '15'
+  ambiguous: false
+  reason: 'Schedule III: outlined box at row printed 15 (Adoption credit)'
+- id: states/mt/2025/form2:p7:Schedule III Part II Line 5:w0
+  seen_line: '5'
+  ambiguous: false
+  reason: outlined box on row printed 5 Enter your Montana ordinary income tax
+- id: states/wv/2024/it140:p13:E7:w0
+  seen_line: '7'
+  ambiguous: false
+  reason: outlined box in row printed 7 ALTERNATIVE WEST VIRGINIA TOTAL INCOME TAX
+- id: states/wv/2024/it140:p5:recap03:w0
+  seen_line: '3'
+  ambiguous: false
+  reason: 'credit recap: outlined box at row printed 3 (General Economic Opportunity Tax Credit, EOTC-PIT)'
+- id: states/wv/2024/it140:p6:recap21:w0
+  seen_line: '21'
+  ambiguous: false
+  reason: outlined applicable-credit box on row printed 21 Operating Costs of Child Care Property Tax Credit
+- id: states/wv/2024/it140:p6:total_recap:w0
+  seen_line: '27'
+  ambiguous: false
+  reason: 'credit recap: outlined box at row printed 27 (Total non refundable credits)'
+- id: states/wv/2024/it140:p8:A1:w0
+  seen_line: '1'
+  ambiguous: false
+  reason: outlined box on row printed 1 Tentative Tax (Schedule A Part I)
+- id: states/wv/2024/it140:p9:homestead01:w0
+  seen_line: '1'
+  ambiguous: false
+  reason: 'homestead Part II: outlined box at row printed 1 (WV property tax paid on owner-occupied home)'
+- id: states/wv/2024/it140:p9:homestead05:w0
+  seen_line: '5'
+  ambiguous: false
+  reason: outlined box on row printed 5 Add amounts on lines 4a-4e
+- id: states/wv/2024/it140:p9:homestead06:w0
+  seen_line: '6'
+  ambiguous: false
+  reason: 'homestead: outlined box at row printed 6 (Total gross income, add lines 4 and 5)'
+- id: federal/2026/sched_c:p3:topmostSubform[0].Page2[0].c2_5[0]:w0
+  seen_line: '45'
+  ambiguous: false
+  reason: checkbox, the Yes box of the Yes/No pair on line 45 (vehicle available for personal use); Sched C Part IV
+- id: states/al/2023/al40nr:p14:SCHAATCLN35:w0
+  seen_line: '35'
+  ambiguous: false
+  reason: single amount column, line 35 (actual cost of attending nonfailing school), Schedule AATC
+- id: states/al/2023/al40nr:p15:SCHAACPRTIIILN1:w0
+  seen_line: '1'
+  ambiguous: false
+  reason: Part III Adoption Credit line 1 (single amount column at right edge)
+- id: states/al/2023/al40nr:p19:SchNOL85PTIILN1:w0
+  seen_line: '1'
+  ambiguous: false
+  reason: NOL-85 Part II line 1 (taxable income), outer right amount column; inner sub-column used by lines 2-5
+- id: states/al/2023/al40nr:p19:SchNOL85PTIILN2:w0
+  seen_line: '2'
+  ambiguous: false
+  reason: NOL-85 Part II line 2, inner (left) sub-column of the modifications block, not the outer total column
+- id: states/al/2023/al40nr:p20:SchNOL85ALN3:w0
+  seen_line: '3'
+  ambiguous: false
+  reason: NOL-85A Part I line 3 (taxable income of carry year), outer right amount column
+- id: states/al/2023/al40nr:p21:SchNOL85ALN18:w0
+  seen_line: '18'
+  ambiguous: false
+  reason: NOL-85A Part III line 18 (modified AGI from Alabama sources), single amount column
+- id: states/al/2023/al40nr:p26:SchNOL85ALN3-3:w0
+  seen_line: '3'
+  ambiguous: false
+  reason: NOL-85A (3rd copy) Part I line 3, outer right amount column
+- id: states/al/2023/al40nr:p27:SchNOL85ALN15-3:w0
+  seen_line: '15'
+  ambiguous: false
+  reason: NOL-85A (3rd copy) Part III line 15 (AGI from all sources), single amount column
+- id: states/al/2023/al40nr:p29:SchNOL85ALN12-4:w0
+  seen_line: '12'
+  ambiguous: false
+  reason: NOL-85A (4th copy) Part I/II line 12 (total deductions), outer right amount column; lines 11a-11e use inner sub-column
+- id: states/al/2023/al40nr:p34:4952ALINE2:w0
+  seen_line: '2'
+  ambiguous: false
+  reason: Form 4952A line 2 (disallowed investment interest from 2022), single amount column
+- id: states/al/2023/al40nr:p34:4952ALINE3:w0
+  seen_line: '3'
+  ambiguous: false
+  reason: Form 4952A line 3 (total investment interest expense), single amount column
+- id: states/al/2023/al40nr:p35:FITDW4d:w0
+  seen_line: 4d
+  ambiguous: false
+  reason: line 4d (credits from Form 2439), inner left sub-column (lines 4a-4d); outer right column is for lines 5-6
+- id: states/az/2023/az140nr:p3:3_4c:w0
+  seen_line: 4C
+  ambiguous: false
+  reason: charitable-contribution worksheet line 4C (printed uppercase C), single amount column
+- id: states/az/2023/az140py:p3:3_3c:w0
+  seen_line: 3C
+  ambiguous: false
+  reason: charitable-contribution worksheet line 3C (printed uppercase C), single amount column
+- id: states/az/2025/az140:p3:3_2c:w0
+  seen_line: 2C
+  ambiguous: false
+  reason: charitable-contribution worksheet line 2C (printed uppercase C), single amount column
+- id: states/az/2025/az140:p3:3_4c:w0
+  seen_line: 4C
+  ambiguous: false
+  reason: charitable-contribution worksheet line 4C (printed uppercase C), single amount column
+- id: states/ga/2025/ga500:p11:S2P2L10:w0
+  seen_line: '10'
+  ambiguous: false
+  reason: IND-CR line 10 (credit sold); box vertically level with the second text line of line 10, far-right amount column
+    (x-range of the CREDIT GENERATED THIS TAX YEAR header used by lines 2-8); context render adj/u19_ga500_p11.png; no other
+    boxes visible on the row
+- id: states/ga/2025/ga500:p14:CRP2L1:w0
+  seen_line: '1'
+  ambiguous: false
+  reason: IND-CR credit 202 (child & dependent care) line 1, single amount column
+- id: states/ga/2025/ga500:p14:CRP2L4:w0
+  seen_line: '4'
+  ambiguous: false
+  reason: IND-CR credit 202 line 4 (credit used this tax year), box sits on the second text line of line 4
+- id: states/ga/2025/ga500:p15:CRP3L3:w0
+  seen_line: '3'
+  ambiguous: false
+  reason: IND-CR credit (life insurance premiums) line 3 (credit used this tax year), single amount column
+- id: states/ga/2025/ga500:p17:CRP6_DATEASSISTANCERCV:w0
+  seen_line: '2'
+  ambiguous: false
+  reason: IND-CR disaster assistance credit line 2 (date assistance was received); a date field, single column
+- id: states/ga/2025/ga500:p19:CRP8L2:w0
+  seen_line: '2'
+  ambiguous: false
+  reason: IND-CR foster-child credit line 2 ($2,000 per qualified foster child); single amount column
+- id: states/ga/2025/ga500:p22:CRP13L2:w0
+  seen_line: '2'
+  ambiguous: false
+  reason: IND-CR foster-child adoption credit line 2; the outlined box lies over the left part of a hatched (shaded, apparently
+    not-for-entry) area printed on line 2
+- id: states/ga/2025/ga500:p24:SUML6:w0
+  seen_line: '6'
+  ambiguous: false
+  reason: IND-CR Summary Worksheet line 6 (Disaster Assistance Credit); single amount column
+- id: states/mt/2025/form2:p10:2EC Line 11:w0
+  seen_line: '11'
+  ambiguous: false
+  reason: Schedule 2EC line 11 (Other gains), dollars cell of a dollars|cents pair; single amount column
+- id: states/mt/2025/form2:p10:2EC Line 20:w0
+  seen_line: '20'
+  ambiguous: false
+  reason: Schedule 2EC line 20, dollars cell of a dollars|cents pair; single amount column
+- id: states/mt/2025/form2:p2:Page 2 Line 7:w0
+  seen_line: '7'
+  ambiguous: false
+  reason: capital-gains tax worksheet line 7 (lesser of line 3 or line 6), dollars cell; single amount column
+- id: states/mt/2025/form2:p3:Schedule I, Part I, Line 16:w0
+  seen_line: '16'
+  ambiguous: false
+  reason: Schedule I Part I line 16 (529 plan deposits), dollars cell; single amount column
+- id: states/mt/2025/form2:p4:Schedule II Line 11a:w0
+  seen_line: 11a
+  ambiguous: false
+  reason: Schedule II line 11a (Montana source farm income), inner (left) sub-column; outer right column holds line 11 net
+- id: states/mt/2025/form2:p4:Schedule II Line 16a:w0
+  seen_line: 16a
+  ambiguous: false
+  reason: Schedule II line 16a (Form 1040 line 9), inner (left) sub-column; outer right column holds line 16
+- id: states/mt/2025/form2:p4:Schedule II Line 5:w0
+  seen_line: '5'
+  ambiguous: false
+  reason: Schedule II line 5 (alimony received), outer right amount column, dollars cell
+- id: states/mt/2025/form2:p6:Schedule III Part I Line 3:w0
+  seen_line: '3'
+  ambiguous: false
+  reason: Schedule III Part I line 3 (recycle credit), dollars cell; single amount column
+- id: states/mt/2025/form2:p6:Schedule III Part I Line 5:w0
+  seen_line: '5'
+  ambiguous: false
+  reason: Schedule III Part I line 5 (trades education credit), dollars cell; single amount column
+- id: states/mt/2025/form2:p7:Schedule III Part II Line 4:w0
+  seen_line: '4'
+  ambiguous: false
+  reason: Schedule III Part II line 4 (tax paid to other state), outer right amount column, dollars cell
+- id: states/mt/2025/form2:p7:Schedule III Part II Line 9:w0
+  seen_line: '9'
+  ambiguous: false
+  reason: Schedule III Part II line 9 (multiply line 5 by line 8), outer right amount column, dollars cell
+- id: states/wv/2024/it140:p13:E6:w0
+  seen_line: '6'
+  ambiguous: false
+  reason: Schedule E line 6 (alternative WV taxable income), box level with the second text line of line 6; single amount
+    column
+- id: states/wv/2024/it140:p13:E8:w0
+  seen_line: '8'
+  ambiguous: false
+  reason: Schedule E line 8 (limitation of credit, line 2 minus line 7); single amount column
+- id: states/wv/2024/it140:p4:M60:w0
+  seen_line: '60'
+  ambiguous: false
+  reason: Schedule M line 60 (Jumpstart Savings withdrawals); single amount column
+- id: states/wv/2024/it140:p8:A12:w0
+  seen_line: '7'
+  ambiguous: false
+  reason: line 7 (line 6 col A plus line 6 col B, to IT-140 line 15); one box on the row, positioned in the right (column
+    B) x-range of the two-column table above
+- id: states/wv/2024/it140:p9:homestead07:w0
+  seen_line: '7'
+  ambiguous: false
+  reason: homestead/property-tax credit worksheet line 7 (multiply line 6 by 4%); single amount column
+- id: states/al/2023/al40nr:p18:SchNOL85LN8:w0
+  seen_line: '8'
+  ambiguous: false
+  reason: Box next to printed '8' TOTAL NONBUSINESS INCOME; only entry box on its row
+- id: states/al/2023/al40nr:p19:SchNOL85PTIILN4:w0
+  seen_line: '4'
+  ambiguous: false
+  reason: Inner-column box next to printed '4' Dependent exemption (Part II modifications); only entry box on its row
+- id: states/al/2023/al40nr:p20:SchNOL85ALN5:w0
+  seen_line: '5'
+  ambiguous: false
+  reason: NOL-85A Part I line 5 (total modifications), outer right amount column
+- id: states/al/2023/al40nr:p21:SchNOL85ALN12:w0
+  seen_line: '12'
+  ambiguous: false
+  reason: Outer-column box next to printed '12' TOTAL DEDUCTIONS; only entry box on its row
+- id: states/al/2023/al40nr:p22:SchNOL85ALN5-1:w0
+  seen_line: '5'
+  ambiguous: false
+  reason: Outer-column box next to printed '5' TOTAL MODIFICATIONS; only entry box on its row
+- id: states/al/2023/al40nr:p22:SchNOL85ALN6-1:w0
+  seen_line: '6'
+  ambiguous: false
+  reason: Outer-column box next to printed '6' MODIFIED TAXABLE INCOME; only entry box on its row
+- id: states/al/2023/al40nr:p23:SchNOL85ALN8-1:w0
+  seen_line: '8'
+  ambiguous: false
+  reason: Box next to printed '8' AGI as shown on the return (NOL-85A Part II); only entry box on its row
+- id: states/al/2023/al40nr:p28:SchNOL85ALN5-4:w0
+  seen_line: '5'
+  ambiguous: false
+  reason: Outer-column box next to printed '5' TOTAL MODIFICATIONS; only entry box on its row
+- id: states/al/2023/al40nr:p29:SchNOL85ALN16-4:w0
+  seen_line: '16'
+  ambiguous: false
+  reason: NOL-85A (4th copy) Part III line 16 (NOL to be applied), single amount column
+- id: states/al/2023/al40nr:p34:4952ALINE5:w0
+  seen_line: '5'
+  ambiguous: false
+  reason: Box next to printed '5' Disallowed investment interest carried forward; only entry box on its row
+- id: states/al/2023/al40nr:p35:FITDW2:w0
+  seen_line: '2'
+  ambiguous: false
+  reason: Right-column box next to printed '2' Net Investment Income Tax (FIT deduction worksheet); only entry box on its
+    row
+- id: states/al/2023/al40nr:p35:FITDW6:w0
+  seen_line: '6'
+  ambiguous: false
+  reason: Right-column box next to printed '6' Subtract line 5 from line 3; only printed entry box on the row. A second
+    widget with no printed box sits over the line-6 text near the right end of the dotted leader (x~384-456) - no label,
+    looks stray, not another column
+- id: states/al/2023/al40nr:p3:SCHALINE10A:w0
+  seen_line: 10a
+  ambiguous: false
+  reason: Inner-column box next to printed '10a' Home mortgage interest reported on Form 1098; only entry box on its row
+    (outer column empty on 10a; line 9 total is the row above)
+- id: states/al/2023/al40nr:p3:SCHALINE21:w0
+  seen_line: '21'
+  ambiguous: false
+  reason: Outer-column box next to printed '21' Total itemized deductions to be prorated; only entry box on its row
+- id: states/az/2023/az140py:p3:3_7c:w0
+  seen_line: 7C
+  ambiguous: false
+  reason: Box next to printed '7C' Multiply line 6C by 31%; only entry box on its row
+- id: states/ga/2025/ga500:p10:S2L10:w0
+  seen_line: '10'
+  ambiguous: false
+  reason: Aligned with printed '10.' Amount of credit sold; form prints no boxes (fields invisible), red box sits right
+    of the printed line number with no other widget on the row
+- id: states/ga/2025/ga500:p11:S2P2L12:w0
+  seen_line: '12'
+  ambiguous: false
+  reason: Aligned with printed '12.' Potential carryover to next tax year; form prints no boxes (fields invisible), red
+    box sits right of the printed line number with no other widget on the row
+- id: states/ga/2025/ga500:p12:S3L12:w0
+  seen_line: '12'
+  ambiguous: false
+  reason: Aligned with printed '12.' Total Deductions and Exemptions; form prints no boxes (fields invisible), red box sits
+    right of the printed line number with no other widget on the row
+- id: states/ga/2025/ga500:p14:CRP2L3:w0
+  seen_line: '3'
+  ambiguous: false
+  reason: IND-CR credit 202 line 3 (allowable credit), single amount column
+- id: states/ga/2025/ga500:p17:CRP6L3:w0
+  seen_line: '3'
+  ambiguous: false
+  reason: Aligned with printed '3.' Amount of disaster assistance received; form prints no boxes (fields invisible), red
+    box sits right of the printed line number with no other widget on the row
+- id: states/ga/2025/ga500:p17:CRP6L5:w0
+  seen_line: '5'
+  ambiguous: false
+  reason: Aligned with printed '5.' Enter the lesser of Line 3 or Line 4; form prints no boxes (fields invisible), red box
+    sits right of the printed line number with no other widget on the row
+- id: states/ga/2025/ga500:p17:CRP6L6:w0
+  seen_line: '6'
+  ambiguous: false
+  reason: IND-CR line 6 (credit used this tax year), box level with the second text line of line 6; single amount column
+- id: states/ga/2025/ga500:p20:CRP9L5:w0
+  seen_line: '5'
+  ambiguous: false
+  reason: Aligned with printed '5.' Credit allowed, lesser of Line 3 or Line 4; form prints no boxes (fields invisible),
+    red box sits right of the printed line number with no other widget on the row
+- id: states/ga/2025/ga500:p20:CRP9L7:w0
+  seen_line: '7'
+  ambiguous: false
+  reason: Aligned with printed '7.' Carryover to next tax year; form prints no boxes (fields invisible), red box sits right
+    of the printed line number with no other widget on the row
+- id: states/ga/2025/ga500:p22:CRP13L4:w0
+  seen_line: '4'
+  ambiguous: false
+  reason: Aligned with printed '4.' Credit used this year (second text line of line 4); form prints no boxes (fields invisible),
+    red box sits right of the printed line number with no other widget on the row
+- id: states/ga/2025/ga500:p24:SUML3:w0
+  seen_line: '3'
+  ambiguous: false
+  reason: Aligned with printed '3.' Georgia National Guard/Air National Guard Credit; form prints no boxes (fields invisible),
+    red box sits right of the printed line number with no other widget on the row
+- id: states/mt/2025/form2:p10:2EC Line 15:w0
+  seen_line: '15'
+  ambiguous: false
+  reason: Dollar box next to printed '15' Other income not included above; only entry box on its row (the '00' cents cell
+    is printed, not a widget)
+- id: states/mt/2025/form2:p10:2EC Line 28:w0
+  seen_line: '28'
+  ambiguous: false
+  reason: Dollar box next to printed '28' lesser of line 27 or $1,150; only entry box on its row
+- id: states/mt/2025/form2:p3:Schedule I, Part I, Line 14:w0
+  seen_line: '14'
+  ambiguous: false
+  reason: Dollar box next to printed '14' Montana medical savings account deposits; only entry box on its row
+- id: states/mt/2025/form2:p4:Schedule II Line 10b:w0
+  seen_line: 10b
+  ambiguous: false
+  reason: Inner-column box next to printed '10b' Additional MT source business expenses (rental etc.); only entry box on
+    its row (line 10 outer box is on the row below)
+- id: states/mt/2025/form2:p4:Schedule II Line 16b:w0
+  seen_line: 16b
+  ambiguous: false
+  reason: Inner-column box next to printed '16b' Certain federal adjustments; only entry box on its row
+- id: states/mt/2025/form2:p4:Schedule II Line 6b:w0
+  seen_line: 6b
+  ambiguous: false
+  reason: Inner-column box next to printed '6b' Additional Montana source business expenses; only entry box on its row
+- id: states/mt/2025/form2:p5:Schedule II Line 20:w0
+  seen_line: '20'
+  ambiguous: false
+  reason: Dollar box next to printed '20' Total net long-term capital gains; only entry box on its row
+- id: states/mt/2025/form2:p6:Schedule III Part I Line 2:w0
+  seen_line: '2'
+  ambiguous: false
+  reason: Dollar box next to printed '2' Qualified endowment credit; only entry box on its row
+- id: states/mt/2025/form2:p7:Schedule III Part II Line 6:w0
+  seen_line: '6'
+  ambiguous: false
+  reason: Schedule III Part II line 6 (ratio, 6 decimal places), a comb/decimal ratio field in the outer right column, not
+    a dollar amount
+- id: states/mt/2025/form2:p7:Schedule III Part II Line 8:w0
+  seen_line: '8'
+  ambiguous: false
+  reason: Ratio comb (decimal) box next to printed '8' Divide line 1 by line 3; only entry box on its row
+- id: states/wi/2025/wi_form1:p4:sch1-1:w0
+  seen_line: '1'
+  ambiguous: false
+  reason: Box next to printed '1' Medical and dental expenses (Schedule 1 itemized deduction credit); only entry box on
+    its row
+- id: states/wi/2025/wi_form1:p4:sch1-4:w0
+  seen_line: '4'
+  ambiguous: false
+  reason: 'Schedule 1 itemized: outlined box at row printed 4 (Casualty losses from federal Schedule A)'
+- id: states/wi/2025/wi_form1:p4:sch1-9:w0
+  seen_line: '9'
+  ambiguous: false
+  reason: Box next to printed '9' Multiply line 7 by line 8; only entry box on its row
+- id: states/wv/2024/it140:p13:E5:w0
+  seen_line: '5'
+  ambiguous: false
+  reason: Schedule E (credit for tax paid to other state) line 5 (limitation of credit); single amount column
+- id: states/wv/2024/it140:p5:recap05:w0
+  seen_line: '5'
+  ambiguous: false
+  reason: Applicable-credit box next to printed '5' WV Environmental Agricultural Equipment Credit (AG-1); only entry box
+    on its row
+- id: states/wv/2024/it140:p5:recap06:w0
+  seen_line: '6'
+  ambiguous: false
+  reason: Applicable-credit box next to printed '6' WV Military Incentive Credit (J); only entry box on its row
+- id: states/wv/2024/it140:p5:recap09:w0
+  seen_line: '9'
+  ambiguous: false
+  reason: Applicable-credit box next to printed '9' Qualified Residential Rehabilitated Buildings credit (RBIC-A); only
+    entry box on its row

@@ -65,6 +65,8 @@ def make_acroform_pdf(
     fields_spec: list[dict[str, Any]],
     *,
     page_size: tuple[float, float] = letter,
+    texts: list[tuple] | None = None,
+    draw_labels: bool = True,
 ) -> Path:
     """Generate a synthetic AcroForm PDF and return its path.
 
@@ -102,6 +104,10 @@ def make_acroform_pdf(
               keys (``/MaxLen``, ``/DA``, ``/V``, ``/Ff``); the widget
               annotation keeps geometry/appearance only and has no ``/T``.
         page_size: reportlab page size tuple (default US letter, 612 x 792).
+        texts: extra printed text, ``(page, x, y, text)`` or ``(page, x, y, text, font_size)`` — the
+            captions and line numbers a test needs (Phase K JK15, 2026-10-24: the anchor tests).
+        draw_labels: False drops the debugging label drawn left of every field, so a page prints only
+            ``texts``. A spec may also carry ``tooltip`` (written as /TU).
 
     Returns:
         ``Path`` to the written PDF.
@@ -142,14 +148,20 @@ def make_acroform_pdf(
             )
         specs.append(spec)
 
-    n_pages = max((s["page"] for s in specs), default=1)
+    n_pages = max([s["page"] for s in specs] + [t[0] for t in texts or []] or [1])
 
     # Pass 1 — reportlab: draw pages, labels and form fields.
     buffer = io.BytesIO()
     canv = canvas.Canvas(buffer, pagesize=page_size)
     for page_no in range(1, n_pages + 1):
         canv.setFont("Helvetica", 9)
-        canv.drawString(72, page_size[1] - 50, f"taxfill synthetic fixture — page {page_no}")
+        if draw_labels:
+            canv.drawString(72, page_size[1] - 50, f"taxfill synthetic fixture — page {page_no}")
+        for t in texts or []:
+            if t[0] == page_no:
+                canv.setFont("Helvetica", t[4] if len(t) > 4 else 9)
+                canv.drawString(t[1], t[2], t[3])
+        canv.setFont("Helvetica", 9)
         next_y = page_size[1] - 92  # auto-stack cursor, top-down
         for spec in (s for s in specs if s["page"] == page_no):
             x = spec.get("x", 220)
@@ -161,7 +173,9 @@ def make_acroform_pdf(
             label = spec["name"].rsplit(".", 1)[-1]
             if spec["kind"] == "radio":
                 label = f"{label} {_normalize_state(str(spec['on_value']))}"
-            canv.drawString(72, y + 4, label)
+            if draw_labels:
+                canv.drawString(72, y + 4, label)
+            extra = {"tooltip": spec["tooltip"]} if spec.get("tooltip") else {}
             if spec["kind"] == "text":
                 canv.acroForm.textfield(
                     name=spec["name"],
@@ -172,6 +186,7 @@ def make_acroform_pdf(
                     maxlen=spec.get("maxlen"),
                     fieldFlags=COMB_FLAG if spec.get("comb") else "",
                     value=spec.get("value", ""),
+                    **extra,
                 )
             elif spec["kind"] == "radio":
                 # Each call with the same name adds one kid widget to the
@@ -185,6 +200,7 @@ def make_acroform_pdf(
                     y=y,
                     size=spec.get("size", _CHECKBOX_DEFAULTS["size"]),
                     fieldFlags="noToggleToOff radio",  # drop reportlab's default 'required'
+                    **extra,
                 )
             else:
                 canv.acroForm.checkbox(
@@ -194,6 +210,7 @@ def make_acroform_pdf(
                     size=spec.get("size", _CHECKBOX_DEFAULTS["size"]),
                     checked=False,
                     fieldFlags="",  # reportlab defaults to 'required'; keep fixtures neutral
+                    **extra,
                 )
         canv.showPage()
     canv.save()

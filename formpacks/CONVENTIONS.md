@@ -180,6 +180,16 @@ enforced by `test_year_bearing_line_keys_keep_their_offset_from_tax_year`
   the widget rect against the printed line number before trusting a
   descriptive name, and when the name and the row disagree, say so in the
   field's comment ("the widget NAMED X sits on this row").
+- **The pack-blind anchor is a second reader, not a binding (Phase K JK15,
+  2026-10-24).** `taxfill_core.anchor` reads each widget's printed line from
+  the blank alone, for forms with no pack. scripts/anchor_benchmark.py scores
+  it against the shipped packs' numbered keys ("21", "5a", "line_21",
+  "21.col_b"; every other key shape is unscored), so a disagreement there is
+  either an anchor miss or a pack rotation, settled by a blind vision check.
+  Its tiers are "anchored (unverified line map)" (the top tier, never
+  "high"), "med", "low" and "none". Even the top tier is an unverified line
+  map, and nothing above "low" is emitted until
+  knowledge/anchor/benchmark.yaml has passed.
 
 ### The two topologies are not equally dangerous
 
