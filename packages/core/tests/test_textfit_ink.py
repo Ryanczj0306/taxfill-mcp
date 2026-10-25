@@ -36,6 +36,7 @@ from taxfill_core.textfit import (
     fit,
     ink_extent,
     ink_overrun,
+    widget_box,
     widget_inset,
 )
 from taxfill_core.verify import (
@@ -300,18 +301,26 @@ def _ri_box(kind: str, size: float) -> TextWidget:
                       quadding=quadding)
 
 
+# Measured font_size lines outside RI-1040: (pack, line) -> size. Phase K JEe3 (2026-10-25): MD 502 2023's 14.29 pt
+# state-of-residence box in MinionPro-Regular 8 (/Widths) cannot hold WV, WY, WA, MO, MN, NM or MD at 8 pt.
+OTHER_FONT_SIZES = {("states/md/2023/md502/pack.yaml", "other_state_of_residence"): 7.3}
+STATE_CODES = ("AL AK AZ AR CA CO CT DE DC FL GA HI ID IL IN IA KS KY LA ME MD MA MI MN MS MO MT NE NV NH NJ NM NY NC ND "
+               "OH OK OR PA RI SC SD TN TX UT VT VA WA WV WI WY").split()
+
+
 def test_font_size_is_set_only_on_the_measured_ri_boxes():
     """Every pack line carrying a font_size is one of RI-1040's measured edge-to-edge boxes, at its measured size: 13
-    dates of birth, two middle initials, two suffixes and three signature or preparer dates in each year."""
+    dates of birth, two middle initials, two suffixes and three signature or preparer dates in each year (and the
+    measured boxes of OTHER_FONT_SIZES)."""
     found = {(str(path.relative_to(FORMPACKS)), pf.line, pf.font_size)
              for path in sorted(FORMPACKS.glob("**/pack.yaml")) for pf in load_pack(path).fields if pf.font_size}
-    expected = set()
+    expected = {(pack, line, size) for (pack, line), size in OTHER_FONT_SIZES.items()}
     for path in RI_PACKS:
         for pf in load_pack(path).fields:
             for pattern, _w, _q, _values, size, _long in RI_FONT_SIZES.values():
                 if re.fullmatch(pattern, pf.line):
                     expected.add((str(path.relative_to(FORMPACKS)), pf.line, size))
-    assert len(RI_PACKS) == 3 and len(expected) == 3 * 20, sorted(expected)
+    assert len(RI_PACKS) == 3 and len(expected) == 3 * 20 + len(OTHER_FONT_SIZES), sorted(expected)
     assert found == expected, (
         f"unmeasured font_size lines {sorted(found - expected)}, measured boxes without it {sorted(expected - found)}: "
         "a font_size is the LARGEST size at which the box's widest value prints whole (formpacks/CONVENTIONS.md); "
@@ -493,6 +502,11 @@ def _cut_pt(pack_path: Path, line: str, value: str, work: Path) -> float:
         ("states/ri/2025/ri1040/pack.yaml", "schedule_e.dependent_1.dob", "12312026", False),
         ("states/ca/2025/form540/pack.yaml", "mailing_address.apt_no", "1234567890123", True),
         ("states/ca/2025/form540/pack.yaml", "mailing_address.apt_no", "123456789012", False),
+        # a face measured by its /Widths (Phase K JEe3): ND-1's Verdana 8 cuts a 10-character date Helvetica's
+        # widths passed, and IA 1040's narrower Calibri 10 prints the 15-digit budget Helvetica's widths said it cut
+        ("states/nd/2023/nd1/pack.yaml", "signature.taxpayer_date", "01/10/2024", True),
+        ("states/nd/2023/nd1/pack.yaml", "signature.taxpayer_date", "01/10/24", False),
+        ("states/ia/2025/ia1040/pack.yaml", "36a", "999999999999999", False),
         # right-aligned (/Q 2): the overrun is on the LEFT, so it is the first glyph that is cut
         ("federal/2025/f1040/pack.yaml", "1a", "4000000000000001", True),
         ("federal/2025/f1040/pack.yaml", "1a", "85000", False),
@@ -519,3 +533,248 @@ def test_the_render_cuts_what_the_model_says_and_nothing_else(pack: str, line: s
         assert measured > 0.3, f"{value!r}: the model says cut, the render lost only {measured:.2f} pt"
     else:
         assert measured < 0.1, f"{value!r}: the model says whole, the render lost {measured:.2f} pt"
+
+
+# ── a face measured by its own /Widths (Phase K JEe3, 2026-10-25) ───────────
+#
+# A /DA font other than Helvetica, Arial, Courier or Times whose AcroForm /DR font carries /Widths (ND-1's Verdana,
+# IA 1040's Calibri) is laid out by those widths in every viewer, whatever face it substitutes for the glyphs, so the
+# advance is the /Widths sum and the ink is counted to the full advance (no bearing table for such a face). The
+# synthetic face below gives every glyph 900/1000 em: "123456" at 10 pt advances 54.0 pt by it and 33.4 pt by
+# Helvetica's AFM widths, in a 40 pt box whose room is 38 pt.
+
+WIDE_EM = 900
+
+
+def _wide_font(base: str = "DemoWide", *, first: int = 32, widths: list[float] | None = None,
+               missing: float | None = None, encoding: object = "/WinAnsiEncoding", subtype: str = "/TrueType"):
+    from pypdf.generic import ArrayObject, DictionaryObject, FloatObject, NameObject, NumberObject  # noqa: PLC0415
+
+    widths = widths if widths is not None else [WIDE_EM] * (127 - first)
+    descriptor = DictionaryObject({NameObject("/Type"): NameObject("/FontDescriptor"),
+                                   NameObject("/FontName"): NameObject(f"/{base}"), NameObject("/Flags"): NumberObject(32)})
+    if missing is not None:
+        descriptor[NameObject("/MissingWidth")] = FloatObject(missing)
+    font = DictionaryObject({
+        NameObject("/Type"): NameObject("/Font"), NameObject("/Subtype"): NameObject(subtype),
+        NameObject("/BaseFont"): NameObject(f"/{base}"), NameObject("/FirstChar"): NumberObject(first),
+        NameObject("/LastChar"): NumberObject(first + len(widths) - 1),
+        NameObject("/Widths"): ArrayObject(FloatObject(w) for w in widths), NameObject("/FontDescriptor"): descriptor,
+    })
+    if encoding is not None:
+        font[NameObject("/Encoding")] = encoding if not isinstance(encoding, str) else NameObject(encoding)
+    return font
+
+
+def _with_dr_font(pdf: Path, out: Path, font_name: str, font, das: dict[str, str]) -> Path:
+    """``pdf`` with ``font`` added to its AcroForm /DR as ``font_name`` and the widgets ``das`` names set to their /DA."""
+    from pypdf import PdfReader, PdfWriter  # noqa: PLC0415
+    from pypdf.generic import DictionaryObject, NameObject, TextStringObject  # noqa: PLC0415
+
+    writer = PdfWriter(clone_from=PdfReader(str(pdf)))
+    acroform = writer._root_object["/AcroForm"].get_object()
+    if "/DR" not in acroform:
+        acroform[NameObject("/DR")] = DictionaryObject({NameObject("/Font"): DictionaryObject()})
+    fonts = acroform["/DR"].get_object()["/Font"].get_object()
+    fonts[NameObject(f"/{font_name}")] = writer._add_object(font)
+    for page in writer.pages:
+        for ref in page.get("/Annots") or []:
+            annot = ref.get_object()
+            if annot.get("/T") in das:
+                annot[NameObject("/DA")] = TextStringObject(das[annot["/T"]])
+    writer.write(str(out))
+    return out
+
+
+def _wide_form(tmp_path: Path, font_name: str = "DemoWide", base: str = "DemoWide", value: str = "123456") -> Path:
+    blank = make_acroform_pdf(tmp_path / "plain.pdf", [{"name": "amount", "width": 40.0, "height": 18.0, "value": value}])
+    return _with_dr_font(blank, tmp_path / f"{base}.pdf", font_name, _wide_font(base),
+                         {"amount": f"/{font_name} 10 Tf 0 g"})
+
+
+def test_jee3_read_text_widgets_reads_the_dr_fonts_widths(tmp_path):
+    widget = next(w for w in read_text_widgets(_wide_form(tmp_path)) if w.name == "amount")
+    assert widget.font_widths is not None and widget.font_widths.name == "DemoWide"
+    assert widget.font_widths.em("0") == pytest.approx(0.9)
+    assert advance("123456", 10.0, widths=widget.font_widths) == pytest.approx(54.0)
+    assert advance("123456", 10.0) == pytest.approx(33.36)  # Helvetica's AFM digits, 0.556 em
+    assert bearings("6", widths=widget.font_widths) == (0.0, 0.0)  # no bearing table: ink to the full advance
+
+
+def test_jee3_a_value_that_fits_helveticas_widths_fails_by_the_faces_own(tmp_path):
+    """The JEe open item: Verdana's digits were measured as Helvetica's, so a value too wide for the box passed."""
+    check = clipping_scan(_wide_form(tmp_path))[0]
+    assert check.status == FAIL, check.detail
+    assert "estimated text width 54.0pt (6 characters at 10pt, DemoWide's /Widths; its ink overruns by 16.0pt" in (
+        check.detail)
+    assert clipping_scan(_wide_form(tmp_path / "short", value="1234"))[0].status == PASS  # 36.0 pt in the 38 pt room
+
+
+def test_jee3_the_fill_and_the_mirror_check_measure_by_the_widths(tmp_path):
+    """fill_form's page-header mirror measure (filler._mirror_boxes) and verify's mirror check read the same widths."""
+    from pypdf import PdfReader, PdfWriter  # noqa: PLC0415
+
+    from taxfill_core.filler import _mirror_boxes  # noqa: PLC0415
+
+    form = _wide_form(tmp_path)
+    boxes = _mirror_boxes(PdfWriter(clone_from=PdfReader(str(form))), {"amount"})["amount"]
+    assert boxes[0].widths is not None and boxes[0].widths.em("1") == pytest.approx(0.9)
+    assert fit("123456", boxes).fits is False and fit("1234", boxes).fits is True
+    widget = next(w for w in read_text_widgets(form) if w.name == "amount")
+    from taxfill_core.textfit import widget_box  # noqa: PLC0415
+
+    assert widget_box(widget.rect_width, widget.da, widths=widget.font_widths) == boxes[0]
+
+
+def test_jee3_verify_fails_a_mirror_header_the_faces_widths_cut(tmp_path):
+    from test_page_header_mirrors import PERSON, _pack, _qualified  # noqa: PLC0415
+
+    from taxfill_core.textfit import font_widths  # noqa: PLC0415
+    from taxfill_core.verify import mirror_checks  # noqa: PLC0415
+
+    pack = _pack()
+    fields = {_qualified(pack, line): value for line, value in PERSON.items()}
+    fields[_qualified(pack, "page2.name")] = "Pat Q Example"  # 80.7 pt in Helvetica 12, 140.4 pt at 0.9 em
+    widget = TextWidget(name=_qualified(pack, "page2.name"), value="Pat Q Example", da="/DemoWide 12 Tf 0 g",
+                        rect_width=120.0, rect_height=18)
+    helvetica = next(c for c in mirror_checks(pack, fields, widgets=[widget]) if c.field.endswith("page2.name"))
+    assert helvetica.status == PASS, helvetica.detail
+    wide = widget.model_copy(update={"font_widths": font_widths(_wide_font())})
+    check = next(c for c in mirror_checks(pack, fields, widgets=[wide]) if c.field.endswith("page2.name"))
+    assert check.status == FAIL and "its box cuts off" in check.detail, check.detail
+
+
+@pytest.mark.parametrize("base", ["Helvetica", "ArialMT", "Arial,Bold", "HelveticaLTStd-Bold", "CourierNewPSMT",
+                                  "Courier", "TimesNewRomanPSMT", "Times-Roman"])
+def test_jee3_the_tabled_faces_keep_their_measure_whatever_widths_they_carry(base: str, tmp_path):
+    """Helvetica, Arial, Courier and Times stay measured as before JEe3, byte for byte, even with a /Widths array."""
+    from taxfill_core.textfit import font_widths  # noqa: PLC0415
+
+    assert font_widths(_wide_font(base)) is None
+    form = _wide_form(tmp_path, font_name="F1", base=base)
+    widget = next(w for w in read_text_widgets(form) if w.name == "amount")
+    assert widget.font_widths is None
+    used = "36.0" if "Courier" in base else "33.4"  # Courier 0.6 em a glyph; Helvetica's digits in either weight
+    assert clipping_scan([widget])[0].detail == (
+        f"field 'amount': fits — estimated {used}pt within the 38.0pt inside the 40.0pt widget (less 1pt on each side, "
+        "where the viewer draws the border)")
+
+
+def test_jee3_helvetica_and_courier_verdicts_are_unchanged():
+    """The pre-JEe3 verdicts and words, captured from main 13ccf78, for boxes that name no /Widths face."""
+    widgets = [TextWidget(name="h2", value="1234567", da="/Helv 10 Tf 0 g", rect_width=40.0),
+               TextWidget(name="b", value="Taylor", da="/HeBo 9 Tf 0 g", rect_width=30.0, quadding=2),
+               TextWidget(name="v", value="123456", da="/Verdana 10 Tf 0 g", rect_width=40.0)]  # no /DR: Helvetica
+    assert [(c.status, c.detail) for c in clipping_scan(widgets)] == [
+        (FAIL, "field 'h2': estimated text width 38.9pt (7 characters at 10pt, Helvetica metrics; its ink overruns by "
+               "0.6pt on the right) exceeds the 38.0pt inside the 40.0pt widget (less 1pt on each side, where the viewer "
+               "draws the border) — text may be visually clipped (pitfall P-001); shorten this field's value or switch "
+               "the field to auto-size, then re-render to confirm"),
+        (PASS, "field 'b': fits — estimated 27.0pt within the 28.0pt inside the 30.0pt widget (less 1pt on each side, "
+               "where the viewer draws the border)"),
+        (PASS, "field 'v': fits — estimated 33.4pt within the 38.0pt inside the 40.0pt widget (less 1pt on each side, "
+               "where the viewer draws the border)"),
+    ]
+    from taxfill_core.textfit import widget_box  # noqa: PLC0415
+
+    assert tuple(fit("1234567", [widget_box(40.0, "/Helv 10 Tf 0 g")])) == (
+        False, "38.9 pt at Helv 10, wider than the 38.0 pt inside its box: 40.0 pt wide, less 1 pt on each side")
+    assert tuple(fit("ABCDEFG", [widget_box(40.0, "/Cour 10 Tf 0 g")])) == (
+        False, "42.0 pt at Cour 10, wider than the 38.0 pt inside its box: 40.0 pt wide, less 1 pt on each side")
+
+
+def test_jee3_a_glyph_outside_the_widths_takes_missing_width_else_helveticas():
+    from pypdf.generic import ArrayObject, DictionaryObject, NameObject, NumberObject  # noqa: PLC0415
+
+    from taxfill_core.textfit import font_widths  # noqa: PLC0415
+
+    digits_only = font_widths(_wide_font(first=48, widths=[WIDE_EM] * 10, missing=700))  # '0'..'9' only
+    assert advance("12A", 10.0, widths=digits_only) == pytest.approx(9.0 + 9.0 + 7.0)
+    no_missing = font_widths(_wide_font(first=48, widths=[WIDE_EM] * 10))
+    assert advance("12A", 10.0, widths=no_missing) == pytest.approx(18.0 + advance("A", 10.0))
+    zero = font_widths(_wide_font(first=48, widths=[0] * 10, missing=500))  # a 0 width is no width
+    assert advance("1", 10.0, widths=zero) == pytest.approx(5.0)
+    # IA 1040's Calibri: MacRoman with /Differences; a code /Differences renames reads the new glyph
+    mac = DictionaryObject({NameObject("/Type"): NameObject("/Encoding"),
+                            NameObject("/BaseEncoding"): NameObject("/MacRomanEncoding"),
+                            NameObject("/Differences"): ArrayObject([NumberObject(65), NameObject("/Euro")])})
+    widths = [WIDE_EM] * 95
+    widths[65 - 32] = 450  # code 65 is now the Euro sign
+    calibri = font_widths(_wide_font("Calibri", widths=widths, encoding=mac))
+    assert calibri.em("€") == pytest.approx(0.45) and calibri.em("B") == pytest.approx(0.9)
+    assert font_widths(_wide_font(subtype="/Type0")) is None and font_widths(_wide_font(subtype="/Type3")) is None
+
+
+# ND-1 2023's page-2 signature-date boxes: centred, /Verdana 8 Tf, 43.6 pt (taxpayer, spouse) and 45.4 pt (preparer),
+# no /MaxLen. Verdana's /Widths give a digit 636 and a slash 454, so MM/DD/YYYY advances 47.97 pt and its ink is cut
+# (pdfium: 2.75 pt on the 43.6 pt box, 1.75 pt on the 45.4 pt one; the model: 3.18 and 2.28), where Helvetica's widths
+# said 40.03 pt and passed it. MM/DD/YY (37.79 pt) prints whole, so the 2023 and 2024 packs budget 8, as 2025's did.
+ND_DATE_LINES = ("signature.taxpayer_date", "signature.spouse_date", "preparer.date")
+
+
+@pytest.mark.parametrize("year", [2023, 2024, 2025])
+def test_jee3_nd1_signature_dates_budget_mm_dd_yy(year: int):
+    pack = load_pack(FORMPACKS / f"states/nd/{year}/nd1/pack.yaml")
+    assert {pf.line: pf.maxlen for pf in pack.fields if pf.line in ND_DATE_LINES} == dict.fromkeys(ND_DATE_LINES, 8)
+
+
+@pytest.mark.network
+@pytest.mark.parametrize("year", [2023, 2024])
+def test_jee3_nd1_measures_its_verdana_boxes_by_their_widths(year: int):
+    from taxfill_core.fetch import OfflineFetchError, fetch_pack_blank  # noqa: PLC0415
+
+    pack = load_pack(FORMPACKS / f"states/nd/{year}/nd1/pack.yaml")
+    try:
+        blank = fetch_pack_blank(pack)
+    except OfflineFetchError as exc:
+        pytest.skip(f"cache empty and network unreachable: {exc}")
+    widgets = {w.name: w for w in read_text_widgets(blank)}
+    for line in ND_DATE_LINES:
+        widget = widgets[qualified_field_name(pack, next(pf for pf in pack.fields if pf.line == line))]
+        assert widget.font_widths is not None and widget.font_widths.name == "Verdana", widget.da
+        assert (widget.font_widths.em("0"), widget.font_widths.em("/")) == (0.636, 0.454)
+        widest = "00/00/00"  # the budget-length value: every Verdana digit is 636
+        assert advance(widest, 8.0, widths=widget.font_widths) == pytest.approx(37.792)
+        assert clipping_scan([widget.model_copy(update={"value": widest})])[0].status == PASS
+        full = clipping_scan([widget.model_copy(update={"value": "01/10/2024"})])[0]
+        assert full.status == FAIL and "estimated text width 48.0pt" in full.detail, full.detail
+
+
+@pytest.mark.network
+def test_md502_2023_state_box_holds_every_state_code_at_its_font_size():
+    """Phase K JEe3 (2026-10-25): measured by MinionPro's /Widths, MD 502 2023's state-of-residence box cuts seven state
+    codes at the blank's 8 pt; at the pack's 7.3 pt every code's ink stays inside and verify PASSes the written box,
+    and at 7.4 pt the widest (WV) overruns, so 7.3 is the largest size on the grid."""
+    import re as _re
+
+    from taxfill_core.fetch import fetch_pack_blank
+    from taxfill_core.verify import read_text_widgets
+
+    path = FORMPACKS / "states/md/2023/md502/pack.yaml"
+    pack = load_pack(path)
+    pf = next(f for f in pack.fields if f.line == "other_state_of_residence")
+    assert pf.font_size == 7.3
+    w = next(x for x in read_text_widgets(fetch_pack_blank(pack)) if x.name == pf.field)
+
+    def worst(size: float) -> tuple[float, str]:
+        da = _re.sub(r"[\d.]+\s+Tf", f"{size:g} Tf", w.da)
+        box = widget_box(w.rect_width, da, inset=w.inset, quadding=w.quadding, bold=w.bold, widths=w.font_widths)
+        return max((ink_overrun(c, box), c) for c in STATE_CODES)
+
+    assert worst(8.0)[0] > CUT_TOLERANCE_PT  # the blank's own size cuts a state code
+    assert worst(7.3)[0] <= 0 < worst(7.4)[0]
+
+
+def test_a_font_whose_widths_cover_no_encoded_character_is_not_measured_by_them():
+    """The JEe3 review: /FirstChar past every encoded code (or every width 0) left an empty map, labelled a /Widths
+    measure while every glyph fell back; font_widths now returns None, so the box keeps the standard measure."""
+    from pypdf.generic import ArrayObject, DictionaryObject, NameObject, NumberObject
+
+    from taxfill_core.textfit import font_widths
+
+    font = DictionaryObject({NameObject("/Type"): NameObject("/Font"), NameObject("/Subtype"): NameObject("/TrueType"),
+                             NameObject("/BaseFont"): NameObject("/Verdana"), NameObject("/FirstChar"): NumberObject(300),
+                             NameObject("/LastChar"): NumberObject(301),
+                             NameObject("/Widths"): ArrayObject([NumberObject(600), NumberObject(600)]),
+                             NameObject("/Encoding"): NameObject("/WinAnsiEncoding")})
+    assert font_widths(font) is None

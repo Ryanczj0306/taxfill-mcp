@@ -2255,9 +2255,15 @@ pitfalls:
       in that weight as pdfium draws them (textfit.ink_overrun; bearings
       measured on pdfium's own faces), give or take 0.5 pt. That replaces the
       0.5-em Helvetica average, which under-measured a digit (0.556 em) by a
-      tenth and a capital by up to half; other faces (Verdana, Calibri) are
-      still measured as Helvetica. Comb boxes with a /MaxLen are not measured
-      by width. The eighteen budgets were lowered by one glyph, MD 502 2023's
+      tenth and a capital by up to half. A face other than Helvetica, Arial,
+      Courier or Times whose AcroForm /DR font carries /Widths (ND-1's
+      Verdana, IA 1040's Calibri, DE PIT-RES's Open Sans Bold, ID Form 40's
+      Minion Pro, MO-1040's Tahoma Bold) is measured by those widths, which
+      every viewer lays the text out by whatever face it substitutes, with
+      its ink counted to the full advance (Phase K JEe3, 2026-10-25: a
+      Verdana digit is 0.636 em, and ND-1 2023/2024's signature-date boxes
+      cut MM/DD/YYYY, so they budget 8 as 2025's did). Comb boxes with a
+      /MaxLen are not measured by width. The eighteen budgets were lowered by one glyph, MD 502 2023's
       spouse signature date from 8 to 7, and every TIGHTER_THAN_WIDGET budget
       is re-checked with the model. RI-1040 sizes its dependent dates of
       birth, middle initials, suffixes and signature and preparer dates for

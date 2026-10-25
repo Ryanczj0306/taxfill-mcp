@@ -101,7 +101,7 @@ from taxfill_core.schemas.formpack import (
     ssn_dash_cells_text,
 )
 from taxfill_core.schemas.handfill import HandFillPack
-from taxfill_core.textfit import Fit, WidgetBox, widget_box, widget_inset
+from taxfill_core.textfit import Fit, FontWidths, WidgetBox, font_widths, widget_box, widget_inset
 from taxfill_core.textfit import fit as box_fit
 
 if TYPE_CHECKING:  # pragma: no cover - typing only; the runtime import is local (see fill_form)
@@ -1166,7 +1166,8 @@ def _mirror_boxes(writer: PdfWriter, names: Collection[str]) -> dict[str, list[W
     """The widgets of the fields ``names`` (qualified names) on the blank, as :mod:`taxfill_core.textfit` measures them.
 
     Each widget's width, its /DA (up the /Parent chain, else the AcroForm's default /DA) with the face resolved
-    through the AcroForm /DR fonts, and its multiline flag (/Ff bit 13, inherited the same way). Phase K JK28: the
+    through the AcroForm /DR fonts (with the font's own /Widths for a face other than Helvetica, Courier or Times
+    that carries them, Phase K JEe3), and its multiline flag (/Ff bit 13, inherited the same way). Phase K JK28: the
     page-header mirrors are measured against these before they are written. A /DA font the /DR lacks, and that is
     not one pypdf builds itself (its Core-14 table), is measured as Helvetica: pypdf draws it so and writes
     /Helvetica into the widget's /DA when it fills the box, which is the face verify then reads.
@@ -1180,10 +1181,13 @@ def _mirror_boxes(writer: PdfWriter, names: Collection[str]) -> dict[str, list[W
         fonts = acroform["/DR"].get_object()["/Font"].get_object()
     except (KeyError, AttributeError, TypeError):
         fonts = {}
+    dr_widths: dict[str, FontWidths] = {}
     for key, ref in (fonts or {}).items():
         base = ref.get_object().get("/BaseFont") if hasattr(ref, "get_object") else None
         if base is not None:
             base_fonts[str(key).lstrip("/")] = str(base).lstrip("/")
+        if (widths := font_widths(ref.get_object() if hasattr(ref, "get_object") else ref)) is not None:
+            dr_widths[str(key).lstrip("/")] = widths
     dr_fonts = {str(key).lstrip("/") for key in (fonts or {})}
     try:  # the font names pypdf builds without a /DR entry: Core-14, Arial, Courier New, Times New Roman
         from pypdf._codecs.core_font_metrics import CORE_FONT_METRICS  # noqa: PLC0415
@@ -1218,7 +1222,7 @@ def _mirror_boxes(writer: PdfWriter, names: Collection[str]) -> dict[str, list[W
             q = inherited(annot, "/Q")
             box = widget_box(
                 width, None if da is None else str(da), base_fonts=base_fonts, multiline=multiline,
-                inset=widget_inset(annot), quadding=_alignment(q if q is not None else default_q),
+                inset=widget_inset(annot), quadding=_alignment(q if q is not None else default_q), dr_widths=dr_widths,
             )
             if box.font and box.font not in dr_fonts and pypdf_builds is not None and box.font not in pypdf_builds:
                 box = box._replace(font="Helvetica", courier=False)  # what pypdf draws, and names in the /DA

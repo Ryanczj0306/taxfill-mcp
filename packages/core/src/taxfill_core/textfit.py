@@ -11,8 +11,13 @@ The model is the one the JK28 probe renders pin in ``packages/core/tests/test_pa
 
 * a value's ADVANCE at the widget's /DA font and size: Helvetica (/Helv) and Arial with Adobe's Core-14 Helvetica AFM
   widths, :func:`taxfill_core.overlay.text_width` (a capital is 0.278-0.944 em, a digit 0.556), and Courier and
-  Courier New at exactly 0.6 em a glyph. Any other face is measured as Helvetica. That is a stand-in, not a metric:
-  the blanks the packs map set their boxes in Helv, Arial or Courier;
+  Courier New at exactly 0.6 em a glyph. Any other face whose AcroForm /DR font carries a /Widths array (ND-1's
+  Verdana, IA 1040's Calibri, DE PIT-RES's Open Sans Bold, ID Form 40's Minion Pro, MO-1040's Tahoma Bold) is
+  measured by that array (:class:`FontWidths`, Phase K JEe3, 2026-10-25): a viewer places each glyph by the font's
+  /Widths whatever face it substitutes for it, so they are the advance pdfium lays out (a Verdana digit is 0.636 em,
+  not Helvetica's 0.556). Such a face has no bearing table: its ink is counted to its full advance, which is stricter
+  than any glyph's ink and the same on every platform's substitute. A face with neither is measured as Helvetica,
+  a stand-in, not a metric;
 * against the widget's width LESS its border width on each side (:func:`widget_inset`; 1 pt when the widget
   declares none), because the renderer's form layer (pdfium) draws the value from inside the border and clips it
   inside the far one. Phase K JEe (2026-10-24) measured it on renders through fill_form and render_form, the ink of
@@ -45,8 +50,9 @@ import re
 from collections.abc import Mapping, Sequence
 from typing import NamedTuple
 
-__all__ = ["BORDER_PT", "COURIER_EM", "CUT_TOLERANCE_PT", "DEFAULT_FONT_SIZE", "Fit", "WidgetBox", "advance", "bearings",
-           "fit", "ink_extent", "ink_overrun", "is_bold", "is_courier", "widget_box", "widget_inset"]
+__all__ = ["BORDER_PT", "COURIER_EM", "CUT_TOLERANCE_PT", "DEFAULT_FONT_SIZE", "Fit", "FontWidths", "WidgetBox", "advance",
+           "bearings", "fit", "font_widths", "ink_extent", "ink_overrun", "is_bold", "is_courier", "widget_box",
+           "widget_inset"]
 
 COURIER_EM = 0.6  # every Courier and Courier New glyph advances 600/1000 em
 CUT_TOLERANCE_PT = 0.5  # under the thinnest cut a reviewer has flagged (RI's date of birth, 0.58 pt measured)
@@ -153,9 +159,107 @@ _BOLD_ALIASES = frozenset({"HeBo", "HeBO", "CoBo", "CoBO", "TiBo", "TiBI"})  # A
 _BOLD_NAME_RE = re.compile(r"bold|black|heavy|semibold|demibold|demi\b|-bd\b|bd$", re.IGNORECASE)
 
 
-def bearings(ch: str, *, courier: bool = False, bold: bool | None = None) -> tuple[float, float]:
+# The faces measured by their own tables above (and Times, measured as the wider Helvetica): a /DR font of one of these
+# families keeps that measure even when it carries a /Widths array (ArialMT, CourierNewPSMT, HelveticaLTStd-Bold).
+_TABLED_FACE_RE = re.compile(r"helvetica|arial|courier|times", re.IGNORECASE)
+
+
+class FontWidths(NamedTuple):
+    """A /DR font's /Widths, by character (Phase K JEe3, 2026-10-25): what the viewer advances each glyph by.
+
+    ``widths`` maps each character the font's encoding reaches inside /FirstChar../LastChar to its width in 1000ths
+    of an em; ``missing`` is its /FontDescriptor /MissingWidth (None when the font declares none). Built by
+    :func:`font_widths`.
+    """
+
+    name: str  # the /BaseFont, for messages ('Verdana')
+    widths: Mapping[str, float]
+    missing: float | None = None
+
+    def em(self, ch: str) -> float | None:
+        """``ch``'s advance in em, or None when the font gives none: a code past /Widths with no /MissingWidth, where
+        pdfium takes the substitute face's own advance (platform-dependent), or a width of 0. For a code past /Widths
+        WITH a /MissingWidth this uses that width, which pdfium may not (it can take the embedded program's own
+        advance); no shipped pack's face declares /MissingWidth (Phase K JEe3 review, 2026-10-25)."""
+        width = self.widths.get(ch)
+        if not width:
+            width = self.missing
+        return width / 1000.0 if width else None
+
+
+def _code_to_char(encoding: object) -> list[str | None]:
+    """Character code -> character for a simple font's /Encoding: a base encoding's name (WinAnsi, MacRoman,
+    Standard) and its /Differences, by pypdf's tables (a private module, present from pypdf 6.x); Latin-1 when the
+    tables are missing or the font names no encoding."""
+    encoding = encoding.get_object() if hasattr(encoding, "get_object") else encoding
+    base, differences = encoding, None
+    if isinstance(encoding, Mapping):
+        base, differences = encoding.get("/BaseEncoding"), encoding.get("/Differences")
+    try:
+        from pypdf._codecs import adobe_glyphs, charset_encoding  # noqa: PLC0415
+
+        table: list[str | None] = list(charset_encoding.get(str(base), charset_encoding["/StandardEncoding"]))
+        code = None
+        for item in differences or ():
+            item = item.get_object() if hasattr(item, "get_object") else item
+            if isinstance(item, (int, float)):  # a code starts a run of glyph names
+                code = int(item)
+            elif code is not None and 0 <= code < 256:
+                table[code] = adobe_glyphs.get(str(item))
+                code += 1
+    except Exception:  # noqa: BLE001 — an older or newer pypdf: read the codes as Latin-1
+        table = [chr(code) for code in range(256)]
+    return table
+
+
+def font_widths(font: Mapping[str, object] | None) -> FontWidths | None:
+    """The :class:`FontWidths` of a /DR font dictionary (pypdf's, or any mapping with PDF keys), or None.
+
+    None when the font is a Helvetica, Arial, Courier or Times face (measured by this module's tables, byte for byte
+    as before JEe3), a composite (/Type0) or Type 3 font, or carries no /Widths and /FirstChar. A character the
+    encoding maps to no code inside /Widths is left out; :meth:`FontWidths.em` falls back on /MissingWidth.
+    """
+    if font is None:
+        return None
+    font = font.get_object() if hasattr(font, "get_object") else font
+    if not isinstance(font, Mapping):
+        return None
+    name = str(font.get("/BaseFont", "")).lstrip("/")
+    if _TABLED_FACE_RE.search(name) or str(font.get("/Subtype")) in ("/Type0", "/Type3"):
+        return None
+    raw, first = font.get("/Widths"), font.get("/FirstChar")
+    raw = raw.get_object() if hasattr(raw, "get_object") else raw
+    try:
+        first = int(first.get_object() if hasattr(first, "get_object") else first)
+        widths = [float(w.get_object() if hasattr(w, "get_object") else w) for w in raw]
+    except (TypeError, ValueError):
+        return None
+    if not widths:
+        return None
+    descriptor = font.get("/FontDescriptor")
+    descriptor = descriptor.get_object() if hasattr(descriptor, "get_object") else descriptor
+    missing = descriptor.get("/MissingWidth") if isinstance(descriptor, Mapping) else None
+    try:
+        missing = float(missing) if missing is not None else None
+    except (TypeError, ValueError):
+        missing = None
+    by_char: dict[str, float] = {}
+    for code, ch in enumerate(_code_to_char(font.get("/Encoding"))):
+        if ch and first <= code < first + len(widths) and ch not in by_char:
+            by_char[ch] = widths[code - first]
+    if not by_char:  # no encoded character falls inside /Widths: nothing to measure by (the JEe3 review)
+        return None
+    return FontWidths(name, by_char, missing)
+
+
+def bearings(
+    ch: str, *, courier: bool = False, bold: bool | None = None, widths: FontWidths | None = None
+) -> tuple[float, float]:
     """``ch``'s (left, right) side bearings in em, in the face pdfium draws: Courier or Helvetica, regular or bold;
-    ``bold=None`` (the weight is unknown) takes the smaller of the two weights."""
+    ``bold=None`` (the weight is unknown) takes the smaller of the two weights. A face measured by its /Widths
+    (``widths``, not Courier) has none: its ink is counted to the full advance (Phase K JEe3)."""
+    if widths is not None and not courier:
+        return (0.0, 0.0)
     face = "Courier" if courier else "Helvetica"
     table = _ANY_WEIGHT[face] if bold is None else _BEARINGS[f"{face}-Bold" if bold else face]
     return table.get(ch, (0.0, 0.0))
@@ -184,6 +288,7 @@ class WidgetBox(NamedTuple):
     inset: float = BORDER_PT  # pt lost on EACH side to the border the viewer draws (:func:`widget_inset`)
     quadding: int = 0  # /Q: 0 left, 1 centred, 2 right
     bold: bool | None = False  # a bold face (wider glyphs, thinner bearings); None: unknown, the worse of both weights
+    widths: FontWidths | None = None  # the /DR font's /Widths (a face other than Helvetica/Courier/Times), Phase K JEe3
 
     @property
     def room(self) -> float:
@@ -243,13 +348,17 @@ def widget_box(
     inset: float = BORDER_PT,
     quadding: int = 0,
     bold: bool | None = None,
+    widths: FontWidths | None = None,
+    dr_widths: Mapping[str, FontWidths] | None = None,
 ) -> WidgetBox:
     """A :class:`WidgetBox` from a widget's width and its /DA string ('/Helv 10 Tf 0 g').
 
     ``courier`` is the caller's own reading of the face (verify's ``TextWidget.monospace``); None reads it from the
     /DA font name and ``base_fonts`` (:func:`is_courier`). A /DA with no ``<size> Tf`` is measured at 10 pt.
     ``inset`` is :func:`widget_inset` of the widget: the pt its border takes on each side; ``quadding`` its /Q;
-    ``bold`` the caller's reading of the weight (verify's ``TextWidget.bold``), None reading it from the /DA name.
+    ``bold`` the caller's reading of the weight (verify's ``TextWidget.bold``), None reading it from the /DA name;
+    ``widths`` the caller's reading of the face's /Widths (verify's ``TextWidget.font_widths``), None looking the /DA
+    font up in ``dr_widths`` (the AcroForm /DR fonts' :func:`font_widths`). A Courier face never takes widths.
     """
     match = _DA_FONT_RE.search(da or "")
     if match is not None:
@@ -261,17 +370,22 @@ def widget_box(
         courier = is_courier(font, base_fonts)
     if bold is None:
         bold = is_bold(font, base_fonts)
+    if widths is None and dr_widths:
+        widths = dr_widths.get(font)
     q = int(quadding) if quadding in (0, 1, 2) else 0
-    return WidgetBox(float(width), size, font, courier, multiline, float(inset), q, bold)
+    return WidgetBox(float(width), size, font, courier, multiline, float(inset), q, bold, None if courier else widths)
 
 
-def ink_extent(text: str, size: float, *, courier: bool = False, bold: bool | None = None) -> float:
+def ink_extent(
+    text: str, size: float, *, courier: bool = False, bold: bool | None = None, widths: FontWidths | None = None
+) -> float:
     """How far ``text``'s ink reaches from where it starts, in pt: its advance less its last glyph's right side
     bearing. Trailing spaces carry no ink, so they are not measured; a blank value reaches 0."""
     body = text.rstrip()
     if not body:
         return 0.0
-    return advance(body, size, courier=courier, bold=bold) - bearings(body[-1], courier=courier, bold=bold)[1] * size
+    rsb = bearings(body[-1], courier=courier, bold=bold, widths=widths)[1]
+    return advance(body, size, courier=courier, bold=bold, widths=widths) - rsb * size
 
 
 def ink_overrun(text: str, box: WidgetBox) -> float:
@@ -283,10 +397,11 @@ def ink_overrun(text: str, box: WidgetBox) -> float:
     body = text.strip()
     if not body:
         return float("-inf")
-    rsb = bearings(body[-1], courier=box.courier, bold=box.bold)[1] * box.size
-    lsb = bearings(body[0], courier=box.courier, bold=box.bold)[0] * box.size
-    whole = advance(text, box.size, courier=box.courier, bold=box.bold)
-    lead = advance(text[: len(text) - len(text.lstrip())], box.size, courier=box.courier, bold=box.bold)
+    face = {"courier": box.courier, "bold": box.bold, "widths": box.widths}
+    rsb = bearings(body[-1], **face)[1] * box.size
+    lsb = bearings(body[0], **face)[0] * box.size
+    whole = advance(text, box.size, **face)
+    lead = advance(text[: len(text) - len(text.lstrip())], box.size, **face)
     if box.quadding == 2:
         start = box.room - whole
     elif box.quadding == 1:
@@ -294,7 +409,7 @@ def ink_overrun(text: str, box: WidgetBox) -> float:
     else:
         start = 0.0
     ink_left = start + lead + lsb
-    ink_right = start + advance(text.rstrip(), box.size, courier=box.courier, bold=box.bold) - rsb
+    ink_right = start + advance(text.rstrip(), box.size, **face) - rsb
     return max(-ink_left, ink_right - box.room)
 
 
@@ -309,13 +424,21 @@ def _helvetica_bold_widths() -> tuple[Mapping[str, int], int] | None:
         return None
 
 
-def advance(text: str, size: float, *, courier: bool = False, bold: bool | None = None) -> float:
-    """The advance of ``text`` set at ``size`` pt: 0.6 em a glyph in Courier (either weight), else Helvetica's AFM
-    widths in the box's weight: Helvetica-Bold's when ``bold`` (a bold capital is up to a fifth wider; the digits
-    are the same), regular when not, and the wider of the two per glyph when the weight is unknown (Phase K JEe:
-    a bold name on Form W-7 2025 passed measured in regular widths and printed 4.9 pt cut)."""
+def advance(
+    text: str, size: float, *, courier: bool = False, bold: bool | None = None, widths: FontWidths | None = None
+) -> float:
+    """The advance of ``text`` set at ``size`` pt: 0.6 em a glyph in Courier (either weight); by the font's own
+    /Widths when ``widths`` is given (Phase K JEe3: the advance the viewer lays out, a glyph they give no width
+    measured as below); else Helvetica's AFM widths in the box's weight: Helvetica-Bold's when ``bold`` (a bold
+    capital is up to a fifth wider; the digits are the same), regular when not, and the wider of the two per glyph
+    when the weight is unknown (Phase K JEe: a bold name on Form W-7 2025 passed measured in regular widths and
+    printed 4.9 pt cut)."""
     if courier:
         return COURIER_EM * len(text) * size
+    if widths is not None:
+        ems = [widths.em(ch) for ch in text]
+        rest = "".join(ch for ch, em in zip(text, ems, strict=True) if em is None)
+        return sum(em for em in ems if em is not None) * size + (advance(rest, size, bold=bold) if rest else 0.0)
     # Imported here, not at the top: overlay imports verify, and verify imports this module.
     from taxfill_core.overlay import _helvetica_widths, text_width  # noqa: PLC0415
 
@@ -358,11 +481,11 @@ def fit(text: str, boxes: Sequence[WidgetBox], *, maxlen: int | None = None, com
     overs = [(ink_overrun(text, b), b) for b in fixed]
     fits = all(over <= CUT_TOLERANCE_PT + _EPSILON for over, _ in overs)
     if fits:  # name the box with the least slack, measured from the left as JK28 named it
-        box = max(fixed, key=lambda b: ink_extent(text, b.size, courier=b.courier, bold=b.bold) - b.room)
+        box = max(fixed, key=lambda b: ink_extent(text, b.size, courier=b.courier, bold=b.bold, widths=b.widths) - b.room)
         over = ink_overrun(text, box)
     else:
         over, box = max(overs, key=lambda m: m[0])
-    used = advance(text, box.size, courier=box.courier, bold=box.bold)
+    used = advance(text, box.size, courier=box.courier, bold=box.bold, widths=box.widths)
     if len(fixed) == 1:
         which = "its box"
     else:

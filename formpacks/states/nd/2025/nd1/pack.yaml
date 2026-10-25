@@ -82,7 +82,9 @@
 # budget of maxlen 10. These three lines now carry maxlen 8: an 8-character
 # MM/DD/YY is 37.8 pt and eight digits 40.7 pt, both inside the box. The
 # filler rejects a longer value instead of letting it clip. Verify's clipping
-# estimate (0.5 em per glyph, 40 pt) does not catch this. The two
+# estimate (0.5 em per glyph, 40 pt) did not catch this; since Phase K JEe3
+# (2026-10-25) verify measures a Verdana box by these /Widths and FAILs a
+# 10-character date here, and the 2023 and 2024 packs budget 8 too. The two
 # Date of Death boxes are 52.2 pt wide, and a full MM/DD/YYYY rendered there
 # intact, so they keep maxlen 10.
 #

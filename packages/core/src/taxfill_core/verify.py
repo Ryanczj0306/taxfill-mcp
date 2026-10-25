@@ -85,7 +85,9 @@ widget's ``/DA`` default-appearance string (``<size> Tf``); ``0 Tf`` means
 auto-size and is safe. Otherwise the value's advance at that size — each
 glyph's Helvetica AFM width, or exactly 0.6 em a glyph when the /DA font is a
 Courier face (Phase J JS3c: the face is resolved through the AcroForm /DR
-/BaseFont, falling back to Acrobat's Courier aliases /Cour /CoBo /CoOb /CoBO)
+/BaseFont, falling back to Acrobat's Courier aliases /Cour /CoBo /CoOb /CoBO),
+or the font's own /Widths when its /DR font is another face that carries them
+(Phase K JEe3: ND-1's Verdana, IA 1040's Calibri; ink to the full advance)
 — is compared against the room INSIDE the widget: its width less the border
 the viewer draws on each side, 1 pt when the widget declares none (Phase K
 JEe: renders cut the last glyph of a value that fills the rect edge to edge;
@@ -194,8 +196,10 @@ from taxfill_core.textfit import (
     BORDER_PT,
     CUT_TOLERANCE_PT,
     Fit,
+    FontWidths,
     WidgetBox,
     advance,
+    font_widths,
     ink_overrun,
     is_bold,
     widget_box,
@@ -669,6 +673,14 @@ class TextWidget(BaseModel):
             "both sides and a right-aligned one on the left (textfit.ink_overrun, Phase K JEe)."
         ),
     )
+    font_widths: FontWidths | None = Field(
+        default=None,
+        description=(
+            "The /DA font's /Widths when its AcroForm /DR font is a face other than Helvetica, Arial, Courier or Times "
+            "and carries them (ND-1's Verdana, IA 1040's Calibri): the advance the viewer lays the value out by "
+            "(textfit.font_widths, Phase K JEe3). None: the Helvetica or Courier measure."
+        ),
+    )
 
 
 class VerifyReport(BaseModel):
@@ -853,6 +865,7 @@ def read_text_widgets(
     default_da = acroform.get_object().get("/DA") if acroform is not None else None
     default_q = acroform.get_object().get("/Q") if acroform is not None else None
     base_fonts = _dr_base_fonts(acroform.get_object() if acroform is not None else None)
+    dr_widths = _dr_font_widths(acroform.get_object() if acroform is not None else None)
 
     widgets: list[TextWidget] = []
     for page in reader.pages:
@@ -899,6 +912,7 @@ def read_text_widgets(
                     comb=flags is not None and bool(int(flags) & _COMB_FLAG),
                     quadding=_quadding(_inherited(annot, "/Q"), default_q),
                     bold=_da_is_bold(_pdf_text(da) if da is not None else None, base_fonts),
+                    font_widths=_da_font_widths(_pdf_text(da) if da is not None else None, dr_widths),
                 )
             )
     return widgets
@@ -1634,6 +1648,27 @@ def _dr_base_fonts(acroform: Mapping | None) -> dict[str, str]:
     return out
 
 
+def _dr_font_widths(acroform: Mapping | None) -> dict[str, FontWidths]:
+    """The AcroForm /DR /Font resource names -> their :func:`textfit.font_widths` (Phase K JEe3), for the faces that
+    carry /Widths and are not Helvetica, Arial, Courier or Times; empty when absent."""
+    try:
+        fonts = acroform["/DR"].get_object()["/Font"].get_object() if acroform is not None else None
+    except (KeyError, AttributeError, TypeError):
+        return {}
+    out: dict[str, FontWidths] = {}
+    for key, ref in (fonts or {}).items():
+        widths = font_widths(ref.get_object() if hasattr(ref, "get_object") else ref)
+        if widths is not None:
+            out[str(key).lstrip("/")] = widths
+    return out
+
+
+def _da_font_widths(da: str | None, dr_widths: Mapping[str, FontWidths]) -> FontWidths | None:
+    """The /Widths of a /DA string's font, through the /DR fonts; None when it names no font or one without them."""
+    match = _DA_FONT_RE.search(da or "")
+    return dr_widths.get(match.group(1)) if match is not None else None
+
+
 def _font_size_from_da(da: str | None) -> float | None:
     """Parse the font size from a /DA string; None when no '<size> Tf' found."""
     if not da:
@@ -1666,7 +1701,8 @@ def clipping_scan(
     1. ``len(value) > /MaxLen`` — hard clipping; the PDF silently drops the
        overflow (invisible in field dumps; this is the P-001 SSN incident);
     2. width — the value's advance at the /DA size (Helvetica's AFM widths, 0.6 em
-       a glyph for a Courier face: :func:`taxfill_core.textfit.advance`) vs the
+       a glyph for a Courier face, the font's own /Widths for another /DR face
+       that carries them — Phase K JEe3: :func:`taxfill_core.textfit.advance`) vs the
        room INSIDE the box: its width less the border the viewer draws on each
        side (:func:`taxfill_core.textfit.widget_inset`, 1 pt when the widget
        declares none — Phase K JEe: a value that fills the rect edge to edge
@@ -1773,12 +1809,15 @@ def clipping_scan(
             ))
             continue
         bold = widget.bold if widget.bold is not None else _da_is_bold(widget.da)
-        if not monospace:
+        widths = None if monospace else widget.font_widths
+        if widths is not None:  # Phase K JEe3: the face's own /Widths, ink to the full advance
+            metric = f"{widths.name}'s /Widths"
+        elif not monospace:
             metric = {True: "Helvetica-Bold metrics", False: "Helvetica metrics"}.get(
                 bold, "Helvetica metrics, the wider weight")
-        estimated = advance(widget.value, font_size, courier=monospace, bold=bold)
+        estimated = advance(widget.value, font_size, courier=monospace, bold=bold, widths=widths)
         over = ink_overrun(widget.value, WidgetBox(
-            widget.rect_width, font_size, "", monospace, False, widget.inset, widget.quadding, bold,
+            widget.rect_width, font_size, "", monospace, False, widget.inset, widget.quadding, bold, widths,
         ))
         side = {0: "right", 1: "both sides", 2: "left"}[widget.quadding]
         measure = (
@@ -2913,7 +2952,7 @@ def mirror_checks(
         boxes.setdefault(widget.name, []).append(
             widget_box(
                 widget.rect_width, widget.da, courier=widget.monospace, multiline=widget.multiline, inset=widget.inset,
-                quadding=widget.quadding, bold=widget.bold,
+                quadding=widget.quadding, bold=widget.bold, widths=widget.font_widths,
             )
         )
     checks: list[IdentityCheck] = []

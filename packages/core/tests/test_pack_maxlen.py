@@ -25,7 +25,7 @@ import pytest
 from taxfill_core.fetch import OfflineFetchError, fetch_pack_blank
 from taxfill_core.overlay import text_width
 from taxfill_core.schemas.formpack import load_pack
-from taxfill_core.verify import bound_widget_names, read_text_widgets
+from taxfill_core.verify import TextWidget, bound_widget_names, read_text_widgets
 from taxfill_core.textfit import _RSB_COURIER, CUT_TOLERANCE_PT, DEFAULT_FONT_SIZE, ink_extent
 
 FORMPACKS = Path(__file__).resolve().parents[3] / "formpacks"
@@ -437,7 +437,7 @@ def test_every_tighter_budget_fits_its_box_by_the_ink_model(row: tuple[str, str]
     cell: the render cuts the ninth. Each budget is checked the way verify now checks a value (textfit.ink_extent
     against the width less the border on each side), on every widget of the line, at the pack line's font_size when
     it sets one (Phase K JEe2: the size fill_form writes); an auto-size, multiline or comb widget is not measured, as
-    verify does not measure it.
+    verify does not measure it. A box in a face whose /DR font carries /Widths is measured by them (Phase K JEe3).
     """
     pack_path = FORMPACKS / row[0]
     pack = load_pack(pack_path)
@@ -455,16 +455,41 @@ def test_every_tighter_budget_fits_its_box_by_the_ink_model(row: tuple[str, str]
             size = min(size, field.font_size)
         if size == 0 or box.multiline or (box.comb and box.max_len is not None) or box.rect_width <= 0:
             continue
-        # Courier: every glyph advances 0.6 em, so end on the glyph whose ink reaches furthest right (the smallest
-        # bearing in the table) and the budget holds for ANY text. Helvetica: digits — a text budget there is a cap
-        # on typical content, and verify measures the actual value.
-        last = min(_RSB_COURIER, key=_RSB_COURIER.__getitem__) if box.monospace else "0"
-        probe = "0" * (field.maxlen - 1) + last
-        ink = ink_extent(probe, size, courier=bool(box.monospace))
+        probe, ink = budget_ink(field.maxlen, box, size)
         room = box.rect_width - 2 * box.inset
         assert ink <= room + CUT_TOLERANCE_PT, (
             f"{row}: {field.maxlen} characters ({probe[-1]!r} last) reach {ink:.2f} pt, past the {room:.2f} pt inside the {box.rect_width:.2f} pt "
             f"box ({box.inset:g} pt border a side) — lower the pack maxlen to what renders whole and update the row")
+
+
+def budget_ink(budget: int, box: TextWidget, size: float) -> tuple[str, float]:
+    """The budget-length probe for ``box`` and how far its ink reaches at ``size`` pt, as verify measures it.
+
+    Courier: every glyph advances 0.6 em, so end on the glyph whose ink reaches furthest right (the smallest bearing in
+    the table) and the budget holds for ANY text. Helvetica: digits — a text budget there is a cap on typical content,
+    and verify measures the actual value. A face with its own /Widths (Phase K JEe3): its widest digit, by those
+    widths, with the ink to the full advance.
+    """
+    if box.monospace:
+        probe = "0" * (budget - 1) + min(_RSB_COURIER, key=_RSB_COURIER.__getitem__)
+        return probe, ink_extent(probe, size, courier=True)
+    if box.font_widths is not None:
+        digit = max(string.digits, key=lambda d: box.font_widths.em(d) or 0.0)
+        return digit * budget, ink_extent(digit * budget, size, widths=box.font_widths)
+    return "0" * budget, ink_extent("0" * budget, size)
+
+
+def test_the_budget_probe_is_measured_in_the_boxs_own_face():
+    """Phase K JEe3: a budget in a /Widths face is measured by them. Nine Verdana 8 digits (636/1000 em) reach 45.8 pt
+    in ND-1's 45.4 pt preparer-date box, past its 43.4 pt room; Helvetica's 0.556-em digits said 40.0 pt and fit."""
+    from taxfill_core.textfit import FontWidths  # noqa: PLC0415
+
+    verdana = FontWidths("Verdana", {**dict.fromkeys(string.digits, 636.0), "/": 454.0})
+    box = TextWidget(name="date preparer signed", da="/Verdana 8 Tf 0 g", rect_width=45.4, font_widths=verdana)
+    assert budget_ink(9, box, 8.0) == ("000000000", pytest.approx(45.792))
+    assert budget_ink(9, box.model_copy(update={"font_widths": None}), 8.0)[1] < 45.4 - 2 * box.inset
+    courier = box.model_copy(update={"font_widths": None, "monospace": True})
+    assert budget_ink(9, courier, 8.0)[0] == "00000000" + min(_RSB_COURIER, key=_RSB_COURIER.__getitem__)
 
 
 def _measured_id(row: tuple[str, str]) -> str:
@@ -569,6 +594,9 @@ def test_every_measured_budget_row_still_describes_its_widget(row: tuple[str, st
     # bound_names: a ReadOnly mirror the pack maps (GA 500's voucher STATE box) is read like any other box
     widgets = [w for w in read_text_widgets(Path(blank), bound_names=bound_widget_names(pack)) if w.name == name]
     assert widgets, f"{row}: no text widget '{name}' in the blank — re-derive the binding"
+    # the rows are measured with Helvetica's or Courier's metrics; a box in a face with its own /Widths is measured
+    # by them (Phase K JEe3) and needs a row measured that way
+    assert all(w.font_widths is None for w in widgets), f"{row}: the box's face carries /Widths — re-measure the row"
     capped = sorted({w.max_len for w in widgets if w.max_len is not None})
     assert not capped, f"{row}: the widget now carries /MaxLen {capped}; the sweep above tracks it — delete the row"
     box = min(widgets, key=lambda w: w.rect_width)  # a field repeated on several pages: the narrowest box governs

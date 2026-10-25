@@ -475,7 +475,13 @@ both sides), give or take 0.5 pt (Phase K JEe, P-035: a value that filled the
 rect edge to edge printed cut); verify's clipping scan measures every
 single-line value the same way. Helvetica and Arial advance by
 Adobe's Core-14 Helvetica AFM widths (`overlay.text_width`), Courier and Courier
-New by 0.6 em a glyph, and any other face is measured as Helvetica. A field with
+New by 0.6 em a glyph. Any other face whose AcroForm /DR font carries a /Widths
+array (ND-1's Verdana, IA 1040's Calibri) advances by those widths, the layout
+every viewer uses whatever face it substitutes, with its ink counted to the full
+advance (Phase K JEe3, `textfit.font_widths`); a face with neither is measured
+as Helvetica. Size such a box's budget by its /Widths, not by Helvetica's: a
+Verdana digit is 0.636 em, so ND-1's 43.6 pt signature-date box holds MM/DD/YY,
+not MM/DD/YYYY. A field with
 a widget on several pages must fit each one, in practice its narrowest; an
 auto-size /DA (`0 Tf`) always fits; a multiline or zero-width widget is not
 measured. A comb box is not measured by width either: its `maxlen`, digits-only

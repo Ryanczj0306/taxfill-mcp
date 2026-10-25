@@ -260,7 +260,7 @@ def test_jk28_fit_measures_courier_at_0_6_em_and_reads_the_face_as_verify_does()
         ("/Cour 10 Tf 0 g", {"Cour": "Helvetica"}, False),    # the /DR /BaseFont decides over the alias
         ("/CourierNew,Bold 8 Tf 0 g", {}, True),
         ("/Arial 9 Tf 0 g", {}, False),                       # Arial: Helvetica's widths
-        ("/KozGoPr6N-Medium 10 Tf 0 g", {}, False),           # any other face is measured as Helvetica
+        ("/KozGoPr6N-Medium 10 Tf 0 g", {}, False),           # any other face with no /DR /Widths: Helvetica
     ]:
         assert widget_box(100, da, base_fonts=base_fonts).courier is courier, da
         assert _da_is_monospace(da, base_fonts) is courier, da  # the rule of verify's clipping scan

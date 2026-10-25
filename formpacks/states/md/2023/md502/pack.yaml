@@ -206,10 +206,15 @@ fields:
     field: Enter dates of Maryland Residence to MM/DD/YYYY
     type: text
     maxlen: 10
+  # Phase K JEe3 (2026-10-25): the box is 14.29 pt of MinionPro-Regular 8 (/Widths), sized for its glyphs edge to
+  # edge: at 8 pt WV, WY, WA, MO, MN, NM and MD overrun it by the /Widths measure (WV 1.10 pt). font_size 7.3 is the
+  # largest size on a 0.1 pt grid at which every two-letter state code's ink stays inside (overrun <= 0, worst WY),
+  # and pdfium renders them whole (as RI-1040's edge-to-edge boxes, the user's 2026-10-25 smaller-font decision).
   - line: other_state_of_residence
     field: Text Field 14
     type: text
     maxlen: 2
+    font_size: 7.3
   - line: legal_residence_pm_flag       # place a P (or MILITARY: M) in the box
     field: "If you began or ended legal residence in Maryland in 2023 place a P in the box.\rMILITARY: If you or "
     type: text

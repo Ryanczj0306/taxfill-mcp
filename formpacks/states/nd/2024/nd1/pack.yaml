@@ -508,27 +508,33 @@ fields:
     on_state: /Yes
 
   # ---- signature block
-  - line: signature.taxpayer_date        # "Your Signature ... Date" (narrow box)
+  - line: signature.taxpayer_date        # "Your Signature ... Date" (44.9 pt box; MM/DD/YY -- see below)
     field: Date signed
     type: text
-    maxlen: 10
+    # Phase K JEe3 (2026-10-25): budget 10 -> 8. The box is centred, "/Verdana 8 Tf", no /MaxLen, and the
+    # AcroForm's Verdana /Widths (636 a digit, 454 a slash) put MM/DD/YYYY at 48.0 pt against the
+    # 42.9 pt inside the border, cut on both sides (2.53 pt by the model, 1.42 pt on a pdfium render); verify measured
+    # it as Helvetica (40.0 pt) and passed it. MM/DD/YY is 37.8 pt and prints whole, the 2025 pack's budget.
+    maxlen: 8
   - line: signature.taxpayer_phone       # "Your Signature ... Telephone Number"
     field: day phone
     type: text
-  - line: signature.spouse_date          # "Spouse's Signature ... Date" (narrow box)
+  - line: signature.spouse_date          # "Spouse's Signature ... Date" (44.9 pt box; MM/DD/YY, as the taxpayer's)
     field: Date signed 2
     type: text
-    maxlen: 10
+    maxlen: 8
   - line: signature.spouse_phone         # "Spouse's Signature ... Telephone Number"
     field: Spouse phone
     type: text
   - line: preparer.ptin                  # "Paid Preparer Signature ... PTIN"
     field: ID
     type: text
-  - line: preparer.date                  # "Paid Preparer Signature ... Date" (narrow box)
+  - line: preparer.date                  # "Paid Preparer Signature ... Date" (45.4 pt box; MM/DD/YY)
     field: date preparer signed
     type: text
-    maxlen: 10
+    # Phase K JEe3 (2026-10-25): budget 10 -> 8, as the signature dates: MM/DD/YYYY in Verdana 8 overruns the
+    # 43.4 pt inside this box by 2.28 pt (pdfium cuts 1.75 pt); MM/DD/YY prints whole.
+    maxlen: 8
   - line: preparer.name                  # "Print Name Of Paid Preparer Signature"
     field: preparer name
     type: text
