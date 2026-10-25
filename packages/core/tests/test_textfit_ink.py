@@ -15,7 +15,10 @@ says are cut lose ink in pdfium's render, and the ones it says fit do not.
 """
 from __future__ import annotations
 
+import json
 import string
+import sys
+import warnings
 from pathlib import Path
 
 import pytest
@@ -247,10 +250,20 @@ def test_the_bearing_tables_match_a_fresh_measurement(tmp_path):
         finally:
             doc.close()
 
+    glyphs_of = {"Helvetica": "".join(_RSB_HELVETICA), "Courier": "".join(_RSB_COURIER)}
+    measured = {face: bearings(face, glyphs_of[face.split("-")[0]])
+                for face in ("Helvetica", "Helvetica-Bold", "Courier", "Courier-Bold")}
+    if sys.platform != "darwin":
+        # The tables were measured on macOS, where pdfium draws a non-embedded base-14 face with the system's Helvetica
+        # and Courier; other platforms substitute other faces. Report this platform's bearings, so they can be folded
+        # into the tables (Phase K JEe follow-up), and do not hold the macOS figures against them.
+        report = {face: {ch: [round(lr[0], 3), round(lr[1], 3)] for ch, lr in m.items()} for face, m in measured.items()}
+        warnings.warn(f"JEe bearings on {sys.platform}: {json.dumps(report, sort_keys=True)}", stacklevel=1)
+        pytest.xfail(f"the bearing tables are measured on macOS; {sys.platform} substitutes other faces")
     for lsb, rsb, faces in ((_LSB_HELVETICA, _RSB_HELVETICA, ("Helvetica", "Helvetica-Bold")),
                             (_LSB_COURIER, _RSB_COURIER, ("Courier", "Courier-Bold"))):
         glyphs = "".join(rsb)
-        regular, bold = (bearings(face, glyphs) for face in faces)
+        regular, bold = (measured[face] for face in faces)
         for side, table in ((0, lsb), (1, rsb)):
             off = {ch: (table[ch], round(min(regular[ch][side], bold[ch][side]), 3)) for ch in glyphs
                    if abs(table[ch] - min(regular[ch][side], bold[ch][side])) > 0.006}
