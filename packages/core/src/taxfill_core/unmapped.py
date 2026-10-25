@@ -486,6 +486,37 @@ def _audit_values(blank: Path, data: bytes, written: Mapping[str, str]) -> None:
 # ── fill (fill_form) ─────────────────────────────────────────────────────────
 
 
+def _build_draft(path: Path, text_updates: Mapping[str, str], button_updates: Mapping[str, tuple[str, str]],
+                 written: Mapping[str, str], *, what: str):
+    """The draft's whole document, as fill_form writes it from the blank at ``path``: (writer, stamp placements,
+    viewer guards hidden). Everything but the /Info record is here, so the result is a function of the blank and
+    the written values alone. Phase K JK17 (2026-10-25): verify_unmapped rebuilds the draft with this same function
+    and compares the file against it object by object, so a change the fill did not make (an edited appearance, a
+    document script, a second stamp) fails verify."""
+    from pypdf import PdfWriter  # noqa: PLC0415
+
+    from taxfill_core.filler import (  # noqa: PLC0415
+        UNMAPPED_STAMP,
+        _annotation_flag_pass,
+        _drop_xfa,
+        _repair_empty_field_array,
+        _set_checkboxes,
+    )
+    from taxfill_core.stamp import draw_stamp  # noqa: PLC0415
+
+    writer = PdfWriter(clone_from=str(path))
+    _repair_empty_field_array(writer)
+    if text_updates:  # per widget, never by pypdf's leaf-name match (KG7)
+        _write_text_fields(writer, text_updates)
+    if button_updates:
+        _set_checkboxes(writer, dict(button_updates))
+    guards_hidden = _annotation_flag_pass(writer, written)
+    writer.set_need_appearances_writer(True)
+    _drop_xfa(writer)
+    stamp = draw_stamp(writer, path, UNMAPPED_STAMP, what=what)
+    return writer, stamp, guards_hidden
+
+
 def _names(kind: str, names) -> list[str]:
     if names is None:
         return []
@@ -686,16 +717,8 @@ def fill_unmapped(
     Raises ``fetch.UnmappedBlankRefused`` (a fetch check, rule 1), :class:`UnmappedFillRefused` (rule 14 and other
     whole-call refusals; no PDF written, no value echoed) and ``stamp.StampRefused`` (a page with no room).
     """
-    from pypdf import PdfWriter  # noqa: PLC0415
-
-    from taxfill_core.filler import (  # noqa: PLC0415
-        UNMAPPED_STAMP,
-        _annotation_flag_pass,
-        _drop_xfa,
-        _repair_empty_field_array,
-        _set_checkboxes,
-    )
-    from taxfill_core.stamp import draw_stamp, stamp_check  # noqa: PLC0415
+    from taxfill_core.filler import UNMAPPED_STAMP  # noqa: PLC0415
+    from taxfill_core.stamp import stamp_check  # noqa: PLC0415
 
     blank = load_unmapped_blank(blank_sha256, tax_year=tax_year, source_url=source_url, jurisdiction=jurisdiction,
                                 expected_title=expected_title, cache_dir=cache_dir, workspace_root=workspace_root)
@@ -749,16 +772,8 @@ def fill_unmapped(
     written = {**text_updates, **{n: s for n, (_, s) in button_updates.items()}}
     written = {n: written[n] for n in values if n in written}  # the caller's order
 
-    writer = PdfWriter(clone_from=str(path))
-    _repair_empty_field_array(writer)
-    if text_updates:  # per widget, never by pypdf's leaf-name match (KG7)
-        _write_text_fields(writer, text_updates)
-    if button_updates:
-        _set_checkboxes(writer, button_updates)
-    guards_hidden = _annotation_flag_pass(writer, written)
-    writer.set_need_appearances_writer(True)
-    _drop_xfa(writer)
-    stamp = draw_stamp(writer, path, UNMAPPED_STAMP, what=f"the blank {blank.sha256[:16]}")
+    writer, stamp, guards_hidden = _build_draft(path, text_updates, button_updates, written,
+                                                what=f"the blank {blank.sha256[:16]}")
     labels = _labels(written, prov)
     confirmed_map = {n: CONFIRMED_LABEL for n in written if n in confirmed}
     record = {
