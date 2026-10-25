@@ -25,6 +25,9 @@ Guardrails (docs/dev/ROADMAP.md, Phase K; ADR-0002):
   carries VALUE_LABEL; ``provenance`` only adds a source beside it.
 - KG11 (rule 13): a value is refused when any widget of its field is anchored "none", and when any is anchored in
   CONFIRM_TIERS unless the field is in ``confirmed_fields``.
+- Which box (Phase K JK15b, 2026-10-25): a checkbox or radio entry in ``hand_write`` names its box(es) (``boxes``:
+  page, rect, on-state, position on the page as shown), its sweep number (``sweep_index``) and a ``mark`` sentence, so
+  a refused box is not left as a raw on-state.
 - Rule 14: an unknown field name, a choice not in /Opt, a checkbox value naming no declared on-state, and a /MaxLen
   or comb violation refuse the whole call — no PDF is written and no value is echoed.
 
@@ -58,6 +61,7 @@ __all__ = [
     "PROVENANCE_SOURCES",
     "REFUSALS",
     "VALUE_LABEL",
+    "box_position",
     "calculated_reason",
     "describe_unmapped",
     "fill_unmapped",
@@ -203,6 +207,9 @@ class _Widget:
     refusal: str | None
     rect: list[float]
     number_format: tuple[int, int] | None = None  # (nDec, sepStyle) of a standard AFNumber_Format, else None
+    # Phase K JK15b (2026-10-25): the page's visible box and /Rotate, so a hand_write entry can say where the box is
+    page_box: tuple[float, float, float, float] | None = None
+    rotation: int = 0
 
 
 @dataclass
@@ -287,20 +294,21 @@ def _read_fields(path: Path, table: str | Path | None) -> tuple[list[_Field], di
     annots = []
     for page in reader.pages:
         box = visible_box(page)
+        rotation = int(page.rotation or 0) % 360
         for ref in page.get("/Annots") or []:
             obj = ref.get_object()
             if obj.get("/Subtype") == "/Widget" and _qualified_name(obj):
-                annots.append((obj, box))
+                annots.append((obj, box, rotation))
     if not (len(infos) == len(amap.widgets) == len(annots)):  # all three walk /Annots in page order
         raise RuntimeError(f"widget walk mismatch ({len(infos)} / {len(amap.widgets)} / {len(annots)})")
     fields: dict[str, _Field] = {}
-    for info, anchor, (annot, box) in zip(infos, amap.widgets, annots):
+    for info, anchor, (annot, box, rotation) in zip(infos, amap.widgets, annots):
         f = fields.get(info["name"])
         if f is None:
             f = fields[info["name"]] = _Field(index=len(fields) + 1, name=info["name"], kind=info["kind"], info=info)
         rect = [float(v) for v in info["rect"]] if len(info["rect"]) == 4 else [0.0, 0.0, 0.0, 0.0]
         f.widgets.append(_Widget(info=info, anchor=anchor, refusal=_widget_refusal(info, annot, box), rect=rect,
-                                 number_format=number_format(_chain(annot))))
+                                 number_format=number_format(_chain(annot)), page_box=box, rotation=rotation))
     return list(fields.values()), amap.basis
 
 
@@ -330,11 +338,68 @@ def _place(f: _Field) -> dict:
             "printed_line": a.printed_line, "label": a.label}
 
 
+def box_position(rect: Sequence[float], page_box: Sequence[float], rotation: int = 0) -> tuple[int, int]:
+    """Where a box's centre sits on its page as a viewer shows it: (percent across from the left edge, percent down
+    from the top edge), whole numbers. ``rect`` and ``page_box`` (left, bottom, right, top) are in user space, and a
+    page's /Rotate (clockwise, a multiple of 90) turns its edges, so the reading follows it (Phase K JK15b,
+    2026-10-25)."""
+    x0, x1 = sorted((float(rect[0]), float(rect[2])))
+    y0, y1 = sorted((float(rect[1]), float(rect[3])))
+    left, bottom, right, top = (float(v) for v in page_box)
+    across = ((x0 + x1) / 2 - left) / ((right - left) or 1.0)
+    down = (top - (y0 + y1) / 2) / ((top - bottom) or 1.0)
+    turn = int(rotation) % 360
+    if turn == 90:  # the user-space left edge is shown at the top, the top edge at the right
+        across, down = 1.0 - down, across
+    elif turn == 180:
+        across, down = 1.0 - across, 1.0 - down
+    elif turn == 270:  # the user-space left edge is shown at the bottom, the top edge at the left
+        across, down = down, 1.0 - across
+
+    def pct(v: float) -> int:
+        return int(Decimal(str(min(1.0, max(0.0, v)) * 100)).quantize(Decimal(1)))
+
+    return pct(across), pct(down)
+
+
+def _which_box(f: _Field, value: object) -> dict:
+    """For a checkbox or radio entry in hand_write: which box to mark, so the user need not guess from a raw on-state
+    (the JK19 pilot's Schedule H line 9 "Yes" came back as only "/2"). ``boxes`` lists the widget(s) the value names
+    (each widget whose on-state it is; every widget when it names none, or when there is no value), each with its
+    page, rect, on-state and position; ``sweep_index`` is the "#<n>" the sweep copy prints on a fillable field's boxes
+    (None for a refused field, which the sweep does not mark); ``mark`` says it in a sentence. Phase K JK15b
+    (2026-10-25)."""
+    named = [w for w in f.widgets if isinstance(value, str) and value != "/Off"
+             and value in (w.info.get("on_states") or [])]
+    boxes = []
+    for w in named or f.widgets:
+        states = w.info.get("on_states") or []
+        across, down = box_position(w.rect, w.page_box or (0.0, 0.0, 612.0, 792.0), w.rotation)
+        boxes.append({"page": w.info["page"], "rect": w.rect, "on_state": states[0] if len(states) == 1 else None,
+                      "from_left_pct": across, "from_top_pct": down})
+    sweep_index = f.index if f.refusal is None else None
+    where = "; ".join(f"on page {b['page']}, about {b['from_left_pct']}% across from the left edge and "
+                      f"{b['from_top_pct']}% down from the top" for b in boxes)
+    if len(boxes) > 1:
+        where = f"one of {len(boxes)} boxes: {where}"
+    on_sweep = (f" (marked #{sweep_index} on the sweep copy)" if sweep_index is not None
+                else " (the sweep copy does not mark it)")
+    if value is None:
+        mark = f"the box {where}{on_sweep}"
+    elif value == "/Off":
+        mark = f"leave the box {where} unmarked{on_sweep}"
+    else:
+        mark = f"mark the box {where}{on_sweep}"
+    return {"boxes": boxes, "sweep_index": sweep_index, "mark": mark}
+
+
 def _hand_write(f: _Field, reason: str, value: object = None, *, tier: str | None = None) -> dict:
     why = _CONFIRM_TEXT.format(tier=tier) if reason == "needs_confirmation" else REFUSALS[reason]
     entry = {**_place(f), "value": value, "reason": reason, "why": why}
     if value is not None:
         entry["value_label"] = VALUE_LABEL
+    if f.kind in _BUTTON_KINDS:  # Phase K JK15b (2026-10-25): say which box, not only its on-state
+        entry.update(_which_box(f, value))
     return entry
 
 
@@ -711,7 +776,10 @@ def _worksheet_only(blank: UnmappedBlank, values, provenance, fields: list[_Fiel
             place = {"field": None, "page": None, "pages": [], "printed_line": key, "label": None}
         label = value_label(provenance.get(key))
         lines.append(({**place, "value": shown, "value_label": label, "status": "hand_write"}, f))
-        hand_write.append({**place, "value": shown, "value_label": label, "reason": STATUS_WORKSHEET, "why": why})
+        entry = {**place, "value": shown, "value_label": label, "reason": STATUS_WORKSHEET, "why": why}
+        if f is not None and f.kind in _BUTTON_KINDS:  # Phase K JK15b (2026-10-25): which box
+            entry.update(_which_box(f, shown))
+        hand_write.append(entry)
     note = None if fields else "no printed line was matched to a box: this blank has no fillable field"
     return {
         "grade": GRADE, "status": STATUS_WORKSHEET, "worksheet": _worksheet(blank, lines, note),

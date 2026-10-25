@@ -611,3 +611,59 @@ def test_jk19_money_fields_on_a_flat_blank_get_whole_dollar_rendering_too(tmp_pa
     assert any("rounded" in w for w in result["warnings"])
     with pytest.raises(UnmappedFillRefused, match="marked as money"):
         env.fill(table, {"1": "$52,000"}, money_fields=["1"])
+
+
+# ── which box a hand-written checkbox is (Phase K JK15b, 2026-10-25; docs/dev/JK19-PILOT.md open item under D5) ──
+
+
+def _boxes_blank(tmp_path):
+    """Two numbered rows, a checkbox and a two-widget radio with nothing printed near them (anchored 'none', so
+    refused 'unanchored'), and a captioned checkbox (anchored 'low', so it needs the sweep confirmation)."""
+    texts, fields = demo_rows([("1", "Wages, salaries, tips", "wages"), ("2", "Taxable interest", "interest")])
+    texts.append((1, 60, 470, "Check here if you are a demo filer", 9))
+    fields += [{"name": "demo_check", "kind": "checkbox", "x": 250, "y": 466, "size": 10, "on_value": "1"},
+               {"name": "lone", "kind": "checkbox", "x": 420, "y": 150, "size": 10, "on_value": "1"},
+               {"name": "answer", "kind": "radio", "x": 400, "y": 100, "size": 10, "on_value": "/1"},
+               {"name": "answer", "kind": "radio", "x": 480, "y": 100, "size": 10, "on_value": "/2"}]
+    return make_demo_return(tmp_path / "boxes.pdf", form="DEMO-1", texts=texts, fields=fields)
+
+
+def test_jk15b_a_hand_written_checkbox_entry_says_which_box_to_mark(tmp_path, table):
+    """The JK19 pilot's Schedule H line 9 "Yes" came back as {field, value: '/2', reason: 'unanchored'} with
+    printed_line and label null, so the user could not tell which box to mark. Each checkbox or radio entry in
+    hand_write now names the box: its page, rect and on-state, where it sits on the page, and its sweep number when the
+    sweep shows one."""
+    env = Env(tmp_path, _boxes_blank(tmp_path), 9, "DEMO-1")
+    result = env.fill(table, {"wages": "100", "lone": "yes", "answer": "/2", "demo_check": "yes"})
+    hand = {h["field"]: h for h in result["hand_write"]}
+    assert {k: h["reason"] for k, h in hand.items()} == {
+        "lone": "unanchored", "answer": "unanchored", "demo_check": "needs_confirmation"}
+    lone = hand["lone"]
+    assert lone["printed_line"] is None and lone["value"] == "/1"
+    assert lone["sweep_index"] is None  # a refused field carries no number on the sweep copy
+    [box] = lone["boxes"]
+    assert box["page"] == 1 and box["on_state"] == "/1" and box["rect"] == [420.0, 150.0, 430.0, 160.0]
+    assert (box["from_left_pct"], box["from_top_pct"]) == (69, 80)  # a 612 x 792 letter page
+    assert lone["mark"].startswith("mark the box on page 1, about 69% across from the left edge and 80% down")
+    # a radio: only the widget whose on-state the value names, the right-hand one
+    [box] = hand["answer"]["boxes"]
+    assert box["on_state"] == "/2" and box["rect"][0] == 480.0
+    # a fillable box the user has not confirmed: its sweep number is the way to find it
+    assert hand["demo_check"]["sweep_index"] == next(
+        f["index"] for f in env.describe(table)["fields"] if f["name"] == "demo_check")
+    assert f"#{hand['demo_check']['sweep_index']}" in hand["demo_check"]["mark"]
+    # describe's hand_write lists every box of a refused button field (no value to choose one)
+    desc = {h["field"]: h for h in env.describe(table)["hand_write"]}
+    assert sorted(b["on_state"] for b in desc["answer"]["boxes"]) == ["/1", "/2"]
+    assert desc["lone"]["mark"].startswith("the box on page 1")
+    # an unchecked value says to leave the box empty; a text entry carries none of these keys
+    off = {h["field"]: h for h in env.fill(table, {"lone": "no"})["hand_write"]}["lone"]
+    assert off["value"] == "/Off" and off["mark"].startswith("leave the box on page 1")
+
+
+@pytest.mark.parametrize(("rotation", "expected"), [(0, (25, 75)), (90, (25, 25)), (180, (75, 25)), (270, (75, 75))])
+def test_jk15b_a_box_position_is_read_as_the_page_displays(rotation, expected):
+    """A rotated page (/Rotate) shows its user-space edges on other sides: the position is given as the user sees it.
+    The box's centre sits a quarter of the way in from the unrotated left and bottom edges of a 400 x 800 page: turned
+    a quarter clockwise (/Rotate 90) that corner is the top left one."""
+    assert U.box_position([90.0, 190.0, 110.0, 210.0], (0.0, 0.0, 400.0, 800.0), rotation) == expected

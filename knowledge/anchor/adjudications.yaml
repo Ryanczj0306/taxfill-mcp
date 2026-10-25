@@ -10,7 +10,8 @@
 #   unscored_sample:  # one entry per unscored_sample.json item (top-tier widgets the packs do not number)
 #     - {id: ..., seen_line: ..., ambiguous: ..., reason: ...}
 #
-# retired_unscored_sample: sample entries of earlier runs (methods jk15-v1 to jk15-v3) whose ids the current method no longer samples;
+# retired_unscored_sample: sample entries of earlier runs (methods jk15-v1 to jk15-v3, and the 30 jk15-v5 sample ids TEST run 6
+# (method jk15-v6, Phase K JK15b, 2026-10-25) no longer draws) whose ids the current method no longer samples;
 # kept for the record, never joined. items may hold verdicts for ids that are not disagreements in the current
 # run (an id the method no longer anchors differently); --finalize joins only the current disagreements.
 # retired_items: verdicts on disagreements a later pack fix removed (Phase K JK10, 2026-10-24: the pack re-keyed to
@@ -845,32 +846,34 @@ unscored_sample:
   ambiguous: false
   reason: THE entry box for line 16 in the inner column (lines 15-17 inner, line 18 totals in the right column); preprinted
     00 cents to its right
-- id: states/al/2023/al40nr:p3:SCHALINE4:w0
-  seen_line: '4'
-  ambiguous: false
-  reason: THE entry box for line 4 in the right amount column; lines 1-3 use the inner column; preprinted 00 cents to its
-    right
-- id: states/az/2025/az140:p3:3_5c:w0
-  seen_line: 5C
-  ambiguous: false
-  reason: THE entry box for line 5C (amount column), on the second text row of 5C; preprinted 00 cents to its right
-- id: states/ga/2025/ga500:p11:S2P2L11:w0
-  seen_line: '11'
-  ambiguous: false
-  reason: THE entry box for line 11 (single amount column, no printed box outline on this blank; checked a wider render
-    adj/ga_p11.png)
-- id: states/ga/2025/ga500:p13:CRP1L1:w0
-  seen_line: '1'
-  ambiguous: false
-  reason: THE entry box for line 1 (single amount column, no printed box outline on this blank)
-- id: states/ga/2025/ga500:p13:CRP1L3:w0
+- id: states/al/2023/al40nr:p3:SCHALINE3:w0
   seen_line: '3'
   ambiguous: false
-  reason: THE entry box for line 3 (single amount column, no printed outline), on the second text row of line 3
-- id: states/ga/2025/ga500:p15:CRP3L4:w0
-  seen_line: '4'
+  reason: Outlined box sits in the right column of the row 'Multiply the amount on line 2 by 4%', box label 3
+- id: states/az/2025/az140:p3:3_4c:w0
+  seen_line: 4C
   ambiguous: false
-  reason: THE entry box for line 4 (single amount column, no printed outline)
+  reason: Box on the row 'Add lines 1C through 3C and enter the total', labelled 4C
+- id: states/ga/2025/ga500:p11:S2P2L10:w0
+  seen_line: '10'
+  ambiguous: false
+  reason: Box level with the '10.' designator of 'Enter the amount of the credit sold'
+- id: states/ga/2025/ga500:p12:S3L14:w0
+  seen_line: '14'
+  ambiguous: false
+  reason: Box level with '14.' of 'Income before GA NOL'
+- id: states/ga/2025/ga500:p13:CRP1L2:w0
+  seen_line: '2'
+  ambiguous: false
+  reason: Box level with '2.' of 'Purchase of a home that contains all four accessibility features'
+- id: states/ga/2025/ga500:p15:CRP3L3:w0
+  seen_line: '3'
+  ambiguous: false
+  reason: Box level with '3.' of 'Credit used this tax year (IND-CR Summary Worksheet Line 3)'
+- id: states/ga/2025/ga500:p17:CRP6_DATEASSISTANCERCV:w0
+  seen_line: '2'
+  ambiguous: false
+  reason: Box level with '2. Date assistance was received'
 - id: states/ga/2025/ga500:p18:CRP7L6:w0
   seen_line: '6'
   ambiguous: false
@@ -880,110 +883,103 @@ unscored_sample:
   seen_line: '7'
   ambiguous: false
   reason: THE entry box for line 7 (single amount column, no printed outline), on the second text row of line 7
-- id: states/ga/2025/ga500:p19:CRP8L1:w0
-  seen_line: '1'
-  ambiguous: false
-  reason: THE entry box for line 1 (single amount column, no printed outline)
-- id: states/ga/2025/ga500:p19:CRP8L4:w0
-  seen_line: '4'
-  ambiguous: false
-  reason: THE entry box for line 4 (single amount column, no printed outline)
-- id: states/ga/2025/ga500:p22:CRP13L3:w0
+- id: states/ga/2025/ga500:p19:CRP8L3:w0
   seen_line: '3'
   ambiguous: false
-  reason: THE entry box for line 3 (single amount column, no printed outline); line 2's box above is hatched
-- id: states/ga/2025/ga500:p23:CRP14L1:w0
-  seen_line: '1'
-  ambiguous: false
-  reason: THE entry box for line 1 (single amount column, no printed outline)
-- id: states/ga/2025/ga500:p23:CRP14L5:w0
-  seen_line: '5'
-  ambiguous: false
-  reason: THE entry box for line 5 (single amount column, no printed outline)
-- id: states/ga/2025/ga500:p24:SUML8:w0
-  seen_line: '8'
-  ambiguous: false
-  reason: THE entry box for line 8 (summary worksheet amount column, no printed outline), on the third text row of line
-    8
-- id: states/mt/2025/form2:p10:2EC Line 26:w0
-  seen_line: '26'
-  ambiguous: false
-  reason: THE entry box for line 26 in the amount column; preprinted 00 cents cell to its right
-- id: states/mt/2025/form2:p10:2EC Line 9:w0
-  seen_line: '9'
-  ambiguous: false
-  reason: Dollar box next to printed '9' Alimony; only entry box on its row
-- id: states/mt/2025/form2:p3:Schedule I, Part I, Line 11:w0
-  seen_line: '11'
-  ambiguous: false
-  reason: THE entry box for line 11 in the amount column (Schedule I Part I subtractions); preprinted 00 cents to its right
-- id: states/mt/2025/form2:p4:Schedule II Line 11a:w0
-  seen_line: 11a
-  ambiguous: false
-  reason: THE entry box for line 11a in the inner column (11a/11b inner; line 11 net goes in the right column two rows down);
-    preprinted 00 cents to its right
-- id: states/mt/2025/form2:p4:Schedule II Line 1:w0
-  seen_line: '1'
-  ambiguous: false
-  reason: THE entry box for line 1 in the right amount column; preprinted 00 cents to its right
-- id: states/mt/2025/form2:p4:Schedule II Line 7:w0
-  seen_line: '7'
-  ambiguous: false
-  reason: THE entry box for line 7 in the right amount column; preprinted 00 cents to its right
-- id: states/mt/2025/form2:p6:Schedule III Part I Line 15:w0
-  seen_line: '15'
-  ambiguous: false
-  reason: THE entry box for line 15 in the right amount column (refundable credits); preprinted 00 cents to its right
-- id: states/mt/2025/form2:p6:Schedule III Part I Line 4:w0
-  seen_line: '4'
-  ambiguous: false
-  reason: THE entry box for line 4 in the right amount column (nonrefundable credits); preprinted 00 cents to its right
-- id: states/mt/2025/form2:p7:Schedule III Part II Line 17:w0
-  seen_line: '17'
-  ambiguous: false
-  reason: THE entry box for line 17 in the right amount column; preprinted 00 cents to its right
-- id: states/ri/2025/ri1040:p5:topmostSubform[0].Page5[0].SummaryLine4a[0]:w0
-  seen_line: 4a
-  ambiguous: false
-  reason: 'THE entry box for line 4a: a count (number of children), the only box on the row in the right column'
-- id: states/wi/2025/wi_form1:p4:sch1-7:w0
-  seen_line: '7'
-  ambiguous: false
-  reason: THE entry box for line 7 on the underline amount; preprinted .00 to its right
-- id: states/wv/2024/it140:p13:E2:w0
+  reason: Box level with '3.' of 'Credit used this tax year (IND-CR Summary Worksheet Line 8)'
+- id: states/ga/2025/ga500:p22:CRP13L2:w0
   seen_line: '2'
   ambiguous: false
-  reason: THE entry box for line 2 in the amount column; preprinted .00 to its right
-- id: states/wv/2024/it140:p13:E4:w0
+  reason: Box (inside hatched area) level with '2.' of 'Enter $2,000 per qualified foster child (years after first five)'
+- id: states/ga/2025/ga500:p22:CRP13L4:w0
   seen_line: '4'
   ambiguous: false
-  reason: THE entry box for line 4 in the amount column; preprinted .00 to its right
-- id: states/wv/2024/it140:p13:E7:w0
+  reason: Box level with '4.' of 'Credit used this year (IND-CR Summary Worksheet Line 11)'
+- id: states/ga/2025/ga500:p23:CRP14L4:w0
+  seen_line: '4'
+  ambiguous: false
+  reason: Box level with '4.' of 'Credit used this tax year (IND-CR Summary Worksheet Line 12)'
+- id: states/ga/2025/ga500:p24:SUML7:w0
   seen_line: '7'
   ambiguous: false
-  reason: THE entry box for line 7 in the amount column; preprinted .00 to its right
-- id: states/wv/2024/it140:p4:M60:w0
-  seen_line: '60'
+  reason: Box level with '7. Rural Physicians Credit (IND-CR 207, Line 7)'
+- id: states/mt/2025/form2:p10:2EC Line 25:w0
+  seen_line: '25'
   ambiguous: false
-  reason: THE entry box for line 60 in the amount column; preprinted .00 to its right
+  reason: Box on row 25 'Multiply line 24 by 15% (0.15)'
+- id: states/mt/2025/form2:p10:2EC Line 7:w0
+  seen_line: '7'
+  ambiguous: false
+  reason: Box on row 7 'Capital gain, including any exclusion'
+- id: states/mt/2025/form2:p2:Page 2 Line 9:w0
+  seen_line: '9'
+  ambiguous: false
+  reason: Box on row 9 'Subtract line 6 from line 3'
+- id: states/mt/2025/form2:p4:Schedule II Line 10b:w0
+  seen_line: 10b
+  ambiguous: false
+  reason: Box in inner column beside label 10b 'Additional Montana source business expenses related to rental...'
+- id: states/mt/2025/form2:p4:Schedule II Line 16c:w0
+  seen_line: 16c
+  ambiguous: false
+  reason: Box in inner column beside label 16c 'Net long-term capital gains'
+- id: states/mt/2025/form2:p4:Schedule II Line 6b:w0
+  seen_line: 6b
+  ambiguous: false
+  reason: Box in inner column beside label 6b 'Additional Montana source business expenses'
+- id: states/mt/2025/form2:p6:Schedule III Part I Line 10:w0
+  seen_line: '10'
+  ambiguous: false
+  reason: Box on row 10 'Infrastructure users fee credit. Include Form IUFC'
+- id: states/mt/2025/form2:p6:Schedule III Part I Line 3:w0
+  seen_line: '3'
+  ambiguous: false
+  reason: Box on row 3 'Recycle credit. Include Form RCYL'
+- id: states/mt/2025/form2:p7:Schedule III Part II Line 15:w0
+  seen_line: '15'
+  ambiguous: false
+  reason: Box beside label 15 on second text line of 'Full-year residents enter page 2, line 11 / Part-year ... Schedule II,
+    line 24'
+- id: states/ri/2025/ri1040:p5:topmostSubform[0].Page5[0].SummaryLine3[0]:w0
+  seen_line: '3'
+  ambiguous: false
+  reason: Box on Exemption Number Summary row 3 'Enter the number of boxes checked on lines 1a and 1b'
+- id: states/ri/2025/ri1040:p5:topmostSubform[0].Page5[0].SummaryLine5[0]:w0
+  seen_line: '5'
+  ambiguous: false
+  reason: Box on row 5 'Add the numbers from lines 3 through 4c'
+- id: states/wv/2024/it140:p10:ftcw8:w0
+  seen_line: '8'
+  ambiguous: false
+  reason: Box on row 8 'Multiply the amount on line 7 by the percentage shown on line 6 (Family Tax Credit)'
+- id: states/wv/2024/it140:p13:E3:w0
+  seen_line: '3'
+  ambiguous: false
+  reason: Box on row 3 'Net income derived from above state included in WV total income'
+- id: states/wv/2024/it140:p13:E6:w0
+  seen_line: '6'
+  ambiguous: false
+  reason: Box on row 6 'Alternative West Virginia taxable income'
+- id: states/wv/2024/it140:p4:M59:w0
+  seen_line: '59'
+  ambiguous: false
+  reason: Box on row 59 'ABLE ACT withdrawals NOT used for qualifying expenses'
+- id: states/wv/2024/it140:p6:recap21:w0
+  seen_line: '21'
+  ambiguous: false
+  reason: Box on RECAP row 21 'Operating Costs of Child Care Property Tax Credit'
 - id: states/wv/2024/it140:p6:recap22:w0
   seen_line: '22'
   ambiguous: false
   reason: Applicable-credit box next to printed '22' Industrial Advancement Act Tax Credit; only entry box on its row
-- id: states/wv/2024/it140:p6:recap23:w0
-  seen_line: '23'
+- id: states/wv/2024/it140:p6:recap24:w0
+  seen_line: '24'
   ambiguous: false
-  reason: THE entry box for line 23 in the amount column; the form-name column (WV FIIA-TCS) is printed text to the left;
-    preprinted .00 to its right
-- id: states/wv/2024/it140:p6:recap26:w0
-  seen_line: '26'
+  reason: Box on RECAP row 24 'Volunteer Firefighter Tax Credit'
+- id: states/wv/2024/it140:p9:homestead05:w0
+  seen_line: '5'
   ambiguous: false
-  reason: THE entry box for line 26 in the amount column, on the second text row of line 26; form-name column (EK-1) to
-    the left; preprinted .00 to its right
-- id: states/wv/2024/it140:p9:homestead06:w0
-  seen_line: '6'
-  ambiguous: false
-  reason: THE entry box for line 6 in the amount column; preprinted .00 to its right
+  reason: Box on row 5 'Add amounts on lines 4a, 4b, 4c, 4d, and 4e'
 retired_unscored_sample:
 - id: states/al/2023/al40nr:p14:SCHAATCLN37:w0
   seen_line: '37'
@@ -1534,6 +1530,132 @@ retired_unscored_sample:
   ambiguous: false
   reason: Applicable-credit box next to printed '9' Qualified Residential Rehabilitated Buildings credit (RBIC-A); only
     entry box on its row
+- id: states/al/2023/al40nr:p3:SCHALINE4:w0
+  seen_line: '4'
+  ambiguous: false
+  reason: THE entry box for line 4 in the right amount column; lines 1-3 use the inner column; preprinted 00 cents to its
+    right
+- id: states/az/2025/az140:p3:3_5c:w0
+  seen_line: 5C
+  ambiguous: false
+  reason: THE entry box for line 5C (amount column), on the second text row of 5C; preprinted 00 cents to its right
+- id: states/ga/2025/ga500:p11:S2P2L11:w0
+  seen_line: '11'
+  ambiguous: false
+  reason: THE entry box for line 11 (single amount column, no printed box outline on this blank; checked a wider render
+    adj/ga_p11.png)
+- id: states/ga/2025/ga500:p13:CRP1L1:w0
+  seen_line: '1'
+  ambiguous: false
+  reason: THE entry box for line 1 (single amount column, no printed box outline on this blank)
+- id: states/ga/2025/ga500:p13:CRP1L3:w0
+  seen_line: '3'
+  ambiguous: false
+  reason: THE entry box for line 3 (single amount column, no printed outline), on the second text row of line 3
+- id: states/ga/2025/ga500:p15:CRP3L4:w0
+  seen_line: '4'
+  ambiguous: false
+  reason: THE entry box for line 4 (single amount column, no printed outline)
+- id: states/ga/2025/ga500:p19:CRP8L1:w0
+  seen_line: '1'
+  ambiguous: false
+  reason: THE entry box for line 1 (single amount column, no printed outline)
+- id: states/ga/2025/ga500:p19:CRP8L4:w0
+  seen_line: '4'
+  ambiguous: false
+  reason: THE entry box for line 4 (single amount column, no printed outline)
+- id: states/ga/2025/ga500:p22:CRP13L3:w0
+  seen_line: '3'
+  ambiguous: false
+  reason: THE entry box for line 3 (single amount column, no printed outline); line 2's box above is hatched
+- id: states/ga/2025/ga500:p23:CRP14L1:w0
+  seen_line: '1'
+  ambiguous: false
+  reason: THE entry box for line 1 (single amount column, no printed outline)
+- id: states/ga/2025/ga500:p23:CRP14L5:w0
+  seen_line: '5'
+  ambiguous: false
+  reason: THE entry box for line 5 (single amount column, no printed outline)
+- id: states/ga/2025/ga500:p24:SUML8:w0
+  seen_line: '8'
+  ambiguous: false
+  reason: THE entry box for line 8 (summary worksheet amount column, no printed outline), on the third text row of line
+    8
+- id: states/mt/2025/form2:p10:2EC Line 26:w0
+  seen_line: '26'
+  ambiguous: false
+  reason: THE entry box for line 26 in the amount column; preprinted 00 cents cell to its right
+- id: states/mt/2025/form2:p10:2EC Line 9:w0
+  seen_line: '9'
+  ambiguous: false
+  reason: Dollar box next to printed '9' Alimony; only entry box on its row
+- id: states/mt/2025/form2:p3:Schedule I, Part I, Line 11:w0
+  seen_line: '11'
+  ambiguous: false
+  reason: THE entry box for line 11 in the amount column (Schedule I Part I subtractions); preprinted 00 cents to its right
+- id: states/mt/2025/form2:p4:Schedule II Line 11a:w0
+  seen_line: 11a
+  ambiguous: false
+  reason: THE entry box for line 11a in the inner column (11a/11b inner; line 11 net goes in the right column two rows down);
+    preprinted 00 cents to its right
+- id: states/mt/2025/form2:p4:Schedule II Line 1:w0
+  seen_line: '1'
+  ambiguous: false
+  reason: THE entry box for line 1 in the right amount column; preprinted 00 cents to its right
+- id: states/mt/2025/form2:p4:Schedule II Line 7:w0
+  seen_line: '7'
+  ambiguous: false
+  reason: THE entry box for line 7 in the right amount column; preprinted 00 cents to its right
+- id: states/mt/2025/form2:p6:Schedule III Part I Line 15:w0
+  seen_line: '15'
+  ambiguous: false
+  reason: THE entry box for line 15 in the right amount column (refundable credits); preprinted 00 cents to its right
+- id: states/mt/2025/form2:p6:Schedule III Part I Line 4:w0
+  seen_line: '4'
+  ambiguous: false
+  reason: THE entry box for line 4 in the right amount column (nonrefundable credits); preprinted 00 cents to its right
+- id: states/mt/2025/form2:p7:Schedule III Part II Line 17:w0
+  seen_line: '17'
+  ambiguous: false
+  reason: THE entry box for line 17 in the right amount column; preprinted 00 cents to its right
+- id: states/ri/2025/ri1040:p5:topmostSubform[0].Page5[0].SummaryLine4a[0]:w0
+  seen_line: 4a
+  ambiguous: false
+  reason: 'THE entry box for line 4a: a count (number of children), the only box on the row in the right column'
+- id: states/wi/2025/wi_form1:p4:sch1-7:w0
+  seen_line: '7'
+  ambiguous: false
+  reason: THE entry box for line 7 on the underline amount; preprinted .00 to its right
+- id: states/wv/2024/it140:p13:E2:w0
+  seen_line: '2'
+  ambiguous: false
+  reason: THE entry box for line 2 in the amount column; preprinted .00 to its right
+- id: states/wv/2024/it140:p13:E4:w0
+  seen_line: '4'
+  ambiguous: false
+  reason: THE entry box for line 4 in the amount column; preprinted .00 to its right
+- id: states/wv/2024/it140:p13:E7:w0
+  seen_line: '7'
+  ambiguous: false
+  reason: THE entry box for line 7 in the amount column; preprinted .00 to its right
+- id: states/wv/2024/it140:p4:M60:w0
+  seen_line: '60'
+  ambiguous: false
+  reason: THE entry box for line 60 in the amount column; preprinted .00 to its right
+- id: states/wv/2024/it140:p6:recap23:w0
+  seen_line: '23'
+  ambiguous: false
+  reason: THE entry box for line 23 in the amount column; the form-name column (WV FIIA-TCS) is printed text to the left;
+    preprinted .00 to its right
+- id: states/wv/2024/it140:p6:recap26:w0
+  seen_line: '26'
+  ambiguous: false
+  reason: THE entry box for line 26 in the amount column, on the second text row of line 26; form-name column (EK-1) to
+    the left; preprinted .00 to its right
+- id: states/wv/2024/it140:p9:homestead06:w0
+  seen_line: '6'
+  ambiguous: false
+  reason: THE entry box for line 6 in the amount column; preprinted .00 to its right
 retired_items:
 - id: states/va/2025/va760:p2:17a Spouse Tax Adjustment Dollar Amount:w0
   seen_line: '17'

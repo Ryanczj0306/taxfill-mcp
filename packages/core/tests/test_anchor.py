@@ -711,3 +711,208 @@ def test_a_cap_on_a_rotated_page_keeps_the_rows_count_box_below_the_top_tier(tmp
     assert w["L2"].printed_line == "2" and w["L2"].confidence != A.TOP, w["L2"]
     assert "shared_row:count2" in w["L2"].evidence, w["L2"]
     assert w["L1"].confidence == w["L3"].confidence == A.TOP
+
+
+# ── option boxes: their own caption, and Yes/No pairs (Phase K JK15b, 2026-10-25; docs/dev/JK19-PILOT.md D3, D5) ──
+
+
+def _box(name, x, y, *, size=10, kind="checkbox", on_value=None, page=1):
+    spec = {"name": name, "page": page, "x": x, "y": y, "kind": kind, "size": size}
+    if on_value:
+        spec["on_value"] = on_value
+    return spec
+
+
+def _checkbox_table(tmp_path):
+    """A passing table that licenses BOTH widget groups for the top tier, so only a cap can keep a box below it."""
+    path = tmp_path / "both.yaml"
+    path.write_text(yaml.safe_dump({"schema": 1, "method": A.METHOD, "passed": True,
+                                    "thresholds": {"top": 3.0, "med": 2.0}, "top_tier_kinds": ["text", "checkbox"]}))
+    return path
+
+
+def _text_anchors(widgets):
+    return {(w.field, w.widget_index): (w.printed_line, w.label, w.score, tuple(w.evidence), w.confidence)
+            for w in widgets if w.kind not in ("checkbox", "radio")}
+
+
+def test_an_option_box_is_labelled_by_the_caption_on_its_own_right(tmp_path, passing_table):
+    """D3: OR-40-N 2023 prints "1. [ ] Single  2. [ ] Married filing jointly  3. [ ] Married filing separately", and
+    the Philadelphia School Income Tax return "Check Box If Applies: [ ] Address Change [ ] Amended Return [ ] Final
+    Return". The label was the caption to the box's left, the previous option's ("Married filing jointly" labelled
+    "Single", "Amended Return" labelled "Address Change"); it now names the box's own option."""
+    texts = [(1, 40, 300, "Filing status"),
+             (1, 44, 280, "1."), (1, 70, 280, "Single"), (1, 138, 280, "2."), (1, 165, 280, "Married filing jointly"),
+             (1, 275, 280, "3."), (1, 302, 280, "Married filing separately"),
+             (1, 40, 200, "Check Box If Applies:"), (1, 160, 200, "Address Change"), (1, 250, 200, "Amended Return"),
+             (1, 340, 200, "Final Return")]
+    fields = [_box("fs1", 55, 278), _box("fs2", 150, 278), _box("fs3", 287, 278),
+              _box("addr", 145, 198), _box("amended", 235, 198), _box("final", 325, 198)]
+    w = _first(A.anchor_widgets(_pdf(tmp_path, texts, fields), table=passing_table))
+    assert {k: w[k].label for k in ("fs1", "fs2", "fs3")} == {
+        "fs1": "Single", "fs2": "Married filing jointly", "fs3": "Married filing separately"}
+    assert {k: w[k].label for k in ("addr", "amended", "final")} == {
+        "addr": "Address Change", "amended": "Amended Return", "final": "Final Return"}
+    assert all("label_right" in w[k].evidence for k in ("fs1", "fs2", "addr", "final"))
+    assert [w[k].printed_line for k in ("fs1", "fs2", "fs3")] == ["1", "2", "3"]  # the designators did not move
+
+
+def test_a_caption_printed_left_of_its_box_keeps_the_left_reading(tmp_path, passing_table):
+    """A row that prints each caption LEFT of its box ("Yes [ ] No [ ]") keeps the left reading, and so does a box
+    whose caption ends "check here" (Delaware PIT-NON line 38: "... check here a. ( ) Enter amount from Line 36"). A
+    heading set in a large type beside a box is not its caption (Louisiana IT-540's title beside "Name Change")."""
+    texts = [(1, 40, 400, "Did you move this year?"), (1, 300, 400, "Yes"), (1, 340, 400, "No"),
+             (1, 20, 300, "If you elect the STANDARD DEDUCTION check here"), (1, 263, 300, "a."),
+             (1, 295, 300, "Enter amount from Line 36"),
+             (1, 20, 200, "Name Change"), (1, 94, 196, "2025 STATE RESIDENT", 22)]
+    fields = [_box("moved_yes", 320, 398), _box("moved_no", 355, 398), _box("std", 277, 296, size=15),
+              _box("namechg", 77, 198)]
+    w = _first(A.anchor_widgets(_pdf(tmp_path, texts, fields), table=passing_table))
+    assert w["moved_yes"].label == "Yes" and w["moved_no"].label == "No"
+    assert w["std"].label.startswith("If you elect the STANDARD DEDUCTION check here")
+    assert w["namechg"].label == "Name Change"
+
+
+def _schedule_h_page():
+    """Schedule H (Form 1040) 2025's shape: a gutter column of designators (7, 8, A, 9), the stacked Yes/No pair of
+    question A captioned "Yes." then "No.", and line 9's pair "No." then "Yes." with a wrapped caption between."""
+    texts = [(1, 45, 720, "7"), (1, 65, 720, "Total social security wages"), _leader(1, 65, 720, "Total social security wages"),
+             (1, 45, 696, "8"), (1, 65, 696, "Total Medicare wages"), _leader(1, 65, 696, "Total Medicare wages"),
+             (1, 45, 640, "A"), (1, 65, 640, "Did you pay any one household employee cash wages of $2,800 or more?"),
+             (1, 65, 629, "(If any household employee was your spouse, see the line A instructions.)"),
+             (1, 79, 605, "Yes. Skip lines B and C and go to line 1."), (1, 79, 593, "No. Go to line B."),
+             (1, 45, 440, "9"), (1, 65, 440, "Did you pay total cash wages of $1,000 or more in any calendar quarter?"),
+             (1, 65, 429, "(Don't count cash wages paid to your spouse.)"),
+             (1, 79, 405, "No. Stop. Include the amount from line 8 above on Schedule 2, line 9."),
+             (1, 120, 394, "see the line 9 instructions."),
+             (1, 79, 370, "Yes. Go to line 10.")]
+    fields = [{"name": "f7", "page": 1, "x": BOX_X, "y": 716, "width": 90, "height": 14},
+              {"name": "f8", "page": 1, "x": BOX_X, "y": 692, "width": 90, "height": 14},
+              _box("c1_1[0]", 65, 604, size=8), _box("c1_1[1]", 65, 592, size=8),
+              _box("c1_4[1]", 65, 404, size=8), _box("c1_4[0]", 65, 369, size=8)]
+    return texts, fields
+
+
+def test_a_stacked_yes_no_pair_anchors_to_its_questions_designator(tmp_path, passing_table, monkeypatch):
+    """D5: Schedule H 2025 anchored the boxes of its stacked Yes/No pairs `none` (c1_1[1], c1_4[0] among them), so line
+    9 "Yes" could only be hand-written and its hand_write entry did not say which box. Each box of the pair now takes
+    its question's designator (A, 9) and the label "Yes" or "No", capped below the top tier (one designator names two
+    boxes). The text widgets on the page come out identical to a run without the option passes."""
+    texts, fields = _schedule_h_page()
+    blank = _pdf(tmp_path, texts, fields)
+    w = _first(A.anchor_widgets(blank, table=_checkbox_table(tmp_path)))
+    got = {k: (w[k].printed_line, w[k].label) for k in ("c1_1[0]", "c1_1[1]", "c1_4[1]", "c1_4[0]")}
+    assert got == {"c1_1[0]": ("A", "Yes"), "c1_1[1]": ("A", "No"), "c1_4[1]": ("9", "No"), "c1_4[0]": ("9", "Yes")}
+    for k, partner in (("c1_1[0]", "c1_1[1]"), ("c1_4[0]", "c1_4[1]")):
+        assert f"yes_no_pair:{partner}" in w[k].evidence and f"pair_head:{w[k].printed_line}" in w[k].evidence
+        assert w[k].confidence in (A.MED, A.LOW) and w[k].confidence != A.NONE
+    with_options = _text_anchors(A.anchor_widgets(blank, table=passing_table).widgets)
+    monkeypatch.setattr(A, "_option_labels", lambda words, boxes: None)
+    monkeypatch.setattr(A, "_pair_yes_no", lambda words, boxes: None)
+    assert _text_anchors(A.anchor_widgets(blank, table=passing_table).widgets) == with_options
+    assert with_options[("f7", 0)][0] == "7" and with_options[("f8", 0)][0] == "8"
+
+
+def test_a_side_by_side_yes_no_pair_under_column_headers_takes_the_rows_line_and_stays_below_the_top_tier(tmp_path):
+    """D5, side by side: Schedule H page 2 prints "Yes  No" once over two columns of boxes and "10 [ ] [ ]" per row.
+    Both boxes of a row take its line, labelled from their column header, and neither reaches the top tier even under
+    a table that licenses checkboxes (the multi-box-row rule)."""
+    texts = [(1, 536, 724, "Yes"), (1, 559, 724, "No")]
+    fields = []
+    for i, (num, caption) in enumerate((("10", "Did you pay unemployment contributions to only one state?"),
+                                        ("11", "Did you pay all state unemployment contributions by April 15?"))):
+        y = 700 - i * 12
+        texts += [(1, 45, y, num), (1, 65, y, caption), _leader(1, 65, y, caption, end=505), (1, 517, y, num)]
+        fields += [_box(f"c2_{i + 1}[0]", 540, y - 1, size=8), _box(f"c2_{i + 1}[1]", 561, y - 1, size=8)]
+    w = _first(A.anchor_widgets(_pdf(tmp_path, texts, fields), table=_checkbox_table(tmp_path)))
+    for i, num in ((1, "10"), (2, "11")):
+        yes, no = w[f"c2_{i}[0]"], w[f"c2_{i}[1]"]
+        assert (yes.printed_line, yes.label, no.printed_line, no.label) == (num, "Yes", num, "No")
+        assert yes.confidence != A.TOP and no.confidence != A.TOP
+
+
+def test_an_inline_yes_no_radio_pair_shares_the_rows_line_and_is_capped(tmp_path):
+    """D5, inline: "12 Did you ...? ( ) Yes ( ) No", one radio field with a widget per answer. The "No" widget had no
+    line of its own (only words lie between it and the "Yes" widget); it now takes the row's, and both widgets of the
+    one field are capped below the top tier, which the multi-column rule (fields of different names only) missed."""
+    texts = [(1, 40, 500, "12"), (1, 60, 500, "Did you receive a distribution from a foreign trust?"),
+             (1, 300, 500, "12"), (1, 335, 500, "Yes"), (1, 375, 500, "No")]
+    fields = [_box("q12", 320, 498, kind="radio", on_value="/1"), _box("q12", 360, 498, kind="radio", on_value="/2")]
+    amap = A.anchor_widgets(_pdf(tmp_path, texts, fields), table=_checkbox_table(tmp_path))
+    yes, no = sorted((x for x in amap.widgets if x.field == "q12"), key=lambda x: x.rect[0])
+    assert (yes.printed_line, yes.label, no.printed_line, no.label) == ("12", "Yes", "12", "No")
+    assert "pair_of:q12" in no.evidence
+    assert yes.confidence != A.TOP and no.confidence != A.TOP
+
+
+def test_a_sub_letter_row_hangs_from_the_joined_head_above_it_not_the_line_before(tmp_path, passing_table):
+    """Phase K JK15b (2026-10-25): Schedule C (2022-2025) prints "47a Do you have evidence ...? [ ] Yes [ ] No" and,
+    indented under it, "b If "Yes," is the evidence written? [ ] Yes [ ] No"; Form 2555 prints 13a / b the same way,
+    Schedule 1 prints 2a / b. The joined "47a" is wider than the gutter's "46", so it ended right of the "b" and the
+    sub-letter hung from 46: line 46b, which pair_of then lent to the "No" box at med. Row b is line 47b."""
+    texts = []
+    for num, y in (("44", 700), ("45", 676), ("46", 652)):
+        texts += [(1, 40, y, num), (1, 62, y, f"Question {num}")]
+    texts += [(1, 40, 628, "47a"), (1, 62, 628, "Do you have evidence to support your deduction?"),
+              _leader(1, 62, 628, "Do you have evidence to support your deduction?", end=390),
+              (1, 410, 628, "Yes"), (1, 450, 628, "No"),
+              (1, 49, 604, "b"), (1, 62, 604, "If \"Yes,\" is the evidence written?"),
+              _leader(1, 62, 604, "If \"Yes,\" is the evidence written?", end=390),
+              (1, 410, 604, "Yes"), (1, 450, 604, "No"),
+              (1, 49, 580, "c"), (1, 62, 580, "Amount of the written evidence"),
+              _leader(1, 62, 580, "Amount of the written evidence")]
+    fields = [_box("c2_7[0]", 396, 626), _box("c2_7[1]", 436, 626), _box("c2_8[0]", 396, 602),
+              _box("c2_8[1]", 436, 602),
+              {"name": "f47c", "page": 1, "x": BOX_X, "y": 576, "width": 90, "height": 14}]
+    w = _first(A.anchor_widgets(_pdf(tmp_path, texts, fields), table=passing_table))
+    assert w["f47c"].printed_line == "47c", w["f47c"]
+    yes, no = w["c2_8[0]"], w["c2_8[1]"]
+    assert (yes.printed_line, yes.label, no.printed_line, no.label) == ("47b", "Yes", "47b", "No"), (yes, no)
+    assert "pair_of:c2_8[0]" in no.evidence
+    assert not any(x.printed_line == "46b" for x in w.values())
+
+
+def test_a_lettered_head_does_not_parent_an_earlier_or_equal_letter(tmp_path, passing_table):
+    """The joined head counts only for a later letter: "5b" over an indented "a" (a second column's restart) is not
+    a parent, so the row gets no line from it rather than "5a"."""
+    texts = [(1, 40, 700, "3"), (1, 62, 700, "Line three"), (1, 40, 676, "4"), (1, 62, 676, "Line four"),
+             (1, 40, 652, "5b"), (1, 62, 652, "Line five b"),
+             (1, 49, 628, "a"), (1, 62, 628, "Restarted letter"), _leader(1, 62, 628, "Restarted letter")]
+    fields = [{"name": "fa", "page": 1, "x": BOX_X, "y": 624, "width": 90, "height": 14}]
+    w = _first(A.anchor_widgets(_pdf(tmp_path, texts, fields), table=passing_table))
+    assert w["fa"].printed_line not in ("5a", "4a"), w["fa"]
+
+
+def test_the_pronoun_i_starting_a_sentence_is_not_a_yes_no_pairs_gutter_letter(tmp_path, passing_table):
+    """Phase K JK15b (2026-10-25): WV IT-140 (2023, 2024) page 2 prints "I authorize the Tax Division to discuss my
+    return with my preparer [ ] YES [ ] NO" with its "I" in the column of line numbers above, and the pair took
+    printed_line "I" (pair_head). A bare capital followed at a word space is a word; the boxes keep their labels and
+    no line. A gutter letter set apart from its caption (Schedule H's "A") still heads its pair."""
+    texts = [(1, 40, 700, "27"), (1, 62, 700, "Line twenty-seven"), (1, 40, 676, "28"),
+             (1, 62, 676, "Line twenty-eight"), (1, 40, 652, "29"), (1, 62, 652, "Line twenty-nine"),
+             (1, 40, 628, "I authorize the Tax Division to discuss my return with my preparer"),
+             (1, 382, 628, "YES"), (1, 422, 628, "NO")]
+    fields = [_box("Check Box1", 368, 626), _box("Check Box2", 408, 626)]
+    w = _first(A.anchor_widgets(_pdf(tmp_path, texts, fields), table=passing_table))
+    yes, no = w["Check Box1"], w["Check Box2"]
+    assert (yes.label, no.label) == ("Yes", "No")
+    assert yes.printed_line is None and no.printed_line is None, (yes, no)
+    assert not any(e.startswith("pair_head:") for e in yes.evidence + no.evidence)
+
+
+def test_a_pairs_head_keeps_a_sub_letter_set_flush_against_its_number():
+    """Phase K JK15b (2026-10-25): Schedule B's 2026 draft sets "7a" as "7" and "a" with the "a" starting 0.00002 pt
+    left of the "7"'s right edge (2025 prints it 0.00002 pt right of it), and the stacked pair under it took line "7".
+    A sub-letter flush against its number, either side by a hair, is that sub-line."""
+    def word(text, x0, cy, width=5.0, h=10.0):
+        return A._Word(text=text, x0=x0, y0=cy - h / 2, x1=x0 + width, y1=cy + h / 2, h=h, run=None)
+
+    words = [word("5", 40, 300), word("6", 40, 250), word("7", 40, 200), word("8", 40, 60),
+             word("At any time during the year", 60, 200, width=150)]
+    seven = words[2]
+    words.append(word("a", seven.x1 - 0.00002, 200))
+    pair = (A._Box(info={"name": "yes"}, index=0, x0=60, y0=170, x1=68, y1=178),
+            A._Box(info={"name": "no"}, index=0, x0=60, y0=158, x1=68, y1=166))
+    assert A._pair_head(pair, words, list(pair)) == "7a"
+    words[-1] = word("a", seven.x1 + 0.00002, 200)
+    assert A._pair_head(pair, words, list(pair)) == "7a"

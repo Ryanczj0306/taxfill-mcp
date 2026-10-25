@@ -69,6 +69,34 @@ Any other widget with a printed_line is capped at ``"med"`` (score at most CAP_S
 gives the top tier to a widget carrying ``same_line:``), with one ``same_line:<field>`` entry per rival field. A
 designator printed once per Part (``repeated_line``) is the same rule's case (a).
 
+Option boxes (Phase K JK15b, 2026-10-25; docs/dev/JK19-PILOT.md D3 and D5). Checkbox and radio widgets get two passes
+after every cap above, and they touch option boxes only, so no text widget's anchor moves:
+
+- Their own caption (D3): a row that prints each option's caption right of its box ("1. [ ] Single 2. [ ] Married
+  filing jointly") left every box but the first labelled with the previous option's caption. The row band's option
+  boxes vote for the side whose caption sits closer (a tied band follows its last box; a caption ending "check here"
+  keeps the left), and a box reading right takes the caption printed on its right (``label_right``), stopping at the
+  next box, at the next option's designator and at a gap wider than a word space; a heading in large type is never
+  a caption.
+- Yes/No pairs (D5): a "Yes" box and a "No" box (by their own caption, or by a "Yes"/"No" column header straight
+  above) side by side in one band or stacked in one column form a pair. A box with no printed_line takes its
+  partner's (``pair_of:<field>``) or, when neither has one, the designator of the question above the pair
+  (``pair_head:<line>``; it must stand in the gutter column of designators, where a single upper-case letter counts:
+  Schedule H's A, B and C). Both boxes are labelled "Yes"/"No" and carry ``yes_no_pair:<partner field>``, a cap: one
+  designator names two boxes, so neither reaches the top tier (score at most CAP_PAIR).
+
+What was measured (method jk15-v5, TEST run 5, finalized 2026-10-25). The benchmark scores ``printed_line`` only:
+its text numbers are those of jk15-v4 (scored top-tier text 1086/1086 after the blind adjudication, per-form rate
+0/36, unscored sample 48/48), so the table passes and licenses the ``text`` group (jk15-v6, TEST run 6, the JK15b fix
+wave: the same scored numbers and disagreements; the unscored sample redrew, 30 of its 48 awaiting verdicts); top-tier checkboxes measured 9/10,
+below the 0.99 gate, so ``top_tier_kinds`` stays ``[text]`` and every option box caps at ``"med"``
+(``top_kind_not_licensed:checkbox``). The labels are measured apart, in knowledge/anchor/labels.yaml
+(scripts/anchor_label_check.py; a measurement that licenses nothing): an option box's label names its own option on
+63.5% of the shipped packs' 3,196 named option boxes (14.1% under jk15-v4), 75.8% of Yes/No boxes (7.4%) and 82.3% of
+filing-status boxes (5.7%). The JK19 pilot's blanks are held by test_anchor_jk19_pilot.py (network) and the synthetic
+cases in test_anchor.py. A box still anchored ``"none"`` is refused by the pack-less fill, and its ``hand_write``
+entry names the box by page and position (taxfill_core.unmapped).
+
 Tiers (``confidence``), best first:
 
 - ``"anchored (unverified line map)"`` — the top tier. The string ``"high"`` is never emitted: even a top-tier
@@ -124,7 +152,13 @@ _RANK = {t: i for i, t in enumerate(TIERS)}
 # jk15-v4 (Phase K JK15 round 4, 2026-10-24): the one-to-one rule (module doc) caps a widget whose designator also
 # relates to another field's fillable box anywhere on its page (same printed_line, the token printed before that box,
 # or that box's /TU or name), so an auxiliary box on the designator's line no longer keeps the top tier.
-METHOD = "jk15-v4"
+# jk15-v5 (Phase K JK15b, 2026-10-25): option boxes (checkbox, radio) read their label from their own caption, on the
+# right where the row prints captions right of their boxes (JK19 pilot D3), and the boxes of a Yes/No pair anchor to
+# their question's designator labelled "Yes"/"No", capped below the top tier (D5); text widgets are unchanged.
+# jk15-v6 (Phase K JK15b fix wave, 2026-10-25): a sub-letter row hangs from a joined lettered head above it ("47a"
+# over "b" is 47b; it hung from the line before, "46b", and pair_of lent that to the "No" box at med); a capital word
+# starting a sentence ("I authorize") is not a Yes/No pair's gutter letter; a pair's head keeps a flush sub-letter.
+METHOD = "jk15-v6"
 TABLE_RELPATH = Path("anchor") / "benchmark.yaml"
 
 # ── signal weights (the method; the TIER thresholds live in the committed table) ──
@@ -138,10 +172,25 @@ CAP_MULTI_COLUMN = 2.0   # boxes sharing one printed row (amount columns) never 
 CAP_REPEATED_LINE = 2.0  # one designator on boxes of different fields on one page (one per Part) never does either
 CAP_SHARED_ROW = 2.0     # a widget the row-identification invariant does not license (module doc) caps at med
 CAP_SAME_LINE = 2.0      # a widget whose designator also relates to another field's box on the page caps at med
+CAP_PAIR = 2.0           # the two boxes of a Yes/No pair share their question's designator: never the top tier
+# option boxes (Phase K JK15b, 2026-10-25): their label is read from their own caption, and Yes/No pairs anchor together
+_OPTION_KINDS = frozenset({"checkbox", "radio"})
+OPTION_GAP = 10.0        # pt: an option's caption starts this close to its box (or OPTION_GAP_H font heights)
+OPTION_GAP_H = 1.5
+OPTION_WORD_GAP_H = 0.8  # font heights: a wider gap inside a caption starts the next caption
+PAIR_SIDE_GAP = 150.0    # pt: furthest apart the two boxes of a side-by-side Yes/No pair may stand
+PAIR_STACK_GAP = 48.0    # pt: furthest apart (centre to centre) the two boxes of a stacked Yes/No pair may stand
+PAIR_X_TOL = 3.0         # pt: the left edges of a stacked pair agree this closely
+PAIR_HEAD_ROWS = 4.5     # font heights: furthest above the pair's top box its question's designator may stand
+PAIR_LETTER_GAP_H = 0.6  # font heights: a bare capital letter followed this closely is a word ("I"), not a gutter
+_YES_NO = {"yes": "Yes", "no": "No"}
+_CHECK_HERE = {"here", "check"}
+OPTION_TALL = 1.8        # a word this many times the page's median font height is a heading, never an option caption
+_UPPER = re.compile(r"^[A-Z]\.?$")
 # the fillable boxes the invariant and the one-to-one rule count; "unknown" (no /FT) counts too, failing closed
 _ENTRY_KINDS = frozenset({"text", "choice", "unknown"})
 # evidence that keeps a widget below the top tier
-_NEVER_TOP = ("multi_column_row", "repeated_line:", "shared_row:", "same_line:")
+_NEVER_TOP = ("multi_column_row", "repeated_line:", "shared_row:", "same_line:", "yes_no_pair:")
 BESIDE_GAP = 30.0        # pt: furthest a "beside" token's right edge may sit from the box
 _ALIGN_TOL = 1.6         # pt: two designators share a column when x0 or x1 agree this closely
 _MIN_COLUMN = 3          # designators that make a column (the token itself included)
@@ -822,6 +871,248 @@ def _anchor_page(words: list[_Word], boxes: list[_Box], q: int) -> None:
     _cap_repeated_lines(boxes)
     _cap_shared_rows(boxes)
     _cap_same_lines(words, boxes)
+    # Phase K JK15b (2026-10-25): option boxes only, after every cap, so no text widget's anchor can move
+    _option_labels(words, boxes)
+    _pair_yes_no(words, boxes)
+
+
+# ── option boxes: their own caption, and Yes/No pairs (Phase K JK15b, 2026-10-25) ──
+
+
+def _is_option(b: _Box) -> bool:
+    return b.info["kind"] in _OPTION_KINDS
+
+
+def _right_caption(b: _Box, words: list[_Word], boxes: list[_Box]) -> tuple[float, list[_Word]]:
+    """The caption printed right of an option box ("[ ] Single"): (the gap to its first word, its words), or (inf, [])
+    when no word in the box's band starts within OPTION_GAP of it. A caption wrapped over two printed lines beside one
+    box ("[ ] Yes—Stop! / Go to line 31") is read top line first. Each line stops at the next box of the row band, at
+    a gap wider than OPTION_WORD_GAP_H font heights, and at a designator printed before the next box ("[ ] Single
+    2. [ ]"); a number that is not one starts a caption ("[ ] 65 or older"). A word set over OPTION_TALL times the
+    page's median font height is a heading, not a caption (Louisiana IT-540's "2025 LOUISIANA RESIDENT" title beside
+    its name-change box)."""
+    stop = min((o.x0 for o in boxes if o is not b and _same_band(o, b) and o.x0 >= b.x1 - 1.0), default=math.inf)
+    starts = [o.x0 for o in boxes if o is not b and _same_band(o, b) and o.x0 >= b.x1 - 1.0]
+    tall = OPTION_TALL * _median_height(words)
+    row = [w for w in words if _in_band(w, b) and w.x0 >= b.x1 - 1.0 and w.x1 <= stop + 1.0 and w.h <= tall]
+
+    def next_designator(w: _Word) -> bool:
+        return bool(normalize_line(w.text)) and any(0 <= x - w.x1 <= BESIDE_GAP for x in starts)
+
+    out: list[_Word] = []
+    gap = math.inf
+    seen: set[int] = set()
+    for first in sorted(row, key=lambda w: (-w.cy, w.x0)):
+        if id(first) in seen:
+            continue
+        line = sorted((w for w in row if abs(w.cy - first.cy) <= 0.3 * max(w.h, first.h)), key=lambda w: w.x0)
+        seen |= {id(w) for w in line}
+        head = line[0]
+        if (head.x0 - b.x1 > max(OPTION_GAP_H * head.h, OPTION_GAP) or _is_leader(head.text)
+                or not re.search(r"[A-Za-z0-9]", head.text) or next_designator(head)):
+            continue
+        gap = min(gap, head.x0 - b.x1)
+        out.append(head)
+        edge = head.x1
+        for w in line[1:]:
+            if w.x0 - edge > max(OPTION_WORD_GAP_H * w.h, 4.0):
+                break  # wider than a word space: the next caption ("[ ] Blind   Your spouse was:")
+            if next_designator(w):
+                break  # the next option's own designator ("[ ] Single  2. [ ]")
+            out.append(w)
+            edge = w.x1
+    return gap, out
+
+
+def _median_height(words: list[_Word]) -> float:
+    hs = sorted(w.h for w in words)
+    return hs[len(hs) // 2] if hs else 0.0
+
+
+def _left_gap(b: _Box, words: list[_Word], boxes: list[_Box]) -> tuple[float, _Word | None]:
+    """The gap from the nearest caption word left of an option box (a designator, a leader or a separator is not a
+    caption) back to the box, and that word; (inf, None) when the band holds none before the box to its left. A
+    caption ending "check here" (a letter or a designator may follow) points at the box: its gap counts as -inf."""
+    left = max((o.x1 for o in boxes if o is not b and _same_band(o, b) and o.x1 <= b.x0 + 1.0), default=-math.inf)
+    cands = [w for w in words if _in_band(w, b) and w.x1 <= b.x0 + 1.0 and w.x0 >= left - 1.0
+             and not _is_leader(w.text) and w.text not in _SKIP_BESIDE and not normalize_line(w.text)]
+    if not cands:
+        return math.inf, None
+    near = max(cands, key=lambda w: w.x1)
+    words_before = [w for w in sorted(cands, key=lambda w: -w.x1) if not _SUBLETTER.match(w.text)
+                    and not _UPPER.match(w.text)]
+    if words_before and words_before[0].text.lower().strip(".,:;()►▶") in _CHECK_HERE:
+        return -math.inf, near  # "... check here a. [ ]": the caption is on the left, whatever prints to the right
+    return b.x0 - near.x1, near
+
+
+def _option_labels(words: list[_Word], boxes: list[_Box]) -> None:
+    """D3 (docs/dev/JK19-PILOT.md): an option box's label names its OWN option. Where a row prints each option's
+    caption right of its box ("[ ] Single [ ] Married filing jointly"), the caption on the left is the previous
+    option's, so the label is read from the right. The side is decided per row band: the option boxes of the band
+    vote (a box votes right when its right caption sits closer than its left one) and a strict majority decides for
+    every box of the band. A tied band of two or more boxes follows its last (rightmost) box: right when that box
+    prints a caption to its right ("... [ ] Yes [ ] No", where the "No" box sits nearer "Yes" than "No"), left when it
+    prints one only to its left ("Yes [ ] No [ ]"); otherwise the box decides alone, a tie keeping the left reading. A
+    box that the side says reads right but prints nothing to its right keeps its left label. Labels only: no score
+    moves."""
+    opts = [b for b in boxes if _is_option(b)]
+    if not opts:
+        return
+    gaps = {id(b): (_right_caption(b, words, boxes), _left_gap(b, words, boxes)[0]) for b in opts}
+    for b in opts:
+        (gr, right), gl = gaps[id(b)]
+        band = [o for o in opts if _same_band(o, b)]
+        votes = Counter("r" if gaps[id(o)][0][0] < gaps[id(o)][1] else "l" if gaps[id(o)][1] < gaps[id(o)][0][0]
+                        else "-" for o in band)
+        last = max(band, key=lambda o: o.x1)
+        if votes["r"] > votes["l"]:
+            side = "r"
+        elif votes["l"] > votes["r"]:
+            side = "l"
+        elif len(band) > 1 and gaps[id(last)][0][0] < math.inf:
+            side = "r"  # the band's last box prints a caption to its right: "... [ ] Yes [ ] No"
+        elif len(band) > 1 and gaps[id(last)][1] < math.inf:
+            side = "l"  # nothing right of the last box, a caption left of it: "Yes [ ] No [ ]"
+        else:
+            side = "r" if gr < gl else "l"
+        if side == "r" and right:
+            b.anchor.label = _label([w.text for w in right])
+            b.anchor.evidence.append("label_right")
+
+
+def _yes_no(text: str | None) -> str | None:
+    """ "Yes" or "No" when the caption's first word is that answer ("Yes.", "No—Go to line 24"; never "Note")."""
+    m = re.match(r"[^A-Za-z]*([A-Za-z]+)", text or "")
+    return _YES_NO.get(m.group(1).lower()) if m else None
+
+
+def _option_word(b: _Box, words: list[_Word], boxes: list[_Box]) -> str | None:
+    """ "Yes" or "No" when that is the option the box's own caption names: the first word of its label read from the
+    right, the caption word printed immediately left of it ("Yes [ ] No [ ]"), or a column header printed straight
+    above it with no word between the two in the box's column ("Yes  No" over a column of boxes)."""
+    if "label_right" in b.anchor.evidence:
+        return _yes_no((b.anchor.label or "").split(" ", 1)[0])
+    gl, near = _left_gap(b, words, boxes)
+    if near is not None and gl <= max(OPTION_GAP_H * near.h, OPTION_GAP):
+        return _yes_no(near.text)
+    gr = _right_caption(b, words, boxes)[0]
+    if gl < math.inf and gr < math.inf:
+        return None  # a caption on either side: not a header-only column
+    col = [w for w in words if w.cy > b.y1 and min(w.x1, b.x1) - max(w.x0, b.x0) > 0.5 * min(w.x1 - w.x0, b.x1 - b.x0)]
+    if not col:
+        return None
+    return _yes_no(min(col, key=lambda w: w.cy).text)
+
+
+def _word_follows(w: _Word, words: list[_Word]) -> bool:
+    """A word starts on ``w``'s row within PAIR_LETTER_GAP_H font heights of its right edge, as the next word of a
+    sentence does ("I authorize": 0.2); a gutter letter stands apart from its caption (Schedule H's "A  Did": 1.3)."""
+    return any(o is not w and abs(o.cy - w.cy) <= 0.3 * max(o.h, w.h) and 0 <= o.x0 - w.x1 < PAIR_LETTER_GAP_H * w.h
+               for o in words)
+
+
+def _pair_head(pair: tuple[_Box, _Box], words: list[_Word], boxes: list[_Box]) -> str | None:
+    """The designator of the question a stacked Yes/No pair answers: the nearest row-leading designator above the
+    pair's top box, left of the pair, within PAIR_HEAD_ROWS printed lines, with no other box between its row and the
+    pair. The designator must stand in a column of at least _MIN_COLUMN designators (the form's gutter), so a single
+    upper-case letter counts when it stands in a column of numeric ones (Schedule H prints A, B and C in the column of
+    1-9) and stands apart from the next word, or ends in a period (Phase K JK15b, 2026-10-25: the pronoun "I" of "I
+    authorize ..." is not one); a number followed by a sub-letter ("7 a") is that sub-line. Returns the line or None."""
+    top = max(pair, key=lambda o: o.cy)
+    x_left = min(o.x0 for o in pair)
+    heads, words_at_start = [], []
+    for w in words:
+        line = normalize_line(w.text) or (w.text.rstrip(".") if _UPPER.match(w.text) else None)
+        if line is None or w.x1 > x_left + 1.0 or w.cy < top.cy - 0.5 * w.h or w.cy - top.cy > PAIR_HEAD_ROWS * w.h:
+            continue
+        before = [o for o in words if o is not w and abs(o.cy - w.cy) <= 0.3 * max(o.h, w.h) and o.x1 <= w.x0 + 0.5
+                  and w.x0 - o.x1 < 2.0 * w.h and not _is_leader(o.text)]
+        if before:
+            continue  # not the start of its row
+        if normalize_line(w.text) is None and not w.text.endswith(".") and _word_follows(w, words):
+            words_at_start.append(w)  # a capital word, not a gutter letter: "I authorize ..." (WV IT-140 page 2)
+            continue
+        heads.append((w, line))
+    if not heads:
+        return None
+    w, line = min(heads, key=lambda t: t[0].cy)
+    if any(o.cy <= w.cy for o in words_at_start):
+        return None  # the pair's own question is that unnumbered sentence, not the line above it
+    numeric = [o for o in words if o is not w and normalize_line(o.text)
+               and (abs(o.x0 - w.x0) <= _ALIGN_TOL or abs(o.x1 - w.x1) <= _ALIGN_TOL)]
+    if len(numeric) + 1 < _MIN_COLUMN:
+        return None  # not a gutter column of designators (Schedule B's margin note "FinCEN Form / 114 may ...")
+    if line.isdigit():
+        # -0.5: a sub-letter set flush against its number may start a hair left of it (Schedule B 2026 draft's "7a":
+        # -0.00002 pt), Phase K JK15b (2026-10-25)
+        nxt = [o for o in words if abs(o.cy - w.cy) <= 0.3 * max(o.h, w.h) and -0.5 <= o.x0 - w.x1 < 1.5 * w.h]
+        if nxt and _sub(min(nxt, key=lambda o: o.x0)):
+            line += _sub(min(nxt, key=lambda o: o.x0))  # "7 a" printed apart: line 7a
+    for o in boxes:
+        if any(o is x for x in pair):
+            continue
+        if top.cy < o.cy <= w.cy + 0.5 * w.h or _in_band(w, o):
+            return None  # another box sits between the question's row and the pair, or on that row
+    return line
+
+
+def _pair_yes_no(words: list[_Word], boxes: list[_Box]) -> None:
+    """D5 (docs/dev/JK19-PILOT.md): the boxes of a Yes/No pair each anchor to their question's designator, labelled
+    "Yes" or "No". A pair is a "Yes" box and a "No" box (:func:`_option_word`) side by side in one row band with no
+    option box between them, or stacked in one column (left edges within PAIR_X_TOL) less than PAIR_STACK_GAP apart
+    with no box between; each box pairs once, nearest first. A box with no printed_line takes its partner's
+    (``pair_of:<field>``) or, when neither has one, the question's designator above the pair (``pair_head:<line>``).
+    Both boxes carry ``yes_no_pair:<partner field>`` and cap at CAP_PAIR: one designator names two boxes, so neither
+    reaches the top tier (the multi-box-row rule)."""
+    opts = [b for b in boxes if _is_option(b)]
+    word = {id(b): _option_word(b, words, boxes) for b in opts}
+    yes = [b for b in opts if word[id(b)] == "Yes"]
+    no = [b for b in opts if word[id(b)] == "No"]
+    cands = []
+    for y in yes:
+        for n in no:
+            if _same_band(y, n):
+                lo, hi = sorted((y, n), key=lambda o: o.x0)
+                if any(o is not y and o is not n and _is_option(o) and _same_band(o, y) and lo.x1 <= o.x0 < hi.x0
+                       for o in boxes):
+                    continue
+                dist = hi.x0 - lo.x1
+                if dist > PAIR_SIDE_GAP:
+                    continue
+            elif abs(y.x0 - n.x0) <= PAIR_X_TOL:
+                lo_y, hi_y = sorted((y.cy, n.cy))
+                dist = hi_y - lo_y
+                if dist > PAIR_STACK_GAP or any(o is not y and o is not n and lo_y < o.cy < hi_y
+                                                and min(o.x1, y.x1) - max(o.x0, y.x0) > 0 for o in boxes):
+                    continue
+            else:
+                continue
+            cands.append((dist, y, n))
+    taken: set[int] = set()
+    for _, y, n in sorted(cands, key=lambda t: (t[0], t[1].y0, t[1].x0)):
+        if id(y) in taken or id(n) in taken:
+            continue
+        taken |= {id(y), id(n)}
+        lines = {o.anchor.printed_line for o in (y, n) if o.anchor.printed_line}
+        if len(lines) == 1:
+            line = next(iter(lines))
+            for o, other in ((y, n), (n, y)):
+                if not o.anchor.printed_line:
+                    o.anchor.printed_line = line
+                    o.anchor.evidence.append(f"pair_of:{other.info['name']}")
+                    o.anchor.score = min(other.anchor.score, CAP_PAIR)
+        elif not lines:
+            head = _pair_head((y, n), words, boxes)
+            if head is not None:
+                for o in (y, n):
+                    o.anchor.printed_line = head
+                    o.anchor.evidence.append(f"pair_head:{head}")
+                    o.anchor.score = W_GUTTER - 0.5  # a head above the box, as gutter_head scores
+        for o, other, label in ((y, n, "Yes"), (n, y, "No")):
+            o.anchor.label = label
+            o.anchor.evidence.append(f"yes_no_pair:{other.info['name']}")
+            o.anchor.score = min(o.anchor.score, CAP_PAIR)
 
 
 def _same_band(a: _Box, b: _Box) -> bool:
@@ -959,13 +1250,17 @@ def _aligned_beside(w: _Word, words: list[_Word], boxes: list[_Box]) -> bool:
 
 
 def _parent_above(letter: _Word, words: list[_Word], lead_ids: set[int], left: float) -> str | None:
-    """The numbered head a sub-letter row hangs from: the nearest numeric designator above and left of it."""
+    """The numbered head a sub-letter row hangs from: the nearest numeric designator above and left of it. A joined
+    lettered head above ("47a" over "b") is that row's own number when its letter comes before the sub-letter (Phase K
+    JK15b (2026-10-25): "47a" printed wider than the gutter's "46" used to be skipped, so "b" hung from 46)."""
     best = None
     for w in words:
-        if id(w) not in lead_ids or w.cy <= letter.cy + 0.5 * letter.h or w.x1 > letter.x0 + 1.0 or w.x0 < left - 1.0:
+        if id(w) not in lead_ids or w.cy <= letter.cy + 0.5 * letter.h or w.x0 < left - 1.0:
             continue
         line = normalize_line(w.text)
         if line is None:
+            continue
+        if w.x1 > letter.x0 + 1.0 and (line.isdigit() or w.x0 >= letter.x0 - 1.0):
             continue
         if letter.x0 - w.x0 > 40:
             continue
@@ -975,8 +1270,10 @@ def _parent_above(letter: _Word, words: list[_Word], lead_ids: set[int], left: f
         return None
     line = normalize_line(best.text)
     if not line.isdigit():
-        # "25." heads "a." / "b."; a lettered head ("1a") is not a parent
-        return None
+        # "25." heads "a." / "b."; a lettered head ("47a") heads a later letter ("b") of its own number only
+        num, head_letter = line.rstrip("abcdefghijklmnopqrstuvwxyz"), line[-1]
+        sub = _sub(letter)
+        return num if num.isdigit() and sub is not None and head_letter < sub else None
     return line
 
 

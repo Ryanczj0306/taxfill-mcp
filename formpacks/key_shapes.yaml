@@ -437,28 +437,30 @@ shapes:
   # ("1.cont2") are left out (a not_lines family of the coverage ledger). Listed packs are those where every line it
   # maps a key to is printed and where it brings at least one widget into the gate (a pack whose line-box keys the
   # anchor reads nothing beside stays out; its keys stay undeclared in the ledger); the disagreements it brought in
-  # were vision-read (exceptions table, the r3-* families).
+  # were vision-read (exceptions table, the r3-* families). Phase K JK15b (2026-10-25): Form 2441 2023-2026 ("22.yes",
+  # "22.no") and Schedule A (Form 1040-NR) 2026 ("9.may_be_limited", "9.not_limited") joined once the Yes/No and
+  # option boxes read their question's line (anchor jk15-v5/v6); every key they map agrees with that line.
   - id: line-boxes
     packs: [federal/2019/f8843, federal/2020/f8843, federal/2021/f8843, federal/2022/f1040nr, federal/2022/f8843,
             federal/2022/sched_c, federal/2023/f1040, federal/2023/f1040nr, federal/2023/f1040x, federal/2023/f1116,
-            federal/2023/f2555, federal/2023/f5329, federal/2023/f843, federal/2023/f8606, federal/2023/f8833,
+            federal/2023/f2441, federal/2023/f2555, federal/2023/f5329, federal/2023/f843, federal/2023/f8606, federal/2023/f8833,
             federal/2023/f8843, federal/2023/f8863, federal/2023/f8889, federal/2023/f8938, federal/2023/f8962,
             federal/2023/sched_2, federal/2023/sched_8812, federal/2023/sched_a, federal/2023/sched_a_nr,
             federal/2023/sched_c, federal/2023/sched_d, federal/2023/sched_e, federal/2023/sched_nec,
-            federal/2024/f1040, federal/2024/f1040nr, federal/2024/f1040x, federal/2024/f1116, federal/2024/f2555,
+            federal/2024/f1040, federal/2024/f1040nr, federal/2024/f1040x, federal/2024/f1116, federal/2024/f2441, federal/2024/f2555,
             federal/2024/f5329, federal/2024/f843, federal/2024/f8606, federal/2024/f8833, federal/2024/f8843,
             federal/2024/f8863, federal/2024/f8889, federal/2024/f8938, federal/2024/f8962, federal/2024/sched_2,
             federal/2024/sched_3, federal/2024/sched_8812, federal/2024/sched_a, federal/2024/sched_c,
             federal/2024/sched_d, federal/2024/sched_e, federal/2024/sched_nec, federal/2025/f1040,
-            federal/2025/f1040nr, federal/2025/f1040x, federal/2025/f1116, federal/2025/f2555, federal/2025/f5329,
+            federal/2025/f1040nr, federal/2025/f1040x, federal/2025/f1116, federal/2025/f2441, federal/2025/f2555, federal/2025/f5329,
             federal/2025/f843, federal/2025/f8606, federal/2025/f8833, federal/2025/f8843, federal/2025/f8863,
             federal/2025/f8889, federal/2025/f8938, federal/2025/f8962, federal/2025/sched_1, federal/2025/sched_2,
             federal/2025/sched_8812, federal/2025/sched_a, federal/2025/sched_c, federal/2025/sched_d,
             federal/2025/sched_e, federal/2025/sched_nec, federal/2026/f1040, federal/2026/f1040nr,
-            federal/2026/f1040x, federal/2026/f1116, federal/2026/f2555, federal/2026/f4868, federal/2026/f5329,
+            federal/2026/f1040x, federal/2026/f1116, federal/2026/f2441, federal/2026/f2555, federal/2026/f4868, federal/2026/f5329,
             federal/2026/f843, federal/2026/f8606, federal/2026/f8833, federal/2026/f8843, federal/2026/f8863,
             federal/2026/f8889, federal/2026/f8938, federal/2026/f8962, federal/2026/sched_1, federal/2026/sched_1a,
-            federal/2026/sched_2, federal/2026/sched_8812, federal/2026/sched_a, federal/2026/sched_c,
+            federal/2026/sched_2, federal/2026/sched_8812, federal/2026/sched_a, federal/2026/sched_a_nr, federal/2026/sched_c,
             federal/2026/sched_d, federal/2026/sched_e, states/al/2023/al40nr, states/ar/2023/ar1000f,
             states/ar/2023/ar1000nr, states/ar/2024/ar1000f, states/ar/2025/ar1000f, states/az/2023/az140,
             states/az/2023/az140nr, states/az/2023/az140py, states/az/2024/az140, states/az/2025/az140,

@@ -20,30 +20,6 @@
 # the anchor now reads the key's line or another line) fails the gate as stale and must be removed; a second row for
 # the same widget is refused when the table loads.
 families:
-  - family: f8843-3b-passport
-    reason: >-
-      the passport-number entry sits on printed line 3b; the anchor read 2b from the row above
-    adjudication: JK10 blind vision read of the row crop, 2026-10-24
-    rows:
-      - {pack: federal/2019/f8843, field: "topmostSubform[0].Page1[0].f1_13[0]", widget: 0, line: "3b", anchor: "2b"}
-      - {pack: federal/2020/f8843, field: "topmostSubform[0].Page1[0].f1_13[0]", widget: 0, line: "3b", anchor: "2b"}
-      - {pack: federal/2021/f8843, field: "topmostSubform[0].Page1[0].f1_13[0]", widget: 0, line: "3b", anchor: "2b"}
-      - {pack: federal/2022/f8843, field: "topmostSubform[0].Page1[0].f1_13[0]", widget: 0, line: "3b", anchor: "2b"}
-      - {pack: federal/2023/f8843, field: "topmostSubform[0].Page1[0].f1_13[0]", widget: 0, line: "3b", anchor: "2b"}
-      - {pack: federal/2024/f8843, field: "topmostSubform[0].Page1[0].f1_13[0]", widget: 0, line: "3b", anchor: "2b"}
-      - {pack: federal/2025/f8843, field: "topmostSubform[0].Page1[0].f1_13[0]", widget: 0, line: "3b", anchor: "2b"}
-  - family: f8843-4b-days-excluded
-    reason: >-
-      the days-excluded entry sits at the right of printed line 4b; the anchor read 2b from a row above
-    adjudication: JK10 blind vision read of the row crop, 2026-10-24
-    rows:
-      - {pack: federal/2019/f8843, field: "topmostSubform[0].Page1[0].f1_17[0]", widget: 0, line: "4b", anchor: "2b"}
-      - {pack: federal/2020/f8843, field: "topmostSubform[0].Page1[0].f1_17[0]", widget: 0, line: "4b", anchor: "2b"}
-      - {pack: federal/2021/f8843, field: "topmostSubform[0].Page1[0].f1_17[0]", widget: 0, line: "4b", anchor: "2b"}
-      - {pack: federal/2022/f8843, field: "topmostSubform[0].Page1[0].f1_17[0]", widget: 0, line: "4b", anchor: "2b"}
-      - {pack: federal/2023/f8843, field: "topmostSubform[0].Page1[0].f1_17[0]", widget: 0, line: "4b", anchor: "2b"}
-      - {pack: federal/2024/f8843, field: "topmostSubform[0].Page1[0].f1_17[0]", widget: 0, line: "4b", anchor: "2b"}
-      - {pack: federal/2025/f8843, field: "topmostSubform[0].Page1[0].f1_17[0]", widget: 0, line: "4b", anchor: "2b"}
   - family: f8843-2026-17b
     reason: >-
       the date-intended-to-leave entry sits on printed line 17b of the 2026 draft; the anchor read the line's number
@@ -51,25 +27,6 @@ families:
     adjudication: JK10 blind vision read of the row crop, 2026-10-24
     rows:
       - {pack: federal/2026/f8843, field: "topmostSubform[0].Page2[0].f2_4[0]", widget: 0, line: "17b", anchor: "17"}
-  - family: f1040-35d-account-number
-    reason: >-
-      the account-number comb sits on line d under 35a (35d); the anchor read 34d from the row above
-    adjudication: JK10 blind vision read of the row crop, 2026-10-24
-    rows:
-      - {pack: federal/2022/f1040nr, field: "topmostSubform[0].Page2[0].AccountNo[0].f2_32[0]", widget: 0,
-         line: "35d", anchor: "34d"}
-      - {pack: federal/2023/f1040, field: "topmostSubform[0].Page2[0].AccountNo[0].f2_26[0]", widget: 0,
-         line: "35d", anchor: "34d"}
-      - {pack: federal/2023/f1040nr, field: "topmostSubform[0].Page2[0].AccountNo[0].f2_32[0]", widget: 0,
-         line: "35d", anchor: "34d"}
-      - {pack: federal/2024/f1040, field: "topmostSubform[0].Page2[0].AccountNo[0].f2_26[0]", widget: 0,
-         line: "35d", anchor: "34d"}
-      - {pack: federal/2024/f1040nr, field: "topmostSubform[0].Page2[0].AccountNo[0].f2_32[0]", widget: 0,
-         line: "35d", anchor: "34d"}
-      - {pack: federal/2025/f1040, field: "topmostSubform[0].Page2[0].AccountNo[0].f2_33[0]", widget: 0,
-         line: "35d", anchor: "34d"}
-      - {pack: federal/2025/f1040nr, field: "topmostSubform[0].Page2[0].AccountNo[0].f2_39[0]", widget: 0,
-         line: "35d", anchor: "34d"}
   - family: f1040nr-2026-35e
     reason: >-
       the foreign mailing address entry sits on printed line 35e (the box spans the 'enter it here' row); the anchor
@@ -77,36 +34,6 @@ families:
     adjudication: JK10 blind vision read of the row crop, 2026-10-24
     rows:
       - {pack: federal/2026/f1040nr, field: "topmostSubform[0].Page2[0].f2_45[0]", widget: 0, line: "35e", anchor: "35"}
-  - family: f1040-2025-27c
-    reason: >-
-      the 'If you do not want to claim the EIC, check here' checkbox sits on line c under 27a (27c); the anchor read
-      26c from the row above
-    adjudication: JK10 blind vision read of the row crop, 2026-10-24
-    rows:
-      - {pack: federal/2025/f1040, field: "topmostSubform[0].Page2[0].c2_13[0]", widget: 0, line: "27c", anchor: "26c"}
-  - family: sched-1-2b-19b-19c
-    reason: >-
-      the date-of-divorce (2b, 19c) and recipient's SSN (19b) entries sit on their own printed sub-lines; the anchor
-      read the line one row above (1b, 18b, 18c)
-    adjudication: JK10 blind vision read of the row crop, 2026-10-24
-    rows:
-      - {pack: federal/2022/sched_1, field: "form1[0].Page1[0].f1_05[0]", widget: 0, line: "2b", anchor: "1b"}
-      - {pack: federal/2022/sched_1, field: "form1[0].Page2[0].Line19b_CombField[0].f2_10[0]", widget: 0,
-         line: "19b", anchor: "18b"}
-      - {pack: federal/2022/sched_1, field: "form1[0].Page2[0].f2_11[0]", widget: 0, line: "19c", anchor: "18c"}
-      - {pack: federal/2023/sched_1, field: "form1[0].Page1[0].f1_05[0]", widget: 0, line: "2b", anchor: "1b"}
-      - {pack: federal/2023/sched_1, field: "form1[0].Page2[0].Line19b_CombField[0].f2_10[0]", widget: 0,
-         line: "19b", anchor: "18b"}
-      - {pack: federal/2023/sched_1, field: "form1[0].Page2[0].f2_11[0]", widget: 0, line: "19c", anchor: "18c"}
-      - {pack: federal/2024/sched_1, field: "form1[0].Page1[0].f1_06[0]", widget: 0, line: "2b", anchor: "1b"}
-      - {pack: federal/2024/sched_1, field: "form1[0].Page2[0].Line19b_CombField[0].f2_10[0]", widget: 0,
-         line: "19b", anchor: "18b"}
-      - {pack: federal/2024/sched_1, field: "form1[0].Page2[0].f2_11[0]", widget: 0, line: "19c", anchor: "18c"}
-      - {pack: federal/2025/sched_1, field: "topmostSubform[0].Page1[0].f1_06[0]", widget: 0, line: "2b", anchor: "1b"}
-      - {pack: federal/2025/sched_1, field: "topmostSubform[0].Page2[0].Line19b_CombField[0].f2_10[0]", widget: 0,
-         line: "19b", anchor: "18b"}
-      - {pack: federal/2025/sched_1, field: "topmostSubform[0].Page2[0].f2_11[0]", widget: 0,
-         line: "19c", anchor: "18c"}
   - family: sched-1-8s
     reason: >-
       the line 8s amount box (in parentheses) sits next to the printed '8s' Medicaid waiver payments label; the
@@ -182,18 +109,6 @@ families:
       - {pack: federal/2023/f2441, field: "topmostSubform[0].Page1[0].f1_35[0]", widget: 0, line: "8", anchor: "35"}
       - {pack: federal/2024/f2441, field: "topmostSubform[0].Page1[0].f1_35[0]", widget: 0, line: "8", anchor: "35"}
       - {pack: federal/2025/f2441, field: "topmostSubform[0].Page1[0].f1_32[0]", widget: 0, line: "8", anchor: "35"}
-  - family: f2555-12b-15b
-    reason: >-
-      the 'If Yes, who and for what period?' (12b) and type-of-visa (15b) entries sit on their own printed sub-lines;
-      the anchor read the line one row above (11b, 14b)
-    adjudication: JK10 blind vision read of the row crop, 2026-10-24
-    rows:
-      - {pack: federal/2023/f2555, field: "topmostSubform[0].Page1[0].f1_17[0]", widget: 0, line: "12b", anchor: "11b"}
-      - {pack: federal/2023/f2555, field: "topmostSubform[0].Page1[0].f1_52[0]", widget: 0, line: "15b", anchor: "14b"}
-      - {pack: federal/2024/f2555, field: "topmostSubform[0].Page1[0].f1_17[0]", widget: 0, line: "12b", anchor: "11b"}
-      - {pack: federal/2024/f2555, field: "topmostSubform[0].Page1[0].f1_52[0]", widget: 0, line: "15b", anchor: "14b"}
-      - {pack: federal/2025/f2555, field: "topmostSubform[0].Page1[0].f1_17[0]", widget: 0, line: "12b", anchor: "11b"}
-      - {pack: federal/2025/f2555, field: "topmostSubform[0].Page1[0].f1_52[0]", widget: 0, line: "15b", anchor: "14b"}
   - family: f8316-amount-cells
     reason: >-
       the dollar amount under the cell header 'N. If yes, show amount'; the anchor read N-1, the Yes/No question
@@ -644,23 +559,6 @@ families:
       the box sits on printed line N; the anchor read the line of the row above
     adjudication: JK10 fixer round 3, vision read of the row crop, 2026-10-25
     rows:
-      - {pack: federal/2022/sched_c, field: "topmostSubform[0].Page2[0].c2_8[0]", widget: 0, line: "47b", anchor: "46b"}  # 47b.yes
-      - {pack: federal/2023/f2555, field: "topmostSubform[0].Page1[0].c1_19[0]", widget: 0, line: "13b", anchor: "11b"}  # 13b.yes
-      - {pack: federal/2023/sched_8812, field: "topmostSubform[0].Page2[0].f2_2[0]", widget: 0, line: "16b", anchor: "15b"}  # 16b.num_children
-      - {pack: federal/2023/sched_c, field: "topmostSubform[0].Page2[0].c2_8[0]", widget: 0, line: "47b", anchor: "46b"}  # 47b.yes
-      - {pack: federal/2023/sched_e, field: "topmostSubform[0].Page2[0].f2_64[0]", widget: 0, line: "34b", anchor: "33b"}  # 34b.c
-      - {pack: federal/2023/sched_e, field: "topmostSubform[0].Page2[0].f2_66[0]", widget: 0, line: "34b", anchor: "33b"}  # 34b.e
-      - {pack: federal/2024/f2555, field: "topmostSubform[0].Page1[0].c1_19[0]", widget: 0, line: "13b", anchor: "11b"}  # 13b.yes
-      - {pack: federal/2024/sched_8812, field: "topmostSubform[0].Page2[0].f2_2[0]", widget: 0, line: "16b", anchor: "15b"}  # 16b.num_children
-      - {pack: federal/2024/sched_c, field: "topmostSubform[0].Page2[0].c2_8[0]", widget: 0, line: "47b", anchor: "46b"}  # 47b.yes
-      - {pack: federal/2024/sched_e, field: "topmostSubform[0].Page2[0].f2_64[0]", widget: 0, line: "34b", anchor: "33b"}  # 34b.c
-      - {pack: federal/2024/sched_e, field: "topmostSubform[0].Page2[0].f2_66[0]", widget: 0, line: "34b", anchor: "33b"}  # 34b.e
-      - {pack: federal/2025/f1040nr, field: "topmostSubform[0].Page1[0].c1_24[0]", widget: 0, line: "7b", anchor: "6b"}  # 7b.schedule_d_not_required
-      - {pack: federal/2025/f2555, field: "topmostSubform[0].Page1[0].c1_19[0]", widget: 0, line: "13b", anchor: "11b"}  # 13b.yes
-      - {pack: federal/2025/sched_8812, field: "topmostSubform[0].Page2[0].f2_3[0]", widget: 0, line: "16b", anchor: "15b"}  # 16b.num_children
-      - {pack: federal/2025/sched_c, field: "topmostSubform[0].Page2[0].c2_8[0]", widget: 0, line: "47b", anchor: "46b"}  # 47b.yes
-      - {pack: federal/2025/sched_e, field: "topmostSubform[0].Page2[0].f2_64[0]", widget: 0, line: "34b", anchor: "33b"}  # 34b.c
-      - {pack: federal/2025/sched_e, field: "topmostSubform[0].Page2[0].f2_66[0]", widget: 0, line: "34b", anchor: "33b"}  # 34b.e
       - {pack: states/mt/2024/form2, field: "Schedule II Line 16", widget: 0, line: "16", anchor: "15"}  # sched2.16
   - family: r3-ga500-s4-part2
     reason: >-
@@ -745,12 +643,6 @@ families:
       Last name", the box on item 19b (the anchor read the row's number 19 alone)
     adjudication: JK10 fixer round 4, vision read of the row crop, 2026-10-25
     rows:
-      - {pack: states/ri/2023/ri1040, field: "topmostSubform[0].Page5[0].SummaryLine4b[0]", widget: 0, line: "4b", anchor: "3b"}  # schedule_e.4b
-      - {pack: states/ri/2023/ri1040, field: "topmostSubform[0].Page5[0].SummaryLine4c[0]", widget: 0, line: "4c", anchor: "3c"}  # schedule_e.4c
-      - {pack: states/ri/2024/ri1040, field: "topmostSubform[0].Page5[0].SummaryLine4b[0]", widget: 0, line: "4b", anchor: "3b"}  # schedule_e.4b
-      - {pack: states/ri/2024/ri1040, field: "topmostSubform[0].Page5[0].SummaryLine4c[0]", widget: 0, line: "4c", anchor: "3c"}  # schedule_e.4c
-      - {pack: states/ri/2025/ri1040, field: "topmostSubform[0].Page5[0].SummaryLine4b[0]", widget: 0, line: "4b", anchor: "3b"}  # schedule_e.4b
-      - {pack: states/ri/2025/ri1040, field: "topmostSubform[0].Page5[0].SummaryLine4c[0]", widget: 0, line: "4c", anchor: "3c"}  # schedule_e.4c
       - {pack: states/ca/2023/sched_ca_540nr, field: "3049", widget: 0, line: "19b", anchor: "19"}  # C19b_lastname
       - {pack: states/ca/2024/sched_ca_540nr, field: "540NR CA - 3049", widget: 0, line: "19b", anchor: "19"}  # C19b_lastname
       - {pack: states/ca/2025/sched_ca_540nr, field: "540NR CA - 3049", widget: 0, line: "19b", anchor: "19"}  # C19b_lastname

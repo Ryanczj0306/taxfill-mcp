@@ -657,6 +657,11 @@ TABLE_NOTES = [
     "page 2): taxfill_core.anchor caps those boxes below the top tier.",
     "Selection: sibling forms of one return can sit on opposite sides of the DEV/TEST split, and both mandatory "
     "cases belong to DEV families; measured.selection_disclosure lists them.",
+    "Option boxes (method jk15-v5, Phase K JK15b): checkbox and radio widgets read their label from their own "
+    "caption (the right-hand one where a row prints captions right of its boxes) and the boxes of a Yes/No pair anchor "
+    "to their question's designator labelled Yes/No, capped below the top tier (yes_no_pair). Text widgets are "
+    "unchanged from jk15-v4. This table scores printed_line only; the labels are measured apart, in "
+    "knowledge/anchor/labels.yaml (scripts/anchor_label_check.py), which licenses nothing.",
 ]
 
 

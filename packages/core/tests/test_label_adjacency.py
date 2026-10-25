@@ -153,8 +153,10 @@ def test_the_exceptions_table_names_real_widgets_of_shipped_packs_by_their_key_l
     # 128 anchor misreads + 3 al40 carry-forwards; round 2: 5 misreads + 3 NJ mirror twins the key shapes brought in;
     # round 3: 312 widgets the new shapes brought in (the r3-* families; one more was a pack defect, re-keyed);
     # round 4: 9 anchor misreads the round-4 shapes brought in (RI Schedule E 4b/4c, CA 540NR 19b); round 5: 5 the
-    # declare-me rule's shapes brought in (GA Schedule 4 specify boxes, AZ 140NR's Savings box beside code "98")
-    assert len(exceptions) == 465
+    # declare-me rule's shapes brought in (GA Schedule 4 specify boxes, AZ 140NR's Savings box beside code "98");
+    # Phase K JK15b (2026-10-25): 63 rows cleared themselves when the anchor (jk15-v6) read the key's own line (a
+    # sub-letter row under a joined head: f8843 3b/4b, Form 1040 35d, Schedule 1 2b/19b/19c, Form 2555 12b/15b ...)
+    assert len(exceptions) == 402
     from taxfill_core.schemas.formpack import load_pack
 
     packs: dict[str, object] = {}

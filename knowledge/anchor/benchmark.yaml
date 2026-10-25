@@ -6,7 +6,7 @@
 # sharded across adjudicators. The gate is the scored top-tier precision; `notes` says what each number covers.
 # A top-tier anchor is worded "anchored (unverified line map)": it is still not a verified line map.
 schema: 1
-method: jk15-v4
+method: jk15-v6
 thresholds:
   top: 3.0
   med: 2.0
@@ -14,7 +14,7 @@ top_tier_kinds:
 - text
 passed: true
 adjudicated: 185
-test_runs: 4
+test_runs: 6
 history:
 - run: 1
   date: '2026-10-24'
@@ -71,6 +71,39 @@ history:
     OK 511 2025 (DEV) keys line 4''s amount "4" (was "4b") and its Describe box "4.description" (unscored). Re-finalized:
     TEST med scored 561 -> 560, disagreements 186 -> 185; the gate numbers are unchanged'
   date: '2026-10-24'
+- run: 5
+  date: '2026-10-25'
+  method: jk15-v5
+  thresholds:
+    top: 3.0
+    med: 2.0
+  note: 'method jk15-v5 (Phase K JK15b): option boxes only, text widgets unchanged from jk15-v4 (52117 non-option widgets
+    over the 349 cached blanks compared field by field). Checkbox and radio labels read the box''s own caption, on the right
+    where the row prints captions right of the boxes (JK19 pilot D3); the boxes of a Yes/No pair (side by side, stacked, or
+    under Yes/No column headers) take their question''s designator (pair_of / pair_head) labelled Yes/No and carry yes_no_pair,
+    a cap below the top tier (D5). Tuned on DEV only for printed_line (DEV scored numbers unchanged); disclosure: label heuristics
+    were also checked on blanks of TEST families (DE PIT-NON 2023''s check-here radio, f8863 2025''s two-line Yes/No captions,
+    OR-40), none of which moves a scored printed_line of a text widget. Thresholds and selection unchanged.'
+- run: 6
+  date: '2026-10-25'
+  method: jk15-v6
+  thresholds:
+    top: 3.0
+    med: 2.0
+  note: 'method jk15-v6 (Phase K JK15b fix wave, after the verifier''s review of run 5): _parent_above lets a sub-letter row
+    hang from a joined lettered head above it when its letter comes before the sub-letter (Schedule C 47a over b is 47b, Form
+    2555 13a over b is 13b; the joined head is wider than the gutter''s numbers, so b hung from the line before: 46b, 11b),
+    which moves text widgets too (71 replaced lines, e.g. Schedule 1 1b -> 2b, Form 1040 34d -> 35d; 58 gained; 105 beside/gutter
+    conflicts resolved; 246 text widgets changed in all; reviewed by form against the packs, not adjudicated) over the 349
+    cached blanks; _pair_head rejects a bare capital followed at a word space (WV IT-140''s ''I authorize'') and keeps a sub-letter
+    set flush against its number (Schedule B 2026 draft 7a). Found by the verifier over every cached blank, TEST families
+    included (TEST holds Schedule C 2026, whose draft already read 47b, and WV IT-140 2024, whose pair loses the "I"; Form
+    2555 and Schedule 1 are DEV families), so disclosed: not tuned on DEV. Scored TEST and DEV numbers unchanged and the 185
+    disagreement ids unchanged; TEST top/text emitted 1435 -> 1436, so the unscored sample redraws (30 new ids; 18 of 48 keep
+    their verdicts). The Yes/No cross-check in knowledge/anchor/labels.yaml (yes_no_keyed_by_line) has other_line 16 under
+    jk15-v5 and 0 under jk15-v6: the 16 were Schedule C 2022-2025 47b (read 46b) and Form 2555 2023-2025 13b (read 11b), both
+    boxes of each pair, and Schedule B 2026 draft 7a (read 7); jk15-v4''s 7 were those Yes boxes alone. Thresholds and selection
+    unchanged.'
 criteria:
   test_packs_at_least_30: true
   test_federal_at_least_10: true
@@ -120,6 +153,10 @@ notes:
   those boxes below the top tier.'
 - 'Selection: sibling forms of one return can sit on opposite sides of the DEV/TEST split, and both mandatory cases belong
   to DEV families; measured.selection_disclosure lists them.'
+- 'Option boxes (method jk15-v5, Phase K JK15b): checkbox and radio widgets read their label from their own caption (the right-hand
+  one where a row prints captions right of its boxes) and the boxes of a Yes/No pair anchor to their question''s designator
+  labelled Yes/No, capped below the top tier (yes_no_pair). Text widgets are unchanged from jk15-v4. This table scores printed_line
+  only; the labels are measured apart, in knowledge/anchor/labels.yaml (scripts/anchor_label_check.py), which licenses nothing.'
 measured:
   selection_sha256: d87d78833018c39c
   selection_disclosure:
@@ -169,46 +206,46 @@ measured:
     states_distinct: 22
     tiers:
       top:
-        emitted: 1457
+        emitted: 1450
         scored: 1096
         agree: 1086
         disagree: 10
-        unscored: 361
+        unscored: 354
         provisional_precision: 0.9909
         wilson_95:
         - 0.9833
         - 0.995
       med:
-        emitted: 3334
+        emitted: 3358
         scored: 560
         agree: 405
         disagree: 155
-        unscored: 2774
+        unscored: 2798
         provisional_precision: 0.7232
         wilson_95:
         - 0.6847
         - 0.7587
       low:
-        emitted: 3493
+        emitted: 3571
         scored: 37
         agree: 37
         disagree: 0
-        unscored: 3456
+        unscored: 3534
         provisional_precision: 1.0
         wilson_95:
         - 0.9059
         - 1.0
       none:
-        emitted: 922
+        emitted: 827
         scored: 0
         agree: 0
         disagree: 0
-        unscored: 922
+        unscored: 827
         provisional_precision: null
         wilson_95: null
     top_by_kind:
       text:
-        emitted: 1435
+        emitted: 1436
         scored: 1086
         agree: 1077
         provisional_precision: 0.9917
@@ -216,7 +253,7 @@ measured:
         - 0.9843
         - 0.9956
       checkbox:
-        emitted: 22
+        emitted: 14
         scored: 10
         agree: 9
         provisional_precision: 0.9
@@ -235,46 +272,46 @@ measured:
     states_distinct: 17
     tiers:
       top:
-        emitted: 1176
+        emitted: 1170
         scored: 884
         agree: 884
         disagree: 0
-        unscored: 292
+        unscored: 286
         provisional_precision: 1.0
         wilson_95:
         - 0.9957
         - 1.0
       med:
-        emitted: 2556
+        emitted: 2585
         scored: 465
         agree: 331
         disagree: 134
-        unscored: 2091
+        unscored: 2120
         provisional_precision: 0.7118
         wilson_95:
         - 0.6691
         - 0.7511
       low:
-        emitted: 3065
+        emitted: 3079
         scored: 102
         agree: 99
         disagree: 3
-        unscored: 2963
+        unscored: 2977
         provisional_precision: 0.9706
         wilson_95:
         - 0.9171
         - 0.9899
       none:
-        emitted: 1025
+        emitted: 988
         scored: 0
         agree: 0
         disagree: 0
-        unscored: 1025
+        unscored: 988
         provisional_precision: null
         wilson_95: null
     top_by_kind:
       text:
-        emitted: 1150
+        emitted: 1151
         scored: 872
         agree: 872
         provisional_precision: 1.0
@@ -282,7 +319,7 @@ measured:
         - 0.9956
         - 1.0
       checkbox:
-        emitted: 26
+        emitted: 19
         scored: 12
         agree: 12
         provisional_precision: 1.0
@@ -387,7 +424,7 @@ measured:
   unscored_sample:
     size: 48
     seed: 20261024
-    ids_sha256: 2e82f0f073834dc3
+    ids_sha256: 392398eb4c576c8b
 adjudication:
   adjudicated: 185
   unadjudicated: 0
@@ -637,7 +674,7 @@ adjudication:
     groups:
     - text
     size: 48
-    population: 349
+    population: 350
     right: 48
     wrong: 0
     ambiguous: 0
@@ -650,10 +687,10 @@ adjudication:
     groups:
     - text
     scored_n: 1086
-    unscored_population: 349
+    unscored_population: 350
     weights:
-      scored: 0.7568
-      unscored: 0.2432
+      scored: 0.7563
+      unscored: 0.2437
     precision: 1.0
     wilson_95:
     - 0.9793
