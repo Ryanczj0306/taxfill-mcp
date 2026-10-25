@@ -290,6 +290,16 @@ def test_unmapped_blank_refused_at_the_fetch_and_at_every_later_step(env):
     _rule_6(text, env)
 
 
+def test_a_title_refusal_names_the_mcp_parameter_form_title(env):
+    # Phase K JK19 pilot (2026-10-25): Philadelphia's 2023 School Income Tax return asked for as "SIT" was refused
+    # with "pass it as expected_title", a taxfill_core argument fetch_blank does not take
+    _serve(env, 3, make_demo_return(env.tmp / "t.pdf", form="DEMO-3"))
+    text = refused("fetch_blank", {**WHERE, "source_url": URL[3], "form_title": "NOT-THIS-FORM"})
+    _rule_6(text, env)
+    assert "not printed in the title block" in text and "pass it as form_title" in text
+    assert "expected_title" not in text
+
+
 def test_unmapped_fill_refused_writes_nothing_and_echoes_no_value(env):
     fetched = _fetch(env, 2, _demo2(env.tmp))
     out = env.tmp / "drafts" / "x.pdf"

@@ -543,3 +543,71 @@ def test_the_sweep_never_overwrites_the_stored_blank_or_its_record(tmp_path, tab
             env.describe(table, sweep_path=target)
     assert (blank.read_bytes(), record.read_bytes()) == kept
     assert env.fill(table, {"wages": 1}, money_fields=["wages"])["status"] == "unverified_draft"
+
+
+# ── Phase K JK19 (2026-10-25): a right-aligned comb whose standard format groups thousands ───────────────────────
+
+COMMA_FORMAT = {"aa": {"F": "AFNumber_Format(0, 0, 0, 0, '', true);"}}  # 0 decimals, sepStyle 0: "1,234"
+PLAIN_FORMAT = {"aa": {"F": "AFNumber_Format(0, 1, 0, 0, '', true);"}}  # sepStyle 1: "1234"
+
+
+def _right_aligned(pdf, names) -> None:
+    """Set /Q 2 (right-aligned) on the named widgets, as Oregon's OR-40-N dollar combs carry it."""
+    from pypdf.generic import NameObject, NumberObject
+
+    writer = PdfWriter(clone_from=str(pdf))
+    for page in writer.pages:
+        for ref in page.get("/Annots", []):
+            annot = ref.get_object()
+            if str(annot.get("/T")) in names:
+                annot[NameObject("/Q")] = NumberObject(2)
+    writer.write(str(pdf))
+
+
+def _comma_comb_blank(tmp_path):
+    """Amount rows drawn as right-aligned 11-cell combs: the JK19 pilot's OR-40-N 2023 lines 7F-8S print a comma in
+    every 4th cell from the right, and the form's own format (AFNumber_Format, sepStyle 0) groups thousands, so a
+    viewer shows "48,000"; written as bare digits, "48000" put its 8 in the printed comma cell."""
+    comb = {"maxlen": 11, "comb": True, "width": 132}
+    texts, fields = demo_rows([("1", "Wages", "wages", comb), ("2", "Interest", "interest", comb),
+                               ("3", "Other", "other", comb)])
+    pdf = make_demo_return(tmp_path / "comma.pdf", texts=texts, fields=fields,
+                           edits={"wages": COMMA_FORMAT, "interest": COMMA_FORMAT, "other": PLAIN_FORMAT})
+    _right_aligned(pdf, {"wages", "interest", "other"})
+    return pdf
+
+
+def test_jk19_a_money_value_in_a_comma_cell_comb_is_written_comma_grouped(tmp_path, table):
+    env = Env(tmp_path, _comma_comb_blank(tmp_path), 6, "DEMO-1")
+    result = env.fill(table, {"wages": 48000, "interest": -12345, "other": 48000},
+                      money_fields=["wages", "interest", "other"])
+    # each digit lands in its printed cell and each comma in a comma cell; a box without grouping keeps bare digits
+    assert result["written"] == {"wages": "48,000", "interest": "-12,345", "other": "48000"}
+    assert _fields(env.out) == {"wages": "48,000", "interest": "-12,345", "other": "48000"}
+    # a value the agent already grouped is written as given
+    assert env.fill(table, {"wages": "48,000"})["written"] == {"wages": "48,000"}
+
+
+def test_jk19_bare_digits_for_a_comma_cell_comb_outside_money_fields_are_refused(tmp_path, table):
+    env = Env(tmp_path, _comma_comb_blank(tmp_path), 7, "DEMO-1")
+    with pytest.raises(UnmappedFillRefused, match="comma in every 4th cell") as info:
+        env.fill(table, {"wages": "48000"})
+    assert "48000" not in str(info.value) and "money_fields" in str(info.value) and not env.out.exists()
+    for text in ("48000.00", "$48000", "-48000"):  # the JK19 review: not only a bare digit string
+        with pytest.raises(UnmappedFillRefused, match="comma in every 4th cell"):
+            env.fill(table, {"wages": text})
+    assert not env.out.exists()
+    assert env.fill(table, {"wages": "480"})["written"] == {"wages": "480"}  # three digits reach no comma cell
+    assert env.fill(table, {"wages": "48,000"})["written"] == {"wages": "48,000"}  # already comma-grouped
+
+
+def test_jk19_money_fields_on_a_flat_blank_get_whole_dollar_rendering_too(tmp_path, table):
+    # the JK19 pilot passed money_fields with the CT-1040NR/PY 2025 worksheet (a flat blank) and they did nothing: a
+    # cents amount stayed unrounded with no warning, unlike the same call on a fillable blank
+    env = Env(tmp_path, make_demo_return(tmp_path / "flat.pdf", texts=[(1, 60, 600, "1 Wages")]), 8, "DEMO-1")
+    result = env.fill(table, {"1": 52000.6, "2": "75"}, money_fields=["1"])
+    assert [line["value"] for line in result["worksheet"]["lines"]] == ["52001", "75"]
+    assert [h["value"] for h in result["hand_write"]] == ["52001", "75"]
+    assert any("rounded" in w for w in result["warnings"])
+    with pytest.raises(UnmappedFillRefused, match="marked as money"):
+        env.fill(table, {"1": "$52,000"}, money_fields=["1"])

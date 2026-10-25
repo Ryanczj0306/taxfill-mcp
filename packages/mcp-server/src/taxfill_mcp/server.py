@@ -297,6 +297,8 @@ def _unmapped_refusal(tool: str, exc: BaseException, *, source_url: str | None, 
                       wrote: str = "No PDF was written") -> ValueError:
     """Routing rule 6: a core refusal as the ValueError text an agent reads."""
     text = _scrub_local_paths(str(exc)).replace("fetch_unmapped_blank", "fetch_blank with form='unmapped'")
+    # the core's argument name, as fetch_blank spells it (Phase K JK19 pilot, 2026-10-25)
+    text = text.replace("pass it as expected_title", "pass it as form_title")
     text = text.rstrip(". ")
     if "no pdf was written" not in text.lower() or wrote != "No PDF was written":
         text = f"{text}. {wrote}"

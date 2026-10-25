@@ -37,6 +37,7 @@ from __future__ import annotations
 
 import io
 import json
+import re
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
 from decimal import Decimal
@@ -114,7 +115,8 @@ LIMITS: list[str] = [
     "no revision pin: the blank is named by its sha256 only, and its revision was not reviewed",
     "form scripts and XFA bindings did not run: calculated boxes and boxes with a custom format script are not "
     "written (hand_write) and keep whatever the blank prints there, such as a default 0; a box with a standard "
-    "Acrobat format is written as given, unformatted",
+    "Acrobat format is written as given, unformatted (except a money amount in a right-aligned comb whose format "
+    "groups thousands: it is written comma-grouped, so each digit takes its printed cell)",
     f"every value is {VALUE_LABEL}",
     "this draft is never filing-grade, whatever any check says",
 ]
@@ -166,6 +168,24 @@ def calculated_reason(nodes: Sequence) -> str | None:
     return reason
 
 
+# Phase K JK19 (2026-10-25): the leading arguments of a standard AFNumber_Format call (nDec, sepStyle). sepStyle 0
+# groups thousands with commas ("1,234"); a right-aligned comb that carries it prints a comma cell every 4th cell.
+_AF_NUMBER = re.compile(r"^\s*AFNumber_Format\s*\(\s*(\d+)\s*,\s*(\d+)\s*,")
+
+
+def number_format(nodes: Sequence) -> tuple[int, int] | None:
+    """(nDec, sepStyle) of the nearest /AA /F over a widget and its /Parent chain (``nodes``, nearest first) when it is
+    one standard AFNumber_Format call; None otherwise (Phase K JK19, 2026-10-25)."""
+    for node in nodes:
+        aa = node.get("/AA")
+        if aa is None or "/F" not in aa.get_object():
+            continue
+        script = action_script(aa.get_object()["/F"])
+        match = _AF_NUMBER.match(script) if STANDARD_FORMAT.match(script) else None
+        return (int(match.group(1)), int(match.group(2))) if match else None
+    return None
+
+
 def value_label(source: str | None) -> str:
     """KG7's label for one value, with its declared provenance beside it (Open question 11's binding reading)."""
     if source in PROVENANCE_REPLACES_LABEL:
@@ -182,6 +202,7 @@ class _Widget:
     anchor: WidgetAnchor
     refusal: str | None
     rect: list[float]
+    number_format: tuple[int, int] | None = None  # (nDec, sepStyle) of a standard AFNumber_Format, else None
 
 
 @dataclass
@@ -220,6 +241,15 @@ class _Field:
     def first(self) -> _Widget:
         return self.widgets[0]
 
+    @property
+    def comma_cells(self) -> bool:
+        """A right-aligned comb whose own format groups whole dollars with commas (AFNumber_Format(0, 0, ...)): its
+        printed face puts a comma in every 4th cell from the right, as the pack path's ``format: money_comma_cells``
+        boxes do (the OR-40 / OR-40-N dollar combs). Bare digits fill its cells from the right with no regard for the
+        comma cells, so "48000" printed its 8 on a comma (Phase K JK19 pilot, 2026-10-25)."""
+        return bool(self.info.get("comb")) and all(
+            w.info.get("quadding") == 2 and w.number_format == (0, 0) for w in self.widgets)
+
 
 def _widget_refusal(info: dict, annot, page_box) -> str | None:
     from taxfill_core.filler import F_HIDDEN, F_NOVIEW, is_viewer_guard  # noqa: PLC0415
@@ -249,7 +279,7 @@ def _read_fields(path: Path, table: str | Path | None) -> tuple[list[_Field], di
     from pypdf import PdfReader  # noqa: PLC0415
 
     from taxfill_core.filler import visible_box  # noqa: PLC0415
-    from taxfill_core.packbuild import _qualified_name, extract_fields  # noqa: PLC0415
+    from taxfill_core.packbuild import _chain, _qualified_name, extract_fields  # noqa: PLC0415
 
     infos = extract_fields(path)
     amap = anchor_widgets(path, table=table)
@@ -269,7 +299,8 @@ def _read_fields(path: Path, table: str | Path | None) -> tuple[list[_Field], di
         if f is None:
             f = fields[info["name"]] = _Field(index=len(fields) + 1, name=info["name"], kind=info["kind"], info=info)
         rect = [float(v) for v in info["rect"]] if len(info["rect"]) == 4 else [0.0, 0.0, 0.0, 0.0]
-        f.widgets.append(_Widget(info=info, anchor=anchor, refusal=_widget_refusal(info, annot, box), rect=rect))
+        f.widgets.append(_Widget(info=info, anchor=anchor, refusal=_widget_refusal(info, annot, box), rect=rect,
+                                 number_format=number_format(_chain(annot))))
     return list(fields.values()), amap.basis
 
 
@@ -526,27 +557,43 @@ def _not_win_ansi(text: str) -> int:
     return count
 
 
+def _whole_dollar_text(value: object, what: str, warnings: list[str]) -> str:
+    """A money_fields value as IRS whole dollars; rule 14 refuses anything but a plain finite number."""
+    from taxfill_core.filler import whole_dollars  # noqa: PLC0415
+
+    if isinstance(value, bool) or not isinstance(value, (int, float, Decimal)):
+        raise UnmappedFillRefused(f"{what} is marked as money: pass a plain number (int, float or Decimal), with no "
+                                  f"'$' or ',' — nothing was written")
+    try:
+        text, warning = whole_dollars(value, what)
+    except ValueError:
+        raise UnmappedFillRefused(f"{what} is marked as money but its value is not a finite number — pass a plain "
+                                  f"number; nothing was written") from None
+    if warning:
+        warnings.append(warning)
+    return text
+
+
 def _render_text(f: _Field, value: object, money: bool, warnings: list[str]) -> str:
     """The text one value writes into a text or choice field; rule 14 refuses without echoing the value."""
-    from taxfill_core.filler import whole_dollars  # noqa: PLC0415
+    from taxfill_core.schemas.formpack import money_comma_cells_text  # noqa: PLC0415
 
     what = f"field {f.name!r}"
     if money:
-        if isinstance(value, bool) or not isinstance(value, (int, float, Decimal)):
-            raise UnmappedFillRefused(f"{what} is marked as money: pass a plain number (int, float or Decimal), with no "
-                                      f"'$' or ',' — nothing was written")
-        try:
-            text, warning = whole_dollars(value, what)
-        except ValueError:
-            raise UnmappedFillRefused(f"{what} is marked as money but its value is not a finite number — pass a plain "
-                                      f"number; nothing was written") from None
-        if warning:
-            warnings.append(warning)
+        text = _whole_dollar_text(value, what, warnings)
     elif isinstance(value, bool) or not isinstance(value, (str, int)):
         raise UnmappedFillRefused(f"{what} takes a string (got {type(value).__name__}); for a whole-dollar amount pass a "
                                   f"number and list the field in money_fields — nothing was written")
     else:
         text = str(value)
+    if f.comma_cells:  # Phase K JK19 (2026-10-25): each digit in its printed cell, each comma in a comma cell
+        if money:
+            text = money_comma_cells_text(text)
+        elif re.search(r"\d{4,}", text):  # the JK19 review: "48000.00" and "$48000" put digits on commas too
+            raise UnmappedFillRefused(
+                f"{what} is a right-aligned comb that prints a comma in every 4th cell from the right (its own format "
+                f"groups thousands): four or more digits in a row would put a digit on a printed comma — list it in "
+                f"money_fields and pass a number, or pass the amount comma-grouped; nothing was written")
     if f.kind == "choice":
         options = f.info.get("options") or []
         match = next((o["export"] for o in options if text in (o["export"], o["display"])), None)
@@ -659,7 +706,9 @@ def _worksheet_only(blank: UnmappedBlank, values, provenance, fields: list[_Fiel
                      else _render_text(f, value, key in money, warnings) if f.kind in _TEXT_KINDS else value)
             place = _place(f)
         else:  # a flat blank: the key is the printed line as the agent reads it
-            shown, place = value, {"field": None, "page": None, "pages": [], "printed_line": key, "label": None}
+            # money_fields round here too (Phase K JK19 pilot, 2026-10-25: on CT-1040NR/PY they did nothing)
+            shown = _whole_dollar_text(value, f"line {key!r}", warnings) if key in money else value
+            place = {"field": None, "page": None, "pages": [], "printed_line": key, "label": None}
         label = value_label(provenance.get(key))
         lines.append(({**place, "value": shown, "value_label": label, "status": "hand_write"}, f))
         hand_write.append({**place, "value": shown, "value_label": label, "reason": STATUS_WORKSHEET, "why": why})
