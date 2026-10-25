@@ -92,8 +92,9 @@ row per widget with its `kind` (text, checkbox, radio, pushbutton, choice or
 signature), its tooltip (`/TU`), the `/Ff` bits as named flags (`read_only`,
 `required`, `multiline`, `comb`, `password`, `do_not_scroll`, `radio`,
 `pushbutton`, `no_toggle_to_off`), a choice field's `options` (`/Opt`), the
-`/DA` font and size, the `/Q` alignment, and `calculated` (the widget carries an
-`/AA` calculate or format script) plus `javascript`. A calculated or ReadOnly
+`/DA` font and size, the `/Q` alignment, `calculated` (the widget carries an
+`/AA` calculate script, or a format script that is not one standard Acrobat
+format call), `format_action` (any `/AA` format script) and `javascript`. A calculated or ReadOnly
 widget is usually a total or a mirror the form's own script fills: check it on
 the render before you map it (P-007). `--render` also renders the sentinel
 sweep for step 3. For a year-over-year

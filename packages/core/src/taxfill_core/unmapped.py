@@ -37,7 +37,6 @@ from __future__ import annotations
 
 import io
 import json
-import re
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
 from decimal import Decimal
@@ -46,6 +45,7 @@ from pathlib import Path
 from taxfill_core.anchor import LOW, MED, NONE, TIERS, TOP, WidgetAnchor, anchor_widgets
 from taxfill_core.datadir import user_path, write_output
 from taxfill_core.fetch import UnmappedBlank, compute_sha256, load_unmapped_blank
+from taxfill_core.packbuild import STANDARD_FORMAT, action_script
 
 __all__ = [
     "CONFIRMED_LABEL",
@@ -73,11 +73,11 @@ RECORD_KEY = "/TaxfillUnmapped"  # the output's /Info record (ADR-0002 fill_form
 
 # ── binding readings of ADR-0002's open questions (each a one-line change once the user answers) ───────────────────
 
-# ADR-0002 Open question 1 (KG7 and format actions). Binding reading, the ROADMAP's: ANY /AA /F (format) action marks a
-# field calculated and refused, like /AA /C (KG7 row; JK14 box) — measured in the ADR at 43% of the cached blanks'
-# text widgets. False is the proposed amendment: an /F action then refuses only when it is not a single call to one of
-# Acrobat's standard format functions (_STANDARD_FORMAT), with the reason "custom_format_script".
-FORMAT_ACTION_IS_CALCULATED = True
+# ADR-0002 Open question 1 (KG7 and format actions), decided 2026-10-25: the user accepted the amendment. An /AA /F
+# action refuses a field only when it is not a single call to one of Acrobat's standard format functions
+# (packbuild.STANDARD_FORMAT), with the reason "custom_format_script"; /AA /C still refuses it as "calculated". The
+# ADR measured the cached blanks' refused text widgets at 5.6% this way, 43% under the earlier reading (True: any /F).
+FORMAT_ACTION_IS_CALCULATED = False
 
 # ADR-0002 Open question 13 (a floor for "med"). Binding reading: "med" is refused like "low" unless the field is in
 # confirmed_fields (KG6 says so until the user sets a floor from the JK15 table's measured med precision). Setting a
@@ -88,9 +88,6 @@ CONFIRM_TIERS = frozenset({LOW, MED})
 # a declared provenance is only added beside it. A source the user lets stand in for the label goes in this set.
 PROVENANCE_REPLACES_LABEL: frozenset[str] = frozenset()
 
-_STANDARD_FORMAT = re.compile(
-    r"^\s*AF(?:Number|Percent|Date|Time|Special)_Format(?:Ex)?\s*\([^;()]*\)\s*;?\s*$", re.DOTALL)
-
 # Why a field is never written (KG7, ADR-0002 rule 12, the JK15 note on hidden widgets), most specific first.
 REFUSALS: dict[str, str] = {
     "signature": "a signature widget: sign the printed form by hand",
@@ -98,9 +95,10 @@ REFUSALS: dict[str, str] = {
     "viewer_guard": "a page-covering viewer guard (P-027), never a taxpayer line",
     "read_only": "ReadOnly: the form does not take a typed value here",
     "hidden": "hidden by its annotation flags (/F Hidden or NoView): the form shows it only through its own script",
-    "calculated": ("the form computes or reformats it with its own script (/AA /C or /F, KG7) and taxfill runs no "
+    "calculated": ("the form computes it with its own script (an /AA /C calculate action, KG7) and taxfill runs no "
                    "form script: work out the value yourself and write it on the printed form by hand"),
-    "custom_format_script": "the form reformats it with a custom script (/AA /F, KG7)",
+    "custom_format_script": ("the form rewrites it with a custom format script (/AA /F that is not one standard "
+                             "Acrobat format call, KG7): write it on the printed form by hand"),
     "unknown_kind": "a widget with no field type (/FT): no value can be written into it",
     "unanchored": "no printed line or caption could be tied to one of its boxes (anchored 'none', KG11)",
 }
@@ -114,7 +112,8 @@ LIMITS: list[str] = [
     "no identity or cross_form checks",
     "no P-003 required-checkbox audit",
     "no revision pin: the blank is named by its sha256 only, and its revision was not reviewed",
-    "form scripts and XFA bindings did not run: calculated and formatted boxes stay blank (hand_write)",
+    "form scripts and XFA bindings did not run: calculated boxes and boxes with a custom format script stay blank "
+    "(hand_write); a box with a standard Acrobat format is written as given, unformatted",
     f"every value is {VALUE_LABEL}",
     "this draft is never filing-grade, whatever any check says",
 ]
@@ -146,21 +145,10 @@ class UnmappedFillRefused(ValueError):
 # ── Q1: calculated widgets ───────────────────────────────────────────────────
 
 
-def _format_script(action) -> str:
-    action = action.get_object()
-    js = action.get("/JS") if hasattr(action, "get") else None
-    if js is None:
-        return ""
-    js = js.get_object()
-    if hasattr(js, "get_data"):
-        return js.get_data().decode("latin-1", "replace")
-    return str(js)
-
-
 def calculated_reason(nodes: Sequence) -> str | None:
     """"calculated" when a widget or a field above it (``nodes``: the widget and its /Parent chain) carries an /AA /C
-    (calculate) action, or an /AA /F (format) action under Open question 1's reading (FORMAT_ACTION_IS_CALCULATED);
-    "custom_format_script" for a non-standard /F under the proposed amendment; else None."""
+    (calculate) action (or any /AA /F while FORMAT_ACTION_IS_CALCULATED); "custom_format_script" for an /F that is
+    not one standard format call (Open question 1's amendment, accepted 2026-10-25); else None."""
     reason = None
     for node in nodes:
         aa = node.get("/AA")
@@ -172,7 +160,7 @@ def calculated_reason(nodes: Sequence) -> str | None:
         if "/F" in aa:
             if FORMAT_ACTION_IS_CALCULATED:
                 return "calculated"
-            if not _STANDARD_FORMAT.match(_format_script(aa["/F"])):
+            if not STANDARD_FORMAT.match(action_script(aa["/F"])):
                 reason = "custom_format_script"
     return reason
 

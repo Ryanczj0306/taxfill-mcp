@@ -42,9 +42,10 @@ class FieldInfo(dict):
       ``no_toggle_to_off`` (buttons) — a bit that the field's type does not define reads False;
     - ``da_font`` / ``da_size`` (the /DA font resource name and size, the AcroForm /DA when the field has none;
       a size of 0 means auto-size) and ``quadding`` (/Q: 0 left, 1 centred, 2 right; the AcroForm /Q, else 0);
-    - ``calculated``: the field or widget carries an /AA /C (calculate) or /AA /F (format) action — KG7: such a
-      widget is never written by the pack-less fallback, ReadOnly or not; ``javascript``: any /AA or /A action
-      on it is JavaScript.
+    - ``calculated``: the field or widget carries an /AA /C (calculate) action, or an /AA /F (format) action that is
+      anything but a single call to one of Acrobat's standard format functions (KG7 as amended 2026-10-25, ADR-0002
+      Open question 1) — such a widget is never written by the pack-less fallback, ReadOnly or not;
+      ``format_action``: it carries any /AA /F; ``javascript``: any /AA or /A action on it is JavaScript.
     """
 
 
@@ -62,7 +63,23 @@ FF_COMB = 1 << 24             # text
 
 _DA_FONT_RE = re.compile(r"/([^\s/\[\]()<>]+)\s+(-?[\d.]+)\s+Tf")
 # The /AA triggers that make a field computed or reformatted by the viewer (KG7).
-_CALC_TRIGGERS = ("/C", "/F")
+# KG7 as amended (ADR-0002 Open question 1, accepted by the user 2026-10-25): a calculate (/C) action may compute the
+# value, and so may a format (/F) action, unless it is a single call to one of Acrobat's standard format functions,
+# which only formats the value it is given.
+STANDARD_FORMAT = re.compile(
+    r"^\s*AF(?:Number|Percent|Date|Time|Special)_Format(?:Ex)?\s*\([^;()]*\)\s*;?\s*$", re.DOTALL)
+
+
+def action_script(action) -> str:
+    """An action's JavaScript text ("" when it carries none)."""
+    action = action.get_object()
+    js = action.get("/JS") if hasattr(action, "get") else None
+    if js is None:
+        return ""
+    js = js.get_object()
+    if hasattr(js, "get_data"):
+        return js.get_data().decode("latin-1", "replace")
+    return str(js)
 
 
 def _qualified_name(annot) -> str:
@@ -120,15 +137,19 @@ def _options(opt) -> list[dict[str, str]]:
     return out
 
 
-def _actions(annot) -> tuple[bool, bool]:
-    """(calculated, javascript) over the widget and its ancestors: /AA /C or /F; any JavaScript /AA or /A."""
-    calculated = javascript = False
+def _actions(annot) -> tuple[bool, bool, bool]:
+    """(calculated, format_action, javascript) over the widget and its ancestors: an /AA /C, or an /AA /F that is not
+    one standard format call (KG7 as amended); any /AA /F; any JavaScript /AA or /A."""
+    calculated = format_action = javascript = False
     for node in _chain(annot):
         aa = node.get("/AA")
         actions = []
         if aa is not None:
             aa = aa.get_object()
-            calculated = calculated or any(key in aa for key in _CALC_TRIGGERS)
+            calculated = calculated or "/C" in aa
+            if "/F" in aa:
+                format_action = True
+                calculated = calculated or not STANDARD_FORMAT.match(action_script(aa["/F"]))
             actions.extend(aa[key] for key in aa)
         if node.get("/A") is not None:
             actions.append(node["/A"])
@@ -136,7 +157,7 @@ def _actions(annot) -> tuple[bool, bool]:
             action = action.get_object()
             if hasattr(action, "get") and action.get("/S") == "/JavaScript":
                 javascript = True
-    return calculated, javascript
+    return calculated, format_action, javascript
 
 
 def _kind(ft, ff: int) -> str:
@@ -181,7 +202,7 @@ def extract_fields(pdf_path: str | Path) -> list[FieldInfo]:
             quadding = quadding if quadding is not None else default_q
             tooltip = _inherited(obj, "/TU")
             opt = _inherited(obj, "/Opt")
-            calculated, javascript = _actions(obj)
+            calculated, format_action, javascript = _actions(obj)
             text, button = ft == "/Tx", ft == "/Btn"
             out.append(FieldInfo(
                 name=name,
@@ -208,6 +229,7 @@ def extract_fields(pdf_path: str | Path) -> list[FieldInfo]:
                 da_size=float(da_match.group(2)) if da_match else None,
                 quadding=int(quadding) if quadding is not None else 0,
                 calculated=calculated,
+                format_action=format_action,
                 javascript=javascript,
             ))
     return out

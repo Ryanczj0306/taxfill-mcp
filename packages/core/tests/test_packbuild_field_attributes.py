@@ -65,6 +65,7 @@ def synthetic(tmp_path) -> dict[str, dict]:
         {"name": "locked"},
         {"name": "total"},
         {"name": "datefmt"},
+        {"name": "customfmt"},
         {"name": "keystroke_only"},
         {"name": "state"},
         {"name": "listbox"},
@@ -85,6 +86,7 @@ def synthetic(tmp_path) -> dict[str, dict]:
         "locked": {"/Ff": NumberObject(1 | 2)},
         "total": {"/AA": _aa(C='AFSimple_Calculate("SUM", new Array ("a", "b"));')},
         "datefmt": {"/AA": _aa(F='AFDate_FormatEx("mm/dd/yyyy");')},
+        "customfmt": {"/AA": _aa(F='event.value = util.printf("%.2f", event.value * 12);')},
         "keystroke_only": {"/AA": _aa(K="AFNumber_Keystroke(2, 0, 0, 0, '', true);")},
         "state": {"/FT": NameObject("/Ch"), "/Ff": NumberObject(1 << 17), "/Opt": opt},
         "listbox": {"/FT": NameObject("/Ch"), "/Ff": NumberObject(0), "/Opt": ArrayObject([TextStringObject("A")])},
@@ -140,10 +142,13 @@ def test_choice_options_and_type(synthetic):
     assert synthetic["ssn"]["choice_type"] is None and synthetic["ssn"]["options"] == []
 
 
-def test_calculate_and_format_actions_mark_a_field_calculated(synthetic):
-    # KG7: /AA /C or /AA /F makes the field calculated, ReadOnly or not; a keystroke-only /AA does not.
+def test_calculate_and_custom_format_actions_mark_a_field_calculated(synthetic):
+    # KG7 as amended 2026-10-25 (ADR-0002 Open question 1): /AA /C, or an /AA /F that is not one standard Acrobat
+    # format call, makes the field calculated, ReadOnly or not; a standard format call or a keystroke-only /AA does not.
     assert synthetic["total"]["calculated"] and not synthetic["total"]["read_only"]
-    assert synthetic["datefmt"]["calculated"]
+    assert not synthetic["datefmt"]["calculated"] and synthetic["datefmt"]["format_action"]
+    assert synthetic["customfmt"]["calculated"] and synthetic["customfmt"]["format_action"]
+    assert not synthetic["total"]["format_action"]
     assert not synthetic["keystroke_only"]["calculated"] and synthetic["keystroke_only"]["javascript"]
     assert not synthetic["ssn"]["calculated"] and not synthetic["ssn"]["javascript"]
     # an /A JavaScript action (a print button) is JavaScript, not a calculation

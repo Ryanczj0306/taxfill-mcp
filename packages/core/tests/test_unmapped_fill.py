@@ -30,6 +30,7 @@ JUR = "states/sd"
 YEAR = 2025
 CALC_TOTAL = {"aa": {"C": "AFSimple_Calculate('SUM', new Array('wages', 'interest'));"}}
 FORMAT_ONLY = {"aa": {"F": "AFNumber_Format(2, 0, 0, 0, '', true);"}}
+CUSTOM_FORMAT = {"aa": {"F": "event.value = util.printf('%.2f', event.value * 12);"}}
 
 
 def _url(n: int) -> str:
@@ -143,9 +144,11 @@ def _demo3(tmp_path, *, guard: bool = True):
         ("14", "Signature", "signature"),
         ("15", "Formatted amount", "format_only"),
         ("16", "Plain amount", "plain"),
+        ("17", "Rescaled amount", "custom_format"),
     ])
     edits = {"ro_amount": {"ff": 1}, "hidden_amount": {"f": 2}, "noview_amount": {"f": 32 | 4},
-             "print_button": {"ft": "/Btn", "ff": 1 << 16}, "signature": {"ft": "/Sig"}, "format_only": FORMAT_ONLY}
+             "print_button": {"ft": "/Btn", "ff": 1 << 16}, "signature": {"ft": "/Sig"}, "format_only": FORMAT_ONLY,
+             "custom_format": CUSTOM_FORMAT}
     if guard:  # MO-1040's shape: a ReadOnly text panel over the whole page
         fields.append({"name": "viewer_panel", "x": 0, "y": 0, "width": 612, "height": 792})
         edits["viewer_panel"] = {"ff": 1}
@@ -222,33 +225,39 @@ def test_e2e_demo_2_choice_radio_comb_and_a_name_on_two_pages(tmp_path, table):
 def test_e2e_demo_3_never_writes_kg7_widgets_and_goes_on(tmp_path, table):
     env = Env(tmp_path, _demo3(tmp_path), 3, "DEMO-3")
     values = {"ro_amount": "1", "hidden_amount": "2", "noview_amount": "3", "print_button": "4", "signature": "Demo",
-              "format_only": "6", "plain": "7", "viewer_panel": "8"}
+              "format_only": "6", "plain": "7", "viewer_panel": "8", "custom_format": "9"}
     # the page-covering guard shares every row band, so the anchor caps each box on the page at med (fail closed)
-    result = env.fill(table, values, confirmed_fields=["plain"])
+    result = env.fill(table, values, confirmed_fields=["plain", "format_only", "custom_format"])
     assert _reasons(result) == {"ro_amount": "read_only", "hidden_amount": "hidden", "noview_amount": "hidden",
-                                "print_button": "pushbutton", "signature": "signature", "format_only": "calculated",
-                                "viewer_panel": "viewer_guard"}
-    assert result["written"] == {"plain": "7"} and _fields(env.out) == {"plain": "7"}
+                                "print_button": "pushbutton", "signature": "signature",
+                                "custom_format": "custom_format_script", "viewer_panel": "viewer_guard"}
+    # a standard Acrobat format call only formats: the value is written as given (KG7 as amended 2026-10-25)
+    assert result["written"] == {"format_only": "6", "plain": "7"}
+    assert _fields(env.out) == {"format_only": "6", "plain": "7"}
     assert result["guards_hidden"] == ["viewer_panel (page 1)"]
     assert all(h["why"] for h in result["hand_write"])
     assert stamp_check(env.out, UNMAPPED_STAMP)["ok"]  # the guard the fill hid does not cover the stamp
     # describe lists the same fields as never filled
     desc = env.describe(table)
     assert {h["field"]: h["reason"] for h in desc["hand_write"]} == _reasons(result)
-    assert {f["name"] for f in desc["fields"] if f["fillable"]} == {"plain"}
+    assert {f["name"] for f in desc["fields"] if f["fillable"]} == {"format_only", "plain"}
 
 
 # ── KG7 / Open question 1: calculated and format-only widgets ─────────────────
 
 
-def test_q1_a_calculated_total_and_a_format_only_box_are_refused(tmp_path, table, monkeypatch):
+def test_q1_a_calculated_total_and_a_custom_format_are_refused_a_standard_format_is_written(tmp_path, table,
+                                                                                           monkeypatch):
+    # ADR-0002 Open question 1, decided 2026-10-25: the user accepted the amendment
+    assert U.FORMAT_ACTION_IS_CALCULATED is False
     env = Env(tmp_path, _demo1(tmp_path), 1, "DEMO-1")
     assert _reasons(env.fill(table, {"total": 1})) == {"total": "calculated"}
     env3 = Env(tmp_path / "three", _demo3(tmp_path, guard=False), 3, "DEMO-3")
-    assert _reasons(env3.fill(table, {"format_only": "6"})) == {"format_only": "calculated"}
-    # the proposed amendment is one constant: a standard format call is then written, a /C total still refused
-    monkeypatch.setattr(U, "FORMAT_ACTION_IS_CALCULATED", False)
     assert env3.fill(table, {"format_only": "6"})["written"] == {"format_only": "6"}
+    assert _reasons(env3.fill(table, {"custom_format": "9"})) == {"custom_format": "custom_format_script"}
+    # the earlier reading is one constant: any /F then refuses the field as calculated
+    monkeypatch.setattr(U, "FORMAT_ACTION_IS_CALCULATED", True)
+    assert _reasons(env3.fill(table, {"format_only": "6"})) == {"format_only": "calculated"}
     assert _reasons(env.fill(table, {"total": 1})) == {"total": "calculated"}
 
 
