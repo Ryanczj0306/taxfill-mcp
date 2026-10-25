@@ -483,6 +483,22 @@ and 'NRA' rules stay refusals. CA's "Your name:" box is 125.9-127.0 pt wide at
 Helv 10, so it holds 123.9 pt, about 18 capitals. "ALEXANDRA Q WASHINGTON" is
 142.8 pt, and P-001's 0.5-em estimate (110 pt) passed it.
 
+**`font_size`: a box sized edge to edge for its glyphs** (Phase K JEe2,
+2026-10-25). Some blanks size a box for exactly the glyphs it takes at its /DA
+size, so the widest value loses ink inside the border (RI-1040's 57.6 pt date of
+birth holds 8 Courier New 12 digits with no room for the 1 pt border). A text or
+money line may then carry `font_size` (points, > 0, at most the widget's own /DA
+size): `fill_form` writes that widget's /DA at that size, font and colour kept,
+before any appearance is built, so pypdf's appearance, a viewer that regenerates
+it and verify's width check (which reads the /DA off the filled PDF) all use it.
+Choose the LARGEST size at which the widest value the box takes prints whole by
+the ink model above (overrun at most 0 pt, not the 0.5 pt tolerance) and on a
+pdfium render, and record the measurement in a pack comment. `fill_form` refuses
+a `font_size` above the widget's /DA size, or on an auto-size (`0 Tf`) box. A
+line without `font_size` is never touched; use it only for a box the measure
+says cuts the value the line is meant to hold, never to fit an over-long value
+(shorten the value instead).
+
 **What `fill_form` does.** After the caller's values are validated and rendered,
 every mirror the caller left out (absent or blank) is built from them, in
 dependency order, measured against the blank's own widgets, and written like any

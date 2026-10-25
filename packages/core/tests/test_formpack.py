@@ -224,3 +224,33 @@ def test_js1b_mirror_urls_must_be_exact_wayback_snapshots_of_the_source_url():
             FormPack.model_validate({**data, "mirror_urls": [bad]})
     with pytest.raises(ValidationError, match="need a real pdf_sha256"):
         FormPack.model_validate({**data, "pdf_sha256": "..."})
+
+
+def test_font_size_is_optional_positive_and_text_or_money_only():
+    """Phase K JEe2 (2026-10-25): a per-line font_size for a box the blank sizes edge to edge for its glyphs."""
+    raw = fixture_dict()
+    assert FormPack.model_validate(raw).fields[0].font_size is None  # optional: absent everywhere it is not needed
+    raw["fields"][0]["font_size"] = 11.7
+    assert FormPack.model_validate(raw).fields[0].font_size == 11.7
+    for bad in (0, -1):
+        raw["fields"][0]["font_size"] = bad
+        with pytest.raises(ValidationError, match="greater than or equal to 6"):
+            FormPack.model_validate(raw)
+    raw = fixture_dict()
+    raw["fields"][1]["font_size"] = 9  # a checkbox
+    with pytest.raises(ValidationError, match="'font_size' apply only to text and money fields"):
+        FormPack.model_validate(raw)
+
+
+def test_font_size_is_a_finite_real_number_no_smaller_than_the_overlay_floor():
+    """Phase K JEe2 (2026-10-25): a bool, inf, nan or a tiny size never reaches a widget's /DA (fill_form writes it
+    with :g, and 1e-05 Tf is no PDF number); 6 pt is the floor overlay.MIN_FONT_SIZE already holds the repo to."""
+    raw = fixture_dict()
+    for good in (6, 8.5, 12):
+        raw["fields"][0]["font_size"] = good
+        assert FormPack.model_validate(raw).fields[0].font_size == float(good)
+    for bad, why in ((True, "valid number"), (float("inf"), "finite number"), (float("nan"), "finite number"),
+                     (1e-9, "greater than or equal to 6"), (5.9, "greater than or equal to 6"), ("9", "valid number")):
+        raw["fields"][0]["font_size"] = bad
+        with pytest.raises(ValidationError, match=why):
+            FormPack.model_validate(raw)

@@ -160,8 +160,8 @@ def _synthetic_text(pack_field: PackField, index: int) -> str:
         base = "Testland"
     elif "date" in line:
         # sized to the line's budget: 10 characters where it allows them, 8 under a budget of 8 or 9, 7 below that
-        # (MD 502 2023's spouse box holds 7, Phase K JEe); RI-1040's 72 pt date boxes print 10 cut by about 0.6 pt,
-        # which verify reports under the user's pending decision
+        # (MD 502 2023's spouse box holds 7, Phase K JEe); RI-1040's 72 pt date boxes print 10 whole at the pack's
+        # font_size of 11.8 pt (Phase K JEe2)
         day = 10 + index % 18
         maxlen = pack_field.maxlen
         base = f"01/{day}/2024" if maxlen is None or maxlen >= 10 else f"01/{day}/24" if maxlen >= 8 else f"1/{day}/24"

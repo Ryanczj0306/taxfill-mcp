@@ -25,8 +25,9 @@ differ by at least a fixed contrast from the same render with the stamp's own te
 stamp stripped fails (no text), and so do a stamp under a printing annotation, under content drawn over it (a black
 or grey box, dense stripes), drawn on shaded art it does not stand out from, and a stamp a CropBox cuts. Phase K JK16
 (2026-10-25): the check used to look for dark pixels only, so a blacked-out, low-contrast or cropped stamp passed.
-It reads no OCR: the repo has no OCR engine, and how CI gets one is ADR-0002 Open question 5 — until it is answered,
-this render comparison stands in for the ROADMAP's OCR read of every page.
+It reads no OCR, and taxfill-core never will: the OCR read of every page is a CI test (ADR-0002 Open question 5,
+answered in Phase K JEe2, 2026-10-25): packages/core/tests/test_stamp_ocr.py hands pdfium's print-path render of a
+pack-less draft and a rehearsal fill to the tesseract CLI, which .github/workflows/ci.yml installs on the runner.
 """
 from __future__ import annotations
 

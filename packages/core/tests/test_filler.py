@@ -989,3 +989,85 @@ def test_the_filled_2025_form_1040_carries_no_xfa_stream(tmp_path: Path):
     fill_form(pack, {"name.first": "Alex", "name.last": "Example"}, blank, out)
     assert "/XFA" not in PdfReader(str(out)).trailer["/Root"]["/AcroForm"]
 
+
+
+# ── Phase K JEe2 (2026-10-25): a pack font_size for a box sized edge to edge ─────────────
+
+
+def _sized_blank(tmp_path: Path) -> Path:
+    """Two 50 pt boxes at /Helv 12 (8 digits are cut at 12 pt, whole at 10): 'dob' a parent field with a kid widget (the /DA on the field, as XFA-derived
+    blanks carry it), 'other' a flat merged field."""
+    return make_acroform_pdf(tmp_path / "sized.pdf", [
+        {"name": f"{ROOT}.Page1[0].dob[0]", "width": 50.0, "hierarchical": True},
+        {"name": f"{ROOT}.Page1[0].other[0]", "width": 50.0, "hierarchical": True},
+    ])
+
+
+def _sized_pack(**dob: object) -> FormPack:
+    return mini_pack([{"line": "dob", "field": "Page1[0].dob[0]", "type": "text", **dob},
+                      {"line": "other", "field": "Page1[0].other[0]", "type": "text"}])
+
+
+def test_font_size_writes_the_widgets_da_at_that_size_before_the_appearance(tmp_path: Path):
+    blank = _sized_blank(tmp_path)
+    out = tmp_path / "out.pdf"
+    fill_form(_sized_pack(font_size=9.5), {"dob": "12312026", "other": "12312026"}, blank, out)
+    reader = PdfReader(str(out))
+    kids = {str(a.get_object()["/Parent"].get_object()["/T"]): a.get_object() for a in reader.pages[0]["/Annots"]}
+    dob, other = kids["dob[0]"], kids["other[0]"]
+    assert str(dob["/DA"]) == "/Helv 9.5 Tf .1 .1 .1 rg"  # the size only: font and colour kept
+    assert b"9.5 Tf" in dob["/AP"]["/N"].get_object().get_data()  # pypdf's appearance is built at it
+    assert b"/Helv 12.0 Tf" in other["/AP"]["/N"].get_object().get_data()  # no font_size: untouched
+    from taxfill_core.verify import read_text_widgets  # noqa: PLC0415
+
+    das = {w.name.rsplit(".", 1)[-1]: w.da for w in read_text_widgets(out)}
+    assert das == {"dob[0]": "/Helv 9.5 Tf .1 .1 .1 rg", "other[0]": "/Helv 12 Tf .1 .1 .1 rg"}  # what verify reads
+
+
+def test_a_pack_line_without_font_size_fills_byte_identically(tmp_path: Path):
+    """A font_size line that is not written changes nothing, and a pack with none is the pre-JEe2 fill."""
+    blank = _sized_blank(tmp_path)
+    plain, sized = tmp_path / "plain.pdf", tmp_path / "sized.pdf"
+    fill_form(_sized_pack(), {"other": "12312026"}, blank, plain)
+    fill_form(_sized_pack(font_size=9), {"other": "12312026"}, blank, sized)
+    assert plain.read_bytes() == sized.read_bytes()
+
+
+def test_font_size_above_the_widgets_own_size_or_on_an_auto_size_box_is_refused(tmp_path: Path):
+    from pypdf import PdfWriter  # noqa: PLC0415
+    from pypdf.generic import NameObject, TextStringObject  # noqa: PLC0415
+
+    blank = _sized_blank(tmp_path)
+    with pytest.raises(ValueError, match=r"font_size 14, .* set it to at most 12 pt, or remove it"):
+        fill_form(_sized_pack(font_size=14), {"dob": "1"}, blank, tmp_path / "x.pdf")
+    fill_form(_sized_pack(font_size=12), {"dob": "1"}, blank, tmp_path / "same.pdf")  # equal is allowed
+    writer = PdfWriter(clone_from=str(blank))
+    for ref in writer.pages[0]["/Annots"]:
+        node = ref.get_object()
+        while node is not None:  # the widget and every field above it
+            if "/DA" in node:
+                node[NameObject("/DA")] = TextStringObject("/Helv 0 Tf 0 g")
+            node = node["/Parent"].get_object() if "/Parent" in node else None
+    auto = tmp_path / "auto.pdf"
+    writer.write(str(auto))
+    with pytest.raises(ValueError, match=r"auto-size or sizeless /DA .* remove font_size from the pack line"):
+        fill_form(_sized_pack(font_size=9), {"dob": "1"}, auto, tmp_path / "y.pdf")
+    assert not (tmp_path / "x.pdf").exists() and not (tmp_path / "y.pdf").exists()
+
+
+def test_verify_measures_a_font_size_box_at_its_font_size(tmp_path: Path):
+    """The 8-digit date that the 50 pt box cuts at 12 pt passes once the pack sets 10 pt, read off the filled PDF;
+    a value too long for the box at 10 pt still FAILs."""
+    from taxfill_core.verify import FAIL, PASS, clipping_scan  # noqa: PLC0415
+
+    blank = _sized_blank(tmp_path)
+
+    def width_verdict(pack: FormPack, value: str) -> str:
+        out = tmp_path / f"v{len(value)}-{pack.fields[0].font_size}.pdf"
+        fill_form(pack, {"dob": value}, blank, out)
+        (check,) = [c for c in clipping_scan(out) if c.name.endswith("dob[0]")]
+        return check.status
+
+    assert width_verdict(_sized_pack(), "12312026") == FAIL
+    assert width_verdict(_sized_pack(font_size=10), "12312026") == PASS
+    assert width_verdict(_sized_pack(font_size=10), "12/31/2026") == FAIL

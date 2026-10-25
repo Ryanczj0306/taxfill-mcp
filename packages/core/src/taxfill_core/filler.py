@@ -71,7 +71,15 @@ from typing import TYPE_CHECKING
 
 from pydantic import BaseModel, ConfigDict, Field
 from pypdf import PdfWriter
-from pypdf.generic import ArrayObject, DictionaryObject, FloatObject, NameObject, NumberObject, StreamObject
+from pypdf.generic import (
+    ArrayObject,
+    DictionaryObject,
+    FloatObject,
+    NameObject,
+    NumberObject,
+    StreamObject,
+    TextStringObject,
+)
 
 from taxfill_core.datadir import home_display, user_path, write_output
 from taxfill_core.knowledge import assert_pack_filing_grade, provisional_marker
@@ -924,6 +932,52 @@ def _da_font_size(da: object) -> float:
     return float(match.group(1)) if match else 0.0
 
 
+def _apply_font_sizes(writer: PdfWriter, pack: FormPack, lines: Collection[str]) -> list[str]:
+    """Write each widget of a ``font_size`` line among ``lines`` with its /DA at that size (Phase K JEe2, 2026-10-25).
+
+    A blank can size a box edge to edge for its glyphs at the box's own /DA size (RI-1040's dependent dates of birth
+    hold 8 Courier New 12 digits in 57.6 pt, and the last one loses its right edge inside the border). The pack's
+    ``font_size`` names the size at which the widest value the box takes prints whole; this sets it in the widget's
+    own /DA, font and colour kept, before any appearance is built from it, so pypdf's appearance, a viewer that
+    regenerates it (NeedAppearances) and verify's width check all use it. A line without ``font_size`` is never
+    touched. Refused, naming the line: a size above the widget's /DA size, or a widget whose /DA is auto-size (0 Tf)
+    or names no size, since a smaller fixed font there would be a different box. Returns the widget names resized.
+    """
+    sized: dict[str, tuple[str, float]] = {}
+    for pf in pack.fields:
+        if pf.font_size is not None and pf.line in lines:
+            sized[f"{pack.acroform_root}.{pf.field}" if pack.acroform_root else pf.field] = (pf.line, pf.font_size)
+    if not sized:
+        return []
+    acroform = writer._root_object.get("/AcroForm")
+    default_da = acroform.get_object().get("/DA") if acroform is not None else None
+    resized: list[str] = []
+    for page in writer.pages:
+        for ref in page.get("/Annots") or []:
+            annot = ref.get_object()
+            if annot.get("/Subtype") != "/Widget":
+                continue
+            name = _qualified_name(annot)
+            if name not in sized:
+                continue
+            line, size = sized[name]
+            da = _inherited_attr(annot, "/DA") or default_da
+            own = _da_font_size(da)
+            if own <= 0 or size > own + 1e-9:
+                raise ValueError(
+                    f"line '{line}' of {pack.form} ({pack.tax_year}) sets font_size {size:g}, but its widget "
+                    f"'{name}' is drawn at /DA {str(da) if da is not None else '(none)'!r}: a pack font_size only "
+                    f"shrinks a fixed-size box — set it to at most {own:g} pt, or remove it from the pack line"
+                    if own > 0 else
+                    f"line '{line}' of {pack.form} ({pack.tax_year}) sets font_size {size:g}, but its widget "
+                    f"'{name}' has an auto-size or sizeless /DA ({str(da) if da is not None else '(none)'!r}), "
+                    f"which the viewer already fits to the box — remove font_size from the pack line"
+                )
+            annot[NameObject("/DA")] = TextStringObject(_DA_FONT_SIZE.sub(f"{size:g} Tf", str(da), count=1))
+            resized.append(name)
+    return resized
+
+
 def _align_comb_cells(writer: PdfWriter, blank_pdf: Path, text_updates: Mapping[str, str]) -> list[str]:
     """Narrow or shift every written comb widget whose cells cross the separators printed in its box (Phase K JK28).
 
@@ -1480,6 +1534,9 @@ def fill_form(
 
     _repair_empty_field_array(writer)
     available = _field_names(writer)
+    # Phase K JEe2 (2026-10-25): a box the pack sets a smaller font_size for gets it in its /DA before anything is
+    # measured or drawn from it: the page-header mirrors below, then every appearance.
+    _apply_font_sizes(writer, pack, {*values, *pack.mirrors})
     # Page-header mirrors (Phase K JK28): every caller value is validated and rendered, so build the mirrors the
     # caller left out from exactly what this fill writes, measured against the widgets of the blank just opened.
     mirror_fields = {f"{pack.acroform_root}.{by_line[m].field}" if pack.acroform_root else by_line[m].field

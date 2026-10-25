@@ -2261,10 +2261,11 @@ pitfalls:
       spouse signature date from 8 to 7, and every TIGHTER_THAN_WIDGET budget
       is re-checked with the model. RI-1040 sizes its dependent dates of
       birth, middle initials, suffixes and signature and preparer dates for
-      their glyphs edge to edge; how to render them (a shorter date, a smaller
-      font, or a documented clip) is the user's decision, and until it is
-      recorded a value that passed the old check keeps that verdict, with the
-      measured cut in the check (verify.PENDING_CLIP_DECISIONS). Tests,
+      their glyphs edge to edge; the user chose a smaller font (Phase K JEe2,
+      2026-10-25): a pack line's font_size, which fill_form writes into the
+      widget's /DA and verify measures at, set to the largest size at which
+      the box's widest value prints whole by the model and on a pdfium render
+      (11.7, 8.5, 11.4 and 11.8 pt). Tests,
       P-035-tagged, in packages/core/tests/test_textfit_ink.py, including
       (network) renders of left-, right- and centre-aligned and bold boxes that
       pin the arithmetic to pdfium.

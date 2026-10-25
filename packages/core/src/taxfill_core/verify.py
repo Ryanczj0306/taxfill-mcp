@@ -1867,65 +1867,6 @@ def _drop_blank_owned(pack: FormPack, widgets: Sequence[TextWidget]) -> tuple[li
     return kept, True
 
 
-# Phase K JEe (2026-10-24): boxes whose rendering is the user's PENDING decision (ROADMAP JEe, KG9). Until it is
-# recorded, a value there keeps the verdict it had before JEe: a value whose advance still fits the widget's rect
-# (cut only by the border inset) passes with the measured facts; anything longer FAILs as it always did.
-# (jurisdiction, form) -> (the pack lines it covers, the note). Recording the decision deletes the row.
-PENDING_CLIP_DECISIONS: dict[tuple[str, str], tuple[re.Pattern[str], str]] = {
-    ("states/ri", "RI-1040"): (
-        re.compile(
-            r"schedule_e\.dependent_\d+\.dob|(?:spouse\.)?name\.(?:middle_initial|suffix)"
-            r"|signature\.(?:taxpayer|spouse)\.date|preparer\.date"
-        ),
-        "PENDING the user's decision (ROADMAP JEe): RI-1040 sizes these boxes for its Courier New 12 glyphs edge to "
-        "edge. The dependent date-of-birth box is 57.6pt, so the 8-digit MMDDYYYY date the form's XFA template asks "
-        "for loses about 0.6pt of its last digit's right edge (7 digits fit whole); the centred middle-initial box "
-        "is 7.2pt, one glyph, so a wide initial such as M or W loses up to 0.9pt each side (I fits whole); the "
-        "suffix box is 21.6pt, three glyphs, so III loses about 0.6pt (JR and SR fit whole); the signature and "
-        "preparer date boxes are 72pt, ten glyphs, so a 10-character date loses about 0.6pt of its last digit "
-        "(01/15/24 fits whole). The choices are a shorter date (MMDDYY), a smaller font (8 digits fit whole in the "
-        "date-of-birth box at 11pt), or a documented clip; until one is recorded a value that fills the box edge to "
-        "edge is written as given and this check does not fail",
-    ),
-}
-_WIDTH_FAIL_PREFIX = "estimated text width"
-
-
-def _fills_its_rect(widget: TextWidget) -> bool:
-    """The value passed the width check as it stood before Phase K JEe (``len x 0.5 x size`` against the rect, 0.6
-    for a Courier face): exactly the verdict a pending decision keeps. Anything that check failed fails now too."""
-    size = _font_size_from_da(widget.da)
-    if size == 0:
-        return True
-    monospace = widget.monospace if widget.monospace is not None else _da_is_monospace(widget.da)
-    ratio = _MONOSPACE_CHAR_WIDTH_RATIO if monospace else _AVG_CHAR_WIDTH_RATIO
-    return len(widget.value) * ratio * (size or _DEFAULT_FONT_SIZE) <= widget.rect_width
-
-
-def _pending_clip_decisions(
-    pack: FormPack, checks: list[ClippingCheck], widgets: Sequence[TextWidget]
-) -> list[ClippingCheck]:
-    """A width FAIL on a box in :data:`PENDING_CLIP_DECISIONS` becomes a PASS carrying the pending decision, but
-    only when the value fills the rect edge to edge or less (:func:`_fills_its_rect`): the cut the decision is about.
-    A longer value, a MaxLen overflow and every other box keep their verdict."""
-    rule = PENDING_CLIP_DECISIONS.get((pack.jurisdiction, pack.form))
-    if rule is None:
-        return checks
-    pattern, note = rule
-    names = {qualified_field_name(pack, pf) for pf in pack.fields if pattern.fullmatch(pf.line)}
-    by_name: dict[str, list[TextWidget]] = {}
-    for widget in widgets:
-        if widget.name in names:
-            by_name.setdefault(widget.name, []).append(widget)
-    covered = {name for name, boxes in by_name.items() if all(_fills_its_rect(box) for box in boxes)}
-    return [
-        check.model_copy(update={"status": PASS, "detail": f"{check.detail} [{note}]"})
-        if check.status == FAIL and check.name in covered and _WIDTH_FAIL_PREFIX in check.detail
-        else check
-        for check in checks
-    ]
-
-
 def _widget_clipping_checks(pack: FormPack, widgets: Sequence[TextWidget]) -> list[ClippingCheck]:
     """:func:`clipping_scan` over a filled PDF's widgets, minus what the blank still owns.
 
@@ -1935,7 +1876,7 @@ def _widget_clipping_checks(pack: FormPack, widgets: Sequence[TextWidget]) -> li
     widget says so, with the command that fixes it.
     """
     scanned, blank_consulted = _drop_blank_owned(pack, widgets)
-    checks = _pending_clip_decisions(pack, clipping_scan(scanned), scanned) + _bound_maxlen_checks(pack, scanned)
+    checks = clipping_scan(scanned) + _bound_maxlen_checks(pack, scanned)
     if blank_consulted:
         return checks
     read_only_names = {widget.name for widget in scanned if widget.read_only}
@@ -3244,8 +3185,7 @@ def verify_form(
     # through the dump.
     clipping_checks = (
         _widget_clipping_checks(pack, widget_models) if widgets_from_disk
-        else _pending_clip_decisions(pack, clipping_scan(widget_models), widget_models)
-        + _bound_maxlen_checks(pack, widget_models)
+        else clipping_scan(widget_models) + _bound_maxlen_checks(pack, widget_models)
     ) + _pack_maxlen_checks(pack, fields, skip_names=frozenset(w.name for w in widget_models))
     checkbox_checks = checkbox_audit(pack, fields)
     identity_checks = (

@@ -435,8 +435,9 @@ def test_every_tighter_budget_fits_its_box_by_the_ink_model(row: tuple[str, str]
 
     Before JEe the rows were measured edge to edge, and nine Courier-10 glyphs exactly fill AL Schedule OC's 54.0 pt
     cell: the render cuts the ninth. Each budget is checked the way verify now checks a value (textfit.ink_extent
-    against the width less the border on each side), on every widget of the line; an auto-size, multiline or comb
-    widget is not measured, as verify does not measure it.
+    against the width less the border on each side), on every widget of the line, at the pack line's font_size when
+    it sets one (Phase K JEe2: the size fill_form writes); an auto-size, multiline or comb widget is not measured, as
+    verify does not measure it.
     """
     pack_path = FORMPACKS / row[0]
     pack = load_pack(pack_path)
@@ -450,6 +451,8 @@ def test_every_tighter_budget_fits_its_box_by_the_ink_model(row: tuple[str, str]
     assert boxes, f"{row}: no text widget named {name!r} on the blank"
     for box in boxes:
         size = _font_size(box.da)
+        if size and field.font_size is not None:  # Phase K JEe2: fill_form writes the box at the pack's font_size
+            size = min(size, field.font_size)
         if size == 0 or box.multiline or (box.comb and box.max_len is not None) or box.rect_width <= 0:
             continue
         # Courier: every glyph advances 0.6 em, so end on the glyph whose ink reaches furthest right (the smallest

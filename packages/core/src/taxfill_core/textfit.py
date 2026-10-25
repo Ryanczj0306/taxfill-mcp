@@ -31,8 +31,8 @@ The model is the one the JK28 probe renders pin in ``packages/core/tests/test_pa
 * by the box's alignment (/Q): a left-aligned value starts at the left inset and overruns on the right; a
   right-aligned one ends at the right inset and overruns on the left (its first glyph's LEFT side bearing counts);
   a centred one splits the overrun between both sides. RI-1040's centred middle-initial box is one Courier-12 glyph
-  wide (7.2 pt): the 2 pt the border takes splits 1 pt a side and the glyph's own bearings absorb it, so an initial
-  renders whole (:func:`ink_overrun`);
+  wide (7.2 pt): the 2 pt the border takes splits 1 pt a side, so a wide initial (V, A, N, M, W) is cut at 12 pt,
+  and the RI packs write those boxes at 8.5 pt (a pack line's font_size, Phase K JEe2) (:func:`ink_overrun`);
 * a field with a widget on several pages fits only when it fits each of them, in practice its narrowest;
 * an auto-size /DA (``0 Tf``) always fits, because the viewer shrinks the text. A widget with no /DA is measured at
   10 pt Helvetica (verify's P-001 assumption). A multiline widget wraps, so one line's advance says nothing about it,

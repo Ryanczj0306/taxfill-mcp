@@ -209,7 +209,7 @@ Each item is a place where the code at ccf02d2 contradicts, or goes past, the RO
 The user accepted this ADR with the recommended answers ("all as recommended"):
 
 - **Open question 1:** the amendment. An /AA /F action marks a widget as calculated only when it is anything other than a single call to one of Acrobat's standard format functions; a /C action still does. `custom_format_script` joins the refusal reasons. The KG7 row (docs/dev/ROADMAP.md), the JK14 box and ADR-0001's KG7 row changed in the same commit, and `unmapped.FORMAT_ACTION_IS_CALCULATED` is False; `packbuild.extract_fields` reports `calculated` by the same rule and `format_action` for any /F.
-- **Open question 5:** the stamp's OCR check runs with tesseract installed on the CI runner. It is a CI tool, never a runtime dependency of taxfill-core.
+- **Open question 5:** the stamp's OCR check runs with tesseract installed on the CI runner. It is a CI tool, never a runtime dependency of taxfill-core. Built 2026-10-25: packages/core/tests/test_stamp_ocr.py, with the apt step in .github/workflows/ci.yml.
 - **Open question 13:** no floor. `med` keeps needing the user's confirmation on the rendered page, like `low` (`unmapped.CONFIRM_TIERS`).
 - **Open questions 2-4, 6-12 and 14-17:** the readings proposed above. In particular, the pack-path changes of Open question 2 land before 2026-12-01; revision-dated forms (Open question 7) and partly scanned blanks (Open question 14) stay refused; every written value keeps the KG7 label (Open question 11); verify_filing refuses unmapped items (Open question 12); the form's first page is the first page that carries a widget (Open question 16).
 

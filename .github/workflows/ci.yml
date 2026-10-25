@@ -28,6 +28,11 @@ jobs:
           python-version: "3.11"
       - name: Sync workspace
         run: uv sync
+      - name: Install tesseract-ocr (a CI tool for the stamp's OCR read, never a runtime dependency)
+        # ADR-0002 Open question 5 (Phase K JEe2, 2026-10-25): packages/core/tests/test_stamp_ocr.py renders every
+        # page of a pack-less draft and a rehearsal fill and runs the tesseract CLI on it; it FAILS when CI is set and
+        # tesseract is missing. Ubuntu's package, no Python dependency: taxfill-core never imports or calls it.
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends tesseract-ocr tesseract-ocr-eng
       - name: Run tests (offline — live-.gov round-trips run in the network-tests job)
         # pytest-xdist (Phase J JD2): the offline suite in parallel; the property tests seed their own
         # random.Random, so a worker split cannot change what they draw.

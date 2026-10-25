@@ -209,6 +209,21 @@ class PackField(BaseModel):
             "checked. Valid on checkbox fields only."
         ),
     )
+    # Phase K JEe2 (2026-10-25): strict, finite and at least overlay.MIN_FONT_SIZE (6 pt), so a bool, inf, nan or a
+    # tiny size (written into the /DA with :g, 1e-05 Tf is no PDF number) is refused here, at pack load.
+    font_size: float | None = Field(
+        default=None,
+        ge=6,
+        strict=True,
+        allow_inf_nan=False,
+        description=(
+            "Points, for a box the blank sizes edge to edge for its glyphs at its /DA size (Phase K JEe2: "
+            "RI-1040's dates of birth, initials, suffixes and signature dates): fill_form writes the widget's /DA "
+            "at this size, font and colour kept, before the appearance is built, and verify measures the value "
+            "at it. At least 6 pt and at most the widget's own /DA size (fill_form refuses a larger one, or an "
+            "auto-size box). Text and money lines only; leave it out everywhere else."
+        ),
+    )
 
     @model_validator(mode="after")
     def _check_options_match_type(self) -> "PackField":
@@ -219,9 +234,9 @@ class PackField(BaseModel):
                     f"(the PDF export value, e.g. \"/1\") — dump the blank PDF's "
                     f"field states to find it"
                 )
-            if self.comb or self.maxlen is not None or self.format is not None:
+            if self.comb or self.maxlen is not None or self.format is not None or self.font_size is not None:
                 raise ValueError(
-                    f"field '{self.line}': 'maxlen', 'comb' and 'format' apply only to "
+                    f"field '{self.line}': 'maxlen', 'comb', 'format' and 'font_size' apply only to "
                     f"text and money fields — remove them from this checkbox"
                 )
         else:

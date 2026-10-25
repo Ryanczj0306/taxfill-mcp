@@ -15,6 +15,7 @@ says are cut lose ink in pdfium's render, and the ones it says fit do not.
 """
 from __future__ import annotations
 
+import re
 import string
 import sys
 from pathlib import Path
@@ -40,10 +41,8 @@ from taxfill_core.textfit import (
 from taxfill_core.verify import (
     FAIL,
     PASS,
-    PENDING_CLIP_DECISIONS,
     ClippingCheck,
     TextWidget,
-    _pending_clip_decisions,
     clipping_scan,
     qualified_field_name,
     read_text_widgets,
@@ -270,84 +269,148 @@ def test_the_tolerance_stays_under_the_thinnest_flagged_cut():
     assert ink_overrun("01012020", RI_DOB._replace(bold=False)) > CUT_TOLERANCE_PT
 
 
-# ── the pending decision ─────────────────────────────────────────────────────
+# ── RI-1040's edge-to-edge boxes: a smaller font (Phase K JEe2) ─────────────
 
 
 RI_PACKS = sorted(FORMPACKS.glob("states/ri/*/ri1040/pack.yaml"))
+# Phase K JEe2 (2026-10-25): the user chose a smaller font for the four kinds of box RI-1040 sizes for its Courier New
+# 12 glyphs edge to edge. kind -> (its lines, the box width pt and /Q, the widest values it takes, the pack font_size,
+# a value too long for it). Each size is the largest on a 0.1 pt grid at which every widest value's ink stays inside
+# the box (overrun <= 0, not merely the tolerance); the measurements are in the packs' comment.
+RI_FONT_SIZES = {
+    "date of birth": (r"schedule_e\.dependent_\d+\.dob", 57.6, 0,
+                      [f"1231202{d}" for d in string.digits], 11.7, "12/31/2026"),
+    "middle initial": (r"(?:spouse\.)?name\.middle_initial", 7.2, 1, list(string.ascii_uppercase), 8.5, "VW"),
+    "suffix": (r"(?:spouse\.)?name\.suffix", 21.6, 0, ["III", "JR", "SR", "IV", "II"], 11.4, "VIII"),
+    "signature date": (r"signature\.(?:taxpayer|spouse)\.date|preparer\.date", 72.0, 0,
+                       [f"12/31/202{d}" for d in string.digits], 11.8, "Dec 31, 2026"),
+}
 
 
-@pytest.mark.parametrize("path", RI_PACKS, ids=lambda p: p.parent.parent.name)
-def test_ri_dob_keeps_its_verdict_until_the_user_decides(path: Path):
-    """KG9: RI-1040's edge-to-edge boxes are the user's call (a shorter date, a smaller font, or a documented clip):
-    the dependent dates of birth, the centred middle initials, the suffixes and the signature and preparer dates.
-    Until it is recorded, a width FAIL on those boxes passes with the measured facts attached; nothing else changes."""
-    pack = load_pack(path)
-    pattern, note = PENDING_CLIP_DECISIONS[(pack.jurisdiction, pack.form)]
-    covered = {pf.line for pf in pack.fields if pattern.fullmatch(pf.line)}
-    dobs = sorted(line for line in covered if line.endswith(".dob"))
-    assert len(dobs) == 13, f"{path}: {len(dobs)} dependent date-of-birth lines, the face prints 13 rows"
-    assert covered - set(dobs) == {"name.middle_initial", "spouse.name.middle_initial", "name.suffix",
-                                   "spouse.name.suffix", "signature.taxpayer.date", "signature.spouse.date",
-                                   "preparer.date"}, covered - set(dobs)
-    dob = qualified_field_name(pack, next(pf for pf in pack.fields if pf.line == dobs[0]))
-    other = qualified_field_name(pack, next(pf for pf in pack.fields if not pattern.fullmatch(pf.line)))
-    width_fail = "estimated text width 57.6pt (len 8 x 0.6 x 12pt Courier metric) exceeds the 55.6pt inside ..."
-    checks = [
-        ClippingCheck(name=dob, status=FAIL, detail=f"field '{dob}': {width_fail}"),
-        ClippingCheck(name=dob, status=FAIL, detail=f"field '{dob}': value is 9 characters but MaxLen is 8"),
-        ClippingCheck(name=other, status=FAIL, detail=f"field '{other}': {width_fail}"),
-    ]
-    box = {"da": "/CourierNewPSMT 12 Tf 0 g", "rect_width": 57.6, "monospace": True}
-    widgets = [TextWidget(name=dob, value="01012020", **box), TextWidget(name=other, value="01012020", **box)]
-    out = _pending_clip_decisions(pack, checks, widgets)
-    assert out[0].status == PASS and note in out[0].detail and "0.6pt of its last digit" in out[0].detail
-    assert "M or W" in note and "III" in note
-    assert out[1].status == FAIL  # a MaxLen overflow is not the pending decision
-    assert out[2].status == FAIL  # another box is not covered
-    # a value wider than the rect itself is no edge-to-edge cut: it FAILed before JEe and still does
-    longer = [TextWidget(name=dob, value="01/01/2020", **box)]
-    assert _pending_clip_decisions(pack, checks[:1], longer)[0].status == FAIL
-    ma = load_pack(FORMPACKS / "states/ma/2025/form1/pack.yaml")
-    assert _pending_clip_decisions(ma, checks[:1], widgets) == checks[:1]
+# Phase K JEe2 (2026-10-25), verifier finding: values a box takes beyond its widest generational value, whose ink the
+# pack size does NOT keep inside the box, kind -> [(value, side)]. They pass verify inside CUT_TOLERANCE_PT, the same
+# tolerance as every other box, and the pack comment says so: ESQ ends past the suffix box's right inset, and V, VI and
+# VII start just left of its left inset, at every size (so no smaller size would bring them in).
+RI_WITHIN_TOLERANCE = {"suffix": [("ESQ", "right"), ("V", "left"), ("VI", "left"), ("VII", "left")]}
+
+
+def _ri_box(kind: str, size: float) -> TextWidget:
+    _pattern, width, quadding, *_ = RI_FONT_SIZES[kind]
+    return TextWidget(name=kind, value="", da=f"/CourierNewPSMT {size:g} Tf 0 g", rect_width=width, monospace=True,
+                      quadding=quadding)
+
+
+def test_font_size_is_set_only_on_the_measured_ri_boxes():
+    """Every pack line carrying a font_size is one of RI-1040's measured edge-to-edge boxes, at its measured size: 13
+    dates of birth, two middle initials, two suffixes and three signature or preparer dates in each year."""
+    found = {(str(path.relative_to(FORMPACKS)), pf.line, pf.font_size)
+             for path in sorted(FORMPACKS.glob("**/pack.yaml")) for pf in load_pack(path).fields if pf.font_size}
+    expected = set()
+    for path in RI_PACKS:
+        for pf in load_pack(path).fields:
+            for pattern, _w, _q, _values, size, _long in RI_FONT_SIZES.values():
+                if re.fullmatch(pattern, pf.line):
+                    expected.add((str(path.relative_to(FORMPACKS)), pf.line, size))
+    assert len(RI_PACKS) == 3 and len(expected) == 3 * 20, sorted(expected)
+    assert found == expected, (
+        f"unmeasured font_size lines {sorted(found - expected)}, measured boxes without it {sorted(expected - found)}: "
+        "a font_size is the LARGEST size at which the box's widest value prints whole (formpacks/CONVENTIONS.md); "
+        "measure it and add the box here")
+
+
+@pytest.mark.parametrize("kind", sorted(RI_FONT_SIZES))
+def test_each_ri_box_prints_its_widest_value_whole_at_its_font_size(kind: str):
+    """At the pack size every widest value's ink stays inside the box and verify PASSes it; 0.1 pt larger the widest
+    one's ink overruns (the size is the largest on the grid); at the blank's own 12 pt verify FAILs it, which is
+    why the size changed; and a value too long for the box still FAILs at the pack size."""
+    _pattern, _width, _q, values, size, too_long = RI_FONT_SIZES[kind]
+    box = _ri_box(kind, size)
+    as_box = WidgetBox(box.rect_width, size, "CourierNewPSMT", True, False, 1.0, box.quadding, False)
+    assert max(ink_overrun(v, as_box) for v in values) <= 0, kind
+    assert {c.status for c in clipping_scan([box.model_copy(update={"value": v}) for v in values])} == {PASS}
+    assert max(ink_overrun(v, as_box._replace(size=round(size + 0.1, 1))) for v in values) > 0, kind
+    at_twelve = clipping_scan([_ri_box(kind, 12.0).model_copy(update={"value": v}) for v in values])
+    assert FAIL in {c.status for c in at_twelve}, kind
+    assert clipping_scan([box.model_copy(update={"value": too_long})])[0].status == FAIL, (kind, too_long)
+
+
+@pytest.mark.parametrize("kind", sorted(RI_WITHIN_TOLERANCE))
+def test_the_values_past_an_ri_box_at_its_font_size_pass_only_within_the_tolerance(kind: str):
+    """Each listed value's ink crosses the box's inset at the pack size by more than 0 and less than CUT_TOLERANCE_PT,
+    so verify PASSes it as it would on any box; at the blank's 12 pt ESQ was a FAIL. The left-side ones start with V,
+    whose ink begins left of its origin (a negative left bearing)."""
+    _pattern, width, quadding, _values, size, _long = RI_FONT_SIZES[kind]
+    as_box = WidgetBox(width, size, "CourierNewPSMT", True, False, 1.0, quadding, False)
+    for value, side in RI_WITHIN_TOLERANCE[kind]:
+        assert 0 < ink_overrun(value, as_box) < CUT_TOLERANCE_PT, (value, ink_overrun(value, as_box))
+        assert (bearings(value[0], courier=True)[0] < 0) == (side == "left"), value
+        assert clipping_scan([_ri_box(kind, size).model_copy(update={"value": value})])[0].status == PASS, value
+    assert clipping_scan([_ri_box(kind, 12.0).model_copy(update={"value": "ESQ"})])[0].status == FAIL
+
+
+def _widest(kind: str) -> str:
+    _pattern, width, quadding, values, size, _long = RI_FONT_SIZES[kind]
+    box = WidgetBox(width, size, "CourierNewPSMT", True, False, 1.0, quadding, False)
+    return max(values, key=lambda v: ink_overrun(v, box))
 
 
 @pytest.mark.network
-@pytest.mark.parametrize(("year", "value", "status"), [
-    ("2023", "01/01/2020", FAIL),        # no pack maxlen in 2023: a slashed date is written, and it is far too wide
-    ("2023", "January 1, 2020", FAIL),
-    ("2025", "01012020", PASS),          # edge to edge: the pending decision, its facts in the detail
-])
-def test_the_pending_decision_covers_only_the_edge_to_edge_cut(year: str, value: str, status: str, tmp_path):
-    """The JEe verifier's blocker: the exception once passed ANY width FAIL on the DOB box. Every verify path is run on
-    a real fill: verify_form from disk, verify_form with the caller's widget records, and verify_filing."""
+@pytest.mark.parametrize("path", RI_PACKS, ids=lambda p: p.parent.parent.name)
+def test_a_real_ri_fill_writes_each_box_at_its_font_size_and_verify_passes_it(path: Path, tmp_path):
+    """Fill every one of the 20 boxes with its widest value: each widget's /DA is written at the pack size, and every
+    verify path (from disk, the caller's widget records, verify_filing) PASSes each box's width; a value too long for
+    a box at its size (a slashed date of birth, a spelled-out signature date) still FAILs on every path."""
     from taxfill_core.fetch import fetch_pack_blank  # noqa: PLC0415
     from taxfill_core.filler import fill_form  # noqa: PLC0415
     from taxfill_core.verify import FilingItem, verify_filing, verify_form  # noqa: PLC0415
 
-    pack = load_pack(FORMPACKS / f"states/ri/{year}/ri1040/pack.yaml")
-    out = tmp_path / "ri.pdf"
-    fill_form(pack, {"schedule_e.dependent_1.dob": value}, fetch_pack_blank(pack), out)
-    dob = qualified_field_name(pack, next(pf for pf in pack.fields if pf.line == "schedule_e.dependent_1.dob"))
+    pack = load_pack(path)
+    kind_of = {pf.line: kind for pf in pack.fields for kind, row in RI_FONT_SIZES.items() if re.fullmatch(row[0], pf.line)}
+    names = {qualified_field_name(pack, pf): kind_of[pf.line] for pf in pack.fields if pf.line in kind_of}
+    blank = fetch_pack_blank(pack)
 
-    def width_checks(report) -> list[ClippingCheck]:
-        return [c for c in report.clipping if c.name.endswith(dob) and "estimated text width" in c.detail]
+    def width_checks(values: dict[str, str]) -> list[list[ClippingCheck]]:
+        out = tmp_path / f"ri-{len(values)}.pdf"
+        fill_form(pack, values, blank, out)
+        sizes = {w.name: w.da for w in read_text_widgets(out) if w.name in names and w.value}
+        assert sizes == {n: f"/CourierNewPSMT {RI_FONT_SIZES[names[n]][4]:g} Tf 0 g" for n in sizes}, sizes
+        reports = [verify_form(pack, out), verify_form(pack, out, widgets=read_text_widgets(out)),
+                   verify_filing([FilingItem(form_key="ri", pack=pack, pdf_path=out)])]
+        # the width checks only: a 2025 date of birth also gets the pack-maxlen check
+        return [[c for c in r.clipping if any(c.name.endswith(n) for n in sizes) and "pt inside the" in c.detail]
+                for r in reports]
 
-    reports = [
-        verify_form(pack, out),
-        verify_form(pack, out, widgets=read_text_widgets(out)),
-        verify_filing([FilingItem(form_key="ri", pack=pack, pdf_path=out)]),
-    ]
-    for report in reports:
-        checks = width_checks(report)
-        assert checks and {c.status for c in checks} == {status}, [c.detail for c in checks]
-        assert ("PENDING the user's decision" in checks[0].detail) == (status == PASS)
+    for checks in width_checks({line: _widest(kind) for line, kind in kind_of.items()}):
+        assert len(checks) == 20 and {c.status for c in checks} == {PASS}, [c.detail for c in checks if c.status != PASS]
+    dob = "schedule_e.dependent_1.dob"
+    long_date = {"signature.taxpayer.date": "Dec 31, 2026"}
+    if next(pf for pf in pack.fields if pf.line == dob).maxlen is None:  # 2023 and 2024 budget no date of birth
+        long_date[dob] = "12/31/2026"
+    for checks in width_checks(long_date):
+        assert len(checks) == len(long_date) and {c.status for c in checks} == {FAIL}, [c.detail for c in checks]
 
 
-def test_every_pending_decision_row_still_names_a_shipped_form():
-    for (jurisdiction, form), (pattern, _note) in PENDING_CLIP_DECISIONS.items():
-        packs = [load_pack(p) for p in FORMPACKS.glob(f"{jurisdiction}/*/*/pack.yaml")]
-        hits = [p for p in packs if p.form == form and any(pattern.fullmatch(pf.line) for pf in p.fields)]
-        assert hits, f"PENDING_CLIP_DECISIONS names {jurisdiction} {form}, which no pack carries — delete the row"
+@pytest.mark.network
+@pytest.mark.parametrize("path", RI_PACKS, ids=lambda p: p.parent.parent.name)
+@pytest.mark.parametrize(("kind", "line"), [("date of birth", "schedule_e.dependent_13.dob"),
+                                            ("middle initial", "spouse.name.middle_initial"),
+                                            ("suffix", "name.suffix"), ("signature date", "preparer.date")])
+def test_the_render_draws_each_ri_box_whole_at_its_font_size(path: Path, kind: str, line: str, tmp_path):
+    """pdfium's render agrees: the widest value, filled at the pack size, loses no ink to its box."""
+    cut = _cut_pt(path, line, _widest(kind), tmp_path)
+    assert cut < 0.1, f"{path.parent.parent.name} {line}: {_widest(kind)!r} lost {cut:.2f} pt at the pack font_size"
+
+
+@pytest.mark.network
+@pytest.mark.parametrize("path", RI_PACKS, ids=lambda p: p.parent.parent.name)
+@pytest.mark.parametrize(("value", "side"), RI_WITHIN_TOLERANCE["suffix"])
+def test_the_render_cuts_a_value_past_the_suffix_box_by_less_than_the_tolerance(path: Path, value: str, side: str,
+                                                                                 tmp_path):
+    """pdfium's render of the within-tolerance suffixes at the pack size: ESQ loses under CUT_TOLERANCE_PT of ink on
+    the right, and V, VI and VII, which start left of the model's inset, render whole."""
+    cut = _cut_pt(path, "name.suffix", value, tmp_path)
+    limit = CUT_TOLERANCE_PT if side == "right" else 0.1
+    assert cut < limit, f"{path.parent.parent.name} name.suffix: {value!r} lost {cut:.2f} pt at the pack font_size"
 
 
 # ── the render ───────────────────────────────────────────────────────────────
@@ -425,8 +488,9 @@ def _cut_pt(pack_path: Path, line: str, value: str, work: Path) -> float:
 @pytest.mark.parametrize(
     ("pack", "line", "value", "cut"),
     [
-        ("states/ri/2025/ri1040/pack.yaml", "schedule_e.dependent_1.dob", "01012020", True),
-        ("states/ri/2025/ri1040/pack.yaml", "schedule_e.dependent_1.dob", "0101202", False),
+        # at the pack's font_size (11.7 pt, Phase K JEe2): 8 digits whole, a ninth far past the box
+        ("states/ri/2025/ri1040/pack.yaml", "schedule_e.dependent_1.dob", "123120261", True),
+        ("states/ri/2025/ri1040/pack.yaml", "schedule_e.dependent_1.dob", "12312026", False),
         ("states/ca/2025/form540/pack.yaml", "mailing_address.apt_no", "1234567890123", True),
         ("states/ca/2025/form540/pack.yaml", "mailing_address.apt_no", "123456789012", False),
         # right-aligned (/Q 2): the overrun is on the LEFT, so it is the first glyph that is cut
@@ -443,8 +507,11 @@ def test_the_render_cuts_what_the_model_says_and_nothing_else(pack: str, line: s
     from taxfill_core.fetch import fetch_pack_blank  # noqa: PLC0415
 
     loaded = load_pack(FORMPACKS / pack)
-    name = qualified_field_name(loaded, next(pf for pf in loaded.fields if pf.line == line))
+    pf = next(pf for pf in loaded.fields if pf.line == line)
+    name = qualified_field_name(loaded, pf)
     widget = next(w for w in read_text_widgets(fetch_pack_blank(loaded)) if w.name == name)
+    if pf.font_size is not None:  # the fill writes the box at the pack's size (Phase K JEe2), so the model reads it
+        widget = widget.model_copy(update={"da": re.sub(r"[\d.]+ Tf", f"{pf.font_size:g} Tf", widget.da)})
     verdict = clipping_scan([widget.model_copy(update={"value": value})])[0].status
     assert verdict == (FAIL if cut else PASS), f"{value!r}: the model says {verdict}"
     measured = _cut_pt(FORMPACKS / pack, line, value, tmp_path)

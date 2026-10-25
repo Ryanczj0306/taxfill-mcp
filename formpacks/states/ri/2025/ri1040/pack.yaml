@@ -233,6 +233,25 @@ source_url: https://tax.ri.gov/sites/g/files/xkgbur541/files/2026-01/2025_1040WE
 pdf_sha256: "ac024a0d865fd08ca8cc6a907ae78b0aa74a3f3bd3b6c35d845f4294ba4d9f52"
 acroform_root: "topmostSubform[0]"
 fields:
+  # Phase K JEe2 (2026-10-25), font_size: RI-1040 sizes four kinds of box for its Courier New 12 glyphs edge to
+  # edge (each widget's /DA "/CourierNewPSMT 12 Tf 0 g", a 1 pt border a side), so the widest value each takes
+  # lost ink at 12 pt. The user chose a smaller font: each kind gets the largest size, on a 0.1 pt grid, at which
+  # its widest value prints whole by taxfill_core.textfit's ink model (overrun <= 0 pt, not the 0.5 pt tolerance)
+  # and on a pdfium render of the filled box against the same box widened 40 pt (no ink cut), in all three years:
+  #   dependent date of birth (57.6 pt, left-aligned): 8-digit MMDDYYYY ending in 6, the digit with the least
+  #     right bearing: 11.7 pt (ink 0.46 pt inside; 11.8 overruns 0.01 pt; 12 overruns 0.96, render cut 0.92);
+  #   middle initial (7.2 pt, centred): V, the widest capital ink in Courier (then A, N, M, W): 8.5 pt (0.01 pt
+  #     inside; 8.6 overruns 0.02 pt; 12 overruns 1.06 pt a side, render cut 0.92);
+  #   suffix (21.6 pt, left-aligned): III, the widest generational suffix (JR, SR, II, III, IV): 11.4 pt (0.16 pt
+  #     inside; 11.5 overruns 0.01 pt; 12 overruns 0.86, render cut 0.58). Two kinds of value the box takes pass at
+  #     11.4 only within verify's 0.5 pt tolerance, as on any box (Phase K JEe2 (2026-10-25), verifier finding): ESQ
+  #     ends 0.43 pt past the right inset (render cut 0.33 pt; at 12 pt it overran 1.48 and FAILed), and V, VI and
+  #     VII start 0.06 pt left of the left inset at every size (V's negative left bearing; the render draws them
+  #     whole); test_textfit_ink's RI_WITHIN_TOLERANCE pins both;
+  #   signature and preparer dates (72 pt, left-aligned): 10-character MM/DD/YYYY ending in 6 (12/31/2026):
+  #     11.8 pt (0.23 pt inside; 11.9 overruns 0.37 pt, render cut 0.33; 12 overruns 0.96, render cut 0.92).
+  # fill_form writes each box's /DA at its font_size and verify measures the value there; a value wider than the
+  # box takes at that size (a slashed date of birth, a date longer than 10 characters) still FAILs.
   # ============================================ page 1 -- header (name / address)
   - line: name.first                     # "Your first name"
     field: Page1[0].PrimFirstName[0]
@@ -241,6 +260,7 @@ fields:
     field: Page1[0].PrimMidInitial[0]
     type: text
     maxlen: 1
+    font_size: 8.5  # JEe2: the middle-initial box, measured at the top of fields
   - line: name.last                      # "Last name"
     field: Page1[0].PrimLastName[0]
     type: text
@@ -248,6 +268,7 @@ fields:
     field: Page1[0].Suffix[0]
     type: text
     maxlen: 3
+    font_size: 11.4  # JEe2: the suffix box, measured at the top of fields
   - line: spouse.name.first              # "Spouse's name"
     field: Page1[0].SecFirstName[0]
     type: text
@@ -255,6 +276,7 @@ fields:
     field: Page1[0].SecMidInitial[0]
     type: text
     maxlen: 1
+    font_size: 8.5  # JEe2: the middle-initial box, measured at the top of fields
   - line: spouse.name.last               # "Last name"
     field: Page1[0].SecLastName[0]
     type: text
@@ -262,6 +284,7 @@ fields:
     field: Page1[0].Suffix[1]
     type: text
     maxlen: 3
+    font_size: 11.4  # JEe2: the suffix box, measured at the top of fields
   - line: identifying_number             # "Your social security number" (9-digit comb)
     field: Page1[0].PrimTaxpayerSSN[0]
     type: text
@@ -498,6 +521,7 @@ fields:
   - line: signature.taxpayer.date             # taxpayer "Date"
     field: Page2[0].DateP[0]
     type: text
+    font_size: 11.8  # JEe2: the signature and preparer date box, measured at the top of fields
   - line: signature.taxpayer.phone            # taxpayer "Telephone number"
     field: Page2[0].PhoneNumberP[0]
     type: text
@@ -513,6 +537,7 @@ fields:
   - line: signature.spouse.date                 # spouse "Date"
     field: Page2[0].DateS[0]
     type: text
+    font_size: 11.8  # JEe2: the signature and preparer date box, measured at the top of fields
   - line: signature.spouse.phone                # spouse "Telephone number"
     field: Page2[0].PhoneNumberS[0]
     type: text
@@ -523,6 +548,7 @@ fields:
   - line: preparer.date                         # paid preparer "Date"
     field: Page2[0].Date[0]
     type: text
+    font_size: 11.8  # JEe2: the signature and preparer date box, measured at the top of fields
   - line: preparer.phone                        # paid preparer "Telephone number"
     field: Page2[0].PreparerPhoneNumber[0]
     type: text
@@ -1003,6 +1029,7 @@ fields:
     field: Page5[0].DOB-1[0]
     type: text
     maxlen: 8
+    font_size: 11.7  # JEe2: the date-of-birth box, measured at the top of fields
   - line: schedule_e.dependent_1.relationship  # 2a (D) Relationship (no /MaxLen on rows 1-13 since 2025; 79.2 pt box, 10 glyphs render whole)
     field: Page5[0].Relationship-1[0]
     type: text
@@ -1020,6 +1047,7 @@ fields:
     field: Page5[0].DOB-2[0]
     type: text
     maxlen: 8
+    font_size: 11.7  # JEe2: the date-of-birth box, measured at the top of fields
   - line: schedule_e.dependent_2.relationship
     field: Page5[0].Relationship-2[0]
     type: text
@@ -1037,6 +1065,7 @@ fields:
     field: Page5[0].DOB-3[0]
     type: text
     maxlen: 8
+    font_size: 11.7  # JEe2: the date-of-birth box, measured at the top of fields
   - line: schedule_e.dependent_3.relationship
     field: Page5[0].Relationship-3[0]
     type: text
@@ -1054,6 +1083,7 @@ fields:
     field: Page5[0].DOB-4[0]
     type: text
     maxlen: 8
+    font_size: 11.7  # JEe2: the date-of-birth box, measured at the top of fields
   - line: schedule_e.dependent_4.relationship
     field: Page5[0].Relationship-4[0]
     type: text
@@ -1071,6 +1101,7 @@ fields:
     field: Page5[0].DOB-5[0]
     type: text
     maxlen: 8
+    font_size: 11.7  # JEe2: the date-of-birth box, measured at the top of fields
   - line: schedule_e.dependent_5.relationship
     field: Page5[0].Relationship-5[0]
     type: text
@@ -1088,6 +1119,7 @@ fields:
     field: Page5[0].DOB-6[0]
     type: text
     maxlen: 8
+    font_size: 11.7  # JEe2: the date-of-birth box, measured at the top of fields
   - line: schedule_e.dependent_6.relationship
     field: Page5[0].Relationship-6[0]
     type: text
@@ -1105,6 +1137,7 @@ fields:
     field: Page5[0].DOB-7[0]
     type: text
     maxlen: 8
+    font_size: 11.7  # JEe2: the date-of-birth box, measured at the top of fields
   - line: schedule_e.dependent_7.relationship
     field: Page5[0].Relationship-7[0]
     type: text
@@ -1122,6 +1155,7 @@ fields:
     field: Page5[0].DOB-8[0]
     type: text
     maxlen: 8
+    font_size: 11.7  # JEe2: the date-of-birth box, measured at the top of fields
   - line: schedule_e.dependent_8.relationship
     field: Page5[0].Relationship-8[0]
     type: text
@@ -1139,6 +1173,7 @@ fields:
     field: Page5[0].DOB-9[0]
     type: text
     maxlen: 8
+    font_size: 11.7  # JEe2: the date-of-birth box, measured at the top of fields
   - line: schedule_e.dependent_9.relationship
     field: Page5[0].Relationship-9[0]
     type: text
@@ -1156,6 +1191,7 @@ fields:
     field: Page5[0].DOB-10[0]
     type: text
     maxlen: 8
+    font_size: 11.7  # JEe2: the date-of-birth box, measured at the top of fields
   - line: schedule_e.dependent_10.relationship
     field: Page5[0].Relationship-10[0]
     type: text
@@ -1173,6 +1209,7 @@ fields:
     field: Page5[0].DOB-11[0]
     type: text
     maxlen: 8
+    font_size: 11.7  # JEe2: the date-of-birth box, measured at the top of fields
   - line: schedule_e.dependent_11.relationship
     field: Page5[0].Relationship-11[0]
     type: text
@@ -1190,6 +1227,7 @@ fields:
     field: Page5[0].DOB-12[0]
     type: text
     maxlen: 8
+    font_size: 11.7  # JEe2: the date-of-birth box, measured at the top of fields
   - line: schedule_e.dependent_12.relationship
     field: Page5[0].Relationship-12[0]
     type: text
@@ -1207,6 +1245,7 @@ fields:
     field: Page5[0].DOB-13[0]
     type: text
     maxlen: 8
+    font_size: 11.7  # JEe2: the date-of-birth box, measured at the top of fields
   - line: schedule_e.dependent_13.relationship
     field: Page5[0].Relationship-13[0]
     type: text
