@@ -1,10 +1,17 @@
-# sched_se 2026 — DRAFTS-FIRST (Phase J JT5a, read 2026-09-27). Mapped from the IRS early-release DRAFT
-# (irs.gov/pub/irs-dft/f1040sse--dft.pdf, footer "Created 4/27/26"). Its cover sheet: "there are
-# never any changes to the last posted draft of the form and the final revision of the form". PDF page
-# 1 is that cover sheet, so the form's pages are PDF pages 2 onward. When the final posts at
-# irs-prior/f1040sse--2026.pdf (scripts/check_finals.py opens the re-pin issue), re-pin source_url,
-# pdf_sha256 and source_status final, drop draft_created, and re-read the face. TY2026 is planning-only,
-# so this pack fills only in REHEARSAL mode.
+# sched_se 2026 — DRAFTS-FIRST (Phase J JT5a, read 2026-09-27), RE-PINNED TO THE FINAL 2026-11-05 (Phase J JT6,
+# the first TY2026 finals; the `ty2026-finals: re-pin now` issue). Mapped from the IRS early-release DRAFT
+# (irs.gov/pub/irs-dft/f1040sse--dft.pdf, footer "Created 4/27/26", sha a59fa5dcf2f0a8a5…), whose cover sheet
+# said "there are never any changes to the last posted draft of the form and the final revision of the form" —
+# and there were none. The final at irs.gov/pub/irs-prior/f1040sse--2026.pdf (PDF metadata 11/03/26; the footer
+# keeps "Created 4/27/26"; downloaded twice, both sha256 a42f5a19c0e84a96…; irs-pdf/f1040sse.pdf serves the same
+# bytes) carries the same 27 widgets, each on the same page once the draft's cover sheet is dropped, with the same
+# /Rect, /Ff, /MaxLen, /DA, /Q and /AP states, and the page text differs only by the removed "DRAFT — DO NOT FILE"
+# banners (a full text diff of both pages). What did change is the shape of every IRS final (the 2025 final has
+# both): the final is an XFA hybrid (/AcroForm gains /XFA and /SigFlags 2 — the filler drops the XFA stream when it
+# writes, Phase K JK5) and carries NO /TU tooltips, which the draft printed on all 27 widgets; neither the map nor
+# the filler reads a tooltip (the pack-blind anchor loses that evidence here: knowledge/anchor, run 7). The form's
+# pages are now PDF pages 1 and 2. TY2026 is planning-only (knowledge/federal/2026.yaml is provisional), so this
+# FINAL pack fills only in REHEARSAL mode until JT6 flips the year (filler.rehearsal_only).
 #
 # 2025 -> 2026: 27 widgets, the same set as 2025 except two leaves that lost their ReadOrder wrapper:
 # Line5a_ReadOrder[0].f1_10[0] -> f1_10[0] (line 5a) and Line8a_ReadOrder[0].f1_14[0] -> f1_14[0]
@@ -46,10 +53,9 @@
 form: "Schedule SE (Form 1040)"
 jurisdiction: federal
 tax_year: 2026
-source_url: https://www.irs.gov/pub/irs-dft/f1040sse--dft.pdf
-pdf_sha256: "a59fa5dcf2f0a8a5a71c46aa3837e9e8e605eeecc0a666bcb784a368900d141c"
-source_status: draft
-draft_created: "4/27/26"
+source_url: https://www.irs.gov/pub/irs-prior/f1040sse--2026.pdf
+pdf_sha256: "a42f5a19c0e84a966a49b5f4ca021d3f49c4fda2e087da0b00bf2003525f8655"
+source_status: final
 acroform_root: topmostSubform[0]
 fields:
   - line: name

@@ -8,7 +8,7 @@
 # block whose authority does not exist yet is ABSENT, not guessed: calc raises its
 # prescriptive "no block for this year" error rather than return a fabricated figure.
 #
-# WHAT THE PACK RESTS ON (as of 2026-09-27)
+# WHAT THE PACK RESTS ON (as of 2026-09-27; the first two form finals noted 2026-11-05)
 #   Final and in force:
 #     * Rev. Proc. 2025-32, the 2026 inflation adjustments (rate_schedules,
 #       standard_deduction, tax_computation_worksheet, capital_gains_brackets).
@@ -21,11 +21,16 @@
 #       (filing_grade_basis: own_final_revision); the Q4 voucher is due Jan. 15, 2027.
 #     * Form W-2 (2026), Created 1/7/26, and the 2026 General Instructions for
 #       Forms W-2 and W-3 (irs-prior/fw2--2026.pdf, irs-prior/iw2w3--2026.pdf).
+#     * Schedule C (2026) and Schedule SE (2026), the first TY2026 form finals
+#       (irs-prior/f1040sc--2026.pdf, 10/29/26; irs-prior/f1040sse--2026.pdf, 11/03/26),
+#       each widget-identical to its draft; their packs were re-pinned 2026-11-05 (JT6,
+#       first finals). They move no figure here: sched_se.ss_wages (form_lines) is now
+#       read off the final, and every other block still waits on the sources below.
 #   Drafts only (irs.gov/pub/irs-dft/, projection-grade until each final posts;
 #   footer "Created" dates):
 #     * Form 1040 (8/19/26); Schedules 1 (4/24/26), 1-A (6/16/26), 2 (4/27/26),
-#       3 (4/27/26), 3-A (6/24/26), A (5/12/26), B (4/7/26), D (4/1/26),
-#       SE (4/27/26); Forms 8949 (4/1/26), 8959 (5/27/26), 8889 (4/30/26),
+#       3 (4/27/26), 3-A (6/24/26), A (5/12/26), B (4/7/26), D (4/1/26);
+#       Forms 8949 (4/1/26), 8959 (5/27/26), 8889 (4/30/26),
 #       8606 (4/21/26).
 #     * Pub 1040 (2026), Tax and Earned Income Credit Tables, draft dated Aug 28,
 #       2026 (posted 09/16/2026).
@@ -1924,9 +1929,9 @@ form_lines:
       tax withholding on Form 1040, 1040-SR, or 1040-NR, line 25c".
   sched_se.ss_wages:
     line: "8a"
-    line_source: "draft Created 4/27/26"
-    url: "https://www.irs.gov/pub/irs-dft/f1040sse--dft.pdf"
-    read: "2026-09-24"
+    line_source: final
+    url: "https://www.irs.gov/pub/irs-prior/f1040sse--2026.pdf"
+    read: "2026-11-05"
     printed: "8a Total social security wages and tips (total of boxes 3 and 7 on Form(s) W-2) and railroad retirement (tier 1) compensation. If $184,500 or more, skip lines 8b through 10, and go to line 11"
     note: >-
       W-2 boxes 3 and 7, not box 1. Through line 8d it comes off the line 7

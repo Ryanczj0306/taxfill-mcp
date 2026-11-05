@@ -1,9 +1,21 @@
 # Federal Schedule C (Form 1040), TAX YEAR 2026 — DRAFTS-FIRST (Phase J JT5d, read 2026-09-27).
 #
 # Mapped from the IRS early-release DRAFT (irs.gov/pub/irs-dft/f1040sc--dft.pdf, footer "Schedule C (Form
-# 1040) 2026 Created 5/15/26"). PDF page 1 is the IRS cover sheet, so the form's pages 1 and 2 are PDF pages
-# 2 and 3. When the final posts at irs-prior/f1040sc--2026.pdf, re-pin source_url, pdf_sha256 and
-# source_status final, drop draft_created, and re-read the face. TY2026 is planning-only (rehearsal only).
+# 1040) 2026 Created 5/15/26"). The draft's PDF page 1 was the IRS cover sheet, so the form's pages 1 and 2 were
+# PDF pages 2 and 3 (the final below has no cover sheet). TY2026 is planning-only (rehearsal only).
+#
+# RE-PINNED TO THE FINAL 2026-11-05 (Phase J JT6, the first TY2026 finals; the `ty2026-finals: re-pin now` issue).
+# The final posted at irs.gov/pub/irs-prior/f1040sc--2026.pdf (PDF metadata 10/29/26; the footer keeps "Created
+# 5/15/26"), downloaded twice, both sha256 cc44e7d1150e54d9…; irs-pdf/f1040sc.pdf serves the same bytes. Compared
+# widget by widget with the draft (sha 287b4510dd847c11…): the same 109 names, each on the same page once the cover
+# sheet is dropped, the same /Rect, /Ff, /MaxLen, /DA, /Q and /AP states; the page text differs only by the removed
+# "DRAFT — DO NOT FILE" banners (a full text diff of both pages). Two things DID change, and they are the shape of
+# every IRS final (the 2025 final has both): the final is an XFA hybrid (/AcroForm gains /XFA and /SigFlags 2 — the
+# filler drops the XFA stream when it writes, Phase K JK5), and it carries NO /TU tooltips, which the draft printed
+# on all 109 widgets. Neither the map nor the filler reads a tooltip, so every binding, maxlen and relation below
+# stands on the final face; the pack-blind anchor loses its tooltip evidence here (knowledge/anchor, run 7).
+# TY2026 is still planning-only (knowledge/federal/2026.yaml is provisional), so this FINAL pack fills only in
+# REHEARSAL mode until JT6 flips the year (filler.rehearsal_only).
 #
 # 109 widgets (2025: 105), all mapped (the numbering skips f1_30). 2025 -> 2026, read off the draft face
 # and widget tree (every binding re-read — the page-1 f-numbers shift after the new address boxes):
@@ -22,10 +34,9 @@
 form: Schedule C (Form 1040)
 jurisdiction: federal
 tax_year: 2026
-source_url: https://www.irs.gov/pub/irs-dft/f1040sc--dft.pdf
-pdf_sha256: 287b4510dd847c11f6cbbcc98fee05ac5ff187cc18e1413f8759a4a7cd802224
-source_status: draft
-draft_created: "5/15/26"
+source_url: https://www.irs.gov/pub/irs-prior/f1040sc--2026.pdf
+pdf_sha256: cc44e7d1150e54d991835814c1191f60a32617730ca9e50e6f532b51293a86b4
+source_status: final
 acroform_root: topmostSubform[0]
 fields:
   - { line: "name", field: "Page1[0].f1_1[0]", type: text }

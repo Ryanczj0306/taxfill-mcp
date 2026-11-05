@@ -14,7 +14,7 @@ top_tier_kinds:
 - text
 passed: true
 adjudicated: 185
-test_runs: 6
+test_runs: 7
 history:
 - run: 1
   date: '2026-10-24'
@@ -104,6 +104,20 @@ history:
     jk15-v5 and 0 under jk15-v6: the 16 were Schedule C 2022-2025 47b (read 46b) and Form 2555 2023-2025 13b (read 11b), both
     boxes of each pair, and Schedule B 2026 draft 7a (read 7); jk15-v4''s 7 were those Yes boxes alone. Thresholds and selection
     unchanged.'
+- run: 7
+  date: '2026-11-05'
+  method: jk15-v6
+  thresholds:
+    top: 3.0
+    med: 2.0
+  note: 'run 7, no method change: the 2026 Schedule C and Schedule SE blanks were re-pinned from the IRS drafts to the finals
+    (Phase J JT6, 2026-11-05). The finals carry the same widgets, each one page lower (the drafts'' cover sheet is gone),
+    but — like every IRS final — no /TU tooltips, which the drafts printed on every widget, so the anchor''s tooltip evidence
+    (tu_line, tu_other_line, tu_words_same_row) disappears on these two packs: on Schedule C five widgets left the top tier
+    for med (lines 9, 13, 14, 32b; Schedule SE 4c) and three that a tooltip for the parent line had held at low reached it
+    (16a, 20a, 24a), every one agreeing with its pack; the scored top tier is 1094 / 1084 agree (was 1096 / 1086). The selection''s
+    two pdf_sha256 values follow the packs; the one adjudicated sched_c item is re-keyed p3 -> p2 (the same box, the same
+    blind verdict).'
 criteria:
   test_packs_at_least_30: true
   test_federal_at_least_10: true
@@ -158,7 +172,7 @@ notes:
   labelled Yes/No, capped below the top tier (yes_no_pair). Text widgets are unchanged from jk15-v4. This table scores printed_line
   only; the labels are measured apart, in knowledge/anchor/labels.yaml (scripts/anchor_label_check.py), which licenses nothing.'
 measured:
-  selection_sha256: d87d78833018c39c
+  selection_sha256: 348eac6615ea0b1c
   selection_disclosure:
     siblings_across_split:
     - dev: states/al/al40
@@ -206,9 +220,9 @@ measured:
     states_distinct: 22
     tiers:
       top:
-        emitted: 1450
-        scored: 1096
-        agree: 1086
+        emitted: 1448
+        scored: 1094
+        agree: 1084
         disagree: 10
         unscored: 354
         provisional_precision: 0.9909
@@ -216,24 +230,24 @@ measured:
         - 0.9833
         - 0.995
       med:
-        emitted: 3358
-        scored: 560
-        agree: 405
+        emitted: 3355
+        scored: 561
+        agree: 406
         disagree: 155
-        unscored: 2798
-        provisional_precision: 0.7232
+        unscored: 2794
+        provisional_precision: 0.7237
         wilson_95:
-        - 0.6847
-        - 0.7587
+        - 0.6853
+        - 0.7591
       low:
-        emitted: 3571
-        scored: 37
-        agree: 37
+        emitted: 3576
+        scored: 38
+        agree: 38
         disagree: 0
-        unscored: 3534
+        unscored: 3538
         provisional_precision: 1.0
         wilson_95:
-        - 0.9059
+        - 0.9082
         - 1.0
       none:
         emitted: 827
@@ -245,21 +259,21 @@ measured:
         wilson_95: null
     top_by_kind:
       text:
-        emitted: 1436
-        scored: 1086
-        agree: 1077
+        emitted: 1435
+        scored: 1085
+        agree: 1076
         provisional_precision: 0.9917
         wilson_95:
         - 0.9843
         - 0.9956
       checkbox:
-        emitted: 14
-        scored: 10
-        agree: 9
-        provisional_precision: 0.9
+        emitted: 13
+        scored: 9
+        agree: 8
+        provisional_precision: 0.8889
         wilson_95:
-        - 0.5958
-        - 0.9821
+        - 0.565
+        - 0.9801
     forms_with_a_mis_anchored_top_widget: 1
     per_form_any_mis_anchored_top_rate: 0.0278
     forms_with_top_tier: 36
@@ -430,8 +444,8 @@ adjudication:
   unadjudicated: 0
   tiers:
     top:
-      scored: 1096
-      right: 1095
+      scored: 1094
+      right: 1093
       wrong: 1
       ambiguous: 0
       unadjudicated: 0
@@ -440,24 +454,24 @@ adjudication:
       - 0.9948
       - 0.9998
     med:
-      scored: 560
-      right: 554
+      scored: 561
+      right: 555
       wrong: 6
       ambiguous: 0
       unadjudicated: 0
       precision: 0.9893
       wilson_95:
-      - 0.9768
+      - 0.9769
       - 0.9951
     low:
-      scored: 37
-      right: 37
+      scored: 38
+      right: 38
       wrong: 0
       ambiguous: 0
       unadjudicated: 0
       precision: 1.0
       wilson_95:
-      - 0.9059
+      - 0.9082
       - 1.0
     none:
       scored: 0
@@ -469,8 +483,8 @@ adjudication:
       wilson_95: null
   top_by_kind:
     text:
-      scored: 1086
-      right: 1086
+      scored: 1085
+      right: 1085
       wrong: 0
       ambiguous: 0
       unadjudicated: 0
@@ -479,15 +493,15 @@ adjudication:
       - 0.9965
       - 1.0
     checkbox:
-      scored: 10
-      right: 9
+      scored: 9
+      right: 8
       wrong: 1
       ambiguous: 0
       unadjudicated: 0
-      precision: 0.9
+      precision: 0.8889
       wilson_95:
-      - 0.5958
-      - 0.9821
+      - 0.565
+      - 0.9801
   per_form_any_mis_anchored_top_rate: 0.0
   forms_with_top_tier: 36
   forms_with_a_mis_anchored_top_widget: []
@@ -686,11 +700,11 @@ adjudication:
   combined_top_estimate:
     groups:
     - text
-    scored_n: 1086
+    scored_n: 1085
     unscored_population: 350
     weights:
-      scored: 0.7563
-      unscored: 0.2437
+      scored: 0.7561
+      unscored: 0.2439
     precision: 1.0
     wilson_95:
     - 0.9793

@@ -24,10 +24,10 @@ so this page is always current.
 | Schedule 8812 (Form 1040) | — | ✓ | ✓ | ✓ | draft |
 | Schedule A (Form 1040) | — | ✓ | ✓ | ✓ | draft |
 | Schedule B (Form 1040) | — | ✓ | ✓ | ✓ | draft |
-| Schedule C (Form 1040) | ✓ | ✓ | ✓ | ✓ | draft |
+| Schedule C (Form 1040) | ✓ | ✓ | ✓ | ✓ | rehearsal |
 | Schedule D (Form 1040) | — | ✓ | ✓ | ✓ | draft |
 | Schedule E (Form 1040) | — | ✓ | ✓ | ✓ | draft |
-| Schedule SE (Form 1040) | — | ✓ | ✓ | ✓ | draft |
+| Schedule SE (Form 1040) | — | ✓ | ✓ | ✓ | rehearsal |
 
 The 2022 schedule packs serve Form 1040-NR, which attaches them; there is no Form 1040 pack for 2022.
 

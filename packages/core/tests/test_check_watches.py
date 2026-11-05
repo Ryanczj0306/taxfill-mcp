@@ -133,7 +133,9 @@ def _main(web: _Web, argv: list[str], runner: _Runner | None = None, today: dt.d
 def test_the_named_targets_are_the_roadmap_s():
     assert [b.stem for b in cw.DRAFT_BASELINES] == ["f1040nrn", "f1040nro"]
     assert all(b.last_modified == dt.date(2025, 5, 13) for b in cw.DRAFT_BASELINES)
-    assert [s for s, _, _ in cw.nondraft_packs(2026)] == ["f1040es", "f8316", "f843", "f8833", "fw7"]
+    # JT6 (2026-11-05): the Schedule C and SE finals joined the non-draft set (sorted by pack directory).
+    assert [s for s, _, _ in cw.nondraft_packs(2026)] == [
+        "f1040es", "f8316", "f843", "f8833", "fw7", "f1040sc", "f1040sse"]
     rows = cw.state_targets(2026)
     tier1 = [r["state"].lower() for r in yaml.safe_load((REPO / "scripts" / "tier1_states.yaml").read_text())["tier1"]]
     assert sorted({r["state"] for r in rows}) == sorted(tier1) and len(tier1) == 12
@@ -254,7 +256,8 @@ def test_a_provisional_next_year_pack_does_not_move_the_watches_off_the_season(t
     assert year == 2026
     stems = [w.stem for w in cf.watch_list(year, repo=tmp_path)]
     assert len(stems) > 10 and "f1040" in stems
-    assert [s for s, _, _ in cw.nondraft_packs(year, tmp_path)] == ["f1040es", "f8316", "f843", "f8833", "fw7"]
+    assert [s for s, _, _ in cw.nondraft_packs(year, tmp_path)] == [
+        "f1040es", "f8316", "f843", "f8833", "fw7", "f1040sc", "f1040sse"]
 
 
 def test_a_release_on_the_last_day_of_october_survives_the_month_rollover():

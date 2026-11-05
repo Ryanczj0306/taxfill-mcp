@@ -1828,7 +1828,8 @@ def test_jt5a_the_near_ports_read_their_drafts():
     ext = load_pack(REPO_ROOT / "formpacks/federal/2026/f4868/pack.yaml")
     niit = load_pack(REPO_ROOT / "formpacks/federal/2026/f8960/pack.yaml")
     assert {(p.form, p.source_status, p.draft_created) for p in (se, ext, niit)} == {
-        ("Schedule SE (Form 1040)", "draft", "4/27/26"), ("4868", "draft", "5/13/26"), ("8960", "draft", "6/1/26")}
+        ("Schedule SE (Form 1040)", "final", None), ("4868", "draft", "5/13/26"), ("8960", "draft", "6/1/26")}
+    # Schedule SE's draft (Created 4/27/26) became the final on 2026-11-03: see test_jt6_* below.
     fields = {f.line: f.field for f in se.fields}
     assert (fields["5a"], fields["8a"]) == ("Page1[0].f1_10[0]", "Page1[0].f1_14[0]")      # the ReadOrder wrappers went
     disaster = next(f for f in ext.fields if f.line == "10.disaster")
@@ -1944,7 +1945,7 @@ def test_jt5d_schedule_a_renumbers_the_gift_and_other_lines():
 
 def test_jt5d_schedule_c_splits_the_address_and_line_16():
     new = _fed_pack(2026, "sched_c")
-    assert (new.source_status, new.draft_created, len(new.fields)) == ("draft", "5/15/26", 109)
+    assert (new.source_status, new.draft_created, len(new.fields)) == ("final", None, 109)   # final since 2026-11-05
     f = {pf.line: pf for pf in new.fields}
     assert [k for k in f if k.startswith("business_address.")] == [
         "business_address.street", "business_address.apt", "business_address.city", "business_address.state",
@@ -2170,3 +2171,63 @@ def test_conventions_lists_exactly_the_known_form_keys():
     assert listed == KNOWN_FORM_KEYS, (
         f"CONVENTIONS.md form keys: missing {sorted(KNOWN_FORM_KEYS - listed)}, extra {sorted(listed - KNOWN_FORM_KEYS)}")
     assert f"these {len(KNOWN_FORM_KEYS)} federal keys" in text[start:end]
+
+
+# ── JT6, the first TY2026 finals (2026-11-05) ─────────────────────────────────────────────────────────────────────
+
+# form key -> (the irs-prior final, its sha256, the widgets on the final blank). The IRS cover sheet promised "no
+# changes between the last posted draft and the final"; the re-pin held it to that, widget by widget.
+JT6_FIRST_FINALS = {
+    "sched_c": ("https://www.irs.gov/pub/irs-prior/f1040sc--2026.pdf",
+                "cc44e7d1150e54d991835814c1191f60a32617730ca9e50e6f532b51293a86b4", 109),
+    "sched_se": ("https://www.irs.gov/pub/irs-prior/f1040sse--2026.pdf",
+                 "a42f5a19c0e84a966a49b5f4ca021d3f49c4fda2e087da0b00bf2003525f8655", 27),
+}
+# Widgets a pack leaves unmapped on purpose: Schedule SE's two pre-printed constants, unmapped since the 2023 pack.
+JT6_UNMAPPED_ON_PURPOSE = {"sched_se": {"Page1[0].f1_13[0]", "Page2[0].f2_1[0]"}}
+
+
+def test_jt6_the_first_finals_are_repinned_and_stay_rehearsal_only():
+    """The 2026 Schedule C (posted 10/29/26) and Schedule SE (11/03/26) finals: each pack pins the irs-prior final
+    with no draft stamp, keeps the map JT5a/JT5d read, and — the year still provisional — fills only in rehearsal."""
+    from taxfill_core.filler import rehearsal_only  # noqa: PLC0415
+    for key, (url, sha, _widgets) in JT6_FIRST_FINALS.items():
+        pack = _fed_pack(2026, key)
+        assert (pack.source_url, pack.pdf_sha256, pack.source_status, pack.draft_created) == (url, sha, "final", None), key
+        assert rehearsal_only(pack), key
+    assert len(_fed_pack(2026, "sched_c").fields) == 109 and len(_fed_pack(2026, "sched_se").fields) == 25
+
+
+def _widget_names(pdf_path: Path) -> tuple[int, list[str]]:
+    """(pages, every widget's fully qualified name) read off the page /Annots, so a name counts once per widget."""
+    from pypdf import PdfReader  # noqa: PLC0415
+    reader = PdfReader(str(pdf_path))
+    names = []
+    for page in reader.pages:
+        for annot in page.get("/Annots") or []:
+            annot = annot.get_object()
+            if annot.get("/Subtype") != "/Widget":
+                continue
+            parts, node = [], annot
+            while node is not None:
+                if node.get("/T") is not None:
+                    parts.append(str(node["/T"]))
+                node = node.get("/Parent")
+                node = node.get_object() if node is not None else None
+            names.append(".".join(reversed(parts)))
+    return len(reader.pages), names
+
+
+@pytest.mark.network
+def test_jt6_the_first_finals_carry_every_mapped_widget_and_nothing_unmapped():
+    """On each final blank: two pages (the draft's cover sheet is gone), every mapped field is a widget, and every
+    widget is mapped except the ones the pack leaves out on purpose."""
+    for key, (_url, _sha, widgets) in JT6_FIRST_FINALS.items():
+        pack = _fed_pack(2026, key)
+        pages, names = _widget_names(fetch_pack_blank(pack))
+        assert (pages, len(names)) == (2, widgets), (key, pages, len(names))
+        root = pack.acroform_root + "."
+        mapped = {root + f.field for f in pack.fields}
+        assert mapped <= set(names), (key, sorted(mapped - set(names)))
+        assert set(names) - mapped == {root + n for n in JT6_UNMAPPED_ON_PURPOSE.get(key, set())}, key
+

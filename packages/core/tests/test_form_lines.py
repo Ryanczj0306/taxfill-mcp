@@ -69,12 +69,14 @@ EXPECTED: dict[str, dict[int, str]] = {
     "f1040.ira_taxable": {y: "4b" for y in range(2019, 2027)},
 }
 READ = {k: "2026-09-27" for k in ("f1040.agi", "f1040.total_tax", "f1040.ira_distributions", "f1040.ira_taxable")}
+# JT6 (2026-11-05): a 2026 key whose form has posted its FINAL is recorded as final (irs-prior, no draft stamp);
+# the value is the date the final face was read. Schedule SE's final (11/03/26) is identical to its 4/27/26 draft.
+FINAL_2026 = {"sched_se.ss_wages": "2026-11-05"}
 DRAFT_CREATED = {
     "sched1.other_income": "4/24/26",
     "f1040nr.treaty_exempt": "8/19/26",
     "f8959.withholding_part": "5/27/26",
     "f1040.additional_medicare_withholding": "8/19/26",
-    "sched_se.ss_wages": "4/27/26",
     "f1040.agi": "8/19/26",
     "f1040.total_tax": "8/19/26",
     "f1040.ira_distributions": "8/19/26",
@@ -119,8 +121,9 @@ def test_every_year_records_every_jf6a_key_with_its_face(key: str, year: int):
     assert year in EXPECTED[key], f"{year} is not pinned: read its {key} face and extend EXPECTED"
     entry = form_line_entry(year, key)
     assert entry.line == EXPECTED[key][year], f"{key} {year}"
-    assert entry.read == READ.get(key, "2026-09-24")
-    if year == 2026:
+    final_2026 = year == 2026 and key in FINAL_2026
+    assert entry.read == (FINAL_2026[key] if final_2026 else READ.get(key, "2026-09-24"))
+    if year == 2026 and not final_2026:
         assert entry.line_source == f"draft Created {DRAFT_CREATED[key]}"
         assert entry.url.startswith("https://www.irs.gov/pub/irs-dft/") and entry.url.endswith("--dft.pdf")
         if EXPECTED[key][year] is None:          # recorded absent, with its reason (f1040.total_tax, JF6c)

@@ -31,7 +31,7 @@ plan for what is **not yet done**, as of **2026-10-09** (re-planned 2026-10-09 �
 
 ## Where we are (verified)
 
-Done and on `main` (**15,549 tests** — offline 12,007 + live-.gov 3542; derived
+Done and on `main` (**15,551 tests** — offline 12,008 + live-.gov 3543; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -1304,6 +1304,7 @@ line items sum to the headline delta.
 
 - [ ] **JT6 — Finals re-pin, filing-grade flip, 2027 planning pack** (L; fires on check_finals) [TY26-28 + TY26-16]
   - **Per flagged form.** Diff its AcroForm names against the draft pack (the IRS says they are identical), re-render and re-audit, re-pin source_url and sha, and set `source_status: final`.
+    - **2026-11-05 — the first two finals re-pinned** (the `ty2026-finals: re-pin now` issue #9): Schedule C (irs-prior/f1040sc--2026.pdf, posted 10/29/26) and Schedule SE (irs-prior/f1040sse--2026.pdf, 11/03/26). Each final is widget-identical to its draft once the draft's cover sheet is dropped (109 and 27 widgets: names, /Rect, /Ff, /MaxLen, /AP states; the page text differs only by the DRAFT banners), so both maps stand; the packs are `source_status: final` and stay rehearsal-only while the year is provisional (`filler.rehearsal_only`). The knowledge pack's `sched_se.ss_wages` form line is read off the final. **What a final changes against its draft (expect it on every re-pin):** the final is an XFA hybrid (`/XFA`, `/SigFlags 2`, as every 2025 final; the filler already drops the stream) and carries no `/TU` tooltips, which the drafts print on every widget — the maps never read them, but the pack-blind anchor does, so the JK15 benchmark was re-measured on the finals (run 7, no method change: top tier 1094 scored / 1084 agree, was 1096 / 1086; still passed) and its one Schedule C adjudication re-keyed to the final's page. The watch now HEADs 32 stems, all 404 on 2026-11-05 (the 2025 precedent says mid-January). Tests: `test_jt6_*` (test_formpacks_federal), the discovery and watch rosters.
   - **Knowledge.**
     - Re-verify every draft-backed block against the final instructions, flipping its second_passes entries.
       - Including tax.obbba_schedule_1a (JF8): re-read the final Schedule 1-A and its instructions (the statutory figures cannot move; the face's slopes, rounding and birth date can).
