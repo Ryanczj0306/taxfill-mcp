@@ -39,7 +39,7 @@ The 2022 schedule packs serve Form 1040-NR, which attaches them; there is no For
 | Schedule A (Form 1040-NR) | — | — | — | — | ✓ | ✓ | ✓ | draft |
 | Schedule NEC (Form 1040-NR) | — | — | — | — | ✓ | ✓ | ✓ | — |
 | Schedule OI (Form 1040-NR) | — | — | — | ✓ | ✓ | ✓ | ✓ | — |
-| Form 8843 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | draft |
+| Form 8843 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | rehearsal |
 
 ### Estimated tax, extensions and amended returns
 
@@ -57,7 +57,7 @@ The 2022 schedule packs serve Form 1040-NR, which attaches them; there is no For
 | Form 1116 | ✓ | ✓ | ✓ | draft |
 | Form 2210 | — | — | ✓ | draft |
 | Form 2441 | ✓ | ✓ | ✓ | draft |
-| Form 2555 | ✓ | ✓ | ✓ | draft |
+| Form 2555 | ✓ | ✓ | ✓ | rehearsal |
 | Form 5329 | ✓ | ✓ | ✓ | draft |
 | Form 8316 | ✓ | ✓ | ✓ | rehearsal |
 | Form 8606 | ✓ | ✓ | ✓ | draft |

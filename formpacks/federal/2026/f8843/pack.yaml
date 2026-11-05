@@ -1,8 +1,15 @@
-# f8843 2026 — DRAFTS-FIRST (Phase J JT5c, read 2026-09-27). Mapped from the IRS early-release DRAFT
-# (irs.gov/pub/irs-dft/f8843--dft.pdf, footer "Created 5/11/26"). PDF page 1 is the IRS cover sheet, so
-# the form's pages are PDF pages 2-3 and its instructions 4-5 (the "Sign here" block is on PDF page 3). When
-# the final posts at irs-prior/f8843--2026.pdf, re-pin source_url, pdf_sha256, source_status final and the
-# signature page, drop draft_created, and re-read the face. TY2026 is planning-only (rehearsal mode only).
+# f8843 2026 — DRAFTS-FIRST (Phase J JT5c, read 2026-09-27), RE-PINNED TO THE FINAL 2026-11-05 (Phase J JT6, the
+# first TY2026 finals). Mapped from the IRS early-release DRAFT (irs.gov/pub/irs-dft/f8843--dft.pdf, footer
+# "Created 5/11/26", sha fa350c49d804c21e…), whose PDF page 1 was the cover sheet. The final at
+# irs.gov/pub/irs-prior/f8843--2026.pdf (PDF metadata 11/05/26; downloaded twice, both sha256 6e32cbf67c45464e…;
+# irs-pdf/f8843.pdf serves the same bytes) carries the same 48 widgets, each one page lower (no cover sheet), with
+# the same /Rect, /Ff, /MaxLen, /DA, /Q and /AP states; the page text differs only by the removed "DRAFT — DO NOT
+# FILE" banners (a full word diff of all four pages). So the form's pages are PDF pages 1-2 and its instructions
+# 3-4, and the "Sign here" block is on PDF page 2 (signature.page below, 3 on the draft). Like every IRS final it
+# is an XFA hybrid (/XFA, /SigFlags 2; the filler drops the stream, JK5) with NO /TU tooltips, which the draft
+# printed on every widget; neither the map nor the filler reads a tooltip (the pack-blind anchor loses that
+# evidence here: knowledge/anchor, run 8). TY2026 is planning-only (knowledge/federal/2026.yaml is provisional),
+# so this FINAL pack fills only in REHEARSAL mode until JT6 flips the year (filler.rehearsal_only).
 #
 # 2025 -> 2026: the same 48 widgets and lines. Seventeen text leaves drop their zero padding (Page1 f1_01-f1_09
 # -> f1_1-f1_9, Page2 f2_01-f2_08 -> f2_1-f2_8; same positions), and every printed year column moves up one
@@ -50,10 +57,9 @@
 form: "8843"
 jurisdiction: federal
 tax_year: 2026
-source_url: https://www.irs.gov/pub/irs-dft/f8843--dft.pdf
-pdf_sha256: "fa350c49d804c21e3ca9bc3edaf1ef9ce9ed71cd302b47ee919383438d792826"
-source_status: draft
-draft_created: "5/11/26"
+source_url: https://www.irs.gov/pub/irs-prior/f8843--2026.pdf
+pdf_sha256: "6e32cbf67c45464e7d93ee4c184a0be775bffd59f7574d054064ee4476b46c08"
+source_status: final
 acroform_root: "topmostSubform[0]"
 fields:
   # ---- page 1 header ------------------------------------------------------
@@ -291,10 +297,10 @@ identity_fields: [name.first, name.last, identifying_number, mailing_address]
 # these boxes are correctly BLANK. verify_filing honours that only in a filing that holds a Form 1040,
 # 1040-SR, 1040-NR or 1040-X; verified alone, the form counts as filed by itself (Phase K JK27, 2026-10-16).
 standalone_only_lines: [home_country_address, mailing_address]
-signature: { page: 3, standalone_only: true }   # PDF page 3 of the draft (page 1 is the cover sheet)
+signature: { page: 2, standalone_only: true }   # PDF page 2 of the final (the draft's cover sheet put it on page 3 until 2026-11-05)
 # Standalone where-to-file, verified by READING the "When and Where To File"
-# section inside this exact revision's instructions (page 3 of the
-# source_url PDF): "If you don't have to file a 2025 tax return, mail Form
+# section inside this exact revision's instructions (PDF page 3 of the
+# final; page 4 of the draft it was read on, 2026-09-27): "If you don't have to file a 2025 tax return, mail Form
 # 8843 to the Department of the Treasury, Internal Revenue Service Center,
 # Austin, TX 73301-0215". Form 8843 is an informational statement -- no tax
 # is ever due with it, so the with-payment address is the same Austin

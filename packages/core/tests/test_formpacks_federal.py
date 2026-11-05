@@ -1853,7 +1853,7 @@ def test_jt5b_the_credit_and_exclusion_ports_read_their_drafts():
     feie = load_pack(REPO_ROOT / "formpacks/federal/2026/f2555/pack.yaml")
     edu = load_pack(REPO_ROOT / "formpacks/federal/2026/f8863/pack.yaml")
     assert {(p.source_status, p.draft_created) for p in (ctc, feie, edu)} == {
-        ("draft", "4/24/26"), ("draft", "9/18/26"), ("draft", "4/28/26")}
+        ("draft", "4/24/26"), ("final", None), ("draft", "4/28/26")}   # Form 2555's final posted 2026-11-05 (JT6)
     # The 2026 Schedule 8812 reads AGI from line 11b of either parent (the 1040-NR legs joined in JT5c).
     assert set(ctc.cross_form) == {"1 == f1040.11b", "14 == f1040.19", "27 == f1040.28",
                                    "1 == f1040nr.11b", "14 == f1040nr.19", "27 == f1040nr.28"}
@@ -1897,7 +1897,8 @@ def test_jt5c_the_nr_legs_join_the_2026_schedules():
 
 def test_jt5c_the_8843_and_schedule_a_nr_drafts():
     old, new = _fed_pack(2025, "f8843"), _fed_pack(2026, "f8843")
-    assert (new.source_status, new.draft_created, new.signature.page) == ("draft", "5/11/26", 3)
+    # Form 8843's final posted 2026-11-05 (JT6): no cover sheet, so the "Sign here" block is PDF page 2 (draft: 3).
+    assert (new.source_status, new.draft_created, new.signature.page) == ("final", None, 2)
     # Line 4a prints "2026 2025 2024" (the same three boxes); lines 7 and 11 ask about the six prior years:
     # 2020-2025 on the 2026 form (2025: 2019-2024).
     f4a = {pf.line: pf.field for pf in new.fields if pf.line.startswith("4a.")}
@@ -2175,13 +2176,18 @@ def test_conventions_lists_exactly_the_known_form_keys():
 
 # ── JT6, the first TY2026 finals (2026-11-05) ─────────────────────────────────────────────────────────────────────
 
-# form key -> (the irs-prior final, its sha256, the widgets on the final blank). The IRS cover sheet promised "no
-# changes between the last posted draft and the final"; the re-pin held it to that, widget by widget.
+# form key -> (the irs-prior final, its sha256, the final's pages, the widgets on the final blank). The IRS cover
+# sheet promised "no changes between the last posted draft and the final"; the re-pin held it to that, widget by
+# widget. Every final has one page fewer than its draft (the cover sheet) and no /TU tooltips.
 JT6_FIRST_FINALS = {
     "sched_c": ("https://www.irs.gov/pub/irs-prior/f1040sc--2026.pdf",
-                "cc44e7d1150e54d991835814c1191f60a32617730ca9e50e6f532b51293a86b4", 109),
+                "cc44e7d1150e54d991835814c1191f60a32617730ca9e50e6f532b51293a86b4", 2, 109),
     "sched_se": ("https://www.irs.gov/pub/irs-prior/f1040sse--2026.pdf",
-                 "a42f5a19c0e84a966a49b5f4ca021d3f49c4fda2e087da0b00bf2003525f8655", 27),
+                 "a42f5a19c0e84a966a49b5f4ca021d3f49c4fda2e087da0b00bf2003525f8655", 2, 27),
+    "f2555": ("https://www.irs.gov/pub/irs-prior/f2555--2026.pdf",
+              "a88984fa3dd5b5846cc446032aaa2e0a6489d5efc8ac63f62632613c7e3d6b11", 3, 160),
+    "f8843": ("https://www.irs.gov/pub/irs-prior/f8843--2026.pdf",
+              "6e32cbf67c45464e7d93ee4c184a0be775bffd59f7574d054064ee4476b46c08", 4, 48),
 }
 # Widgets a pack leaves unmapped on purpose: Schedule SE's two pre-printed constants, unmapped since the 2023 pack.
 JT6_UNMAPPED_ON_PURPOSE = {"sched_se": {"Page1[0].f1_13[0]", "Page2[0].f2_1[0]"}}
@@ -2191,11 +2197,12 @@ def test_jt6_the_first_finals_are_repinned_and_stay_rehearsal_only():
     """The 2026 Schedule C (posted 10/29/26) and Schedule SE (11/03/26) finals: each pack pins the irs-prior final
     with no draft stamp, keeps the map JT5a/JT5d read, and — the year still provisional — fills only in rehearsal."""
     from taxfill_core.filler import rehearsal_only  # noqa: PLC0415
-    for key, (url, sha, _widgets) in JT6_FIRST_FINALS.items():
+    for key, (url, sha, _pages, _widgets) in JT6_FIRST_FINALS.items():
         pack = _fed_pack(2026, key)
         assert (pack.source_url, pack.pdf_sha256, pack.source_status, pack.draft_created) == (url, sha, "final", None), key
         assert rehearsal_only(pack), key
     assert len(_fed_pack(2026, "sched_c").fields) == 109 and len(_fed_pack(2026, "sched_se").fields) == 25
+    assert _fed_pack(2026, "f8843").signature.page == 2   # the draft's cover sheet put it on page 3
 
 
 def _widget_names(pdf_path: Path) -> tuple[int, list[str]]:
@@ -2220,12 +2227,12 @@ def _widget_names(pdf_path: Path) -> tuple[int, list[str]]:
 
 @pytest.mark.network
 def test_jt6_the_first_finals_carry_every_mapped_widget_and_nothing_unmapped():
-    """On each final blank: two pages (the draft's cover sheet is gone), every mapped field is a widget, and every
-    widget is mapped except the ones the pack leaves out on purpose."""
-    for key, (_url, _sha, widgets) in JT6_FIRST_FINALS.items():
+    """On each final blank: one page fewer than the draft (the cover sheet is gone), every mapped field is a widget,
+    and every widget is mapped except the ones the pack leaves out on purpose."""
+    for key, (_url, _sha, final_pages, widgets) in JT6_FIRST_FINALS.items():
         pack = _fed_pack(2026, key)
         pages, names = _widget_names(fetch_pack_blank(pack))
-        assert (pages, len(names)) == (2, widgets), (key, pages, len(names))
+        assert (pages, len(names)) == (final_pages, widgets), (key, pages, len(names))
         root = pack.acroform_root + "."
         mapped = {root + f.field for f in pack.fields}
         assert mapped <= set(names), (key, sorted(mapped - set(names)))

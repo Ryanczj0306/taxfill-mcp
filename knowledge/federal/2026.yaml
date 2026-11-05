@@ -21,11 +21,13 @@
 #       (filing_grade_basis: own_final_revision); the Q4 voucher is due Jan. 15, 2027.
 #     * Form W-2 (2026), Created 1/7/26, and the 2026 General Instructions for
 #       Forms W-2 and W-3 (irs-prior/fw2--2026.pdf, irs-prior/iw2w3--2026.pdf).
-#     * Schedule C (2026) and Schedule SE (2026), the first TY2026 form finals
-#       (irs-prior/f1040sc--2026.pdf, 10/29/26; irs-prior/f1040sse--2026.pdf, 11/03/26),
-#       each widget-identical to its draft; their packs were re-pinned 2026-11-05 (JT6,
-#       first finals). They move no figure here: sched_se.ss_wages (form_lines) is now
-#       read off the final, and every other block still waits on the sources below.
+#     * Schedule C (2026), Schedule SE (2026), Form 2555 (2026) and Form 8843 (2026), the
+#       first TY2026 form finals (irs-prior/f1040sc--2026.pdf, 10/29/26; f1040sse--2026.pdf,
+#       11/03/26; f2555--2026.pdf and f8843--2026.pdf, 11/05/26), each widget-identical to
+#       its draft; their packs were re-pinned 2026-11-05 (JT6, first finals). They move no
+#       figure here: sched_se.ss_wages (form_lines) is now read off the final, Schedule SE's
+#       line 7 prints the $184,500 wage base (verified on the final), and every other block
+#       still waits on the sources below.
 #   Drafts only (irs.gov/pub/irs-dft/, projection-grade until each final posts;
 #   footer "Created" dates):
 #     * Form 1040 (8/19/26); Schedules 1 (4/24/26), 1-A (6/16/26), 2 (4/27/26),
@@ -297,8 +299,8 @@ tax:
   # the social security wage base: $184,500 for 2026, stated in Pub 15 (2026),
   # "Tax rates and the social security wage base limit" ("The social security
   # wage base limit is $184,500."), and repeated at the motion-picture-project
-  # and Form W-2 checks. Schedule SE (2026) line 7 will restate it — re-verify
-  # when that form publishes.
+  # and Form W-2 checks. Schedule SE (2026) line 7 restates it: the FINAL
+  # (irs-prior/f1040sse--2026.pdf, re-pinned 2026-11-05) prints "7 … $184,500".
   se_tax:
     citation:
       source: >-

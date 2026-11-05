@@ -14,7 +14,7 @@ top_tier_kinds:
 - text
 passed: true
 adjudicated: 185
-test_runs: 7
+test_runs: 8
 history:
 - run: 1
   date: '2026-10-24'
@@ -118,6 +118,16 @@ history:
     (16a, 20a, 24a), every one agreeing with its pack; the scored top tier is 1094 / 1084 agree (was 1096 / 1086). The selection''s
     two pdf_sha256 values follow the packs; the one adjudicated sched_c item is re-keyed p3 -> p2 (the same box, the same
     blind verdict).'
+- run: 8
+  date: '2026-11-05'
+  method: jk15-v6
+  thresholds:
+    top: 3.0
+    med: 2.0
+  note: 'run 8, no method change: the 2026 Form 2555 and Form 8843 blanks were re-pinned from the IRS drafts to the finals
+    (Phase J JT6, 2026-11-05, the same day as run 7''s Schedule C and SE). As before, the finals carry the same widgets one
+    page lower (no cover sheet) and no /TU tooltips, so the anchor''s tooltip evidence disappears on these two packs; the
+    selection''s two pdf_sha256 values follow the packs. No adjudicated item names either pack.'
 criteria:
   test_packs_at_least_30: true
   test_federal_at_least_10: true
@@ -172,7 +182,7 @@ notes:
   labelled Yes/No, capped below the top tier (yes_no_pair). Text widgets are unchanged from jk15-v4. This table scores printed_line
   only; the labels are measured apart, in knowledge/anchor/labels.yaml (scripts/anchor_label_check.py), which licenses nothing.'
 measured:
-  selection_sha256: 348eac6615ea0b1c
+  selection_sha256: 46246f179e00dfb3
   selection_disclosure:
     siblings_across_split:
     - dev: states/al/al40
@@ -286,35 +296,35 @@ measured:
     states_distinct: 17
     tiers:
       top:
-        emitted: 1170
-        scored: 884
-        agree: 884
+        emitted: 1155
+        scored: 869
+        agree: 869
         disagree: 0
         unscored: 286
         provisional_precision: 1.0
         wilson_95:
-        - 0.9957
+        - 0.9956
         - 1.0
       med:
-        emitted: 2585
-        scored: 465
-        agree: 331
+        emitted: 2588
+        scored: 482
+        agree: 348
         disagree: 134
-        unscored: 2120
-        provisional_precision: 0.7118
+        unscored: 2106
+        provisional_precision: 0.722
         wilson_95:
-        - 0.6691
-        - 0.7511
+        - 0.6804
+        - 0.7601
       low:
-        emitted: 3079
-        scored: 102
-        agree: 99
+        emitted: 3091
+        scored: 100
+        agree: 97
         disagree: 3
-        unscored: 2977
-        provisional_precision: 0.9706
+        unscored: 2991
+        provisional_precision: 0.97
         wilson_95:
-        - 0.9171
-        - 0.9899
+        - 0.9155
+        - 0.9897
       none:
         emitted: 988
         scored: 0
@@ -325,24 +335,24 @@ measured:
         wilson_95: null
     top_by_kind:
       text:
-        emitted: 1151
-        scored: 872
-        agree: 872
+        emitted: 1139
+        scored: 860
+        agree: 860
         provisional_precision: 1.0
         wilson_95:
         - 0.9956
         - 1.0
       checkbox:
-        emitted: 19
-        scored: 12
-        agree: 12
+        emitted: 16
+        scored: 9
+        agree: 9
         provisional_precision: 1.0
         wilson_95:
-        - 0.7575
+        - 0.7009
         - 1.0
     forms_with_a_mis_anchored_top_widget: 0
     per_form_any_mis_anchored_top_rate: 0.0
-    forms_with_top_tier: 31
+    forms_with_top_tier: 30
     widgets_with_truth: 1598
     widgets_with_truth_but_no_printed_line: 147
   mandatory:
