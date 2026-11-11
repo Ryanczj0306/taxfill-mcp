@@ -6,6 +6,12 @@
 # money typing) and no binding was copied from it: every row below was placed from THIS blank's widget
 # rects against its own printed labels and confirmed on a sentinel render.
 #
+# RE-KEYED 2026-10-25 (Phase K JK10b). The NOL-85 "Other (explain)" boxes are
+# keyed by the line the face prints them on: SchNOL85LN1hOther (line 1(h)) and
+# SchNOL85LN7gOther (line 7(g)), formerly keyed by their field names
+# SchNOL85LN2hOther / SchNOL85LN17gOther, which name lines the form does not
+# print. The fields are unchanged; only this pack referred to the old keys.
+#
 # URL. https://www.revenue.alabama.gov/wp-content/uploads/2024/03/23f40nr.pdf. Digest a41dd6a3fef8… —
 # two downloads on 2026-10-02, the discovery copy and the recorded discovery digest all agree. 35 pages
 # (29 portrait letter; 5 landscape letter, pages 15 and 30-33; page 35 a 608 x 258 pt worksheet strip),
@@ -1229,7 +1235,8 @@ fields:
   - {line: "SchNOL85LN1e", field: "SchNOL85LN1e", type: text, maxlen: 10}
   - {line: "SchNOL85LN1f", field: "SchNOL85LN1f", type: text, maxlen: 10}
   - {line: "SchNOL85LN1g", field: "SchNOL85LN1g", type: text, maxlen: 10}
-  - {line: "SchNOL85LN2hOther", field: "SchNOL85LN2hOther", type: text}  # line 1(h) "Other (explain)" text (the raw name says 2h)
+  # Phase K JK10b (2026-10-25): keyed by the printed line (1(h) / 7(g)); the field name says 2h.
+  - {line: "SchNOL85LN1hOther", field: "SchNOL85LN2hOther", type: text}  # line 1(h) "Other (explain)" text (the raw name says 2h)
   - {line: "SchNOL85LN1h", field: "SchNOL85LN1h", type: text, maxlen: 9}
   - {line: "SchNOL85LN2a", field: "SchNOL85LN2a", type: text, maxlen: 9}
   - {line: "SchNOL85LN2b", field: "SchNOL85LN2b", type: text, maxlen: 9}
@@ -1244,7 +1251,8 @@ fields:
   - {line: "SchNOL85LN7d", field: "SchNOL85LN7d", type: text, maxlen: 10}
   - {line: "SchNOL85LN7e", field: "SchNOL85LN7e", type: text, maxlen: 9}
   - {line: "SchNOL85LN7f", field: "SchNOL85LN7f", type: text, maxlen: 10}
-  - {line: "SchNOL85LN17gOther", field: "SchNOL85LN17gOther", type: text, maxlen: 11}  # line 7(g) "Other (explain)" text (the raw name says 17g)
+  # Phase K JK10b (2026-10-25): keyed by the printed line (1(h) / 7(g)); the field name says 17g.
+  - {line: "SchNOL85LN7gOther", field: "SchNOL85LN17gOther", type: text, maxlen: 11}  # line 7(g) "Other (explain)" text (the raw name says 17g)
   - {line: "SchNOL85LN7g", field: "SchNOL85LN7g", type: text, maxlen: 10}
   - {line: "SchNOL85LN8", field: "SchNOL85LN8", type: text, maxlen: 10}
   - {line: "SchNOL85LN9", field: "SchNOL85LN9", type: text, maxlen: 10}

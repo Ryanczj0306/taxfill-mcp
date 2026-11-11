@@ -1,6 +1,13 @@
 # ===========================================================================
 # TY2024 PORT of formpacks/states/mo/2023/mo1040/pack.yaml (ported 2026-08-25).
 #
+# RE-KEYED 2026-11-11 (Phase K JK10b). The check box "Sold or disposed property
+# previously taken as addition modification" is keyed moa_14sold, by the line
+# the face prints it on (Form MO-A Part 1 line 14, Missouri depreciation
+# adjustment); it was keyed by its field name moa_13sold, and line 13 is the
+# Qualified Health Insurance Premiums line. The field is unchanged; only this
+# pack referred to the old key.
+#
 # TOPOLOGY VERDICT: NEAR-PORT — but a real one, not a three-line swap. The
 # 2024 bundle RESTRUCTURED Form MO-A Part 3 (Sections A and C shrank), moved
 # MO-A page 3's Section C/D onto document page 9, and ADDED a whole new form
@@ -1164,7 +1171,8 @@ fields:
   - line: "moa_13s"
     field: "moa_13s"
     type: money
-  - line: "moa_13sold"
+  # Phase K JK10b (2026-11-11): keyed by the printed line (MO-A Part 1 line 14); the field name says 13.
+  - line: "moa_14sold"
     field: "moa_13sold"
     type: checkbox
     on_state: "/X"

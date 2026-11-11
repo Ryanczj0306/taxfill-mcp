@@ -659,3 +659,143 @@ families:
       - {pack: states/ga/2023/ga500, field: "S4P2L16_OTHER", widget: 0, line: "16", anchor: "53"}  # s4.p2.16_specify
       - {pack: states/ga/2024/ga500, field: "S4P2L16_OTHER", widget: 0, line: "16", anchor: "6"}  # s4.p2.16_specify
       - {pack: states/ga/2025/ga500, field: "S4P2L16_OTHER", widget: 0, line: "16", anchor: "6"}  # s4.p2.16_specify
+  # ── Phase K JK10b (2026-10-25): disagreements the Alabama booklet shapes brought into the gate ──
+  - family: jk10b-al-nol85-7g-explain
+    reason: >-
+      Form NOL-85 prints line 7's sub-lines "7(a)" ... "(f)" and then "(g) Other (explain) [box]" with the 7g amount
+      box at the right; the explain box sits on that "(g)" row of line 7. The anchor joined the gutter letter "(g)"
+      to "6" (line 6, TOTAL NONBUSINESS DEDUCTIONS, printed at the right two rows above 7(a)) and read 6g, a line the
+      form does not print
+    adjudication: JK10b vision read of the rendered page (NOL-85 page of each booklet), 2026-10-25
+    rows:
+      - {pack: states/al/2023/al40, field: "SchNOL85LN17gOther", widget: 0, line: "7g", anchor: "6g"}  # SchNOL85LN7gOther
+      - {pack: states/al/2023/al40nr, field: "SchNOL85LN17gOther", widget: 0, line: "7g", anchor: "6g"}  # SchNOL85LN7gOther
+      - {pack: states/al/2024/al40, field: "SchNOL85LN17gOther", widget: 0, line: "7g", anchor: "6g"}  # SchNOL85LN7gOther
+      - {pack: states/al/2025/al40, field: "SchNOL85LN17gOther", widget: 0, line: "7g", anchor: "6g"}  # SchNOL85LN7gOther
+  - family: jk10b-al40nr-line-13-options
+    reason: >-
+      Form 40NR prints line 13 "Check appropriate box. If you itemize, enter amount from Schedule A, line 30." and,
+      on the row with line 13's amount box, "a [ ] Itemized Deductions b [ ] Standard Deduction" (Schedule A line
+      30 says "check 13a"); the anchor joined the letters to line 12 above and read 12a / 12b
+    adjudication: JK10b vision read of the rendered page 1, 2026-10-25
+    rows:
+      - {pack: states/al/2023/al40nr, field: "LINE13A", widget: 0, line: "13a", anchor: "12a"}  # LINE13A
+      - {pack: states/al/2023/al40nr, field: "LINE13B", widget: 0, line: "13b", anchor: "12b"}  # LINE13B
+  # ── Phase K JK10b (2026-11-11): disagreements the MO-1040 bundle's shapes brought into the gate ──
+  - family: jk10b-mo-cr-box-designators
+    reason: >-
+      Form MO-CR and MO-CR Schedule 1 label every amount box with its own designator ("6Y" / "6S", "4Y" / "4S"),
+      printed in the cell at the box's left; the row also starts with the line's number in the gutter ("6. Minus,
+      related adjustments ...", "4. Claimant's Missouri income tax ..."), and on these rows the anchor read that
+      gutter number instead of the box's "6Y" / "4Y"
+    adjudication: JK10b vision read of each row's crop (both MO-CR copies; both 2025 Schedule 1 copies), 2026-11-11
+    rows:
+      - {pack: states/mo/2023/mo1040, field: "mocr_6y", widget: 0, line: "6y", anchor: "6"}  # mocr_6y
+      - {pack: states/mo/2023/mo1040, field: "mocr_6yb", widget: 0, line: "6y", anchor: "6"}  # mocr_6yb
+      - {pack: states/mo/2024/mo1040, field: "mocr_6y", widget: 0, line: "6y", anchor: "6"}  # mocr_6y
+      - {pack: states/mo/2024/mo1040, field: "mocr_6yb", widget: 0, line: "6y", anchor: "6"}  # mocr_6yb
+      - {pack: states/mo/2025/mo1040, field: "mocrsch1_4y", widget: 0, line: "4y", anchor: "4"}  # mocrsch1_4y
+      - {pack: states/mo/2025/mo1040, field: "mocrsch1-2_4y", widget: 0, line: "4y", anchor: "4"}  # mocrsch1-2_4y
+  - family: jk10b-mo-line-1-worksheet-federal-line-column
+    reason: >-
+      the Worksheet for Line 1 (Adjusted Gross Income Worksheet for Combined Return) numbers its rows 1-18 at the
+      left and, in 2023 and 2024, again between the Y - Yourself and S - Spouse boxes; a column headed "Federal Form
+      1040 or Federal Form 1040-SR" left of the Y box prints the federal line each row draws from ("1z", "2b", "3b",
+      Schedule 1's "1", "2a", "3" ...). The anchor read that federal line beside the Y box; the key names the
+      worksheet row the box sits on
+    adjudication: JK10b vision read of the rendered worksheet page (2023 and 2024 page 21), 2026-11-11
+    rows:
+      - {pack: states/mo/2023/mo1040, field: "1-Y", widget: 0, line: "1", anchor: "1z"}  # 1-Y
+      - {pack: states/mo/2023/mo1040, field: "2-Y", widget: 0, line: "2", anchor: "2b"}  # 2-Y
+      - {pack: states/mo/2023/mo1040, field: "3-Y", widget: 0, line: "3", anchor: "3b"}  # 3-Y
+      - {pack: states/mo/2023/mo1040, field: "4-Y", widget: 0, line: "4", anchor: "1"}  # 4-Y
+      - {pack: states/mo/2023/mo1040, field: "5-Y", widget: 0, line: "5", anchor: "2a"}  # 5-Y
+      - {pack: states/mo/2023/mo1040, field: "6-Y", widget: 0, line: "6", anchor: "3"}  # 6-Y
+      - {pack: states/mo/2023/mo1040, field: "8-Y", widget: 0, line: "8", anchor: "4"}  # 8-Y
+      - {pack: states/mo/2023/mo1040, field: "9-Y", widget: 0, line: "9", anchor: "4b"}  # 9-Y
+      - {pack: states/mo/2023/mo1040, field: "10-Y", widget: 0, line: "10", anchor: "5b"}  # 10-Y
+      - {pack: states/mo/2023/mo1040, field: "11-Y", widget: 0, line: "11", anchor: "5"}  # 11-Y
+      - {pack: states/mo/2023/mo1040, field: "12-Y", widget: 0, line: "12", anchor: "6"}  # 12-Y
+      - {pack: states/mo/2023/mo1040, field: "13-Y", widget: 0, line: "13", anchor: "7"}  # 13-Y
+      - {pack: states/mo/2023/mo1040, field: "14-Y", widget: 0, line: "14", anchor: "6b"}  # 14-Y
+      - {pack: states/mo/2023/mo1040, field: "15-Y", widget: 0, line: "15", anchor: "9"}  # 15-Y
+      - {pack: states/mo/2023/mo1040, field: "17-Y", widget: 0, line: "17", anchor: "10"}  # 17-Y
+      - {pack: states/mo/2023/mo1040, field: "18-Y", widget: 0, line: "18", anchor: "11"}  # 18-Y
+      - {pack: states/mo/2024/mo1040, field: "1-Y", widget: 0, line: "1", anchor: "1z"}  # 1-Y
+      - {pack: states/mo/2024/mo1040, field: "2-Y", widget: 0, line: "2", anchor: "2b"}  # 2-Y
+      - {pack: states/mo/2024/mo1040, field: "3-Y", widget: 0, line: "3", anchor: "3b"}  # 3-Y
+      - {pack: states/mo/2024/mo1040, field: "4-Y", widget: 0, line: "4", anchor: "1"}  # 4-Y
+      - {pack: states/mo/2024/mo1040, field: "5-Y", widget: 0, line: "5", anchor: "2a"}  # 5-Y
+      - {pack: states/mo/2024/mo1040, field: "6-Y", widget: 0, line: "6", anchor: "3"}  # 6-Y
+      - {pack: states/mo/2024/mo1040, field: "8-Y", widget: 0, line: "8", anchor: "4"}  # 8-Y
+      - {pack: states/mo/2024/mo1040, field: "9-Y", widget: 0, line: "9", anchor: "4b"}  # 9-Y
+      - {pack: states/mo/2024/mo1040, field: "10-Y", widget: 0, line: "10", anchor: "5b"}  # 10-Y
+      - {pack: states/mo/2024/mo1040, field: "11-Y", widget: 0, line: "11", anchor: "5"}  # 11-Y
+      - {pack: states/mo/2024/mo1040, field: "12-Y", widget: 0, line: "12", anchor: "6"}  # 12-Y
+      - {pack: states/mo/2024/mo1040, field: "13-Y", widget: 0, line: "13", anchor: "7"}  # 13-Y
+      - {pack: states/mo/2024/mo1040, field: "14-Y", widget: 0, line: "14", anchor: "6b"}  # 14-Y
+      - {pack: states/mo/2024/mo1040, field: "15-Y", widget: 0, line: "15", anchor: "9"}  # 15-Y
+      - {pack: states/mo/2024/mo1040, field: "17-Y", widget: 0, line: "17", anchor: "10"}  # 17-Y
+      - {pack: states/mo/2024/mo1040, field: "18-Y", widget: 0, line: "18", anchor: "11"}  # 18-Y
+  - family: jk10b-mo-2025-line-1-worksheet-federal-line-column
+    reason: >-
+      the 2025 Worksheet for Line 1 has 11 rows, numbered at the left only, and the same "Federal Form 1040 or
+      Federal Form 1040-SR" column left of the Y - Yourself box ("1z", "2b", "3b", "4b", "5b", "6b", "7a", "11a");
+      the anchor read that federal line beside the Y box and carried it to the S - Spouse box of the row. The key
+      names the worksheet row the box sits on (rows 8 and 10 draw from federal lines 8 and 10 and agree)
+    adjudication: JK10b vision read of the rendered worksheet page (2025 page 30), 2026-11-11
+    rows:
+      - {pack: states/mo/2025/mo1040, field: "1-Y", widget: 0, line: "1", anchor: "1z"}  # 1-Y
+      - {pack: states/mo/2025/mo1040, field: "1-S", widget: 0, line: "1", anchor: "1z"}  # 1-S
+      - {pack: states/mo/2025/mo1040, field: "2-Y", widget: 0, line: "2", anchor: "2b"}  # 2-Y
+      - {pack: states/mo/2025/mo1040, field: "2-S", widget: 0, line: "2", anchor: "2b"}  # 2-S
+      - {pack: states/mo/2025/mo1040, field: "3-Y", widget: 0, line: "3", anchor: "3b"}  # 3-Y
+      - {pack: states/mo/2025/mo1040, field: "3-S", widget: 0, line: "3", anchor: "3b"}  # 3-S
+      - {pack: states/mo/2025/mo1040, field: "4-Y", widget: 0, line: "4", anchor: "4b"}  # 4-Y
+      - {pack: states/mo/2025/mo1040, field: "4-S", widget: 0, line: "4", anchor: "4b"}  # 4-S
+      - {pack: states/mo/2025/mo1040, field: "5-Y", widget: 0, line: "5", anchor: "5b"}  # 5-Y
+      - {pack: states/mo/2025/mo1040, field: "5-S", widget: 0, line: "5", anchor: "5b"}  # 5-S
+      - {pack: states/mo/2025/mo1040, field: "6-Y", widget: 0, line: "6", anchor: "6b"}  # 6-Y
+      - {pack: states/mo/2025/mo1040, field: "6-S", widget: 0, line: "6", anchor: "6b"}  # 6-S
+      - {pack: states/mo/2025/mo1040, field: "7-Y", widget: 0, line: "7", anchor: "7a"}  # 7-Y
+      - {pack: states/mo/2025/mo1040, field: "7-S", widget: 0, line: "7", anchor: "7a"}  # 7-S
+      - {pack: states/mo/2025/mo1040, field: "18-Y", widget: 0, line: "11", anchor: "11a"}  # 11-Y
+      - {pack: states/mo/2025/mo1040, field: "18-S", widget: 0, line: "11", anchor: "11a"}  # 11-S
+  - family: jk10b-mo-crp-7g-sharing-options
+    reason: >-
+      Form MO-CRP line 7's option "G. Shared Residence" prints three boxes in a row, each followed by its caption:
+      [ ] 1 (50%)  [ ] 2 (33%)  [ ] 3 (25%). The anchor read the caption of the box to the left ("1" beside the
+      "2 (33%)" box, "2" beside the "3 (25%)" box) as a line number; all three boxes belong to line 7, which is what
+      the key claims
+    adjudication: JK10b vision read of each copy's row crop (five copies in each of the three blanks), 2026-11-11
+    rows:
+      - {pack: states/mo/2023/mo1040, field: "c.crp_7ja", widget: 0, line: "7", anchor: "1"}  # c.crp_7ja
+      - {pack: states/mo/2023/mo1040, field: "c.crp_7ka", widget: 0, line: "7", anchor: "2"}  # c.crp_7ka
+      - {pack: states/mo/2023/mo1040, field: "c.crp_7jb", widget: 0, line: "7", anchor: "1"}  # c.crp_7jb
+      - {pack: states/mo/2023/mo1040, field: "c.crp_7kb", widget: 0, line: "7", anchor: "2"}  # c.crp_7kb
+      - {pack: states/mo/2023/mo1040, field: "c.crp_7jc", widget: 0, line: "7", anchor: "1"}  # c.crp_7jc
+      - {pack: states/mo/2023/mo1040, field: "c.crp_7kc", widget: 0, line: "7", anchor: "2"}  # c.crp_7kc
+      - {pack: states/mo/2023/mo1040, field: "c.crp_7jd", widget: 0, line: "7", anchor: "1"}  # c.crp_7jd
+      - {pack: states/mo/2023/mo1040, field: "c.crp_7kd", widget: 0, line: "7", anchor: "2"}  # c.crp_7kd
+      - {pack: states/mo/2023/mo1040, field: "c.crp_7je", widget: 0, line: "7", anchor: "1"}  # c.crp_7je
+      - {pack: states/mo/2023/mo1040, field: "c.crp_7ke", widget: 0, line: "7", anchor: "2"}  # c.crp_7ke
+      - {pack: states/mo/2024/mo1040, field: "c.crp_7ja", widget: 0, line: "7", anchor: "1"}  # c.crp_7ja
+      - {pack: states/mo/2024/mo1040, field: "c.crp_7ka", widget: 0, line: "7", anchor: "2"}  # c.crp_7ka
+      - {pack: states/mo/2024/mo1040, field: "c.crp_7jb", widget: 0, line: "7", anchor: "1"}  # c.crp_7jb
+      - {pack: states/mo/2024/mo1040, field: "c.crp_7kb", widget: 0, line: "7", anchor: "2"}  # c.crp_7kb
+      - {pack: states/mo/2024/mo1040, field: "c.crp_7jc", widget: 0, line: "7", anchor: "1"}  # c.crp_7jc
+      - {pack: states/mo/2024/mo1040, field: "c.crp_7kc", widget: 0, line: "7", anchor: "2"}  # c.crp_7kc
+      - {pack: states/mo/2024/mo1040, field: "c.crp_7jd", widget: 0, line: "7", anchor: "1"}  # c.crp_7jd
+      - {pack: states/mo/2024/mo1040, field: "c.crp_7kd", widget: 0, line: "7", anchor: "2"}  # c.crp_7kd
+      - {pack: states/mo/2024/mo1040, field: "c.crp_7je", widget: 0, line: "7", anchor: "1"}  # c.crp_7je
+      - {pack: states/mo/2024/mo1040, field: "c.crp_7ke", widget: 0, line: "7", anchor: "2"}  # c.crp_7ke
+      - {pack: states/mo/2025/mo1040, field: "c.crp_7ja", widget: 0, line: "7", anchor: "1"}  # c.crp_7ja
+      - {pack: states/mo/2025/mo1040, field: "c.crp_7ka", widget: 0, line: "7", anchor: "2"}  # c.crp_7ka
+      - {pack: states/mo/2025/mo1040, field: "c.crp_7jb", widget: 0, line: "7", anchor: "1"}  # c.crp_7jb
+      - {pack: states/mo/2025/mo1040, field: "c.crp_7kb", widget: 0, line: "7", anchor: "2"}  # c.crp_7kb
+      - {pack: states/mo/2025/mo1040, field: "c.crp_7jc", widget: 0, line: "7", anchor: "1"}  # c.crp_7jc
+      - {pack: states/mo/2025/mo1040, field: "c.crp_7kc", widget: 0, line: "7", anchor: "2"}  # c.crp_7kc
+      - {pack: states/mo/2025/mo1040, field: "c.crp_7jd", widget: 0, line: "7", anchor: "1"}  # c.crp_7jd
+      - {pack: states/mo/2025/mo1040, field: "c.crp_7kd", widget: 0, line: "7", anchor: "2"}  # c.crp_7kd
+      - {pack: states/mo/2025/mo1040, field: "c.crp_7je", widget: 0, line: "7", anchor: "1"}  # c.crp_7je
+      - {pack: states/mo/2025/mo1040, field: "c.crp_7ke", widget: 0, line: "7", anchor: "2"}  # c.crp_7ke

@@ -110,6 +110,25 @@ CONVENTIONS = L.load_conventions()
     ("states/mt/2023/form2", "sub.3.b", "3", "mt-form2-2023-columns"),
     ("states/mt/2023/form2", "16a.a", None, None),   # exemption row a (a letter-only line no shape expresses)
     ("states/mo/2025/mo1040", "line27Y", "27y", "mo-1040-yourself-spouse"),
+    # Phase K JK10b (2026-11-11): the MO-1040 bundle's attached forms
+    ("states/mo/2025/mo1040", "mocrsch1-2_4y", "4y", "mo-cr-yourself-spouse"),
+    ("states/mo/2023/mo1040", "nri_line3bSstate2", "3", "mo-nri-items"),
+    ("states/mo/2023/mo1040", "nri_line2Y", "2y", "mo-nri-items"),
+    ("states/mo/2024/mo1040", "moa_14sold", "14", "mo-a-line-options"),
+    ("states/mo/2024/mo1040", "t.tc.ac7", "7", "mo-tc-lines"),
+    ("states/mo/2023/mo1040", "wftc_line7", None, None),      # MO-WFTC joins the bundle in 2024
+    ("states/mo/2025/mo1040", "33_YS", None, None),           # a hidden widget: not_lines
+    ("states/mo/2025/mo1040", "62-Y", None, None),            # "Age 62 through 64": not_lines
+    # Phase K JK10b (2026-11-11): NJ-1040's numbered filing statuses; GA Schedule 3 / Schedule 4 column letters
+    ("states/nj/2025/nj1040", "filing_status::hoh", "4", "nj1040-filing-status-4"),
+    ("states/nj/2023/nj1040", "filing_status_qw_year_of_death::2021", "5", "nj1040-filing-status-5"),
+    ("states/ga/2024/ga500", "s3.1a", "1", "ga500-schedule-lines"),        # Column A of line 1, not a line "1a"
+    ("states/ga/2024/ga500", "s3.8c", "8", "ga500-schedule-lines"),
+    ("states/ga/2023/ga500", "s3.10b", "10b", "ga500-schedule-lines"),     # from line 9 on a letter is a sub-line
+    ("states/ga/2023/ga500", "s3.10b_self_65", "10b", "ga500-schedule-lines"),
+    ("states/ga/2025/ga500", "s4.p3.12a", "12", "ga500-schedule-part-lines"),   # column (a) of Part III line 12
+    ("states/ga/2025/ga500", "s4.p4.3b", "3", "ga500-schedule-part-lines"),
+    ("states/ga/2025/ga500", "s4.p2.16_specify", "16", "ga500-schedule-part-lines"),
     ("states/wv/2024/it140", "sch_m.29a", "29", "wv-it140-schedule-m-columns"),
     ("states/ia/2025/ia1040", "s1.1b.cents", "1", "ia-1040-schedule-1-columns"),
     ("federal/2025/f1040", "4c.rollover", "4c", "line-boxes"),
@@ -158,7 +177,11 @@ def test_the_exceptions_table_names_real_widgets_of_shipped_packs_by_their_key_l
     # sub-letter row under a joined head: f8843 3b/4b, Form 1040 35d, Schedule 1 2b/19b/19c, Form 2555 12b/15b ...);
     # Phase J JT6 (2026-11-05): 1 more (Form 2555 2026 15e.desc) cleared itself when the pack moved from the draft to
     # the final, which carries no /TU tooltips — the "15" the anchor had read came from the draft's tooltip.
-    assert len(exceptions) == 401
+    # Phase K JK10b (2026-10-25): 6 the Alabama booklet shapes brought in (NOL-85's 7(g) explain box read 6g in all
+    # four booklets, 40NR line 13's a / b boxes read 12a / 12b)
+    # Phase K JK10b (2026-11-11): 84 the MO-1040 bundle's shapes brought in (the Worksheet for Line 1's federal-line
+    # column, 48; MO-CRP line 7's G sharing options over five copies, 30; MO-CR's 6Y and Schedule 1's 4Y, 6)
+    assert len(exceptions) == 491
     from taxfill_core.schemas.formpack import load_pack
 
     packs: dict[str, object] = {}
@@ -594,7 +617,12 @@ def test_the_not_lines_list_is_short_and_every_family_leaves_out_shipped_keys():
     assert [f.id for f in families] == ["identity", "household-members", "positional-rows",
                                         # fixer round 5: the declare-me rule's non-line keys, each vision-read
                                         "check-off-amounts", "direct-deposit-529", "positional-codes",
-                                        "filing-status-reference"]
+                                        "filing-status-reference",
+                                        # Phase K JK10b: the AL booklets' table cells and copy headers, face-read
+                                        "al-booklet-tables",
+                                        # Phase K JK10b (2026-11-11): the MO bundle's person / row / age boxes and
+                                        # its hidden calculation widgets, face-read
+                                        "mo-bundle-non-lines"]
     hit = {f.id: 0 for f in families}
     for pid in PACK_IDS:
         pack = L.B.load_pack(REPO / "formpacks" / pid / "pack.yaml")
@@ -702,10 +730,21 @@ def test_no_row_at_or_above_the_floor_has_more_undeclared_keys_than_checked_ones
                 "states/mt/2023/form2"):
         row = LEDGER.rows[pid]
         assert not L.below_floor(row.checked, row.lines, LEDGER.floor) and row.lines - row.mapped < 0.2 * row.lines
-    # and a pack whose line-like keys stay mostly undeclared is below the floor, named shape-not-declared
+    # Phase K JK10b (2026-10-25): the AL booklets' schedules are declared (key_shapes.yaml al-*) and their table cells
+    # named (not_lines al-booklet-tables): the fraction clears the floor, but Schedule OC's letter-numbered lines
+    # ("J1") stay undeclared and dark, so each row reads PARTIAL, named shape-not-declared
+    for pid in ("states/al/2023/al40", "states/al/2024/al40", "states/al/2025/al40", "states/al/2023/al40nr"):
+        row = LEDGER.rows[pid]
+        assert row.checked >= LEDGER.floor * row.lines and row.lines - row.mapped < 0.2 * row.lines, pid
+        assert row.reason == "shape-not-declared" and "SCHOCLINE#PJ" in row.dark, pid
+    # Phase K JK10b (2026-11-11): the MO-1040 bundle's attached forms are declared (key_shapes.yaml mo-*): the
+    # fraction clears the floor and four keys stay undeclared, but the anchor reads no designator beside MO-NRI
+    # Part A's status boxes or MO-CRP's To: dates, so each row reads PARTIAL, named anchor-reads-no-designators
     for y in (2023, 2024, 2025):
-        row = LEDGER.rows[f"states/al/{y}/al40"]
-        assert row.reason == "shape-not-declared" and row.lines - row.mapped > 1000
+        row = LEDGER.rows[f"states/mo/{y}/mo1040"]
+        assert row.checked >= LEDGER.floor * row.lines and row.lines - row.mapped == 4, y
+        assert row.reason == "anchor-reads-no-designators" and row.dark == ("d.crp_#o", "nri_line#"), y
+        assert not row.declare, y
 
 
 # Phase K JK10 (2026-10-24), fixer round 2: keys the declared shapes found off the printed line, re-keyed
@@ -721,6 +760,14 @@ SHAPE_RE_KEYED = {
     # fixer round 3: the 2023 Schedule 1 prints this row "8p Section 461(l) excess business loss adjustment"
     "states/mt/2023/form2": ({"sch1.8p.a": "Schedule 1 Col A Line 8o", "sch1.8p.b": "Schedule 1 Col B Line 8o"},
                              {"sch1.8o.a", "sch1.8o.b"}),
+    # Phase K JK10b (2026-10-25): Form NOL-85 prints these "Other (explain)" boxes on lines 1(h) and 7(g); the keys
+    # were the field names, which say 2h and 17g (lines the form does not print)
+    **{pid: ({"SchNOL85LN1hOther": "SchNOL85LN2hOther", "SchNOL85LN7gOther": "SchNOL85LN17gOther"},
+             {"SchNOL85LN2hOther", "SchNOL85LN17gOther"})
+       for pid in ("states/al/2023/al40", "states/al/2024/al40", "states/al/2025/al40", "states/al/2023/al40nr")},
+    # Phase K JK10b (2026-11-11): Form MO-A prints the "Sold or disposed property ..." box on Part 1 line 14; the key
+    # was the field name, which says 13 (the Qualified Health Insurance Premiums line)
+    **{f"states/mo/{y}/mo1040": ({"moa_14sold": "moa_13sold"}, {"moa_13sold"}) for y in (2023, 2024, 2025)},
 }
 
 
@@ -735,6 +782,56 @@ def test_keys_the_declared_shapes_found_off_their_printed_line_are_re_keyed(pack
     assert not gone & set(field_of)
     refs = " ".join([*pack.relations, *pack.cross_form])
     assert not set(re.findall(r"[\w.]+", refs)) & gone
+
+
+MO_PACKS = tuple(f"states/mo/{y}/mo1040" for y in (2023, 2024, 2025))
+
+
+@pytest.mark.network
+@pytest.mark.parametrize("pack_id", MO_PACKS)
+def test_mo_a_sold_property_box_sits_on_printed_line_14(pack_id):
+    """Phase K JK10b (2026-11-11): the anchor reads no line beside Form MO-A's "Sold or disposed property previously
+    taken as addition modification" box, so the gate cannot hold its key; this pins it to the face. The nearest
+    line number printed in the gutter at or above the box is "14." (the field's own name says 13)."""
+    from taxfill_core.fetch import fetch_pack_blank
+    from taxfill_core.schemas.formpack import load_pack
+
+    pack = load_pack(REPO / "formpacks" / pack_id / "pack.yaml")
+    field = {f.line: f.field for f in pack.fields}["moa_14sold"]
+    blank = fetch_pack_blank(pack)
+    (box,) = [w for w in L.A.raw_anchors(blank) if w.field == field]
+    x0, x1 = sorted((box.rect[0], box.rect[2]))
+    y0, y1 = sorted((box.rect[1], box.rect[3]))
+    runs = [r for r in L.A.text_runs(blank) if r.page == box.page]
+    above = [r for r in runs if re.fullmatch(r"\d{1,2}\.", r.text) and r.x1 <= x0 and r.y0 >= (y0 + y1) / 2]
+    assert min(above, key=lambda r: r.y0).text == "14."
+    row = [r.text for r in sorted(runs, key=lambda r: r.x0) if r.x0 >= x1 and y0 - 2 <= r.y0 <= y1]
+    assert row[:4] == ["Sold", "or", "disposed", "property"]
+    assert L.claim_line(pack_id, "moa_14sold", CONVENTIONS) == ("14", "mo-a-line-options")
+
+
+@pytest.mark.network
+@pytest.mark.parametrize("pack_id", MO_PACKS)
+def test_mo_hidden_calculation_widgets_are_hidden_on_the_blank(pack_id):
+    """Phase K JK10b (2026-11-11): the not_lines family mo-bundle-non-lines leaves "33_YS", "33_SP" and "adjLine14"
+    out because the blank hides them (annotation flag Hidden): the face prints no box for them. A shape drafted for
+    them called them the check boxes of line 33; this pins the reason to the blank."""
+    from pypdf import PdfReader
+
+    from taxfill_core.fetch import fetch_pack_blank
+    from taxfill_core.schemas.formpack import load_pack
+
+    pack = load_pack(REPO / "formpacks" / pack_id / "pack.yaml")
+    hidden = {}
+    for page in PdfReader(str(fetch_pack_blank(pack))).pages:
+        for annot in page.get("/Annots") or []:
+            annot = annot.get_object()
+            name = annot.get("/T") or (annot["/Parent"].get_object().get("/T") if "/Parent" in annot else None)
+            if name in ("33_YS", "33_SP", "adjLine14"):
+                hidden[str(name)] = bool(int(annot.get("/F", 0)) & 2)
+    assert hidden == {"33_YS": True, "33_SP": True, "adjLine14": True}
+    assert {f.line for f in pack.fields} >= set(hidden)
+    assert all(L.not_line_family(k, pack=pack_id) == "mo-bundle-non-lines" for k in hidden)
 
 
 # Phase K JK10 (2026-10-24), P-031: a box of line N the face does not number is keyed "N.<what>", never "Na"; the box
@@ -999,6 +1096,18 @@ PLANTED = {  # three line-bearing keys per pack the gate checked on NO widget be
     "states/mt/2023/form2#ltc": ("ltc.1", "ltc.2", "ltc.3"),
     "states/mt/2023/form2#status2a": ("status2a.1.b", "status2a.2.b", "status2a.4.b"),
     "states/ny/2025/it201": ("D2_2_months_you_in_yonkers", "D2_3_months_spouse_in_yonkers", "F_1_months_you_in_nyc"),
+    # Phase K JK10b (2026-10-25): the Alabama booklet schedules, keyed by field name, that no shape declared
+    "states/al/2023/al40#aatc": ("SCHAATCLN8", "SCHAATCLN17", "SCHAATCLN26"),
+    "states/al/2025/al40#nol85a": ("SchNOL85ALN2-1", "SchNOL85ALN3-1", "SchNOL85ALN5-1"),
+    "states/al/2024/al40#cr": ("SCHCRWKSHTPTLN1B", "SCHCRWKSHTPTLN2B", "SCHCRWKSHTPTLN3B"),
+    "states/al/2023/al40nr#sch-a": ("SCHALINE1", "SCHALINE3", "SCHALINE5"),
+    # Phase K JK10b (2026-11-11): the MO-1040 bundle's attached forms and worksheets, keyed by field name
+    "states/mo/2023/mo1040#pts": ("n.pts_1", "n.pts_2", "n.pts_3"),
+    "states/mo/2023/mo1040#mo-cr": ("mocr_1y", "mocr_3y", "mocr_5y"),
+    "states/mo/2024/mo1040#mo-tc": ("n.tc_c1_1", "t.tc.ac2", "t.tc_cn3"),
+    "states/mo/2024/mo1040#wftc": ("wftc_line5", "wftc_line6", "wftc_line7"),
+    "states/mo/2025/mo1040#5695": ("qh1", "qh4y", "qh16"),
+    "states/mo/2025/mo1040#mo-a": ("moa_pt2_1", "moa_wks2", "moa_y3"),
     # (MD 502's filing status boxes are one radio field told apart by on_state, and f8863's questions print only
     # (2) and (3) on both 22a and 22b, so a 3-cycle there always pairs two boxes of one designator: not planted)
 }
@@ -1023,6 +1132,74 @@ def test_a_planted_three_cycle_among_newly_shaped_keys_is_caught(pack_id):
     assert {a, b, c} <= flagged
     # without their shape the keys name no line, which is how the same rotation passed unseen before
     assert all(L.claim_line(pack_id, k, CONVENTIONS, shapes=[]) == (None, None) for k in (a, b, c))
+
+
+@pytest.mark.network
+@pytest.mark.parametrize("year", (2023, 2024, 2025))
+def test_a_rotation_among_nj_1040_filing_status_ovals_is_caught(year):
+    """Phase K JK10b (2026-11-11): NJ-1040's filing statuses are one radio field whose ovals differ by on_state, so
+    the planted 3-cycle above (which rotates fields) cannot move them. Rotate the on_states of Single, Married/CU
+    Couple filing joint and Head of Household: the face numbers the rows 1, 2 and 4, and all three keys disagree.
+    Without the named blocks the gate compared nothing for them."""
+    from taxfill_core.fetch import fetch_pack_blank
+    from taxfill_core.schemas.formpack import load_pack
+
+    pid = f"states/nj/{year}/nj1040"
+    pack = load_pack(REPO / "formpacks" / pid / "pack.yaml")
+    blank = fetch_pack_blank(pack)
+    keys = L.B.pack_keys(pack)
+    a, b, c = (f"filing_status::{s}" for s in ("single", "mfj", "hoh"))
+    state_of = {str(k["key"]): k["on_state"] for k in keys if str(k["key"]) in (a, b, c)}
+    assert len(set(state_of.values())) == 3
+    assert not L.check_blank(pid, blank, keys, pack.acroform_root or "", CONVENTIONS).unexcused(L.load_exceptions())
+    rot = {a: state_of[b], b: state_of[c], c: state_of[a]}
+    planted = [dict(k, on_state=rot.get(str(k["key"]), k.get("on_state"))) for k in keys]
+    res = L.check_blank(pid, blank, planted, pack.acroform_root or "", CONVENTIONS)
+    assert {a, b, c} <= {k for r in res.unexcused(L.load_exceptions()) for k in r.claims}
+    assert all(L.claim_line(pid, k, CONVENTIONS, shapes=[]) == (None, None) for k in (a, b, c))
+
+
+@pytest.mark.network
+@pytest.mark.parametrize("year", (2023, 2024, 2025))
+def test_ga_500_column_letters_name_no_printed_sub_line(year):
+    """Phase K JK10b (2026-11-11): Schedule 3 lines 1-8 (Columns A-C) and Schedule 4 Parts III / IV lines 1-13
+    (columns (a) / (b)) print the line number N, never "Na". Schedule 3 prints "N." over each column's box: the
+    designators at the box's left, on its row or in the caption above it (up to two lines), are the bare N.
+    Schedule 4 prints "N." once at the row's left, and its page prints no word "Na" / "Nb" at all (the page's text
+    is read whole: the anchor's runs miss some of its numbers). The letters are columns and the keys map to N."""
+    import pypdfium2 as pdfium
+
+    from taxfill_core.fetch import fetch_pack_blank
+    from taxfill_core.schemas.formpack import load_pack
+
+    pid = f"states/ga/{year}/ga500"
+    pack = load_pack(REPO / "formpacks" / pid / "pack.yaml")
+    blank = fetch_pack_blank(pack)
+    root = pack.acroform_root or ""
+    box_of = {w.field: w for w in L.A.raw_anchors(blank) if w.widget_index == 0}
+    runs = [(r, n) for r in L.A.text_runs(blank) if (n := L.A.normalize_line(r.text))]
+    doc = pdfium.PdfDocument(str(blank))
+    words: dict[int, set[str]] = {}
+    cols = [f for f in pack.fields if re.fullmatch(r"s3\.[1-8][abc]|s4\.p[34]\.\d{1,2}[ab]", f.line)]
+    assert len(cols) == 24 + 46
+    for f in cols:
+        n, letter = re.search(r"(\d+)([abc])$", f.line).groups()
+        box = box_of[f"{root}.{f.field}" if root else f.field]
+        if f.line.startswith("s3."):
+            x0 = min(box.rect[0], box.rect[2])
+            y0, y1 = sorted((box.rect[1], box.rect[3]))
+            near = {d for r, d in runs if r.page == box.page and r.x1 <= x0 + 5 and r.y1 >= y0 - 3
+                    and r.y0 <= y1 + 30 and d in (n, f"{n}{letter}")}
+            assert near == {n}, (f.line, near)
+        else:
+            if box.page not in words:
+                words[box.page] = set(doc[box.page - 1].get_textpage().get_text_range().split())
+            assert not {f"{n}{letter}", f"{n}{letter}.", f"{n}({letter})"} & words[box.page], f.line
+        line, via = L.claim_line(pid, f.line, CONVENTIONS)
+        assert line == n and via in ("ga500-schedule-lines", "ga500-schedule-part-lines"), f.line
+    # Part III and Part IV, a page each, the same table: between them the text layer holds every row number "1." ...
+    # "13." (the 2025 blank draws Part III's numbers as outlines, all but "3."; Part IV's page holds them all)
+    assert len(words) == 2 and {f"{n}." for n in range(1, 14)} <= set().union(*words.values())
 
 
 @pytest.mark.network

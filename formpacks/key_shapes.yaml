@@ -96,11 +96,19 @@ shapes:
 
   - id: ga500-schedule-lines
     packs: [states/ga/2023/ga500, states/ga/2024/ga500, states/ga/2025/ga500]
-    pattern: '^s\d{1,2}[a-z]?\.0*(?P<n>\d{1,3})(?P<x>[a-z])?(?:_[a-z][a-z_]*(?:\.[a-z]+)?)?$'
+    pattern: '^(?:(s3\.(?=0*[1-8][abc]$))|s\d{1,2}[a-z]?\.)0*(?P<n>\d{1,3})(?(1)[abc]|(?P<x>[a-z])?(?:_[a-z][a-z0-9_]*(?:\.[a-z]+)?)?)$'
+    header: [(COLUMN A), (COLUMN B), (COLUMN C)]
     means: >-
       line N of Form 500 Schedule 1, 2, 3 ... ("s1.7a" = Schedule 1 line 7a); fixer round 5 (the declare-me rule): a
-      second box of line N named by what it holds ("s1.5_specify", "s2.1_credit_code", "s3.10_deduction.standard")
-    examples: {s1.7a: "7a", s3.12: "12", s1.12_specify: "12", s3.10_deduction.standard: "10"}
+      second box of line N named by what it holds ("s1.5_specify", "s2.1_credit_code", "s3.10_deduction.standard").
+      Phase K JK10b (2026-11-11), read on the three faces: Schedule 3's lines 1-8 are a three-column table (FEDERAL
+      INCOME AFTER GEORGIA ADJUSTMENT (COLUMN A), INCOME NOT TAXABLE TO GEORGIA (COLUMN B), GEORGIA INCOME (COLUMN
+      C)) that prints "1." ... "8." over each column's box, so the letter of "s3.1a" ... "s3.8c" is the column and
+      the key maps to N (it had been read as a sub-line "1a", which the schedule does not print); from line 9 on a
+      letter is a printed sub-line ("s3.10a"). The name may hold a digit, for the 2023 Schedule 3 line 10b boxes
+      "Self: 65 or over?" / "Spouse: 65 or over?" ("s3.10b_self_65")
+    examples: {s1.7a: "7a", s3.12: "12", s1.12_specify: "12", s3.10_deduction.standard: "10", s3.10b_self_65: "10b",
+               s3.1a: "1", s3.8c: "8", s3.10a: "10a"}
 
   # ── fixer round 3 (Phase K JK10, 2026-10-24): shapes for the families the non-circular denominator exposed ──
   # (the coverage ledger now counts every key with a line-like token, so a family keyed in an undeclared shape
@@ -229,14 +237,20 @@ shapes:
 
   - id: ga500-schedule-part-lines
     packs: [states/ga/2023/ga500, states/ga/2024/ga500, states/ga/2025/ga500]
-    pattern: '^(?:s\d+\.p\d|s\dret\.(?:tp|sp)|s\dmil\.(?:tp|sp)|indcr_summary|indcr\d{3}(?:\.[a-c])?)\.0*(?P<n>\d{1,3})(?P<x>[a-z])?(?:_[a-z][a-z_]*)?$'
+    pattern: '^(?:(s4\.p[34])|s\d+\.p\d|s\dret\.(?:tp|sp)|s\dmil\.(?:tp|sp)|indcr_summary|indcr\d{3}(?:\.[a-c])?)\.0*(?P<n>\d{1,3})(?(1)[ab]|(?P<x>[a-z])?(?:_[a-z][a-z_]*)?)$'
+    header: ["(a) Return as filed or liability as last"]
     means: >-
       line N of a part of a Form 500 schedule ("s4.p1.3" = Schedule 4 Part 1 line 3), of the Schedule 1
       retirement or military worksheets for the taxpayer / spouse ("s1ret.tp.2", "s1mil.sp.4"), or of the
       individual credit summary ("indcr_summary.5"); fixer round 5 (the declare-me rule): line N of an individual
       credit form IND-CR NNN ("indcr201.3"; "indcr212.a.2" = part a line 2, its "_rotations" box), and a named box
-      of line N ("s4.p2.16_specify")
-    examples: {s4.p1.3: "3", s1ret.tp.2: "2", indcr_summary.5: "5", indcr201.4: "4", indcr212.b.2_rotations: "2"}
+      of line N ("s4.p2.16_specify"). Phase K JK10b (2026-11-11), read on the three faces: Schedule 4 Part III
+      (Carryback) and Part IV print lines 1-13 once, at the left, over two columns of boxes headed "(a) Return as
+      filed or liability as last determined" and "(b) Liability after application" (the (b) heading is drawn, not
+      in every blank's text layer), so the letter of "s4.p3.1a" / "s4.p4.11b" is the column and the key maps to N
+      (it had been read as a sub-line "1a")
+    examples: {s4.p1.3: "3", s1ret.tp.2: "2", indcr_summary.5: "5", indcr201.4: "4", indcr212.b.2_rotations: "2",
+               s4.p3.1a: "1", s4.p4.11b: "11", s4.p2.16_specify: "16"}
 
   # ── fixer round 4 (Phase K JK10, 2026-10-24): whole schedules the dark-family rule found undeclared ──
   # A family of 5+ undeclared keys (label_adjacency.dark_families) made its pack PARTIAL; these declare the ones the
@@ -431,6 +445,526 @@ shapes:
       generic line-boxes shape, broadened in fixer round 5, mapped them to 22a and disagreed with every Yes box).
       The 2026 face is left out: the anchor reads no line beside its boxes (a shape must compare a widget)
     examples: {22a.q2.yes: "2", 22b.q3.no: "3"}
+
+  # ── Phase K JK10b (2026-10-25): the Alabama Form 40 / 40NR booklets ──
+  # The AL packs key every supporting schedule by the blank's own field names ("SCHAATCLN7", "SchNOL85ALN4a-1",
+  # "SCHCRWKSHTPTLN3B"), which no shape declared, so 32-37 of their ~900-1,450 line-bearing keys were checked. Each
+  # shape below was read on its packs' own faces (work renders of every schedule page, not shipped): in the field
+  # names "LN" / "LINE" and the number name the schedule line the face prints; a trailing capital names a column,
+  # a copy of the page ("-1" ... "-4": NOL-85A is printed four times, KRCC-I twice) or the second box of a line. A
+  # letter that is a sub-line the face prints ("1a" on NOL-85, "10A" on 40NR Schedule A) maps to it; the others map
+  # to the row's number. Blanks (first 16 hex of the sha256 each pack pins, matched by the cached file):
+  #   states/al/2023/al40    023470e8b831a77a    states/al/2024/al40    4f6c357f74e247bb
+  #   states/al/2025/al40    ffea0ca6b0f313ec    states/al/2023/al40nr  a41dd6a3fef84c0a
+  - id: al-booklet-schedule-lines
+    packs: [states/al/2023/al40, states/al/2024/al40, states/al/2025/al40, states/al/2023/al40nr]
+    pattern: '^(?:SCHAATC|SCHAACPRTIII|SCHATPPTII?|SCHHBCPT(?:I|II|III|IV)|SchNOL85A?(?:PTII)?|PG7|4952A)(?:LN|LINE)0*(?P<n>\d{1,3})(?P<x>[a-h])?(?:[AB]|Other|-[1-4])?$'
+    means: >-
+      line N of a booklet schedule the field name spells out: Schedule AATC ("SCHAATCLN7"), Schedule AAC Part III
+      ("SCHAACPRTIIILN3"), Schedule ATP Parts I-II ("SCHATPPTIILINE2"), Schedule HBC Parts I-IV ("SCHHBCPTIIILINE5";
+      Part I's "4A" / "4B" and "8A" / "8B" are line 4's and line 8's Primary and Secondary account-holder boxes),
+      Form NOL-85 and its Part II ("SchNOL85LN1g", "SchNOL85PTIILN3"; "...Other" is a line's explain box), each of
+      the four NOL-85A copies ("SchNOL85ALN4a-2" = line 4(a) of copy 2) and Form 4952A ("PG7LINE3" on Form 40,
+      "4952ALINE3" on 40NR); a lower-case letter is the sub-line the face prints ("1(a)" ... "7(g)", "11c"). Schedule
+      AAC Parts I and II are table cells numbered across the row (the ledger's al-booklet-tables)
+    examples: {SCHAATCLN37: "37", SCHAACPRTIIILN3: "3", SCHATPPTIILINE2: "2", SCHHBCPTILINE4B: "4",
+               SchNOL85LN1g: "1g", SchNOL85PTIILN3: "3", SchNOL85ALN4a-2: "4a", SchNOL85ALN11e-4: "11e",
+               PG7LINE5: "5", 4952ALINE6: "6"}
+
+  - id: al40-schedule-cr-columns
+    packs: [states/al/2023/al40, states/al/2024/al40, states/al/2025/al40]
+    pattern: '^SCHCRWKSHTPTLN0*(?P<n>\d{1,2})[A-E]?$'
+    header: [Column A, Column B, Column C, Column D, Column E, Column F]
+    means: >-
+      row N of Schedule CR (Credit for Taxes Paid to Other States; the face numbers rows 1-25 and lines 26-27): the
+      capital after N is the row's Column A-E box, and no capital is Column F ("SCHCRWKSHTPTLN3B" = row 3, Column B;
+      "SCHCRWKSHTPTLN26" = line 26)
+    examples: {SCHCRWKSHTPTLN3B: "3", SCHCRWKSHTPTLN25E: "25", SCHCRWKSHTPTLN27: "27"}
+
+  - id: al-schedule-rs-columns
+    packs: [states/al/2023/al40, states/al/2024/al40, states/al/2025/al40, states/al/2023/al40nr]
+    pattern: '^SCHRS(?:PT(?:II|III|IV|V))?(?:(?:[A-I]|HS|IS)?LN|[BCF])0*(?P<n>\d{1,2})(?:-1)?$'
+    header: [FEIN, Account Number, State ID, Alabama Withheld]
+    means: >-
+      row N of a Schedule RS part (Part I unprefixed, "PTII" ... "PTV"; the face numbers rows 1-7 and lines 8-11):
+      the capital before "LN" is the row's column A-I ("SCHRSPTIIELN3" = Part II row 3, column E Gross
+      Distribution; 2025's column H and I boxes are "HSLN" / "ISLN"), "B" / "C" / "F" with no "LN" are the IRA
+      check box, distribution code and state code columns, and no capital is the part's numbered line
+      ("SCHRSPTIILN9"); 2025 prints the schedule a second time, its boxes suffixed "-1"
+    examples: {SCHRSALN1: "1", SCHRSPTIIELN3: "3", SCHRSPTIIILN7: "7", SCHRSPTIIHSLN2: "2", SCHRSB4-1: "4",
+               SCHRSPTVLN4-1: "4", SCHRSLN8: "8"}
+
+  - id: al-schedule-rs-line-10
+    packs: [states/al/2023/al40, states/al/2024/al40, states/al/2025/al40, states/al/2023/al40nr]
+    pattern: '^SCHRS(?:YES|NO)2?(?:-1)?$'
+    line: "10"
+    means: >-
+      a named block: the Yes / No boxes of Schedule RS line 10 ("RETIREMENT EXCLUSION. Is the primary taxpayer 65 or
+      older ...?" in Part II, the spouse's in Part III: "SCHRSYES2")
+    examples: {SCHRSYES: "10", SCHRSNO2: "10", SCHRSYES-1: "10"}
+
+  - id: al-schedule-krcci-projects
+    packs: [states/al/2023/al40, states/al/2024/al40, states/al/2025/al40, states/al/2023/al40nr]
+    pattern: '^SCHKRCCIPT(?:III|IV)LINE0*(?P<n>\d)[abc]?(?:-2)?$'
+    header: [Project 1, Project 2, Project 3]
+    means: >-
+      line N of Schedule KRCC-I Part III or IV: the lower-case letter is the line's Project 1 / 2 / 3 column, not a
+      sub-line (the face prints only "1." ... "5."), and "-2" the schedule's second copy ("SCHKRCCIPTIVLINE3b-2" =
+      Part IV line 3, Project 2, copy 2)
+    examples: {SCHKRCCIPTIIILINE1a: "1", SCHKRCCIPTIVLINE3b-2: "3", SCHKRCCIPTIIILINE5: "5"}
+
+  - id: al40-schedule-b-interest-rows
+    packs: [states/al/2023/al40, states/al/2024/al40, states/al/2025/al40]
+    pattern: '^(?:INTPAYER|EXMPINT|TAXINT)#[1-9]$'
+    line: "1"
+    means: >-
+      a named block: Schedule B line 1 (Interest): its nine payer rows, each with its Column A (Exempt Interest) and
+      Column B (Taxable Interest) amounts; the digit after "#" is the row, not a line
+    examples: {INTPAYER#1: "1", EXMPINT#5: "1", TAXINT#9: "1"}
+
+  - id: al40-schedule-b-dividend-rows
+    packs: [states/al/2023/al40, states/al/2024/al40, states/al/2025/al40]
+    pattern: '^(?:DIVPAYER|TAXDIV)#[1-9]$'
+    line: "2"
+    means: >-
+      a named block: Schedule B line 2 (Dividends): its nine payer rows and their Column B amounts
+    examples: {DIVPAYER#1: "2", TAXDIV#9: "2"}
+
+  # Schedule E (Form 40) Part I names each row's three property boxes after what the row holds ("RENTSRECEIVED#2" =
+  # line 3, Property B); the digit after "#" is the property column A-C the face heads "Properties A B C", never a
+  # line, so each row is a named block giving its printed line. Line 18 "Other (list)" holds five rows of three
+  # ("OTHEXP3#2" = line 18, row 3, Property B).
+  - id: al40-schedule-e-rentsreceived
+    packs: [states/al/2023/al40, states/al/2024/al40, states/al/2025/al40]
+    pattern: '^RENTSRECEIVED#[1-3]$'
+    line: "3"
+    means: 'a named block: Schedule E line 3 "Rents received", Properties A-C'
+    examples: {RENTSRECEIVED#1: "3", RENTSRECEIVED#3: "3"}
+
+  - id: al40-schedule-e-royaltiesreceived
+    packs: [states/al/2023/al40, states/al/2024/al40, states/al/2025/al40]
+    pattern: '^ROYALTIESRECEIVED#[1-3]$'
+    line: "4"
+    means: 'a named block: Schedule E line 4 "Royalties received", Properties A-C'
+    examples: {ROYALTIESRECEIVED#1: "4", ROYALTIESRECEIVED#3: "4"}
+
+  - id: al40-schedule-e-advertisingexpense
+    packs: [states/al/2023/al40, states/al/2024/al40, states/al/2025/al40]
+    pattern: '^ADVERTISINGEXPENSE#[1-3]$'
+    line: "5"
+    means: 'a named block: Schedule E line 5 "Advertising", Properties A-C'
+    examples: {ADVERTISINGEXPENSE#1: "5", ADVERTISINGEXPENSE#3: "5"}
+
+  - id: al40-schedule-e-autotravelexp
+    packs: [states/al/2023/al40, states/al/2024/al40, states/al/2025/al40]
+    pattern: '^AUTOTRAVELEXP#[1-3]$'
+    line: "6"
+    means: 'a named block: Schedule E line 6 "Auto and travel", Properties A-C'
+    examples: {AUTOTRAVELEXP#1: "6", AUTOTRAVELEXP#3: "6"}
+
+  - id: al40-schedule-e-cleaningmaintexp
+    packs: [states/al/2023/al40, states/al/2024/al40, states/al/2025/al40]
+    pattern: '^CLEANINGMAINTEXP#[1-3]$'
+    line: "7"
+    means: 'a named block: Schedule E line 7 "Cleaning and maintenance", Properties A-C'
+    examples: {CLEANINGMAINTEXP#1: "7", CLEANINGMAINTEXP#3: "7"}
+
+  - id: al40-schedule-e-commissionsexp
+    packs: [states/al/2023/al40, states/al/2024/al40, states/al/2025/al40]
+    pattern: '^COMMISSIONSEXP#[1-3]$'
+    line: "8"
+    means: 'a named block: Schedule E line 8 "Commissions", Properties A-C'
+    examples: {COMMISSIONSEXP#1: "8", COMMISSIONSEXP#3: "8"}
+
+  - id: al40-schedule-e-insuranceexp
+    packs: [states/al/2023/al40, states/al/2024/al40, states/al/2025/al40]
+    pattern: '^INSURANCEEXP#[1-3]$'
+    line: "9"
+    means: 'a named block: Schedule E line 9 "Insurance", Properties A-C'
+    examples: {INSURANCEEXP#1: "9", INSURANCEEXP#3: "9"}
+
+  - id: al40-schedule-e-legalexp
+    packs: [states/al/2023/al40, states/al/2024/al40, states/al/2025/al40]
+    pattern: '^LEGALEXP#[1-3]$'
+    line: "10"
+    means: 'a named block: Schedule E line 10 "Legal and other professional fees", Properties A-C'
+    examples: {LEGALEXP#1: "10", LEGALEXP#3: "10"}
+
+  - id: al40-schedule-e-mgmtfeesexp
+    packs: [states/al/2023/al40, states/al/2024/al40, states/al/2025/al40]
+    pattern: '^MGMTFEESEXP#[1-3]$'
+    line: "11"
+    means: 'a named block: Schedule E line 11 "Management fees", Properties A-C'
+    examples: {MGMTFEESEXP#1: "11", MGMTFEESEXP#3: "11"}
+
+  - id: al40-schedule-e-mtgintexp
+    packs: [states/al/2023/al40, states/al/2024/al40, states/al/2025/al40]
+    pattern: '^MTGINTEXP#[1-3]$'
+    line: "12"
+    means: 'a named block: Schedule E line 12 "Mortgage interest", Properties A-C'
+    examples: {MTGINTEXP#1: "12", MTGINTEXP#3: "12"}
+
+  - id: al40-schedule-e-otherintexp
+    packs: [states/al/2023/al40, states/al/2024/al40, states/al/2025/al40]
+    pattern: '^OTHERINTEXP#[1-3]$'
+    line: "13"
+    means: 'a named block: Schedule E line 13 "Other interest", Properties A-C'
+    examples: {OTHERINTEXP#1: "13", OTHERINTEXP#3: "13"}
+
+  - id: al40-schedule-e-repairsexp
+    packs: [states/al/2023/al40, states/al/2024/al40, states/al/2025/al40]
+    pattern: '^REPAIRSEXP#[1-3]$'
+    line: "14"
+    means: 'a named block: Schedule E line 14 "Repairs", Properties A-C'
+    examples: {REPAIRSEXP#1: "14", REPAIRSEXP#3: "14"}
+
+  - id: al40-schedule-e-suppliesexp
+    packs: [states/al/2023/al40, states/al/2024/al40, states/al/2025/al40]
+    pattern: '^SUPPLIESEXP#[1-3]$'
+    line: "15"
+    means: 'a named block: Schedule E line 15 "Supplies", Properties A-C'
+    examples: {SUPPLIESEXP#1: "15", SUPPLIESEXP#3: "15"}
+
+  - id: al40-schedule-e-taxes
+    packs: [states/al/2023/al40, states/al/2024/al40, states/al/2025/al40]
+    pattern: '^TAXES#[1-3]$'
+    line: "16"
+    means: 'a named block: Schedule E line 16 "Taxes", Properties A-C'
+    examples: {TAXES#1: "16", TAXES#3: "16"}
+
+  - id: al40-schedule-e-utilities
+    packs: [states/al/2023/al40, states/al/2024/al40, states/al/2025/al40]
+    pattern: '^UTILITIES#[1-3]$'
+    line: "17"
+    means: 'a named block: Schedule E line 17 "Utilities", Properties A-C'
+    examples: {UTILITIES#1: "17", UTILITIES#3: "17"}
+
+  - id: al40-schedule-e-subtotalexp
+    packs: [states/al/2023/al40, states/al/2024/al40, states/al/2025/al40]
+    pattern: '^SUBTOTALEXP#[1-3]$'
+    line: "19"
+    means: 'a named block: Schedule E line 19 "Add lines 5 through 18", Properties A-C'
+    examples: {SUBTOTALEXP#1: "19", SUBTOTALEXP#3: "19"}
+
+  - id: al40-schedule-e-depreciation
+    packs: [states/al/2023/al40, states/al/2024/al40, states/al/2025/al40]
+    pattern: '^DEPRECIATION#[1-3]$'
+    line: "20"
+    means: 'a named block: Schedule E line 20 "Depreciation expense or depletion", Properties A-C'
+    examples: {DEPRECIATION#1: "20", DEPRECIATION#3: "20"}
+
+  - id: al40-schedule-e-totalexpenses
+    packs: [states/al/2023/al40, states/al/2024/al40, states/al/2025/al40]
+    pattern: '^TOTALEXPENSES#[1-3]$'
+    line: "21"
+    means: 'a named block: Schedule E line 21 "Total expenses", Properties A-C'
+    examples: {TOTALEXPENSES#1: "21", TOTALEXPENSES#3: "21"}
+
+  - id: al40-schedule-e-scheduleeincloss
+    packs: [states/al/2023/al40, states/al/2024/al40, states/al/2025/al40]
+    pattern: '^SCHEDULEEINCLOSS#[1-3]$'
+    line: "22"
+    means: 'a named block: Schedule E line 22 "Income or (loss)", Properties A-C'
+    examples: {SCHEDULEEINCLOSS#1: "22", SCHEDULEEINCLOSS#3: "22"}
+
+  - id: al40-schedule-e-other-expenses
+    packs: [states/al/2023/al40, states/al/2024/al40, states/al/2025/al40]
+    pattern: '^OTHEXP[1-5]#[1-3]$'
+    line: "18"
+    means: 'a named block: Schedule E line 18 "Other (list)", its five rows of Properties A-C'
+    examples: {OTHEXP1#1: "18", OTHEXP5#3: "18"}
+
+  - id: al40-other-income-description
+    packs: [states/al/2023/al40, states/al/2024/al40, states/al/2025/al40]
+    pattern: '^OTHERINCEXP#1$'
+    line: "7"
+    means: >-
+      a named block: Form 40 page 2 Part I line 7 "Other income (state nature and source)", the description box
+      before the line's amount
+    examples: {OTHERINCEXP#1: "7"}
+
+  # Form 40NR's own pages (2023): page 1's line 13 / 19 boxes, page 2's Parts I-VI and Schedules A, B, D and E. A
+  # capital after the line number is the line's B / C amount column (page 2, Schedules B, D, E), a sub-line the face
+  # prints (Schedule A 10a / 10b and 24a-24c, Schedule B 2a-2d, Schedule E 6a-6c), a cell of the line's itemizing
+  # table (Schedule D line 2, Schedule E line 2: column letter, then row) or the line's description box.
+  - id: al40nr-page1-line-boxes
+    packs: [states/al/2023/al40nr]
+    pattern: '^(?:CK)?LINE(?P<n>13|19)(?P<x>[AB])?$'
+    means: >-
+      line 13's two check boxes, which the face prints "a [ ] Itemized Deductions b [ ] Standard Deduction"
+      (Schedule A line 30 says "check 13a"), and line 19's "check if from Schedule 85A" box
+    examples: {LINE13A: "13a", LINE13B: "13b", CKLINE19: "19"}
+
+  - id: al40nr-page2-parts
+    packs: [states/al/2023/al40nr]
+    pattern: '^PG2PT[1-6]LINE[BC]?0*(?P<n>\d{1,2})(?:[A-E]\d?)?$'
+    header: [B – All Sources, C – Alabama Income]
+    means: >-
+      line N of page 2 Part I-VI: "B" / "C" before or after N is the line's column B (All Sources) or C (Alabama
+      Income) box ("PG2PT1LINEB4", "PG2PT2LINE8C"), another capital the line's description or answer box
+      ("PG2PT1LINE8A2" = line 8's "state nature and source", "PG2PT6LINE5B" = line 5's spouse's employer)
+    examples: {PG2PT1LINEB4: "4", PG2PT1LINE9C: "9", PG2PT1LINE8A2: "8", PG2PT4LINE7: "7", PG2PT6LINE5B: "5"}
+
+  - id: al40nr-schedule-a-sublines
+    packs: [states/al/2023/al40nr]
+    pattern: '^SCHALINE(?P<n>10|24)(?P<x>[A-C])\d?$'
+    means: >-
+      Schedule A sub-lines 10a / 10b and 24a-24c ("SCHALINE10B" = 10b; "SCHALINE10B1"-"B3" are 10b's name and
+      address boxes)
+    examples: {SCHALINE10A: "10a", SCHALINE10B2: "10b", SCHALINE24C: "24c"}
+
+  - id: al40nr-schedule-a-lines
+    packs: [states/al/2023/al40nr]
+    pattern: '^SCHALINE(?!(?:10|24)[A-C])0*(?P<n>\d{1,2})[A-D]?$'
+    means: >-
+      Schedule A line N; a capital names a box of the line's list ("SCHALINE8A" / "8B" = line 8's "Other taxes
+      (List ...)" boxes, "SCHALINE20A"-"20D" line 20's, "SCHALINE25A" / "26A" lines 25 and 26's)
+    examples: {SCHALINE1: "1", SCHALINE8B: "8", SCHALINE20D: "20", SCHALINE30: "30"}
+
+  - id: al40nr-schedule-b-sublines
+    packs: [states/al/2023/al40nr]
+    pattern: '^SCHBLINE(?P<n>2)(?P<x>[A-D])1?$'
+    means: >-
+      Schedule B line 2a-2d (interest from obligations of the federal government and Alabama's subdivisions): the
+      amount box, and with "1" its payer description box
+    examples: {SCHBLINE2A: "2a", SCHBLINE2D1: "2d"}
+
+  - id: al40nr-schedule-b-lines
+    packs: [states/al/2023/al40nr]
+    pattern: '^SCHBLINE0*(?P<n>[134])[BC]?$'
+    header: [Adjusted Gross Income from All Sources, Adjusted Gross Income Earned in Alabama]
+    means: >-
+      Schedule B line 1, 3 or 4; "B" / "C" is line 4's column B (all sources) or column C (earned in Alabama)
+    examples: {SCHBLINE1: "1", SCHBLINE4C: "4"}
+
+  - id: al40nr-schedule-d-lines
+    packs: [states/al/2023/al40nr]
+    pattern: '^SCHDLINE0*(?P<n>[1-5])(?:[A-F][1-3]?)?$'
+    header: [Kind of Property & Location]
+    means: >-
+      Schedule D line N: line 2's table cells ("SCHDLINE2C3" = column c, row 3), line 3's column totals c-f, and
+      lines 4-5's column B / C boxes
+    examples: {SCHDLINE1: "1", SCHDLINE2A1: "2", SCHDLINE3F: "3", SCHDLINE5C: "5"}
+
+  - id: al40nr-schedule-e-lines
+    packs: [states/al/2023/al40nr]
+    pattern: '^SCHEPT[12]LINE0*(?P<n>[1-578])(?:[A-E][1-4]?)?$'
+    means: >-
+      Schedule E Part I line 1-5 and Part II line 7-8: line 2's table cells ("SCHEPT1LINE2B4" = column b, row 4),
+      line 3's column totals b-e, and the column B / C boxes of lines 4, 5, 7 and 8
+    examples: {SCHEPT1LINE1: "1", SCHEPT1LINE2E3: "2", SCHEPT1LINE5C: "5", SCHEPT2LINE8B: "8"}
+
+  - id: al40nr-schedule-e-line-6
+    packs: [states/al/2023/al40nr]
+    pattern: '^SCHEPT2LINE(?P<n>6)(?P<x>[A-C])(?:[1-3]|[BC])$'
+    means: >-
+      Schedule E Part II line 6a-6c (a partnership, estate, trust or S corporation): its name, address and EIN boxes
+      ("1"-"3") and its column B / C amounts ("SCHEPT2LINE6BC" = line 6b, column C)
+    examples: {SCHEPT2LINE6A1: "6a", SCHEPT2LINE6CB: "6c"}
+
+  # ── Phase K JK10b (2026-11-11): the MO-1040 bundle's attached forms and worksheets ──
+  # The MO packs carry Form MO-A, MO-CR (two copies, and its Schedule 1), MO-NRI, MO-TC, MO-PTS, MO-CRP (five copies),
+  # Form 5695, the Tax Calculation Worksheet, the Worksheet for Line 1 and, 2024 on, Form MO-WFTC in one blank, keyed
+  # by field name in shapes no rule read ("mocr_3y", "moa_pt2_4", "n.tc_c1_5", "c.crp_7da", "qh4y"), so 129 of ~490
+  # line-bearing keys were checked. Each shape below was read on its packs' own faces (work renders of every attached
+  # page of the 2023 blank and of each page the 2024 or 2025 blank prints differently; not shipped). A shape first
+  # drafted for "33_YS" / "33_SP" / "adjLine14" did not hold: those widgets are hidden (the ledger's not_lines
+  # family mo-bundle-non-lines says why). Blanks (first 16 hex of the sha256 each pack pins, matched by the cached
+  # file): states/mo/2023/mo1040 589940ef12527b44, states/mo/2024/mo1040 8a16adf7e840fd5b, states/mo/2025/mo1040
+  # 912b43015ea273d9.
+  - id: mo-cr-yourself-spouse
+    packs: [states/mo/2023/mo1040, states/mo/2024/mo1040, states/mo/2025/mo1040]
+    pattern: '^(?:mocr_|mocrsch1(?:-2)?_)0*(?P<n>\d{1,2})(?P<x>[ys])b?$'
+    means: >-
+      line N's Yourself or Spouse box on Form MO-CR ("mocr_3y"; a trailing "b" is the form's second copy,
+      "mocr_3yb") and on MO-CR Schedule 1 ("mocrsch1_2s"; the 2025 blank holds a second copy, "mocrsch1-2_2s"): the
+      face labels each box "3Y" / "3S", so the key maps to that designator
+    examples: {mocr_3y: "3y", mocr_11sb: "11s", mocrsch1_2s: "2s", mocrsch1-2_5y: "5y"}
+
+  - id: mo-cr-line-2-state-of
+    packs: [states/mo/2023/mo1040, states/mo/2024/mo1040, states/mo/2025/mo1040]
+    pattern: '^mocr_st-[12]b?$'
+    line: "2"
+    means: >-
+      a named block: Form MO-CR line 2's "State of:" boxes over the Yourself (-1) and Spouse (-2) columns, on each
+      copy ("b")
+    examples: {mocr_st-1: "2", mocr_st-2b: "2"}
+
+  - id: mo-cr-line-4-other-income
+    packs: [states/mo/2023/mo1040, states/mo/2024/mo1040]
+    pattern: '^mocr_other1b?$'
+    line: "4"
+    means: >-
+      a named block: the box inside Form MO-CR line 4's caption, "Other income (Describe nature ____)", on each copy
+      ("b"); the 2025 pack maps no such key
+    examples: {mocr_other1: "4", mocr_other1b: "4"}
+
+  - id: mo-nri-items
+    packs: [states/mo/2023/mo1040, states/mo/2024/mo1040, states/mo/2025/mo1040]
+    pattern: '^nri_(?:line)?(?P<n>[123])(?:(?P<x>[YS])|_[YS](?:rw)?bx|S?[ab][12]|S?bstate|(?:[ab][YS]|[YS][ab])(?:state[23])?|[YS]state[23])$'
+    means: >-
+      a box of Form MO-NRI's numbered items. Part C (Missouri Income Percentage) labels its boxes "1Y" / "1S" ...
+      "3Y" / "3S" ("nri_line2Y" = 2y). Part A prints the status items "1. Nonresident of Missouri", "2. Part-Year
+      Missouri Resident" and "3. Military/Nonresident Tax Status" once for Yourself and once for the Spouse, and
+      every other key maps to its item's number: the item's check box ("nri_line1_Ybx") and its Remote Work box
+      ("nri_line1_Yrwbx"), item 2's A. Date From / To boxes ("nri_line2a1", "nri_line2Sa2"), its B. other-state box
+      ("nri_line2bstate") and dates ("nri_line2Sb1"), and item 3's Missouri / Non-Missouri Home of Record boxes and
+      their state boxes ("nri_line3Ya", "nri_3aYstate2", "nri_3Ya", "nri_line3bSstate3"). The anchor reads no
+      designator beside the Part A boxes (the ledger's dark family nri_line#)
+    examples: {nri_line2Y: "2y", nri_line3S: "3s", nri_line1_Yrwbx: "1", nri_line2Sa2: "2", nri_line2bstate: "2",
+               nri_line3bSstate2: "3", nri_3Ya: "3", nri_3aYstate2: "3"}
+
+  - id: mo-nri-state-of-residence
+    packs: [states/mo/2023/mo1040, states/mo/2024/mo1040, states/mo/2025/mo1040]
+    pattern: '^nri_resid_[YS]$'
+    line: "1"
+    means: >-
+      a named block: the "State of residence during <year>" box under Form MO-NRI Part A item 1 (Nonresident of
+      Missouri), Yourself and Spouse
+    examples: {nri_resid_Y: "1", nri_resid_S: "1"}
+
+  - id: mo-1040-line-1-worksheet
+    packs: [states/mo/2023/mo1040, states/mo/2024/mo1040, states/mo/2025/mo1040]
+    pattern: '^(?P<n>[1-9]|1[0-8])-[YS]$'
+    header: [Y - Yourself, S - Spouse]
+    means: >-
+      row N of the "Worksheet for Line 1" (Adjusted Gross Income Worksheet for Combined Return): its Y - Yourself and
+      S - Spouse boxes. The face prints N at the row's start (2023 and 2024 print it again between the two columns)
+      and, in a column left of the Y box, the federal Form 1040 line the row draws from ("1z", "2b", "4b"), which
+      is what the anchor reads beside the Y box (2025: beside both boxes); those boxes are adjudicated in the
+      exceptions table. The 2025 worksheet has 11 rows, and its pack keys them by row ("11-Y" is the field "18-Y")
+    examples: {1-Y: "1", 11-S: "11", 18-Y: "18"}
+
+  - id: mo-a-part-2-and-3-lines
+    packs: [states/mo/2023/mo1040, states/mo/2024/mo1040, states/mo/2025/mo1040]
+    pattern: '^moa_pt[2-5]_0*(?P<n>\d{1,2})$'
+    means: >-
+      line N of a Form MO-A section where the line has one box: "pt2" is Part 2 (Missouri Itemized Deductions), and
+      "pt3" / "pt4" / "pt5" are Part 3's Section A (Public Pension Calculation), Section B (Private Pension
+      Calculation) and Section C (Social Security or Social Security Disability Calculation); the Yourself / Spouse
+      boxes of those sections ("moa_pt3_6y") are mo-1040-yourself-spouse's
+    examples: {moa_pt2_4: "4", moa_pt3_5: "5", moa_pt4_9: "9", moa_pt5_4: "4"}
+
+  - id: mo-a-line-options
+    packs: [states/mo/2023/mo1040, states/mo/2024/mo1040, states/mo/2025/mo1040]
+    pattern: '^moa_(?P<n>2|11|14)(?:p|f|scorp|busint|n|netop|r|mil|com|ba|moPPTA|o|other|sold)$'
+    means: >-
+      a box of Form MO-A Part 1 that sits on line N and names what the line's amount is: on line 2 and line 11 the
+      source check boxes Partnership ("moa_2p"), Fiduciary, S Corporation, Business Interest, Net Operating Loss
+      ("moa_2n", "moa_11netop"), Railroad Retirement Benefits ("moa_11r"), Military (nonresident), Combat Pay, Build
+      America and Recovery Zone Bond Interest ("moa_11ba"), MO Public-Private Transportation Act and Other
+      ("moa_11o") with its description box ("moa_11other"); on line 14 (Missouri depreciation adjustment) the box
+      "Sold or disposed property previously taken as addition modification" ("moa_14sold")
+    examples: {moa_2p: "2", moa_2scorp: "2", moa_11ba: "11", moa_11other: "11", moa_14sold: "14"}
+
+  - id: mo-a-part-2-worksheet
+    packs: [states/mo/2023/mo1040, states/mo/2024/mo1040, states/mo/2025/mo1040]
+    pattern: '^moa_wks(?P<n>[1-7])$'
+    means: 'line N of Form MO-A''s "Part 2 Worksheet - Net State Income Taxes, Line 11" ("moa_wks5")'
+    examples: {moa_wks1: "1", moa_wks7: "7"}
+
+  - id: mo-tax-calculation-worksheet
+    packs: [states/mo/2023/mo1040, states/mo/2024/mo1040, states/mo/2025/mo1040]
+    pattern: '^moa_[ys](?P<n>[1-7])$'
+    header: [Tax Calculation Worksheet, Yourself, Spouse]
+    means: >-
+      line N of the Tax Calculation Worksheet (Section B of the Tax Chart page): its Yourself ("moa_y3") and Spouse
+      ("moa_s3") boxes; the field names start "moa_" though the worksheet is not part of Form MO-A
+    examples: {moa_y1: "1", moa_s7: "7"}
+
+  - id: mo-5695-lines
+    packs: [states/mo/2023/mo1040, states/mo/2024/mo1040, states/mo/2025/mo1040]
+    pattern: '^qh0*(?P<n>\d{1,2})(?P<x>[ys])?$'
+    means: >-
+      line N of Form 5695 (Qualified Health Insurance Premiums Worksheet for MO-A); where the line has Yourself and
+      Spouse boxes the face labels them "4Y" / "4S" and the key maps to that designator ("qh4y", "qh17s")
+    examples: {qh1: "1", qh4y: "4y", qh16: "16", qh17s: "17s"}
+
+  - id: mo-tc-lines
+    packs: [states/mo/2023/mo1040, states/mo/2024/mo1040, states/mo/2025/mo1040]
+    pattern: '^(?:n\.tc_c[12]_|t\.tc[._](?:bn|ac|cn))0*(?P<n>\d{1,2})$'
+    header: [Benefit Number, Alpha Code, Credit Name, Column 1, Column 2]
+    means: >-
+      line N of Form MO-TC's credit table: its Benefit Number, Alpha Code and Credit Name boxes ("t.tc_bn3",
+      "t.tc.ac3", "t.tc_cn3") and its Column 1 / Column 2 amounts ("n.tc_c2_3"); lines 11-13 are the totals
+    examples: {t.tc_bn3: "3", t.tc.ac7: "7", t.tc_cn10: "10", n.tc_c1_13: "13", n.tc_c2_12: "12"}
+
+  - id: mo-pts-lines
+    packs: [states/mo/2023/mo1040, states/mo/2024/mo1040, states/mo/2025/mo1040]
+    pattern: '^n\.pts_0*(?P<n>\d{1,2})$'
+    means: 'line N of Form MO-PTS (Property Tax Credit Schedule)'
+    examples: {n.pts_1: "1", n.pts_14: "14"}
+
+  - id: mo-crp-lines
+    packs: [states/mo/2023/mo1040, states/mo/2024/mo1040, states/mo/2025/mo1040]
+    pattern: '^[ncd]\.crp_0*(?P<n>[5-9])(?:[a-e]|[a-k][a-e]|(?:fr|to)_(?:mm|dd)-[1-5])$'
+    means: >-
+      line N of Form MO-CRP (Certification of Rent Paid), of which the bundle holds five copies: the last letter, or
+      the "-1" ... "-5" after a date part, is the copy ("n.crp_6c" = line 6 of copy c; "d.crp_5fr_mm-2" = line 5's
+      From month, copy 2). On line 7 the letter before the copy is the check box: "a"-"g" are the printed options A.
+      to G. ("c.crp_7da" = D. Skilled or Intermediate Care Nursing Home, copy a), "h" is E.'s "if meals are
+      included - 50%" box, and "i" / "j" / "k" are G.'s sharing options "1 (50%)" / "2 (33%)" / "3 (25%)", whose own
+      numbers the anchor reads beside the "j" and "k" boxes (adjudicated in the exceptions table)
+    examples: {n.crp_6c: "6", c.crp_7da: "7", c.crp_7kb: "7", d.crp_5fr_mm-2: "5", d.crp_5to_dd-5: "5"}
+
+  - id: mo-crp-line-4-landlord-phone
+    packs: [states/mo/2023/mo1040, states/mo/2024/mo1040, states/mo/2025/mo1040]
+    pattern: '^d\.crp_llphone1[b-e]?$'
+    line: "4"
+    means: >-
+      a named block: the box of Form MO-CRP line 4, "Landlord's Phone Number (Must be completed)", on each of the
+      five copies (the trailing letter)
+    examples: {d.crp_llphone1: "4", d.crp_llphone1e: "4"}
+
+  - id: mo-wftc-lines
+    packs: [states/mo/2024/mo1040, states/mo/2025/mo1040]
+    pattern: '^wftc_line0*(?P<n>\d{1,2})$'
+    means: 'line N of Form MO-WFTC (Missouri Working Family Tax Credit), in the bundle from 2024 ("wftc_line7")'
+    examples: {wftc_line5: "5", wftc_line10: "10"}
+
+  # ── Phase K JK10b (2026-11-11): NJ-1040's numbered filing statuses ──
+  # NJ-1040 prints its five filing statuses as numbered rows, "1." ... "5.", each with an oval (one radio field,
+  # told apart by on_state), and the pack keys each oval by the status's name, a key with no line token: the gate
+  # compared nothing for them. Five named blocks give each oval its printed number, so a rotation among the ovals
+  # disagrees. Read on page 1 of the three faces (blanks listed at the top of this file). The rest of NJ-1040's
+  # unchecked keys are amount-comb digit cells the anchor reads no line beside (the ledger rows say which).
+  - id: nj1040-filing-status-1
+    packs: [states/nj/2023/nj1040, states/nj/2024/nj1040, states/nj/2025/nj1040]
+    pattern: '^filing_status::single$'
+    line: "1"
+    means: 'a named block: the oval of filing status "1. Single"'
+    examples: {"filing_status::single": "1"}
+
+  - id: nj1040-filing-status-2
+    packs: [states/nj/2023/nj1040, states/nj/2024/nj1040, states/nj/2025/nj1040]
+    pattern: '^filing_status::mfj$'
+    line: "2"
+    means: 'a named block: the oval of filing status "2. Married/CU Couple, filing joint return"'
+    examples: {"filing_status::mfj": "2"}
+
+  - id: nj1040-filing-status-3
+    packs: [states/nj/2023/nj1040, states/nj/2024/nj1040, states/nj/2025/nj1040]
+    pattern: '^filing_status::mfs$'
+    line: "3"
+    means: 'a named block: the oval of filing status "3. Married/CU Partner, filing separate return"'
+    examples: {"filing_status::mfs": "3"}
+
+  - id: nj1040-filing-status-4
+    packs: [states/nj/2023/nj1040, states/nj/2024/nj1040, states/nj/2025/nj1040]
+    pattern: '^filing_status::hoh$'
+    line: "4"
+    means: 'a named block: the oval of filing status "4. Head of Household"'
+    examples: {"filing_status::hoh": "4"}
+
+  - id: nj1040-filing-status-5
+    packs: [states/nj/2023/nj1040, states/nj/2024/nj1040, states/nj/2025/nj1040]
+    pattern: '^filing_status(?:::qualifying_widow|_qw_year_of_death::\d{4})$'
+    line: "5"
+    means: >-
+      a named block: the oval of filing status "5. Qualifying Widow(er)/Surviving CU Partner" and, on the row under
+      it, the two year ovals of "Indicate the year of your spouse's/CU partner's death" (the two years before the
+      tax year: "filing_status_qw_year_of_death::2022")
+    examples: {"filing_status::qualifying_widow": "5", "filing_status_qw_year_of_death::2022": "5"}
 
   # Generic: a key that starts with line N (optionally "line"/"line_") and then names the box ("4c.rollover",
   # "9.primary", "18a.gross", "1.original", "line10b_count", "11_filing_status::single"). Continuation rows

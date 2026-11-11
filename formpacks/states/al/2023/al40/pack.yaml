@@ -6,6 +6,12 @@
 # every widget's /FT, /Ff and /AP /N appearance states from the official blank,
 # and placing each fillable widget on its printed line.
 #
+# RE-KEYED 2026-10-25 (Phase K JK10b). The NOL-85 "Other (explain)" boxes are
+# keyed by the line the face prints them on: SchNOL85LN1hOther (line 1(h)) and
+# SchNOL85LN7gOther (line 7(g)), formerly keyed by their field names
+# SchNOL85LN2hOther / SchNOL85LN17gOther, which name lines the form does not
+# print. The fields are unchanged; only this pack referred to the old keys.
+#
 # RE-KEYED 2026-10-02 (Phase J JS5, pitfall P-031). Page 1's line keys from
 # line 5 on had been numbered from a superseded face: the 2023 Form 40 prints
 # 5a (Alabama tax withheld) and 5b (wages), 20a/20b (the two party
@@ -4713,7 +4719,8 @@ fields:
     field: SchNOL85LN1g
     type: text
     maxlen: 10
-  - line: SchNOL85LN2hOther
+  # Phase K JK10b (2026-10-25): keyed by the printed line (1(h) / 7(g)); the field name says 2h.
+  - line: SchNOL85LN1hOther
     field: SchNOL85LN2hOther
     type: text
   - line: SchNOL85LN1h
@@ -4772,7 +4779,8 @@ fields:
     field: SchNOL85LN7f
     type: text
     maxlen: 10
-  - line: SchNOL85LN17gOther
+  # Phase K JK10b (2026-10-25): keyed by the printed line (1(h) / 7(g)); the field name says 17g.
+  - line: SchNOL85LN7gOther
     field: SchNOL85LN17gOther
     type: text
     maxlen: 11
