@@ -520,7 +520,7 @@ def test_the_foreign_tax_credit_topic_carries_the_election_and_its_cost():
     # creditability is not waived: 901/903 and the 901(k) holding period
     assert "901(k)" in blob and "tax paid in lieu of a tax on income" in blob
     urls = {s.url for s in r.sources}
-    assert any("section904" in u for u in urls) and any("section901" in u for u in urls)
+    assert any("/s904/" in u for u in urls) and any("/s901/" in u for u in urls)
     assert any("f1116" in u for u in urls) and any("i1116" in u for u in urls)
     assert any("p514" in u for u in urls)
 
@@ -572,7 +572,7 @@ def test_p013_deposit_interest_queries_route_to_nonresident_fdap():
             topics = {s.topic for s in r.sources}
             assert topics == {"nonresident_fdap"}, f"{query!r} ({year}) routed to {topics}"
             urls = {s.url for s in r.sources}
-            assert any("section871" in u and u.startswith("https://uscode.house.gov/") for u in urls)
+            assert "https://uscode.house.gov/us/usc/t26/s871/" in urls
             assert "https://www.irs.gov/publications/p519" in urls
 
 

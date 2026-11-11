@@ -3101,7 +3101,7 @@ def test_roth_conversion_income_is_never_itself_net_investment_income():
                            knowledge_dir=KNOWLEDGE_DIR)
     assert some.niit_from_conversion == irs_round(Decimal("4200") * Decimal("0.038"))   # 160
     assert "1411(c)(5)" in some.work
-    assert any("section1411" in c.url for c in some.citations)
+    assert any("/s1411/" in c.url for c in some.citations)
 
 
 def test_roth_conversion_work_carries_the_withholding_and_irreversibility_warnings():
@@ -3258,7 +3258,7 @@ def test_hsa_deduction_last_month_rule_makes_the_testing_period_visible():
     # The safe alternative is stated, not implied.
     assert "Contributing no more than $729.17" in r.work
     assert r.at_risk_if_testing_period_fails == irs_round(Decimal("8750") - Decimal("729.17"))
-    assert any("section223" in c.url for c in r.citations)
+    assert any("/s223/" in c.url for c in r.citations)
 
 
 def test_hsa_deduction_employer_money_reduces_the_deduction_it_is_not_a_second_one():
@@ -3845,7 +3845,7 @@ def test_no_withholding_and_no_fica_on_espp_compensation_is_stated():
     sale_year = date.fromisoformat(_PUB525_EXAMPLE_10["sale_date"]).year
     assert f"Schedule 1 line {form_line(sale_year, 'sched1.stock_options')}" in r.work   # JF6b
     urls = {c.url for c in r.citations}
-    assert any("section3121" in u for u in urls)
+    assert any("/s3121/" in u for u in urls)
 
 
 def test_a_nonstatutory_option_is_refused_rather_than_run_through_423():
@@ -4101,7 +4101,7 @@ def test_the_section_151_addback_divergence_is_disclosed_not_silently_resolved()
                                 taxable_income_before_capital_loss=90_000, year=2025)
     note = [a for a in r.input_assumptions if "SECTION 151 ADD-BACK" in a]
     assert note and "151(d)(5)(C)" in note[0] and "$6,000" in note[0]
-    assert any("section151" in c.url for c in r.citations)
+    assert any("/s151/" in c.url for c in r.citations)
 
 
 def test_espp_capital_loss_hands_off_to_the_limitation_op():
@@ -4453,7 +4453,7 @@ def test_the_work_string_carries_every_condition_and_the_statute():
     assert r.citation.url.startswith("https://uscode.house.gov/")
     assert "does not exceed $300 ($600 in the case of a joint return)" in r.citation.source
     urls = [c.url for c in r.citations]
-    assert any("section904" in u for u in urls) and any("section901" in u for u in urls)
+    assert any("/s904/" in u for u in urls) and any("/s901/" in u for u in urls)
     assert any("f1116--2023.pdf" in u for u in urls) and any("i1116--2023.pdf" in u for u in urls)
     # What the op does NOT decide is stated, so silence is never a clean bill.
     blob = " ".join(r.not_modeled)

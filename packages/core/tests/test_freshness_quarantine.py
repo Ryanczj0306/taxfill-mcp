@@ -69,17 +69,38 @@ MA_FORM1_NETWORK_TESTS = frozenset(
 )
 
 
-# JK30 (2026-10-24): uscode.house.gov "is currently operating in a temporary format", and the view.xhtml section pages
-# the source registries cite answer HTTP 404. The rows cover all of them or none: the whole service is down.
-def _registry_uscode_view_urls() -> set[str]:
-    """Every uscode.house.gov view.xhtml URL the two source registries cite (what check_drift probes)."""
-    text = "".join((REPO / "knowledge" / name).read_text(encoding="utf-8") for name in ("sources.yaml", "sources_states.yaml"))
-    return set(re.findall(r"https://uscode\.house\.gov/view\.xhtml\?[^\s\"']+", text))
+# JK30 (2026-10-24, closed 2026-11-11): uscode.house.gov "is currently operating in a temporary format" and its
+# view.xhtml section pages answer HTTP 404, but the same site serves each section as a static page,
+# https://uscode.house.gov/us/usc/t<title>/s<section>/ (current law, unlike govinfo.gov's annual edition, which
+# lacks the sections P.L. 119-21 added). Every citation was re-pointed to that form and the eighteen drift rows
+# deleted; this guard keeps the dead form out.
+USCODE_SECTION_PAGE = re.compile(r"https://uscode\.house\.gov/us/usc/t\d+/s[0-9A-Za-z]+/")
+
+
+def _cited_uscode_urls() -> dict[str, set[str]]:
+    """file -> every uscode.house.gov URL it cites, over the knowledge layer, the packs and the engine's source."""
+    roots = [*(REPO / "knowledge").rglob("*.yaml"), *(REPO / "formpacks").rglob("pack.yaml"),
+             *(REPO / "packages" / "core" / "src" / "taxfill_core").glob("*.py")]
+    found = {}
+    for path in roots:
+        urls = set(re.findall(r"https://uscode\.house\.gov/[^\s\"')>\]]*", path.read_text(encoding="utf-8")))
+        if urls:
+            found[str(path.relative_to(REPO))] = urls
+    return found
+
+
+def test_every_us_code_citation_names_a_static_section_page():
+    cited = _cited_uscode_urls()
+    assert len(cited) >= 10 and sum(len(u) for u in cited.values()) >= 60          # the guard reads something
+    bad = {f: sorted(u for u in urls if not USCODE_SECTION_PAGE.fullmatch(u)) for f, urls in cited.items()}
+    assert not {f: u for f, u in bad.items() if u}, (
+        "a US Code citation must be https://uscode.house.gov/us/usc/t<title>/s<section>/ — the view.xhtml form "
+        f"answers 404 while the site runs in its temporary format (JK30): { {f: u for f, u in bad.items() if u} }")
 
 
 def test_the_quarantine_names_real_targets_each_with_an_expiry_and_a_fix():
     entries = fq.load()
-    assert {e.fixed_by for e in entries} == {"JK2", "JK30"}  # JS1a/JS1b/JS5 retired theirs; JK2's rows self-clear
+    assert {e.fixed_by for e in entries} == {"JK2"}  # JS1a/JS1b/JS5/JK30 retired theirs; JK2's rows self-clear
     knowledge = "\n".join(p.read_text(encoding="utf-8") for p in (REPO / "knowledge").rglob("*.yaml"))
     knowledge += "\n".join(p.read_text(encoding="utf-8") for p in (REPO / "formpacks").rglob("pack.yaml"))
     for e in entries:
@@ -94,13 +115,10 @@ def test_the_quarantine_names_real_targets_each_with_an_expiry_and_a_fix():
     # two MA packs are served only by the CI blank cache, so exactly their twenty node ids are quarantined (JK2,
     # JK27, JK28).
     assert {e.target for e in entries if e.kind == "network_test"} == MA_FORM1_NETWORK_TESTS
-    # The MN M1 booklet move was FIXED (new URL), not quarantined. The only drift rows are JK30's (2026-10-24): the
-    # uscode.house.gov view.xhtml section pages the source registries cite, while that site runs in a temporary format.
-    drift = [e for e in entries if e.kind == "drift"]
-    assert not drift or {e.target for e in drift} == _registry_uscode_view_urls()
-    assert all(e.fixed_by == "JK30" and e.expires == dt.date(2026, 12, 15) for e in drift)
-    assert all("temporary format" in e.why and "govinfo.gov" in e.why for e in drift)
-    assert {e.added for e in entries} == {dt.date(2026, 10, 15), dt.date(2026, 10, 16), dt.date(2026, 10, 24)}
+    # The MN M1 booklet move was FIXED (new URL), not quarantined, and so were JK30's eighteen uscode.house.gov rows
+    # (2026-10-24 -> 2026-11-11: each citation re-pointed to the site's static section page). No drift row is left.
+    assert not [e for e in entries if e.kind == "drift"]
+    assert {e.added for e in entries} == {dt.date(2026, 10, 15), dt.date(2026, 10, 16)}
     assert all("mass.gov" in e.why and "mirror" in e.why and "cache" in e.why
                for e in entries if e.kind == "network_test")
 

@@ -554,7 +554,7 @@ tax:
         IRC 21(a)(2) (P.L. 119-21 §70405), 21(c), 21(d)(2) and 129(a)(2)(A) (§70404), taxable years
         beginning after December 31, 2025; draft 2026 Instructions for Form 2441 (2026 Phaseout
         Schedule) and draft Form 2441 (Created 4/30/26) line 21
-      url: "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section21&num=0&edition=prelim"
+      url: "https://uscode.house.gov/us/usc/t26/s21/"
     expense_cap:
       one_qualifying_person: 3000
       two_or_more_qualifying_persons: 6000
@@ -599,7 +599,7 @@ tax:
   taxable_social_security:
     citation:
       source: "IRC 86(c); checked against the draft Pub 915 (2026) (Aug 17, 2026), Base amount and Worksheet 1"
-      url: "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section86&num=0&edition=prelim"
+      url: "https://uscode.house.gov/us/usc/t26/s86/"
     base_amount:
       single: 25000
       married_filing_jointly: 32000
@@ -646,7 +646,7 @@ tax:
   salt_cap:
     citation:
       source: "IRC 164(b)(6)-(7) as amended by P.L. 119-21 §70120; checked against the draft Schedule A (Form 1040) 2026 (Created 5/12/26) line 5e"
-      url: "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section164&num=0&edition=prelim"
+      url: "https://uscode.house.gov/us/usc/t26/s164/"
     cap: 40400
     cap_mfs: 20200
     phase_down:
@@ -670,7 +670,7 @@ tax:
   itemized_limitation:
     citation:
       source: "IRC 68 as rewritten by P.L. 119-21 §70111; the draft Schedule A (Form 1040) 2026 (Created 5/12/26) line 18"
-      url: "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section68&num=0&edition=prelim"
+      url: "https://uscode.house.gov/us/usc/t26/s68/"
     reduction_numerator: 2
     reduction_denominator: 37
     schedule_a_screen_over: 384350
@@ -692,7 +692,7 @@ tax:
   education_credits:
     citation:
       source: "IRC 25A(b)-(d), (g)(1) and (i) as amended by P.L. 119-21 §70606; checked against the draft Form 8863 (2026) (Created 4/28/26) lines 2 and 13 and its draft instructions"
-      url: "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section25A&num=0&edition=prelim"
+      url: "https://uscode.house.gov/us/usc/t26/s25A/"
     aotc:
       per_student_cap: 2500
       first_dollar_cap: 2000
@@ -815,7 +815,7 @@ tax:
         added by P.L. 119-21 — statutory, not inflation-indexed; checked against the final Form
         W-4 (2026) Step 4(b) Deductions Worksheet and the draft 2026 Schedule 1-A (Form 1040),
         Created 6/16/26
-      url: "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section224&num=0&edition=prelim"
+      url: "https://uscode.house.gov/us/usc/t26/s224/"
     effective_years: "2025 through 2028 (OBBBA, P.L. 119-21, enacted 2025-07-04)"
     magi_definition: >-
       Form 1040/1040-SR/1040-NR line 11b (AGI) + excluded Puerto Rico income +
@@ -1011,7 +1011,7 @@ charitable_contributions:
       December 31, 2025; Rev. Proc. 2025-32 §4.33(2); Pub 526 (2025), Membership fees or dues;
       IRC 6115(a); IRC 170(f)(8)(A) and (C); checked against Form W-4 (2026) Step 4(b) lines 12
       and 6d
-    url: "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section170&num=0&edition=prelim"
+    url: "https://uscode.house.gov/us/usc/t26/s170/"
   effective: "taxable years beginning after December 31, 2025 (P.L. 119-21 §§70424(b), 70425(c))"
   nonitemizer:
     cap: { married_filing_jointly: 2000, other: 1000 }
@@ -1187,7 +1187,7 @@ credits:
         by the individual during the taxable year does not exceed $300 ($600 in the case of a
         joint return)". Estates and trusts are excluded by IRC 904(j)(3)(D) ("This subsection
         shall not apply to any estate or trust").
-      url: "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section904&num=0&edition=prelim"
+      url: "https://uscode.house.gov/us/usc/t26/s904/"
     de_minimis_election:
       # "in the case of a joint return" is LITERAL: only married filing jointly
       # takes $600; a qualifying surviving spouse and MFS take $300.
@@ -1195,7 +1195,7 @@ credits:
         joint_return: 600
         other: 300
       statute: "IRC 904(j)"
-      statute_url: "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section904&num=0&edition=prelim"
+      statute_url: "https://uscode.house.gov/us/usc/t26/s904/"
       added_by: "P.L. 105-34 (Taxpayer Relief Act of 1997), enacted 1997-08-05"
       inflation_indexed: false
       excluded_entities: [estate, trust]
@@ -1422,7 +1422,7 @@ effective_law_changes:
       JT2a) — the estimator takes itemized_deductions as the caller's total.
     citation:
       source: "IRC 164(b)(6)-(7) (uscode.house.gov, read 2026-09-27)"
-      url: "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section164&num=0&edition=prelim"
+      url: "https://uscode.house.gov/us/usc/t26/s164/"
     status: enacted
     affects:
       - tax.salt_cap
@@ -1434,7 +1434,7 @@ effective_law_changes:
       reduction is not posted, so the estimator discloses the screen and does not price it.
     citation:
       source: "IRC 68 (uscode.house.gov, read 2026-09-27)"
-      url: "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section68&num=0&edition=prelim"
+      url: "https://uscode.house.gov/us/usc/t26/s68/"
     status: irs_guidance_pending
     lookup_path: "sources.yaml by_topic itemized_limitation_2026"
     affects:
@@ -1449,7 +1449,7 @@ effective_law_changes:
       Modeled in credits.child_tax_credit (Phase J JT1d).
     citation:
       source: "IRC 24(h)(2)-(7) and 24(i) (uscode.house.gov, read 2026-09-27)"
-      url: "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section24&num=0&edition=prelim"
+      url: "https://uscode.house.gov/us/usc/t26/s24/"
     status: enacted
     affects:
       - credits.child_tax_credit
@@ -1493,7 +1493,7 @@ effective_law_changes:
       source: >-
         IRC 224(b)(1)-(2) and (h), 225(b)(1)-(2) and (g), 163(h)(4)(A)-(C) and 151(d)(5)(C), as
         added by P.L. 119-21 (uscode.house.gov, read 2026-09-27)
-      url: "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section224&num=0&edition=prelim"
+      url: "https://uscode.house.gov/us/usc/t26/s224/"
     status: enacted
     affects:
       - tax.obbba_schedule_1a
@@ -1511,7 +1511,7 @@ effective_law_changes:
       source: >-
         IRC 170(p) and 170(b)(1)(I), with the §70424(b) and §70425(c) effective-date notes
         (uscode.house.gov, read 2026-09-27)
-      url: "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section170&num=0&edition=prelim"
+      url: "https://uscode.house.gov/us/usc/t26/s170/"
     status: enacted
     affects:
       - charitable_contributions
@@ -1543,7 +1543,7 @@ effective_law_changes:
       source: >-
         IRC 21(a)(2) and 129(a)(2)(A) with the §70405(b) and §70404(b) effective-date notes
         (uscode.house.gov, read 2026-09-27)
-      url: "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section21&num=0&edition=prelim"
+      url: "https://uscode.house.gov/us/usc/t26/s21/"
     status: enacted
     affects:
       - tax.dependent_care
@@ -1609,7 +1609,7 @@ foreign_account_reporting:
     form: "8938"
     form_key: f8938
     statute: "IRC 6038D"
-    statute_url: "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section6038D&num=0&edition=prelim"
+    statute_url: "https://uscode.house.gov/us/usc/t26/s6038D/"
     instructions_url: "https://www.irs.gov/pub/irs-prior/i8938--2021.pdf"
     filed_with: >-
       the IRS, ATTACHED to the annual income tax return (the printed form says
@@ -1694,7 +1694,7 @@ foreign_account_reporting:
           "20 percent" on an underpayment attributable to an undisclosed foreign
           financial asset understatement). Restated in the Instructions for Form
           8938 (Rev. 11-2021), "Penalties".
-        url: "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section6038D&num=0&edition=prelim"
+        url: "https://uscode.house.gov/us/usc/t26/s6038D/"
       failure_to_file: 10000
       continuing_failure_per_30_days: 10000
       continuing_failure_grace_days_after_notice: 90
@@ -1739,7 +1739,7 @@ foreign_account_reporting:
     form: "FinCEN Form 114"
     form_key: fincen114
     statute: "31 U.S.C. 5314"
-    statute_url: "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title31-section5314&num=0&edition=prelim"
+    statute_url: "https://uscode.house.gov/us/usc/t31/s5314/"
     regulation: "31 CFR 1010.350; 31 CFR 1010.306(c)-(e)"
     regulation_url: "https://www.ecfr.gov/current/title-31/section-1010.350"
     filed_with: >-
@@ -1819,7 +1819,7 @@ foreign_account_reporting:
           1010.821, Table 1 — for penalties assessed on or after January 17, 2025
           (90 FR 5630) the non-willful maximum is $16,536 and the willful
           statutory floor is $165,353.
-        url: "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title31-section5321&num=0&edition=prelim"
+        url: "https://uscode.house.gov/us/usc/t31/s5321/"
       inflation_adjustment_url: "https://www.ecfr.gov/current/title-31/section-1010.821"
       non_willful_statutory_maximum: 10000
       non_willful_adjusted_maximum: 16536

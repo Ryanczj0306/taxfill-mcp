@@ -4757,11 +4757,11 @@ _RECHAR_TIMING = (
     "the due date for filing your return for that year, not including extensions.\""
 )
 _RECHAR_CITATIONS = (
-    ("IRC 408A(d)(6)-(7)", "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section408A&num=0&edition=prelim"),
+    ("IRC 408A(d)(6)-(7)", "https://uscode.house.gov/us/usc/t26/s408A/"),
     ("Treas. Reg. 1.408A-5, Q&A-1 to -6", "https://www.ecfr.gov/current/title-26/section-1.408A-5"),
     ("Instructions for Form 8606 (2025), Recharacterizations", "https://www.irs.gov/instructions/i8606"),
     ("Instructions for Forms 1099-R and 5498 (2026), IRA recharacterizations", "https://www.irs.gov/instructions/i1099r"),
-    ("IRC 72(t)(2)(A)(ix)", "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section72&num=0&edition=prelim"),
+    ("IRC 72(t)(2)(A)(ix)", "https://uscode.house.gov/us/usc/t26/s72/"),
     ("Instructions for Form 5329 (2025), exception 21", "https://www.irs.gov/instructions/i5329"),
 )
 _RECHAR_DIRECTIONS = {"roth_to_traditional": ("Roth", "traditional"), "traditional_to_roth": ("traditional", "Roth")}
@@ -5929,7 +5929,7 @@ _IRC_408D2_CITATION = Citation(
         "calendar year.' — the one-pool rule (A) AND the statutory basis for Form 8606 "
         "line 9 adding the year's distributions and conversions back to the Dec-31 value"
     ),
-    url="https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section408&num=0&edition=prelim",
+    url="https://uscode.house.gov/us/usc/t26/s408/",
 )
 
 _F8606_INSTRUCTIONS_CITATION = Citation(
@@ -6022,7 +6022,7 @@ _IRC_1411_C5_CITATION = Citation(
         "never itself net investment income, yet it sits in AGI and therefore RAISES the "
         "MAGI the 1411 threshold is measured against"
     ),
-    url="https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section1411&num=0&edition=prelim",
+    url="https://uscode.house.gov/us/usc/t26/s1411/",
 )
 
 
@@ -6808,7 +6808,7 @@ _IRC_223_LIMIT_CITATION = Citation(
         "such individual is entitled to benefits under title XVIII of the Social Security Act "
         "and for each month thereafter'"
     ),
-    url="https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section223&num=0&edition=prelim",
+    url="https://uscode.house.gov/us/usc/t26/s223/",
 )
 
 _IRC_223_B8_CITATION = Citation(
@@ -6830,7 +6830,7 @@ _IRC_223_B8_CITATION = Citation(
         "beginning with the last month of the taxable year referred to in subparagraph (A) and "
         "ending on the last day of the 12th month following such month' — 13 months"
     ),
-    url="https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section223&num=0&edition=prelim",
+    url="https://uscode.house.gov/us/usc/t26/s223/",
 )
 
 _IRC_223_C1_CITATION = Citation(
@@ -6850,7 +6850,7 @@ _IRC_223_C1_CITATION = Citation(
         "benefits; (E) excludes a qualifying direct primary care service arrangement from "
         "being a health plan at all"
     ),
-    url="https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section223&num=0&edition=prelim",
+    url="https://uscode.house.gov/us/usc/t26/s223/",
 )
 
 _IRC_223_F4_CITATION = Citation(
@@ -6861,7 +6861,7 @@ _IRC_223_F4_CITATION = Citation(
         "excepts distributions made after the account beneficiary's death, disability, or "
         "attaining the age for Medicare eligibility"
     ),
-    url="https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section223&num=0&edition=prelim",
+    url="https://uscode.house.gov/us/usc/t26/s223/",
 )
 
 _IRC_4973_HSA_CITATION = Citation(
@@ -6879,7 +6879,7 @@ _IRC_4973_HSA_CITATION = Citation(
         "distribution to which section 223(f)(3) applies shall be treated as an amount not "
         "contributed'"
     ),
-    url="https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section4973&num=0&edition=prelim",
+    url="https://uscode.house.gov/us/usc/t26/s4973/",
 )
 
 _REV_RUL_2004_45_CITATION = Citation(
@@ -8044,7 +8044,7 @@ _IRC_423_CITATION = Citation(
         "shall be required to be deducted and withheld under chapter 24 with respect to any amount "
         "treated as compensation under this subsection.'"
     ),
-    url="https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section423&num=0&edition=prelim",
+    url="https://uscode.house.gov/us/usc/t26/s423/",
 )
 
 _IRC_421_CITATION = Citation(
@@ -8062,7 +8062,7 @@ _IRC_421_CITATION = Citation(
         "sentence.' (d) a disposition made pursuant to a certificate of divestiture under section "
         "1043(b)(2) 'shall be treated as meeting the requirements of section 422(a)(1) or 423(a)(1)'"
     ),
-    url="https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section421&num=0&edition=prelim",
+    url="https://uscode.house.gov/us/usc/t26/s421/",
 )
 
 _IRC_422_CITATION = Citation(
@@ -8077,7 +8077,7 @@ _IRC_422_CITATION = Citation(
         "not exceed the excess (if any) of the amount realized on such sale or exchange over the "
         "adjusted basis of such share' — the ISO-only cap that has NO section 423 counterpart"
     ),
-    url="https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section422&num=0&edition=prelim",
+    url="https://uscode.house.gov/us/usc/t26/s422/",
 )
 
 _IRC_83_E1_CITATION = Citation(
@@ -8087,7 +8087,7 @@ _IRC_83_E1_CITATION = Citation(
         "transferred under a qualifying section 423 exercise, so section 83 — and with it the section "
         "83(b) election — never reaches an ESPP purchase"
     ),
-    url="https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section83&num=0&edition=prelim",
+    url="https://uscode.house.gov/us/usc/t26/s83/",
 )
 
 _IRC_3121_A22_CITATION = Citation(
@@ -8098,7 +8098,7 @@ _IRC_3121_A22_CITATION = Citation(
         "stock purchase plan (as defined in section 423(b)), or (B) any disposition by the individual "
         "of such stock'"
     ),
-    url="https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section3121&num=0&edition=prelim",
+    url="https://uscode.house.gov/us/usc/t26/s3121/",
 )
 
 _PUB525_ESPP_CITATION = Citation(
@@ -8232,7 +8232,7 @@ _IRC_1211_B_CITATION = Citation(
         "beginning after December 31, 1986; the figures are STATUTORY and carry no inflation "
         "adjustment, which is why they are not in a year pack"
     ),
-    url="https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section1211&num=0&edition=prelim",
+    url="https://uscode.house.gov/us/usc/t26/s1211/",
 )
 
 _IRC_1212_B_CITATION = Citation(
@@ -8255,7 +8255,7 @@ _IRC_1212_B_CITATION = Citation(
         "This (2)(A) lesser-of is what the Capital Loss Carryover Worksheet's lines 1-4 compute, and it "
         "is why a low-taxable-income year consumes LESS of the loss than it deducts"
     ),
-    url="https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section1212&num=0&edition=prelim",
+    url="https://uscode.house.gov/us/usc/t26/s1212/",
 )
 
 _IRC_1222_CITATION = Citation(
@@ -8269,7 +8269,7 @@ _IRC_1222_CITATION = Citation(
         "loss for such year'. Short and long are netted SEPARATELY first (Schedule D lines 7 and 15) "
         "and only then against each other (line 16)"
     ),
-    url="https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section1222&num=0&edition=prelim",
+    url="https://uscode.house.gov/us/usc/t26/s1222/",
 )
 
 _IRC_151_D5_CITATION = Citation(
@@ -8282,7 +8282,7 @@ _IRC_151_D5_CITATION = Citation(
         "to $6,000 for each qualified individual' for taxable years beginning before January 1, 2029 — "
         "a deduction allowed UNDER SECTION 151 that the printed worksheet does not add back"
     ),
-    url="https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section151&num=0&edition=prelim",
+    url="https://uscode.house.gov/us/usc/t26/s151/",
 )
 
 _PUB550_CARRYOVER_CITATION = Citation(
@@ -9506,7 +9506,7 @@ _IRC_904J_CITATION = Citation(
         "payee statement; 904(j)(3)(C) takes 'payee statement' from section 6724(d)(2); and "
         "904(j)(3)(D): 'This subsection shall not apply to any estate or trust.'"
     ),
-    url="https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section904&num=0&edition=prelim",
+    url="https://uscode.house.gov/us/usc/t26/s904/",
 )
 
 _IRC_901_CITATION = Citation(
@@ -9522,7 +9522,7 @@ _IRC_901_CITATION = Citation(
         "profits, or excess profits otherwise generally imposed by any foreign country or by "
         "any possession of the United States'."
     ),
-    url="https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section901&num=0&edition=prelim",
+    url="https://uscode.house.gov/us/usc/t26/s901/",
 )
 
 _IRC_904A_CITATION = Citation(
@@ -9535,7 +9535,7 @@ _IRC_904A_CITATION = Citation(
         "excess tax paid' is the 1-year-back / 10-year-forward relief the 904(j) election gives "
         "up."
     ),
-    url="https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section904&num=0&edition=prelim",
+    url="https://uscode.house.gov/us/usc/t26/s904/",
 )
 
 # The entity kinds 904(j) speaks to. 904(j)(3)(D) excludes estates and trusts
