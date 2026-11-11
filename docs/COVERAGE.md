@@ -21,7 +21,7 @@ so this page is always current.
 | Schedule 2 (Form 1040) | — | ✓ | ✓ | ✓ | draft |
 | Schedule 3 (Form 1040) | — | ✓ | ✓ | ✓ | draft |
 | Schedule 3-A (Form 1040) | — | — | — | — | draft |
-| Schedule 8812 (Form 1040) | — | ✓ | ✓ | ✓ | draft |
+| Schedule 8812 (Form 1040) | — | ✓ | ✓ | ✓ | rehearsal |
 | Schedule A (Form 1040) | — | ✓ | ✓ | ✓ | draft |
 | Schedule B (Form 1040) | — | ✓ | ✓ | ✓ | draft |
 | Schedule C (Form 1040) | ✓ | ✓ | ✓ | ✓ | rehearsal |
@@ -60,7 +60,7 @@ The 2022 schedule packs serve Form 1040-NR, which attaches them; there is no For
 | Form 2555 | ✓ | ✓ | ✓ | rehearsal |
 | Form 5329 | ✓ | ✓ | ✓ | draft |
 | Form 8316 | ✓ | ✓ | ✓ | rehearsal |
-| Form 8606 | ✓ | ✓ | ✓ | draft |
+| Form 8606 | ✓ | ✓ | ✓ | rehearsal |
 | Form 8833 | ✓ | ✓ | ✓ | rehearsal |
 | Form 8863 | ✓ | ✓ | ✓ | draft |
 | Form 8889 | ✓ | ✓ | ✓ | draft |

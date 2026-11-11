@@ -1,8 +1,19 @@
-# sched_8812 2026 — DRAFTS-FIRST (Phase J JT5b, read 2026-09-27). Mapped from the IRS early-release DRAFT
-# (irs.gov/pub/irs-dft/f1040s8--dft.pdf, footer "Created 4/24/26"). This draft carries no cover sheet. When the final posts
-# at irs-prior/f1040s8--2026.pdf (scripts/check_finals.py opens the re-pin issue), re-pin source_url,
-# pdf_sha256 and source_status final, drop draft_created, and re-read the face. TY2026 is planning-only,
-# so this pack fills only in REHEARSAL mode.
+# sched_8812 2026 — DRAFTS-FIRST (Phase J JT5b, read 2026-09-27), RE-PINNED TO THE FINAL 2026-11-11 (Phase J JT6, the
+# fifth TY2026 final). Mapped from the IRS early-release DRAFT (irs.gov/pub/irs-dft/f1040s8--dft.pdf, footer
+# "Created 4/24/26", sha 0638b2863bdaeadf…), which carried no cover sheet. The final at
+# irs.gov/pub/irs-prior/f1040s8--2026.pdf (PDF metadata 11/09/26, footer "Created 8/18/26"; downloaded twice, both
+# sha256 05b96bd809b37cfd…; irs-pdf/f1040s8.pdf serves the same bytes) has the same two pages and the same 41
+# widgets: every name, /FT, /Ff, /MaxLen, /DA, /Q and /AP state is the draft's, and a word diff of both pages
+# differs only by the removed "DRAFT — DO NOT FILE" banners and the footer date. UNLIKE the first four finals it is
+# NOT rectangle-identical: all 35 text boxes moved (the six checkbox widgets did not). 32 amount boxes start
+# 0.75 pt further right (two of them also end 0.75 pt earlier), the name and SSN boxes lost 0.5 pt at the bottom
+# edge (the SSN box also starts 0.25 pt further left), and the line 16b children-count box (f2_3) sits 5.5 pt
+# further right and is 1.9 pt narrower (59.5 -> 57.6 pt). No box changed rows, so the map stands; the filled
+# final was re-rendered and read row by row (2026-11-11). Like every IRS final
+# it is an XFA hybrid (/XFA, /SigFlags 2; the filler drops the stream, JK5) with NO /TU tooltips, which the draft
+# printed on every widget; neither the map nor the filler reads a tooltip. TY2026 is planning-only
+# (knowledge/federal/2026.yaml is provisional), so this FINAL pack fills only in REHEARSAL mode until JT6 flips the
+# year (filler.rehearsal_only).
 #
 # 2025 -> 2026: 41 widgets, the same names, types and MaxLens as 2025. This draft has NO cover sheet (two
 # form pages). Line 1 now reads "Enter the amount from line 11b of your Form 1040, 1040-SR, or
@@ -93,10 +104,9 @@
 form: "Schedule 8812 (Form 1040)"
 jurisdiction: federal
 tax_year: 2026
-source_url: https://www.irs.gov/pub/irs-dft/f1040s8--dft.pdf
-pdf_sha256: "0638b2863bdaeadfd3fccee12a9145bf92a442d8de156584c5602cc7e3881422"
-source_status: draft
-draft_created: "4/24/26"
+source_url: https://www.irs.gov/pub/irs-prior/f1040s8--2026.pdf
+pdf_sha256: "05b96bd809b37cfd0c223ac0909d2d82645eb8bfd6244701189f40ab8a4ab45c"
+source_status: final
 acroform_root: "topmostSubform[0]"
 
 fields:

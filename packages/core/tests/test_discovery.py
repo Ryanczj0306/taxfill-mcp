@@ -46,14 +46,15 @@ def test_list_all_packs():
     # the 2026 f5329 draft = 149, + JP5c's NEW f2210 (2025 final and the 2026 draft) = 151.
     assert len([s for s in allf if s.jurisdiction == "federal"]) == 151
     ty2026 = {s.form_key: s.source_status for s in allf if s.tax_year == 2026}
-    # JT6 (2026-11-05): sched_c and sched_se moved from draft to final when their 2026 finals posted.
+    # JT6 (2026-11-05): sched_c and sched_se moved from draft to final when their 2026 finals posted, f2555 and
+    # f8843 the same day; 2026-11-11: sched_8812 (posted 11/09/26) and f8606 (11/10/26).
     assert {k for k, v in ty2026.items() if v == "draft"} == {
-        "f1040", "sched_1a", "sched_2", "f8959", "f8889", "sched_1", "sched_3", "f8606", "sched_b", "sched_d", "f8949",
-        "f4868", "f8960", "sched_8812", "f8863", "f1040nr", "sched_a_nr",
+        "f1040", "sched_1a", "sched_2", "f8959", "f8889", "sched_1", "sched_3", "sched_b", "sched_d", "f8949",
+        "f4868", "f8960", "f8863", "f1040nr", "sched_a_nr",
         "sched_a", "sched_e", "f8962", "f2441", "f1116", "f8938",
         "f1040x", "sched_3a", "f5329", "f2210"}
     assert {k for k, v in ty2026.items() if v == "final"} == {
-        "f8833", "f1040es", "f843", "fw7", "f8316", "sched_c", "sched_se", "f2555", "f8843"}
+        "f8833", "f1040es", "f843", "fw7", "f8316", "sched_c", "sched_se", "f2555", "f8843", "sched_8812", "f8606"}
     assert {s.source_status for s in allf if s.tax_year != 2026} == {"final"}
 
     # State packs. 42 for TY2023 (the C1 resident sweep: 38 states/DC with an

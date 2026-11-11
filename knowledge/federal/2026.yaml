@@ -8,7 +8,7 @@
 # block whose authority does not exist yet is ABSENT, not guessed: calc raises its
 # prescriptive "no block for this year" error rather than return a fabricated figure.
 #
-# WHAT THE PACK RESTS ON (as of 2026-09-27; the first two form finals noted 2026-11-05)
+# WHAT THE PACK RESTS ON (as of 2026-09-27; the form finals noted 2026-11-05 and 2026-11-11)
 #   Final and in force:
 #     * Rev. Proc. 2025-32, the 2026 inflation adjustments (rate_schedules,
 #       standard_deduction, tax_computation_worksheet, capital_gains_brackets).
@@ -28,12 +28,19 @@
 #       figure here: sched_se.ss_wages (form_lines) is now read off the final, Schedule SE's
 #       line 7 prints the $184,500 wage base (verified on the final), and every other block
 #       still waits on the sources below.
+#     * Schedule 8812 (2026) and Form 8606 (2026), final 11/09/26 and 11/10/26
+#       (irs-prior/f1040s8--2026.pdf, footer "Created 8/18/26"; irs-prior/f8606--2026.pdf),
+#       packs re-pinned 2026-11-11 (JT6). Form 8606's final is its draft widget for widget;
+#       Schedule 8812's has the draft's widgets and wording with 35 text boxes nudged by a
+#       fraction of a point. The final Schedule 8812 prints the credits block's figures
+#       (lines 5, 7, 9, 11, 16b, 19, 20: $2,200, $500, $400,000 / $200,000, 5%, $1,700,
+#       $2,500, 15%); its instructions are still a draft, so that block's instruction
+#       quotes stay draft-sourced.
 #   Drafts only (irs.gov/pub/irs-dft/, projection-grade until each final posts;
 #   footer "Created" dates):
 #     * Form 1040 (8/19/26); Schedules 1 (4/24/26), 1-A (6/16/26), 2 (4/27/26),
 #       3 (4/27/26), 3-A (6/24/26), A (5/12/26), B (4/7/26), D (4/1/26);
-#       Forms 8949 (4/1/26), 8959 (5/27/26), 8889 (4/30/26),
-#       8606 (4/21/26).
+#       Forms 8949 (4/1/26), 8959 (5/27/26), 8889 (4/30/26).
 #     * Pub 1040 (2026), Tax and Earned Income Credit Tables, draft dated Aug 28,
 #       2026 (posted 09/16/2026).
 #   Not posted in any form (irs-prior/<form>--2026.pdf answers 404 and the drafts
@@ -1123,7 +1130,10 @@ mailing_addresses:
 # and IRC 32(b)(1) (uscode.house.gov); the draft Schedule 8812 (Form 1040) 2026
 # (Created 4/24/26) and its draft instructions, which print the same CTC figures
 # ("Multiply line 4 by $2,200", "x $1,700", "$400,000" / "$200,000", "more than
-# $2,500"). The EITC figures' second source is the draft Pub 1040 (2026), Tax
+# $2,500"). RE-READ ON THE FINAL 2026-11-11 (JT6): the final Schedule 8812
+# (irs-prior/f1040s8--2026.pdf, Created 8/18/26, posted 11/09/26) prints the same
+# figures on the same lines, word for word; its instructions are not final yet
+# (irs-prior/i1040s8--2026.pdf answers 404). The EITC figures' second source is the draft Pub 1040 (2026), Tax
 # and Earned Income Credit Tables (Aug 28, 2026): all 11,176 cells of its 2026 EIC
 # Table reproduce from this block's figures with the IRC 32(b)(1) percentages
 # (checked 2026-09-27). Each maximum credit also equals its earned income amount
@@ -1141,8 +1151,8 @@ credits:
         Rev. Proc. 2025-32 §4.05: "For taxable years beginning in 2026, the maximum amount of
         the credit allowed under § 24(a) is $2,200" and "the amount used in § 24(d)(1)(A) to
         determine the amount of the credit under § 24 that may be refundable is $1,700";
-        checked against the draft Schedule 8812 (Form 1040) 2026 (Created 4/24/26) lines 5,
-        9 and 16b
+        checked against the final Schedule 8812 (Form 1040) 2026 (Created 8/18/26, posted
+        11/09/26) lines 5, 9 and 16b
       url: "https://www.irs.gov/pub/irs-drop/rp-25-32.pdf"
     # IRC 24(i) (P.L. 119-21): after 2025 the $2,200 is indexed, "rounded to the
     # next lowest multiple of $100" — so 2026 stays $2,200.
@@ -1156,7 +1166,7 @@ credits:
       married_filing_separately: 200000
       head_of_household: 200000
       qualifying_surviving_spouse: 200000
-    phaseout_step: "reduced $50 for each $1,000 (or fraction) of MAGI above the threshold (IRC 24(b)(1); draft Schedule 8812 (2026) lines 10-11: the excess raised to the next multiple of $1,000, then x 5%)"
+    phaseout_step: "reduced $50 for each $1,000 (or fraction) of MAGI above the threshold (IRC 24(b)(1); Schedule 8812 (2026) lines 10-11: the excess raised to the next multiple of $1,000, then x 5%)"
     taxpayer_ssn_requirement: >-
       IRC 24(h)(7)(A): no credit "unless the taxpayer includes on the return of tax for the
       taxable year- (i) the taxpayer's social security number (or, in the case of a joint

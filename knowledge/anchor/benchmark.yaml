@@ -14,7 +14,7 @@ top_tier_kinds:
 - text
 passed: true
 adjudicated: 185
-test_runs: 10
+test_runs: 11
 history:
 - run: 1
   date: '2026-10-24'
@@ -149,6 +149,17 @@ history:
     address, TIN and phone) were keyed "81".."89" after the old revision''s widget names although the face prints no number
     beside them; the re-map''s review renamed them (occupation, spouse_occupation, preparer_*), so they are no longer numbered
     truth and leave the scored set of the one TEST pack that carried them (states/az/2025/az140).'
+- run: 11
+  date: '2026-11-11'
+  method: jk15-v6
+  thresholds:
+    top: 3.0
+    med: 2.0
+  note: 'run 11, no method change: the 2026 Schedule 8812 (a DEV family) and Form 8606 (TEST) blanks were re-pinned from the
+    IRS drafts to the finals (Phase J JT6, 2026-11-11). Form 8606''s final is its draft widget for widget, one page lower
+    (no cover sheet). Schedule 8812''s final keeps the draft''s two pages, names and wording, but all 35 text boxes sit a
+    fraction of a point off the draft''s (one count box 5.5 pt right). Both finals carry no /TU tooltips, so the anchor''s
+    tooltip evidence disappears on these two packs; the selection''s two pdf_sha256 values follow the packs.'
 criteria:
   test_packs_at_least_30: true
   test_federal_at_least_10: true
@@ -203,7 +214,7 @@ notes:
   labelled Yes/No, capped below the top tier (yes_no_pair). Text widgets are unchanged from jk15-v4. This table scores printed_line
   only; the labels are measured apart, in knowledge/anchor/labels.yaml (scripts/anchor_label_check.py), which licenses nothing.'
 measured:
-  selection_sha256: faec69a53fd9ee2e
+  selection_sha256: 1c75565e9b2fe227
   selection_disclosure:
     siblings_across_split:
     - dev: states/al/al40
@@ -251,31 +262,31 @@ measured:
     states_distinct: 22
     tiers:
       top:
-        emitted: 1449
-        scored: 1093
-        agree: 1083
+        emitted: 1444
+        scored: 1088
+        agree: 1078
         disagree: 10
         unscored: 356
-        provisional_precision: 0.9909
+        provisional_precision: 0.9908
         wilson_95:
         - 0.9832
         - 0.995
       med:
-        emitted: 3345
-        scored: 559
-        agree: 404
+        emitted: 3348
+        scored: 564
+        agree: 409
         disagree: 155
-        unscored: 2786
-        provisional_precision: 0.7227
+        unscored: 2784
+        provisional_precision: 0.7252
         wilson_95:
-        - 0.6842
-        - 0.7582
+        - 0.6869
+        - 0.7604
       low:
-        emitted: 3578
+        emitted: 3580
         scored: 39
         agree: 39
         disagree: 0
-        unscored: 3539
+        unscored: 3541
         provisional_precision: 1.0
         wilson_95:
         - 0.9103
@@ -290,12 +301,12 @@ measured:
         wilson_95: null
     top_by_kind:
       text:
-        emitted: 1436
-        scored: 1084
-        agree: 1075
+        emitted: 1431
+        scored: 1079
+        agree: 1070
         provisional_precision: 0.9917
         wilson_95:
-        - 0.9843
+        - 0.9842
         - 0.9956
       checkbox:
         emitted: 13
@@ -317,9 +328,9 @@ measured:
     states_distinct: 17
     tiers:
       top:
-        emitted: 1155
-        scored: 869
-        agree: 869
+        emitted: 1153
+        scored: 867
+        agree: 867
         disagree: 0
         unscored: 286
         provisional_precision: 1.0
@@ -327,15 +338,15 @@ measured:
         - 0.9956
         - 1.0
       med:
-        emitted: 2588
-        scored: 482
-        agree: 348
+        emitted: 2590
+        scored: 484
+        agree: 350
         disagree: 134
         unscored: 2106
-        provisional_precision: 0.722
+        provisional_precision: 0.7231
         wilson_95:
-        - 0.6804
-        - 0.7601
+        - 0.6816
+        - 0.7611
       low:
         emitted: 3091
         scored: 100
@@ -356,12 +367,12 @@ measured:
         wilson_95: null
     top_by_kind:
       text:
-        emitted: 1139
-        scored: 860
-        agree: 860
+        emitted: 1137
+        scored: 858
+        agree: 858
         provisional_precision: 1.0
         wilson_95:
-        - 0.9956
+        - 0.9955
         - 1.0
       checkbox:
         emitted: 16
@@ -475,8 +486,8 @@ adjudication:
   unadjudicated: 0
   tiers:
     top:
-      scored: 1093
-      right: 1092
+      scored: 1088
+      right: 1087
       wrong: 1
       ambiguous: 0
       unadjudicated: 0
@@ -485,14 +496,14 @@ adjudication:
       - 0.9948
       - 0.9998
     med:
-      scored: 559
-      right: 553
+      scored: 564
+      right: 558
       wrong: 6
       ambiguous: 0
       unadjudicated: 0
-      precision: 0.9893
+      precision: 0.9894
       wilson_95:
-      - 0.9768
+      - 0.977
       - 0.9951
     low:
       scored: 39
@@ -514,8 +525,8 @@ adjudication:
       wilson_95: null
   top_by_kind:
     text:
-      scored: 1084
-      right: 1084
+      scored: 1079
+      right: 1079
       wrong: 0
       ambiguous: 0
       unadjudicated: 0
@@ -731,14 +742,14 @@ adjudication:
   combined_top_estimate:
     groups:
     - text
-    scored_n: 1084
+    scored_n: 1079
     unscored_population: 352
     weights:
-      scored: 0.7549
-      unscored: 0.2451
+      scored: 0.754
+      unscored: 0.246
     precision: 1.0
     wilson_95:
-    - 0.9792
+    - 0.9791
     - 1.0
     how: each stratum's precision weighted by its size in the top tier; the interval is the same size-weighted mix of the
       two strata's 95% Wilson bounds (conservative)

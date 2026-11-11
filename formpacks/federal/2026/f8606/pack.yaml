@@ -1,13 +1,22 @@
-# Form 8606 (2026) — Nondeductible IRAs — DRAFTS-FIRST.
+# Form 8606 (2026) — Nondeductible IRAs — DRAFTS-FIRST (Phase J JT3c), RE-PINNED TO THE FINAL 2026-11-11 (Phase J
+# JT6, the sixth TY2026 final).
 #
 # Mapped from the IRS early-release DRAFT (irs.gov/pub/irs-dft/f8606--dft.pdf,
-# footer "Form 8606 (2026) Created 4/21/26"). Its cover sheet: "there are never
-# any changes to the last posted draft of the form and the final revision of the
-# form". PDF page 1 is that cover sheet; the form's two pages are PDF pages 2-3.
-# When the final posts at irs-prior/f8606--2026.pdf, re-pin source_url,
-# pdf_sha256, source_status final, drop draft_created, signature page 2, and
-# re-read the face. TY2026 is planning-only, so this pack fills only in
-# REHEARSAL mode. Phase J JT3c.
+# footer "Form 8606 (2026) Created 4/21/26", sha 4d7e8fe466cf0534…), whose PDF
+# page 1 was the cover sheet ("there are never any changes to the last posted
+# draft of the form and the final revision of the form"). The final at
+# irs.gov/pub/irs-prior/f8606--2026.pdf (PDF metadata 11/10/26; downloaded twice,
+# both sha256 eeb2c5a11da6903e…; irs-pdf/f8606.pdf serves the same bytes) holds
+# the cover sheet to its word: the same 47 widgets, each one page lower, with the
+# same names, /Rect, /FT, /Ff, /MaxLen, /DA, /Q and /AP states; a word diff of
+# both pages differs only by the removed "DRAFT — DO NOT FILE" banners (the
+# footer still reads "Created 4/21/26"). The form's pages are now PDF pages 1-2,
+# so signature.page is 2. Like every IRS final it is an XFA hybrid (/XFA,
+# /SigFlags 2; the filler drops the stream, JK5) with NO /TU tooltips, which the
+# draft printed on every widget; neither the map nor the filler reads a tooltip.
+# TY2026 is planning-only (knowledge/federal/2026.yaml is provisional), so this
+# FINAL pack fills only in REHEARSAL mode until JT6 flips the year
+# (filler.rehearsal_only).
 #
 # PORTED 2026-09-27 from formpacks/federal/2025/f8606/pack.yaml (read that
 # pack's header for the form's logic, the dropped relations and the worked
@@ -31,10 +40,9 @@
 form: "8606"
 jurisdiction: federal
 tax_year: 2026
-source_url: https://www.irs.gov/pub/irs-dft/f8606--dft.pdf
-pdf_sha256: "4d7e8fe466cf0534817d78bc5e6e84d78971b59cbbed0523eaa6448a20c2f2a6"
-source_status: draft
-draft_created: "4/21/26"
+source_url: https://www.irs.gov/pub/irs-prior/f8606--2026.pdf
+pdf_sha256: "eeb2c5a11da6903e30c468572da0242c28f19ee135b9853562d7ce9fc037cb56"
+source_status: final
 acroform_root: "topmostSubform[0]"
 
 fields:
@@ -290,7 +298,7 @@ identity_per_person: [identifying_number]
 # 1040-SR, 1040-NR or 1040-X; verified alone, the form counts as filed by itself (Phase K JK27, 2026-10-16).
 standalone_only_lines: [mailing_address.street, mailing_address.apt, mailing_address.city, mailing_address.state, mailing_address.zip, mailing_address.foreign_country, mailing_address.foreign_province, mailing_address.foreign_postal_code]
 signature:
-  page: 3                                   # PDF page 3 of the draft (page 1 is the IRS cover sheet); page 2 on the final
+  page: 2                                   # the final's page 2 (the draft's cover sheet made it PDF page 3)
   standalone_only: true
 
 # Filed by itself, it goes to "the same time and place you would otherwise file

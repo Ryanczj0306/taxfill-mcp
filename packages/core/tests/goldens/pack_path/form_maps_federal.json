@@ -12899,7 +12899,7 @@
  "2026/f8606": {
   "acroform_root": "topmostSubform[0]",
   "cross_form": [],
-  "draft_created": "4/21/26",
+  "draft_created": null,
   "form": "8606",
   "form_key": "f8606",
   "identity_fields": ["name", "identifying_number"],
@@ -12956,8 +12956,8 @@
   "mirror_abbreviations": {},
   "mirrors": {},
   "relations": ["3 == 1 + 2", "9 == 6 + 7 + 8", "13 == 11 + 12", "15a == 7 - 12", "18 == 16 - 17", "21 == max(0, 19 - 20)", "23 == max(0, 21 - 22)", "25a == max(0, 23 - 24)"],
-  "source_status": "draft",
-  "source_url": "https://www.irs.gov/pub/irs-dft/f8606--dft.pdf",
+  "source_status": "final",
+  "source_url": "https://www.irs.gov/pub/irs-prior/f8606--2026.pdf",
   "tax_year": 2026,
   "unfillable_lines": {}
  },
@@ -14410,7 +14410,7 @@
  "2026/sched_8812": {
   "acroform_root": "topmostSubform[0]",
   "cross_form": ["1 == f1040.11b", "1 == f1040nr.11b", "14 == f1040.19", "14 == f1040nr.19", "27 == f1040.28", "27 == f1040nr.28"],
-  "draft_created": "4/24/26",
+  "draft_created": null,
   "form": "Schedule 8812 (Form 1040)",
   "form_key": "sched_8812",
   "identity_fields": ["name", "identifying_number"],
@@ -14461,8 +14461,8 @@
   "mirror_abbreviations": {},
   "mirrors": {},
   "relations": ["2d == sum(2a..2c)", "3 == 1 + 2d", "5 == 4 * 2200", "7 == 6 * 500", "8 == 5 + 7", "11 == 10 * 0.05", "12 == max(0, 8 - 11)", "14 == min(12, 13)", "17 == min(16a, 16b)", "19 == max(0, 18a - 2500)", "20 == 19 * 0.15", "23 == 21 + 22", "25 == max(0, 23 - 24)"],
-  "source_status": "draft",
-  "source_url": "https://www.irs.gov/pub/irs-dft/f1040s8--dft.pdf",
+  "source_status": "final",
+  "source_url": "https://www.irs.gov/pub/irs-prior/f1040s8--2026.pdf",
   "tax_year": 2026,
   "unfillable_lines": {}
  },
