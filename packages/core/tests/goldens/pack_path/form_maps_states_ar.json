@@ -235,7 +235,8 @@
   "relations": ["33 == 30 + 31 + 32", "44 == 39 + 40 + 41 + 42 + 43", "46 == 44 - 45", "52c == 51 + 52b"],
   "source_status": "final",
   "source_url": "https://www.dfa.arkansas.gov/wp-content/uploads/2023_AR1000F_FullYearResidentIndividualIncomeTaxReturn.pdf",
-  "tax_year": 2023
+  "tax_year": 2023,
+  "unfillable_lines": {}
  },
  "2023/ar1000nr": {
   "acroform_root": "",
@@ -506,7 +507,8 @@
   "relations": ["7c == 7a + 7b", "23.a == 8.a + 10.a + 11.a + 12.a + 13.a + 14.a + 15.a + 16.a + 18a.a + 18b.a + 19.a + 20.a + 21.a + 22.a", "23.b == 8.b + 10.b + 11.b + 12.b + 13.b + 14.b + 15.b + 16.b + 18b.b + 19.b + 20.b + 21.b + 22.b", "23.c == 8.c + 10.c + 11.c + 12.c + 13.c + 14.c + 15.c + 16.c + 18a.c + 18b.c + 19.c + 20.c + 21.c + 22.c", "25.a == 23.a - 24.a", "25.b == 23.b - 24.b", "25.c == 23.c - 24.c", "30 == 29.a + 29.b", "33 == 30 + 31 + 32", "34 == 7c", "37 == 34 + 35 + 36", "38 == max(0, 33 - 37)", "38a == 25.c", "38b == 25.a + 25.b", "44 == 39 + 40 + 41 + 42 + 43", "46 == 44 - 45", "47 == max(0, 46 - 38d)", "50 == 47 - 48 - 49", "51 == max(0, 38d - 46)", "52c == 51 + 52b"],
   "source_status": "final",
   "source_url": "https://www.dfa.arkansas.gov/wp-content/uploads/2023_AR1000NR_PartYear_or_Non-ResidentIndividualIncomeTaxReturn.pdf",
-  "tax_year": 2023
+  "tax_year": 2023,
+  "unfillable_lines": {}
  },
  "2024/ar1000f": {
   "acroform_root": "",
@@ -747,7 +749,8 @@
   "relations": ["33 == 30 + 31 + 32", "44 == 39 + 40 + 41 + 42 + 43", "46 == 44 - 45", "52c == 51 + 52b"],
   "source_status": "final",
   "source_url": "https://www.dfa.arkansas.gov/wp-content/uploads/2024_AR1000F_FullYearResidentIndividualIncomeTaxReturn.pdf",
-  "tax_year": 2024
+  "tax_year": 2024,
+  "unfillable_lines": {}
  },
  "2025/ar1000f": {
   "acroform_root": "",
@@ -989,6 +992,7 @@
   "relations": ["33 == 30 + 31 + 32", "44 == 39a + 39b + 40 + 41 + 42 + 43", "46 == 44 - 45", "52c == 51 + 52b"],
   "source_status": "final",
   "source_url": "https://www.dfa.arkansas.gov/wp-content/uploads/2025_AR1000F_FullYearResidentIndividualIncomeTaxReturn.pdf",
-  "tax_year": 2025
+  "tax_year": 2025,
+  "unfillable_lines": {}
  }
 }

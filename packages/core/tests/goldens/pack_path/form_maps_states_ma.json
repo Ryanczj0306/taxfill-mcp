@@ -178,7 +178,8 @@
   "relations": ["2g == sum(2a..2f)", "16 == 11a + 11b + 14 + 15", "18 == 2g", "21 == 19 + 20", "23 == 23a + 23b", "28a == 22 + 23 + 24 + 25 + 26", "28 == 28a + 28b", "33 == sum(33a..33f)", "35 == 35a + 35b", "37 == 32 + 33 + 34 + 35 + 36", "38 == sum(38a..38c)", "48 == 43 + 44 + 46 + 47", "50 == 38 + 39 + 40 + 41 + 42 + 48 + 49", "53 == 51 - 52"],
   "source_status": "final",
   "source_url": "https://www.mass.gov/doc/2023-form-1-massachusetts-resident-income-tax-return/download",
-  "tax_year": 2023
+  "tax_year": 2023,
+  "unfillable_lines": {}
  },
  "2025/form1": {
   "acroform_root": "",
@@ -362,6 +363,7 @@
   "relations": ["2g == sum(2a..2f)", "16 == 11a + 11b + 14 + 15", "18 == 2g", "21 == 19 + 20", "23 == 23a + 23b", "28a == 22 + 23 + 24 + 25 + 26", "28 == 28a + 28b", "33 == sum(33a..33f)", "35 == 35a + 35b", "37 == 32 + 33 + 34 + 35 + 36", "38 == sum(38a..38c)", "48 == 43 + 44 + 46 + 47", "51 == 38 + 39 + 40 + 41 + 42 + 48 + 49 + 50", "54 == 52 - 53"],
   "source_status": "final",
   "source_url": "https://www.mass.gov/doc/2025-form-1-massachusetts-resident-income-tax-return/download",
-  "tax_year": 2025
+  "tax_year": 2025,
+  "unfillable_lines": {}
  }
 }

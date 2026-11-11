@@ -352,7 +352,7 @@ fields:
   - { line: "ws3_4c_add_1c_3c", field: "3_4c", type: money }  # 4C "Add lines 1C through 3C and enter the total"
   - { line: "ws3_5c_credit_contributions", field: "3_5c", type: money }  # 5C "Total charitable contributions made in 2023 for which you are claiming a credit under Arizona law ..."
   - { line: "ws3_6c_subtract_5c_from_4c", field: "3_6c", type: money }  # 6C "Subtract line 5C from line 4C and enter the difference. If less than zero, enter “0”"
-  - { line: "ws3_7c_multiply_by_31pct", field: "3_7c", type: money }  # 7C "Multiply line 6C by 31% (.31) and enter the result"
+  - { line: "ws3_7c_multiply_by_rate", field: "3_7c", type: money }  # 7C "Multiply line 6C by 31% (.31) and enter the result"
   - { line: "ws3_8c_arizona_income_ratio", field: "3_8c", type: text, maxlen: 5 }  # 8C "Enter your Arizona income ratio from page 1, line 27" — five cells, as line 27
   - { line: "ws3_9c_multiply_7c_by_8c", field: "3_9c", type: money }  # 9C "Multiply line 7C by the ratio on line 8C and enter the result"
   # ===================================================== page 4 — Part 1: Dependents (Box 10a and 10b) continued from page 1, rows 10g-10q
@@ -570,7 +570,7 @@ relations:
   - "87 == max(0, 67 + 85 - 70)"  # 87 "AMOUNT OWED: Add lines 67 and 85"; on the overpayment path 86 "If less than zero, enter amount owed on line 87" (67 "Skip lines 68, 69 and 70")
   - "ws3_4c_add_1c_3c == ws3_1c_gifts_cash_or_check + ws3_2c_other_than_cash_or_check + ws3_3c_carryover"  # 4C "Add lines 1C through 3C"
   - "ws3_6c_subtract_5c_from_4c == max(0, ws3_4c_add_1c_3c - ws3_5c_credit_contributions)"  # 6C "Subtract line 5C from line 4C ... If less than zero, enter 0"
-  - "ws3_7c_multiply_by_31pct == ws3_6c_subtract_5c_from_4c * 0.31"  # 7C "Multiply line 6C by 31% (.31)"
+  - "ws3_7c_multiply_by_rate == ws3_6c_subtract_5c_from_4c * 0.31"  # 7C "Multiply line 6C by 31% (.31)"
   - "54 == ws3_9c_multiply_7c_by_8c"  # page 3 "Enter the amount shown on line 9C on page 2, line 54"
   - "oa_p_total_other_additions == oa_a_fiduciary_adjustment_141az_k1nr + oa_b_items_previously_deducted + oa_c_claim_of_right_repaid_current_year + oa_d_claim_of_right_repaid_prior_years + oa_e_nol_claim_of_right + oa_fa_agri_water_conservation_expenses + oa_fb_s_corp_agri_water_credit + oa_ga_basis_qualified_small_business_credit + oa_gb_basis_pollution_control_credit + oa_gc_basis_agri_pollution_control_credit + oa_h_medical_marijuana_dispensary_loss + oa_i_disabilities_access_expenditures + oa_j_childcare_facility_amortization + oa_k_net_capital_loss_legal_tender + oa_l_entity_level_income_tax + oa_m_motion_picture_production_costs + oa_n_adjustments_tax_credits + oa_o_other_adjustments"  # page 5 P "Add all amounts"
   - "32 == oa_p_total_other_additions"  # page 5 P "... enter the total here and on page 1, line 32"

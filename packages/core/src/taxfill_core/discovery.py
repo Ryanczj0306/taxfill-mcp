@@ -142,6 +142,15 @@ class FormMap(BaseModel):
                     "fills only in core rehearsal mode until the final posts and the pack is re-pinned.",
     )
     draft_created: str | None = Field(default=None, description="A draft's footer stamp, e.g. '8/19/26'.")
+    unfillable_lines: dict[str, str] = Field(
+        default_factory=dict,
+        description="Lines the pack knows but cannot write (line -> why), left unmapped on purpose (P-036: a "
+                    "re-issued blank that binds two printed rows to one field): fill_form refuses a value on them, "
+                    "and the filer hand-writes the row on the printed return. Tell the user before filling. A total "
+                    "that adds such a line must still include the hand-written amount: leave the line out of "
+                    "fill_form's values and give its amount in verify_form's expected, which counts it in the "
+                    "relations. Empty for most packs.",
+    )
 
 
 def list_forms(
@@ -248,4 +257,5 @@ def get_form_map(
         mirror_abbreviations={mirror: list(lines) for mirror, lines in pack.mirror_abbreviations.items()},
         source_status=pack.source_status,
         draft_created=pack.draft_created,
+        unfillable_lines={line: entry.why for line, entry in pack.unfillable_lines.items()},
     )

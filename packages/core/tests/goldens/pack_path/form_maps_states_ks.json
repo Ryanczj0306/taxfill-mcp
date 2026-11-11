@@ -145,7 +145,8 @@
   "relations": ["6 == 4 + 5", "12 == 8 + 11"],
   "source_status": "final",
   "source_url": "https://www.ksrevenue.gov/pdf/k-4023.pdf",
-  "tax_year": 2023
+  "tax_year": 2023,
+  "unfillable_lines": {}
  },
  "2024/k40": {
   "acroform_root": "",
@@ -298,7 +299,8 @@
   "relations": ["exemptions.total_kansas_amount == exemptions.personal.joint_amount + exemptions.personal.single_or_separate_amount + exemptions.head_of_household_amount + exemptions.dependents_amount + exemptions.disabled_veteran_amount", "5 == exemptions.total_kansas_amount", "6 == 4 + 5", "19 == max(0, 16 - 17 - 18)"],
   "source_status": "final",
   "source_url": "https://www.ksrevenue.gov/pdf/k-4024.pdf",
-  "tax_year": 2024
+  "tax_year": 2024,
+  "unfillable_lines": {}
  },
  "2025/k40": {
   "acroform_root": "",
@@ -442,6 +444,7 @@
   "relations": ["exemptions.total_kansas_amount == exemptions.personal.joint_amount + exemptions.personal.single_or_separate_amount + exemptions.head_of_household_amount + exemptions.dependents_amount + exemptions.born_this_year_amount + exemptions.stillborn_amount + exemptions.disabled_veteran_amount", "5 == exemptions.total_kansas_amount", "6 == 4 + 5", "18 == max(0, 16 - 17)"],
   "source_status": "final",
   "source_url": "https://www.ksrevenue.gov/pdf/k-4025.pdf",
-  "tax_year": 2025
+  "tax_year": 2025,
+  "unfillable_lines": {}
  }
 }

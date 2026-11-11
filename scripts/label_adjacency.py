@@ -751,7 +751,7 @@ def not_line_family(key: str, families: list[NotLines] | None = None, pack: str 
 # undeclared). A row whose fraction is already below the floor needs no list: its reason and note stand.
 #
 # Fixer round 5 (Phase K JK10, 2026-10-24): FAMILIES BY PREFIX. Round 4's family kept a key's descriptive tail, so
-# AZ Form 140's charitable worksheet "ws3_1c_gifts_cash_or_check" ... "ws3_7c_multiply_by_31pct" made seven
+# AZ Form 140's charitable worksheet "ws3_1c_gifts_cash_or_check" ... "ws3_7c_multiply_by_rate" made seven
 # one-key families and the dark rule never fired. A key's family is now the key up to and including its FIRST line
 # token (:func:`first_line_token`), digit runs as "#", the tail dropped: all seven are "ws#_#". DARK_FAMILY_MIN stays
 # 5, and it now governs only the families the anchor reads NO line beside: an undeclared key the anchor CAN read is

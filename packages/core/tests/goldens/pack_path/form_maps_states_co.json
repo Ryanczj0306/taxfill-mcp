@@ -107,7 +107,8 @@
   "relations": ["8 == 1 + 2 + 3 + 4 + 5 + 6 + 7", "10 == 8 - 9", "14 == 11 + 12 + 13", "18 == 14 - 15 - 16 - 17", "20 == 18 + 19", "29 == 21 + 22 + 23 + 24 + 25 + 26 + 27 + 28", "33 == 30 + 31 + 32", "35 == 29 + 34", "38 == 36 - 37", "39 == 20 - 35", "43 == 39 + 40 + 41 + 42"],
   "source_status": "final",
   "source_url": "https://tax.colorado.gov/sites/tax/files/documents/DR0104_2023.pdf",
-  "tax_year": 2023
+  "tax_year": 2023,
+  "unfillable_lines": {}
  },
  "2023/dr0104pn": {
   "acroform_root": "",
@@ -179,7 +180,8 @@
   "relations": ["21 == 5 + 7 + 9 + 11 + 13 + 15 + 17 + 19", "25 == 21 - 23", "28 == 24 + 26", "29 == 25 + 27", "32 == 28 - 30", "33 == 29 - 31"],
   "source_status": "final",
   "source_url": "https://tax.colorado.gov/sites/tax/files/documents/DR0104PN_2023.pdf",
-  "tax_year": 2023
+  "tax_year": 2023,
+  "unfillable_lines": {}
  },
  "2024/dr0104": {
   "acroform_root": "",
@@ -318,7 +320,8 @@
   "relations": ["9 == 1 + 2 + 3 + 4 + 5 + 6 + 7 + 8", "11 == 9 - 10", "15 == 12 + 13 + 14", "20 == 15 - 16 - 17 - 18 - 19", "30 == 21 + 22 + 23 + 24 + 25 + 26 + 27 + 28 + 29", "34 == 31 + 32 + 33", "36 == 30 + 35", "37 == max(0, 36 - 20)", "39 == 37 - 38", "40 == max(0, 20 - 36)", "44 == 40 + 41 + 42 + 43"],
   "source_status": "final",
   "source_url": "https://tax.colorado.gov/sites/tax/files/documents/DR_0104_2024.pdf",
-  "tax_year": 2024
+  "tax_year": 2024,
+  "unfillable_lines": {}
  },
  "2025/dr0104": {
   "acroform_root": "",
@@ -459,6 +462,7 @@
   "relations": ["10 == 1 + 2 + 3 + 4 + 5 + 6 + 7 + 9", "12 == 10 - 11", "16 == 13 + 14 + 15", "21 == 16 - 17 - 18 - 19 - 20", "23 == 21 + 22", "33 == 24 + 25 + 26 + 27 + 28 + 29 + 30 + 31 + 32", "37 == 34 + 35 + 36", "39 == 33 + 38", "40 == max(0, 39 - 23)", "42 == 40 - 41", "43 == max(0, 23 - 39)", "47 == 43 + 44 + 45 + 46"],
   "source_status": "final",
   "source_url": "https://tax.colorado.gov/sites/tax/files/documents/DR0104_2025.pdf",
-  "tax_year": 2025
+  "tax_year": 2025,
+  "unfillable_lines": {}
  }
 }

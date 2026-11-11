@@ -2275,3 +2275,36 @@ pitfalls:
       P-035-tagged, in packages/core/tests/test_textfit_ink.py, including
       (network) renders of left-, right- and centre-aligned and bold boxes that
       pin the arithmetic to pdfium.
+  - id: P-036
+    incident: >-
+      A re-issued blank bound two printed rows to one AcroForm field. Arizona
+      re-issued its 2025 Form 140 on 2026-11-02 with the widgets renamed by
+      caption, and line 16 (an addition) and line 27 (a subtraction) both
+      became "Partnership Income adjustment"; three pairs of Other Additions /
+      Other Subtractions rows likewise. A field holds one value and a viewer
+      draws every widget of it from that value, so an amount written for
+      either row prints on both: a wrong-row value on a return, which no
+      per-line map can prevent (found by the freshness drift job, re-mapped
+      2026-11-05). The first fix shortened the relation that adds line 16,
+      which failed the correct return of exactly the filer who has a line 16
+      amount and passed a subtotal that left the hand-written row out; and a
+      second key bound to the shared field, or a value typed into it after
+      the fill, went unnoticed (found by the re-map's review, 2026-11-11).
+    countermeasure: >-
+      A pack declares such lines in unfillable_lines (line -> the shared
+      field and why). The schema refuses a line both declared and mapped, and
+      any line bound to a declared shared field. fill_form refuses a value on
+      one, quoting the reason, and drops an empty one; verify_form does the
+      same with `expected`, where a non-empty value is the amount the filer
+      hand-writes: not compared with the PDF (SKIPPED, with the instruction
+      to hand-write it) but counted by the relations, which keep the printed
+      arithmetic. A relation that fails with such a line undeclared says to
+      declare the hand-written amount; a value found in a shared field fails.
+      A declared amount is taken on the caller's word, so verify_form and
+      verify_filing always list it, with the relations that counted it or the
+      statement that none reads the line.
+      get_form_map lists the lines so the user is told before the fill.
+      Tests, P-036-tagged, in packages/core/tests/test_formpack.py,
+      test_filler.py, test_verify.py, test_pack_invariants.py and
+      test_reissued_blank_remaps.py, and
+      packages/mcp-server/tests/test_unfillable_lines.py.

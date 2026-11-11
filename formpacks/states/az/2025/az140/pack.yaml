@@ -1,4 +1,61 @@
 # ===========================================================================
+# RE-MAPPED 2026-11-05 (Phase K freshness drift re-map, P-036) ONTO THE 2026-11-02 RE-ISSUE.
+#
+# azdor.gov re-issued the 2025 Form 140 at the same URL (PDF /ModDate 2026-11-02 11:23 MST; /Title now
+# "Arizona Form 140 2025"), digest 2acdda2a07ab46d7… (two downloads, identical). The weekly freshness run of
+# 2026-11-02 went red on it (the triage row's DIGEST-MISMATCH). What changed, measured widget by widget against the
+# pinned revision (91722910a79a8ec5…), every widget matched to the re-issue's widget at the same page and /Rect:
+#   * 153 widgets were RENAMED from their line number to the row's caption ("12" -> "Federal adjusted gross income
+#     (from your federal return)", "5Fa" -> "Claim of Right Adjustment for Amounts Repaid in Prior Taxable years");
+#     every /Rect, /Ff, /MaxLen and /FT is unchanged (16 rects moved by 0.5 pt). The new names were read against
+#     each row's key: they agree with every binding below (and showed six key NAMES carried since the 2023 base
+#     that contradicted the face — renamed, see the key renames note).
+#   * Page 1's last-name and SSN boxes ("1b", "1c", which also named the page 2-6 header boxes) are their own
+#     fields now: "Your Last Name", "Your SSN". The header boxes keep "1b" / "1c" and are page-header MIRRORS.
+#   * The radio export values are captions now: "Filing Status" /Choice1..4 -> "/Married Filing Joint Return",
+#     "/Head of Household", "/Married Filing Separate Return", "/Single" (each at the same /Rect as before);
+#     "Itemized/Standard" -> "/Itemized", "/Standard"; "Political Party" -> "/Democratic", "/Libertarian",
+#     "/Republican"; "Refund" -> "/Checking Account", "/Savings Account".
+#   * Seven DUPLICATE widgets are gone (the second overlapping copy of 10o First/Last/SSN/Relationship and of
+#     3_10 First/Last/SSN, each 0.5 pt off the first): 430 -> 423 widgets, 406 -> 404 names.
+#   * FOUR PAIRS OF PRINTED ROWS NOW SHARE ONE FIELD (a defect of the re-issue): line 16 and line 27 are both
+#     "Partnership Income adjustment"; page 5 row A and page 6 row A are both "Married Persons Filing Separate
+#     Returns"; rows B are both "Arizona Form 141AZ Schedule K-1 - Fiduciary Adjustment"; page 5 row M and page 6
+#     row N are both "Americans with Disabilities Act - Access Expenditures". A value written for either row prints
+#     on both, so those eight lines are UNFILLABLE (unfillable_lines at the end, each naming its shared field;
+#     fill_form refuses them; relation 19 still states the printed sum, and verify counts the line 16 amount the
+#     caller declares as hand-written). No archived copy of the prior revision exists (Wayback holds no capture),
+#     so the pack cannot stay on it.
+#   * "16" lost its /DA and /Q (it inherits the form's auto-size default now) and "5A"/"5B"/"5M" lost the
+#     DoNotSpellCheck/DoNotScroll flags: all four are the shared, unmapped fields. "cmdPrintForm" (the unmapped
+#     Print Form push-button) moved and restyled; nothing else moved.
+#   * The printed face did not change: every page of both revisions was rendered and compared (pdfium, 72 and
+#     216 dpi). No printed word, rule or box moved; what differs is the restyled Print Form button on page 2 and
+#     sub-pixel anti-aliasing of glyphs and leader dots (how many pixels differ depends on the renderer and the
+#     resolution, so no pixel count is recorded here). The text layer's extraction order changed (azdor re-tagged
+#     the PDF), which is why the pack-blind gates were re-run on it.
+#   * The signature block's nine boxes (occupations, the paid preparer's firm, address, TIN, phone) were keyed
+#     "81".."89" after the old revision's widget names. The face prints no number beside them, and page 1 prints
+#     boxes numbered 81 and 88 in its REVENUE USE ONLY area, so a number-shaped key named the wrong thing. They
+#     are occupation, spouse_occupation and preparer_* now (the Form 140NR / 140PY packs' names), on all three
+#     years; the bindings did not move.
+# Key renames (the face, all three years, read on the re-issue's own captions and the 2023/2024 text layers):
+#   oa_Fa_agri_water_conservation -> oa_Fa_claim_of_right_prior_years (row F(a) "Claim of Right Adjustment for
+#   Amounts Repaid in Prior Taxable years"); oa_N_amortization_pollution_facility_1990 ->
+#   oa_N_amortization_child_care_facility_1990 ("Amortization or Depreciation for Child Care Facility before
+#   1990"); oa_Q_entity_level_pte_credit -> oa_Q_motion_picture_production_costs ("Motion Picture Productions
+#   Costs"); os_H_agricultural_crops_donation -> os_H_qualified_state_tuition_distributions ("Qualified State
+#   Tuition Distributions"); os_J_agri_water_conservation -> os_J_agricultural_crops_donation ("Agricultural Crops
+#   Given to Arizona Charitable Organizations"); os_M_long_term_care_savings ->
+#   os_M_long_term_care_insurance_premiums ("Long-Term Care Insurance Premiums"); ws3_7c_multiply_by_31pct ->
+#   ws3_7c_multiply_by_rate (31% in 2023, 33% in 2024, 34% here). The bindings were right; the names were not.
+#   The 2023 and 2024 packs carry the same renames (the port rule keeps keys stable across years).
+# VISION AUDIT ON THE RE-ISSUE (2026-11-05): scripts/audit_pack.py against the re-issue — exit 0, 385 mapped lines /
+# 399 fields written, 0 verify fails, 6 pages rendered; pages 5 and 6 read row by row on a 110-dpi render for the
+# key renames above. Page-header mirrors: the five page 2-6 name boxes print the full page-1 name (shortened to an
+# initial when a name is too wide), the five SSN boxes the page-1 SSN; test_reissued_blank_remaps reads them back.
+# The notes below describe the 2025 port as it stood before the re-issue; their widget names are the OLD ones.
+# ===========================================================================
 # TY2025 PORT of formpacks/states/az/2024/az140/pack.yaml, itself the TY2024
 # port of the 2023 base (ported 2026-09-28, Phase J JS3b).
 #
@@ -134,60 +191,60 @@ form: Form 140
 jurisdiction: states/az
 tax_year: 2025
 source_url: https://azdor.gov/sites/default/files/document/FORMS_INDIVIDUAL_2025_140_f.pdf
-pdf_sha256: 91722910a79a8ec544b5b4aef87a56d2d1d2151fe96039dc02b681408db55778
+pdf_sha256: 2acdda2a07ab46d7f6bd701618e63d1af8d45ac7921c38572a740940437edf84
 acroform_root: ''
 fields:
   # ===================================================== header (page 1)
   - line: "82F_extension"
-    field: "Check Box82F"
+    field: "Check Box 82F"
     type: checkbox
     on_state: "/Yes"
   - line: "fiscal_year_beginning"
-    field: "FY_Beg"
+    field: "Fiscal year beginning MMDD2025"
     type: text
     maxlen: 4
   - line: "fiscal_year_ending"
-    field: "FY_End"
+    field: "Fiscal year ending MMDD"
     type: text
     maxlen: 4
   - line: "fiscal_year_ending_year"
-    field: "FY_End Year"
+    field: "Fiscal year ending YY"
     type: text
     maxlen: 2
   - line: "tp_first_name_and_initial"
-    field: "1a"
+    field: "Your First Name and Middle Initial"
     type: text
     maxlen: 39
   - line: "tp_last_name"
-    field: "1b"
+    field: "Your Last Name"
     type: text
     maxlen: 28
   - line: "tp_ssn"
-    field: "1c"
+    field: "Your SSN"
     type: text
     maxlen: 11
   - line: "spouse_first_name_and_initial"
-    field: "1d"
+    field: "Spouse's First Name and Middle Initial"
     type: text
     maxlen: 39
   - line: "spouse_last_name"
-    field: "1e"
+    field: "Spouse's Last Name"
     type: text
     maxlen: 28
   - line: "spouse_ssn"
-    field: "1f"
+    field: "Spouse's SSN"
     type: text
     maxlen: 11
   - line: "home_address"
-    field: "2a"
+    field: "Current Home Address - number and street, rural route"
     type: text
     maxlen: 52
   - line: "apartment_number"
-    field: "2b"
+    field: "Apartment Number"
     type: text
     maxlen: 16
   - line: "daytime_phone"
-    field: "2c"
+    field: "Daytime Phone"
     type: text
     maxlen: 22
   - line: "city"
@@ -210,11 +267,11 @@ fields:
   - line: "4_filing_status::mfj"
     field: "Filing Status"
     type: checkbox
-    on_state: "/Choice1"
+    on_state: "/Married Filing Joint Return"
     group: filing_status
   # ---- 4a Injured Spouse Protection of Joint Overpayment
   - line: "4a_injured_spouse"
-    field: "4a"
+    field: "4a Injured Spouse Protection of Joint Overpayment"
     type: checkbox
     on_state: "/Yes"
   # ---- 5 Head of household qualifying child/dependent name
@@ -224,44 +281,44 @@ fields:
     maxlen: 50
   # ---- Exemptions: count boxes (lines 8-11a; 'Enter the number claimed')
   - line: "8"
-    field: "8"
+    field: "Age 65 or over"
     type: text
     maxlen: 3
   - line: "9"
-    field: "9"
+    field: "Blind"
     type: text
     maxlen: 3
   - line: "10a"
-    field: "10a"
+    field: "Dependents Under age of 17"
     type: text
     maxlen: 3
   - line: "10b"
-    field: "10b"
+    field: "Dependents Age 17 and over"
     type: text
     maxlen: 3
   - line: "11a"
-    field: "11a"
+    field: "Qualifying parents and grandparents"
     type: text
     maxlen: 3
   # ---- 'For more space, check the box and complete page 4' flags
   - line: "10ab_more_space"
-    field: "10a_10b check box"
+    field: "10a 10b check box"
     type: checkbox
     on_state: "/Yes"
   - line: "5_filing_status::hoh"
     field: "Filing Status"
     type: checkbox
-    on_state: "/Choice2"
+    on_state: "/Head of Household"
     group: filing_status
   - line: "6_filing_status::mfs"
     field: "Filing Status"
     type: checkbox
-    on_state: "/Choice3"
+    on_state: "/Married Filing Separate Return"
     group: filing_status
   - line: "7_filing_status::single"
     field: "Filing Status"
     type: checkbox
-    on_state: "/Choice4"
+    on_state: "/Single"
     group: filing_status
   # ===================================================== Dependents detail (Box 10a/10b)
     # cols: (a) name (b) SSN (c) relationship (d) months in home
@@ -432,78 +489,72 @@ fields:
     on_state: "/Yes"
   # ===================================================== Additions (page 1, lines 12-19)
   - line: "12"
-    field: "12"
+    field: "Federal adjusted gross income (from your federal return)"
     type: money
   - line: "13S_filing_140sbi"
     field: "13S"
     type: checkbox
     on_state: "/Yes"
   - line: "13"
-    field: "13"
+    field: "Small Bussiness Income"
     type: money
   - line: "14"
-    field: "14"
+    field: "Modified federal adjusted gross income"
     type: money
   - line: "15"
-    field: "15"
-    type: money
-  - line: "16"
-    field: "16"
+    field: "Non-Arizona municipal interest"
     type: money
   - line: "17"
-    field: "17"
+    field: "Total federal depreciation"
     type: money
   - line: "18"
-    field: "18"
+    field: "Other Additions to Income:  Complete Other Additions to Arizona Gross Income schedule on page 5"
     type: money
   - line: "19"
-    field: "19"
+    field: "Subtotal:  Add lines 14 through 18 and enter the total"
     type: money
   # ===================================================== Subtractions (page 1, lines 20-35)
   - line: "20"
-    field: "20"
+    field: "Total net capital gain or (loss)"
     type: money
   - line: "21"
-    field: "21"
+    field: "Total net short-term capital gain or (loss)"
     type: money
   - line: "22"
-    field: "22"
+    field: "Total net long-term capital gain or (loss)"
     type: money
   - line: "23"
-    field: "23"
+    field: "Net long-term capital gain from assets acquired after December 31, 2011"
     type: money
   - line: "24"
-    field: "24"
+    field: "Multiply line 23 by 25% (.25) and enter the result"
     type: money
   - line: "25"
-    field: "25"
+    field: "Net capital gain derived from investment in qualified small business"
     type: money
   - line: "26"
-    field: "26"
-    type: money
-  - line: "27"
-    field: "27"
+    field: "Recalculated Arizona depreciation"
     type: money
   - line: "28"
-    field: "28"
+    field: "Interest on U.S. obligations such as U.S. savings bonds and treasury bills"
     type: money
   - line: "29a"
-    field: "29a"
+    field: "Exclusion for federal, Arizona state or local government pensions (up to $2,500 per taxpayer)"
     type: money
   - line: "29b"
-    field: "29b"
+    field: "Exclusion for benefits, annuities and pensions for retired/retainer pay of the uniformed services"
     type: money
   - line: "30"
-    field: "30"
+    field: "U.S. Social Security or Railroad Retirement Act benefits included as income on your federal return (taxable amount)"
     type: money
   - line: "31"
-    field: "31"
+    field: "Certain wages of American Indians"
     type: money
   - line: "32"
-    field: "32"
+    field: "Pay received for active service as a member of the reserves, national guard or the U.S. armed forces"
     type: money
   - line: "33"
-    field: "33"
+    field: "Net operating loss adjustment"
     type: money
   - line: "34a"
     field: "34a"
@@ -515,79 +566,79 @@ fields:
     field: "34c"
     type: money
   - line: "35"
-    field: "35"
+    field: "Subtract lines 24 through 34c from line 19"
     type: money
   # ===================================================== page 2 — subtractions cont. & exemptions (36-42)
   - line: "36"
-    field: "36"
+    field: "Other Subtractions from Income.  Complete Other Subtraction from Arizona Gross Income schedule on page 6"
     type: money
   - line: "37"
-    field: "37"
+    field: "Subtract line 36 from line 35.  Enter the difference"
     type: money
   - line: "38"
-    field: "38"
+    field: "Age 65 or over:  Multiply the number in box 8 by $2,100"
     type: money
   - line: "39"
-    field: "39"
+    field: "Blind:  Multiply the number in box 9 by $1,500"
     type: money
   - line: "40E"
     field: "40E"
     type: text
     maxlen: 4
   - line: "40"
-    field: "40"
+    field: "Other Exemptions"
     type: money
   - line: "41"
-    field: "41"
+    field: "Qualifying parents and grandparents:  Multiply the number in box 11a by $10,000"
     type: money
   - line: "42"
-    field: "42"
+    field: "Arizona adjusted gross income:  Subtract lines 38 through 41 from line 37.  If less than zero, enter “0”"
     type: money
   # ---- 43 Deductions (ONE /Btn 'Itemized/Standard'; Choice1 ITEMIZED, Choice2 STANDARD)
   - line: "43_deductions::itemized"
     field: "Itemized/Standard"
     type: checkbox
-    on_state: "/Choice1"
+    on_state: "/Itemized"
     group: deductions_43
   - line: "43"
-    field: "43"
+    field: "Deductions:  Check box and enter amount"
     type: money
   # ---- 44 Charitable contributions while taking the standard deduction (check box 44C)
   - line: "44C_charitable_with_standard"
-    field: "44C"
+    field: "44C checkbox"
     type: checkbox
     on_state: "/Yes"
   - line: "44"
-    field: "44"
+    field: "If you checked box 43S and claim charitable contributions, check 44C. Complete page 3"
     type: money
   # ===================================================== Balance of tax (lines 45-52)
   - line: "45"
-    field: "45"
+    field: "Arizona taxable income:  Subtract lines 43 and 44 from line 42.  If less than zero, enter “0”"
     type: money
   - line: "46"
-    field: "46"
+    field: "Tax:  Multiply line 45 by 2.5% (.025).  Enter the result"
     type: money
   - line: "47"
-    field: "47"
+    field: "Tax from recapture of credits from Arizona Form 301, Part 2, line 30"
     type: money
   - line: "48"
-    field: "48"
+    field: "Subtotal of tax:  Add lines 46 and 47.  Enter the total"
     type: money
   - line: "49"
-    field: "49"
+    field: "Dependent Tax Credit.  See instructions"
     type: money
   - line: "50"
-    field: "50"
+    field: "Family income tax credit (from the worksheet - see instructions)"
     type: money
   - line: "51"
-    field: "51"
+    field: "Nonrefundable Credits from Arizona Form 301, Part 2, line 60"
     type: money
   - line: "52"
-    field: "52"
+    field: "Balance of tax:  Subtract lines 49, 50 and 51 from line 48.  If the sum of lines 49, 50 and 51 is greater than line 48, enter “0”"
     type: money
   # ===================================================== Total payments & refundable credits (53-59)
   - line: "53"
-    field: "53"
+    field: "2025 AZ income tax withheld"
     type: money
   - line: "54a"
     field: "54a"
@@ -596,16 +647,16 @@ fields:
     field: "54b"
     type: money
   - line: "54c"
-    field: "54c"
+    field: "54c Add 54a and 54b"
     type: money
   - line: "55"
-    field: "55"
+    field: "2025 AZ extension payment (Form 204)"
     type: money
   - line: "56"
-    field: "56"
+    field: "Increased Excise Tax Credit (from the worksheet - see instructions)"
     type: money
   - line: "57"
-    field: "57"
+    field: "Property Tax Credit from Arizona Form 140PTC"
     type: money
   # ---- 58 refundable-credit boxes (581 Form 308-I, 582 Form 334, 583 Form 349)
   - line: "58_credit_308i"
@@ -621,101 +672,101 @@ fields:
     type: checkbox
     on_state: "/Yes"
   - line: "58"
-    field: "58"
+    field: "Other refundable credits:  Check the box(es) and enter the total amount"
     type: money
   - line: "59"
-    field: "59"
+    field: "Total payments and refundable credits:  Add lines 53 through 58"
     type: money
   # ===================================================== Tax due / overpayment (60-63)
   - line: "60"
-    field: "60"
+    field: "TAX DUE:  If line 52 is larger than line 59, subtract line 59 from line 52.  Enter amount of tax due. Skip lines 61, 62 and 63"
     type: money
   - line: "61"
-    field: "61"
+    field: "OVERPAYMENT:  If line 59 is larger than line 52, subtract line 52 from line 59.  Enter amount of overpayment"
     type: money
   - line: "62"
-    field: "62"
+    field: "Amount of line 61 to be applied to 2026 estimated tax"
     type: money
   - line: "63"
-    field: "63"
+    field: "Balance of overpayment:  Subtract line 62 from line 61.  Enter the difference"
     type: money
   # ===================================================== Voluntary gifts (lines 64-74)
   - line: "64"
-    field: "64"
+    field: "Solutions Teams Assigned to Schools"
     type: money
   - line: "65"
-    field: "65"
+    field: "Arizona Wildlife"
     type: money
   - line: "66"
-    field: "66"
+    field: "Child Abuse Prevention"
     type: money
   - line: "67"
-    field: "67"
+    field: "Domestic Violence Services"
     type: money
   - line: "68"
-    field: "68"
+    field: "Political Gift"
     type: money
   - line: "69"
-    field: "69"
+    field: "Neighbors Helping Neighbors"
     type: money
   - line: "70"
-    field: "70"
+    field: "Special Olympics"
     type: money
   - line: "71"
-    field: "71"
+    field: "Veterans' Donations Fund"
     type: money
   - line: "72"
-    field: "72"
+    field: "I Didn't Pay Enough Fund"
     type: money
   - line: "73"
-    field: "73"
+    field: "Sustainable State Parks and Road Fund"
     type: money
   - line: "74"
-    field: "74"
+    field: "Spay/Neuter of Animals"
     type: money
   # ---- 75 Political Party (ONE /Btn; Choice1 Democratic, Choice2 Libertarian, Choice3 Republican)
   - line: "75_political_party::democratic"
     field: "Political Party"
     type: checkbox
-    on_state: "/Choice1"
+    on_state: "/Democratic"
     group: political_party_75
   # ===================================================== Penalty / refund / amount owed (76-80)
   - line: "76"
-    field: "76"
+    field: "Estimated payment penalty"
     type: money
   # ---- 77 penalty-computation method (771 Annualized/Other, 772 Farmer/Fisherman, 773 Form 221 included)
   - line: "77_annualized_other"
-    field: "77_1"
+    field: "77_1 Checkbox"
     type: checkbox
     on_state: "/Yes"
   - line: "77_farmer_or_fisherman"
-    field: "77_2"
+    field: "77_2 Checkbox"
     type: checkbox
     on_state: "/Yes"
   - line: "77_form221_included"
-    field: "77_3"
+    field: "77_3 Checkbox"
     type: checkbox
     on_state: "/Yes"
   - line: "78"
-    field: "78"
+    field: "Add lines 64 through 74 and 76"
     type: money
   - line: "79"
-    field: "79"
+    field: "REFUND: Subtract line 78 from line 63"
     type: money
   - line: "79A_foreign_account"
-    field: "79A"
+    field: "79A Checkbox"
     type: checkbox
     on_state: "/Yes"
   # ---- 79 direct-deposit (ONE /Btn 'Refund' Checking/Savings; routing/account comb boxes; 79A foreign account)
   - line: "79_account_type::checking"
     field: "Refund"
     type: checkbox
-    on_state: "/Checking Acct"
+    on_state: "/Checking Account"
     group: account_type_79
   - line: "79_account_type::savings"
     field: "Refund"
     type: checkbox
-    on_state: "/Savings Acct"
+    on_state: "/Savings Account"
     group: account_type_79
   - line: "79_routing_number"
     field: "Routing Number"
@@ -726,80 +777,80 @@ fields:
     type: text
     maxlen: 17
   - line: "80"
-    field: "80"
+    field: "AMOUNT OWED:  Add lines 60 and 78. Make check payable to Arizona Department of Revenue; write your SSN on payment; and include with your return"
     type: money
   - line: "75_political_party::libertarian"
     field: "Political Party"
     type: checkbox
-    on_state: "/Choice2"
+    on_state: "/Libertarian"
     group: political_party_75
   - line: "75_political_party::republican"
     field: "Political Party"
     type: checkbox
-    on_state: "/Choice3"
+    on_state: "/Republican"
     group: political_party_75
   - line: "43_deductions::standard"
     field: "Itemized/Standard"
     type: checkbox
-    on_state: "/Choice2"
+    on_state: "/Standard"
     group: deductions_43
-  - line: "81"
-    field: "81"
+  - line: "occupation"  # was "81", the old revision's widget name: the face prints no number beside this box
+    field: "Your Occupation"
     type: text
     maxlen: 32
-  - line: "82"
-    field: "82"
+  - line: "spouse_occupation"  # was "82", the old revision's widget name: the face prints no number beside this box
+    field: "Spouse's Occupation"
     type: text
     maxlen: 32
-  - line: "83"
-    field: "83"
+  - line: "preparer_firm_name"  # was "83", the old revision's widget name: the face prints no number beside this box
+    field: "Firm's Name"
     type: text
     maxlen: 46
-  - line: "84"
-    field: "84"
+  - line: "preparer_street_address"  # was "84", the old revision's widget name: the face prints no number beside this box
+    field: "Paid Preparer's Street Address"
     type: text
     maxlen: 56
-  - line: "85"
-    field: "85"
+  - line: "preparer_tin"  # was "85", the old revision's widget name: the face prints no number beside this box
+    field: "Paid Preparer's TIN"
     type: text
     maxlen: 25
-  - line: "86"
-    field: "86"
+  - line: "preparer_city"  # was "86", the old revision's widget name: the face prints no number beside this box
+    field: "Paid Preparer's City"
     type: text
     maxlen: 36
-  - line: "87"
-    field: "87"
+  - line: "preparer_state"  # was "87", the old revision's widget name: the face prints no number beside this box
+    field: "Paid Preparer's State"
     type: text
     maxlen: 8
-  - line: "88"
-    field: "88"
+  - line: "preparer_zip_code"  # was "88", the old revision's widget name: the face prints no number beside this box
+    field: "Paid Preparer's ZIP Code"
     type: text
     maxlen: 11
-  - line: "89"
-    field: "89"
+  - line: "preparer_phone"  # was "89", the old revision's widget name: the face prints no number beside this box
+    field: "Paid Preparer's Phone Number"
     type: text
     maxlen: 23
   # ===================================================== page 3 — Standard Deduction Increase worksheet (1C-7C)
   - line: "ws3_1c_gifts_cash_or_check"
-    field: "3_1c"
+    field: "2025 Gifts by cash or check"
     type: money
   - line: "ws3_2c_other"
-    field: "3_2c"
+    field: "2025 Other than by cash or check"
     type: money
   - line: "ws3_3c_carryover"
-    field: "3_3c"
+    field: "Carryover from prior year"
     type: money
   - line: "ws3_4c_add_1c_3c"
-    field: "3_4c"
+    field: "Add lines 1C through 3C and enter the total"
     type: money
   - line: "ws3_5c_credit_contributions"
-    field: "3_5c"
+    field: "Total charitable contributions made in 2025 for which you are claiming a credit under Arizona law for the current (2025) or prior (2024) tax year"
     type: money
   - line: "ws3_6c_subtract_5c_from_4c"
-    field: "3_6c"
+    field: "Subtract line 5c from line 4c and enter the difference. If less than zero, enter 0"
     type: money
-  - line: "ws3_7c_multiply_by_31pct"
-    field: "3_7c"
+  - line: "ws3_7c_multiply_by_rate"
+    field: "Multiply line 6C by 34% (.34) and enter the result"
     type: money
   # ===================================================== page 4 Part 1 — additional dependents (10f-10p)
   - line: "10f_first_name"
@@ -1588,151 +1639,149 @@ fields:
     type: checkbox
     on_state: "/Yes"
   # ===================================================== page 5 — Other Additions to AZ Gross Income (A-T, -> line 18)
-  - line: "oa_A_married_separate"
-    field: "5A"
-    type: money
-  - line: "oa_B_141az_k1"
-    field: "5B"
-    type: money
   - line: "oa_C_lump_sum"
-    field: "5C"
+    field: "Ordinary Income Portion of Lump-Sum Distributions Excluded on Your Federal Return"
     type: money
   - line: "oa_D_items_previously_deducted"
-    field: "5D"
+    field: "Items Previously Deducted for Arizona Purposes"
     type: money
   - line: "oa_E_claim_of_right"
-    field: "5E"
+    field: "Claim of Right Adjustment for Amounts Repaid in 2025"
     type: money
-  - line: "oa_Fa_agri_water_conservation"
-    field: "5Fa"
+  - line: "oa_Fa_claim_of_right_prior_years"
+    field: "Claim of Right Adjustment for Amounts Repaid in Prior Taxable years"
     type: money
   - line: "oa_Fb_net_operating_loss"
-    field: "5Fb"
+    field: "Adjustment for Net Operating Loss due to Claim of Right"
     type: money
   - line: "oa_Ga_agri_water_conservation_credit"
-    field: "5Ga"
+    field: "Amount of Agricultural Water Conservation Expenses deducted under IRC for which a credit is  claimed on Form 312"
     type: money
   - line: "oa_Gb_s_corp_agri_water"
-    field: "5Gb"
+    field: "Addition to S Corporation income due to claiming Pass Through Credit for Agricultural Water  Conservation System (Credit 312)"
     type: money
   - line: "oa_Ha_adjusted_basis_credit_property"
-    field: "5Ha"
+    field: "Adjusted basis computed under IRC for property for which a credit was claimed on Form 338 and that is sold or otherwise disposed of during the taxable year excees the adjusted basis of the property"
     type: money
   - line: "oa_Hb_pollution_control_credit"
-    field: "Hb"
+    field: "Adjusted basis computed under IRC for Agricultural Pollution Control Equipment for which a credit  was taken (Form 325) before taxable year 2025 that was sold or otherwise disposed of during the  taxable year exceeds the adjusted basis of the property"
     type: money
   - line: "oa_Hc_pollution_control_equipment"
-    field: "Hc"
+    field: "Adjusted basis computed under IRC for Pollution Control Equipment for which a credit was taken  (Form 315) before taxable year 2025 that was sold or otherwise disposed of during the taxable year exceeds the adjusted basis of the property"
     type: money
   - line: "oa_I_nonqualified_withdrawals_529"
-    field: "I"
+    field: "Nonqualified Withdrawals from 529 College Savings Plans"
     type: money
   - line: "oa_J_sole_prop_loss_marijuana"
-    field: "J"
+    field: "Sole Proprietorship Loss of an Arizona Nonprofit Medical Marijuana Dispensary included in Federal Adjusted Gross Income.  Sole Proprietorship loss of an Arizona dual licensee that has not elected to operate on a for profit-basis must also add back the portion of their loss that is from the medical marijauna portion of the business that is included in the federal adjusted gross income"
     type: money
   - line: "oa_K_federal_nol_carryforward_nonresident"
-    field: "5K"
+    field: "Federal Net Operating Loss (NOL) Carryforward from Non-Arizona Sources Accrued While a Nonresident"
     type: money
   - line: "oa_L_federal_capital_loss_carryforward"
-    field: "5L"
+    field: "Federal Capital Loss Carryforward Deduction Incurred from Non-Arizona Sources Prior to AZ residency"
     type: money
-  - line: "oa_M_disabilities_access"
-    field: "5M"
-    type: money
-  - line: "oa_N_amortization_pollution_facility_1990"
-    field: "5N"
+  - line: "oa_N_amortization_child_care_facility_1990"
+    field: "Amortization or Depreciation for Child Care Facility before 1990"
     type: money
   - line: "oa_O_net_capital_loss_exchange"
-    field: "5O"
+    field: "Net Capital Loss Derived From the Exchange of One Kind of Legal Tender for Another Kind of Legal Tender"
     type: money
   - line: "oa_P_entity_level_income_tax"
-    field: "5P"
+    field: "Entity-level Income Tax Payment"
     type: money
-  - line: "oa_Q_entity_level_pte_credit"
-    field: "5Q"
+  - line: "oa_Q_motion_picture_production_costs"
+    field: "Motion Picture Productions Costs"
     type: money
   - line: "oa_R_adjustments_tax_credits"
-    field: "5R"
+    field: "Other Adjustments Related to Tax Credits"
     type: money
   - line: "oa_S_other_additions"
-    field: "5S"
+    field: "Other Adjustments"
     type: money
   - line: "oa_T_total_other_additions"
-    field: "5T"
+    field: "Total Other Additions:  Add all amounts and enter the total here and on page 1, line 18"
     type: money
   # ===================================================== page 6 — Other Subtractions from AZ Gross Income (A-W, -> line 36)
-  - line: "os_A_married_separate"
-    field: "6A"
-    type: money
-  - line: "os_B_141az_k1"
-    field: "6B"
-    type: money
   - line: "os_C_federally_taxable_municipal"
-    field: "6C"
+    field: "Federally Taxable Arizona Municipal Interest as Evidenced by Bonds"
     type: money
   - line: "os_D_adoption_expense"
-    field: "6D"
+    field: "Adoption Expense"
     type: money
   - line: "os_E_qualified_wood_stove"
-    field: "6E"
+    field: "Qualified Wood Stove, Wood Fireplace or Gas-Fired Fireplace"
     type: money
   - line: "os_F_claim_of_right"
-    field: "6F"
+    field: "Claim of Right Adjustment for Amounts Repaid in Prior Taxable Years"
     type: money
   - line: "os_G_certain_expenses_federal_credits"
-    field: "6G"
+    field: "Certain Expenses Not Allowed for Federal Purposes (due to claiming federal tax credits)"
     type: money
-  - line: "os_H_agricultural_crops_donation"
-    field: "6H"
+  - line: "os_H_qualified_state_tuition_distributions"
+    field: "Qualified State Tuition Distributions"
     type: money
   - line: "os_I_installment_sale_taxed_other_state"
-    field: "6I"
+    field: "Installment Sale Income from Another State Taxed by the Other State In a Prior Taxable Year"
     type: money
-  - line: "os_J_agri_water_conservation"
-    field: "6J"
+  - line: "os_J_agricultural_crops_donation"
+    field: "Agricultural Crops Given to Arizona Charitable Organizations"
     type: money
   - line: "os_K_basis_adjustment_property"
-    field: "6K"
+    field: "Basis Adjustment for Property Sold or Otherwise Disposed of During the Taxable Year"
     type: money
   - line: "os_L_sole_prop_income_marijuana"
-    field: "6L"
+    field: "Sole Proprietorship Income of an Arizona Nonprofit Medical Marijuana Dispensary Included in Federal Adjusted Gross Income.  In addition, Sole Proprietorship income of an  Arizona dual licensee that has not elected to operate on a for-profit basis may subtract the portion of their federal taxable income that is from the medical marijuana portion of the business"
     type: money
-  - line: "os_M_long_term_care_savings"
-    field: "6M"
-    type: money
-  - line: "os_N_americans_disabilities_access"
-    field: "6N"
+  - line: "os_M_long_term_care_insurance_premiums"
+    field: "Long-Term Care Insurance Premiums"
     type: money
   - line: "os_O_exploration_expenses_pre1990"
-    field: "6O"
+    field: "Exploration Expenses Deferred before January 1, 1990"
     type: money
   - line: "os_P_sole_prop_marijuana_establishment"
-    field: "6P"
+    field: "Sole Proprietorship of an Arizona Marijuana Establishment, Marijuana Testing Facilities and dual  licensees that operate on a for-profit basis: enter the total amount of ordinary and necessary expenses  related to the sales of recreational use products reported on Schedule DFE (line 16).  An LLC that has  elected to be treated as a disregarded entity for federal purposes, and also elected to operate on a  for-profit basis may subtract the total amount of ordinary and necessary expenses related to the sales of recreational use products reported on Schedule DFE (line 16)"
     type: money
   - line: "os_Q_s_corp_shareholders_marijuana"
-    field: "6Q"
+    field: "S Corporation shareholders of an Arizona Marijuana Establishment, Marijuana Testing  Facilities and dual licensees that operate on a for-profit basis:  enter the amount of your pro-rata  share of ordinary and necessary expenses related to the sales of recreational use products as shown  on your Form 120S Schedule K-1, line 7"
     type: money
   - line: "os_R_net_capital_gain_exchange"
-    field: "6R"
+    field: "Net Capital Gain Derived From the Exchange of One Kind of Legal Tender for Another Kind of Legal Tender"
     type: money
   - line: "os_S_virtual_currency_token"
-    field: "6S"
+    field: "Value of Virtual Currency and Non-Fungible Tokens Recieved at the Time of the Airdrop"
     type: money
   - line: "os_T_gas_fees_virtual_currency"
-    field: "6T"
+    field: "Gas Fees Not Included in Virtual Currency or Non-Fungible Token Basis"
     type: money
   - line: "os_U_arizona_families_tax_rebate"
-    field: "6U"
+    field: "Arizona Families Tax Rebate"
     type: money
   - line: "os_V_other_subtractions"
-    field: "6V"
+    field: "Other Adjustments .See instructions and MCTCP worksheet"
     type: money
   - line: "os_W_total_other_subtractions"
-    field: "6W"
+    field: "Total Other Subtractions:  Add all amounts and enter the total here and on page 2, line 36"
     type: money
   # OMITTED push-button (form action, not a data field): "cmdPrintForm".
+  # ---- Page-header mirrors (Phase K re-map 2026-11-05, JK28 mechanism). The 2026-11-02 revision gives page 1's
+  # last-name and SSN boxes their own fields ("Your Last Name", "Your SSN"); the "Your Name (as shown on page 1)" /
+  # "Your Social Security Number" header boxes on pages 2-6 keep the old names "1b" / "1c" (five widgets each).
+  # fill_form builds them from the page-1 values; the name header now carries the FULL name as page 1 shows it (the
+  # shared field could only ever print the last name there), shortened to an initial when the box is too narrow.
+  - line: "tp_name_page_header"
+    field: "1b"
+    type: text
+    maxlen: 28
+  - line: "tp_ssn_page_header"
+    field: "1c"
+    type: text
+    maxlen: 11
 relations:
   - "14 == 12 - 13"  # Line 14 'Modified federal adjusted gross income. Subtract line 13 from line 12.'
+  # Line 16 is UNFILLABLE on the 2026-11-02 revision (P-036, unfillable_lines below), and the relation still states
+  # the printed sum: verify resolves 16 as a line — zero when nothing is declared, else the hand-written amount the
+  # caller gives in `expected` — so a filer with a line 16 amount gets a line 19 that includes it.
   - "19 == 14 + 15 + 16 + 17 + 18"  # Line 19 'Subtotal: Add lines 14 through 18.'
   - "34c == 34a + 34b"  # Line 34c 'add 34a and 34b'
   - "48 == 46 + 47"  # Line 48 'Subtotal of tax: Add lines 46 and 47.'
@@ -1745,3 +1794,37 @@ identity_fields:
   - tp_ssn
   - tp_first_name_and_initial
   - tp_last_name
+mirrors:
+  tp_name_page_header: "{tp_first_name_and_initial} {tp_last_name}"  # "Your Name (as shown on page 1)", pages 2-6
+  tp_ssn_page_header: "{tp_ssn}"  # "Your Social Security Number", pages 2-6
+mirror_abbreviations:
+  tp_name_page_header: [tp_first_name_and_initial]
+# P-036 (Phase K re-map 2026-11-05): the 2026-11-02 revision names these pairs of printed rows with ONE field each,
+# so a value for either row would print on both — fill_form refuses them; the filer hand-writes the row. Each
+# entry names the shared field: no line may map it, and verify fails a PDF that carries a value in it. The old
+# revision (pinned 2026-09-28, digest 91722910a79a8ec5…) kept them apart; no archived copy of it exists.
+unfillable_lines:
+  "16":
+    field: "Partnership Income adjustment"
+    why: "the 2026-11-02 revision of the blank names line 16 (partnership income adjustment, an addition) and line 27 (the subtraction) with ONE field, 'Partnership Income adjustment', so a value for either row would print on both; hand-write line 16 on the printed return; line 19 (add lines 14 through 18) must still include it"
+  "27":
+    field: "Partnership Income adjustment"
+    why: "shares the field 'Partnership Income adjustment' with line 16 on the 2026-11-02 revision (a value for either row would print on both); hand-write line 27 on the printed return"
+  "oa_A_married_separate":
+    field: "Married Persons Filing Separate Returns"
+    why: "page 5 row A (an addition) and page 6 row A (a subtraction) share the field 'Married Persons Filing Separate Returns' on the 2026-11-02 revision; hand-write Other Additions row A on the printed return"
+  "os_A_married_separate":
+    field: "Married Persons Filing Separate Returns"
+    why: "shares the field 'Married Persons Filing Separate Returns' with page 5 row A on the 2026-11-02 revision; hand-write Other Subtractions row A on the printed return"
+  "oa_B_141az_k1":
+    field: "Arizona Form 141AZ Schedule K-1 - Fiduciary Adjustment"
+    why: "page 5 row B and page 6 row B share the field 'Arizona Form 141AZ Schedule K-1 - Fiduciary Adjustment' on the 2026-11-02 revision; hand-write Other Additions row B on the printed return"
+  "os_B_141az_k1":
+    field: "Arizona Form 141AZ Schedule K-1 - Fiduciary Adjustment"
+    why: "shares the field 'Arizona Form 141AZ Schedule K-1 - Fiduciary Adjustment' with page 5 row B on the 2026-11-02 revision; hand-write Other Subtractions row B on the printed return"
+  "oa_M_disabilities_access":
+    field: "Americans with Disabilities Act - Access Expenditures"
+    why: "page 5 row M and page 6 row N share the field 'Americans with Disabilities Act - Access Expenditures' on the 2026-11-02 revision; hand-write Other Additions row M on the printed return"
+  "os_N_americans_disabilities_access":
+    field: "Americans with Disabilities Act - Access Expenditures"
+    why: "shares the field 'Americans with Disabilities Act - Access Expenditures' with page 5 row M on the 2026-11-02 revision; hand-write Other Subtractions row N on the printed return"

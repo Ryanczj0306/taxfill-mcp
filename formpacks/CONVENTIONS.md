@@ -610,6 +610,53 @@ identity mismatch or a missing current address (P-002). Declare such lines in
 - test_standalone_only_lines.py pins the shipped declarations; a new form with
   such a caption adds its packs there.
 
+### Lines the blank cannot take (`unfillable_lines`, P-036)
+
+A re-issued blank can bind two printed rows to ONE AcroForm field. Arizona's
+2026-11-02 revision of the 2025 Form 140 renamed its widgets by caption and
+gave line 16 (a partnership-income addition) and line 27 (the subtraction) the
+same name, "Partnership Income adjustment"; three pairs of Other Additions /
+Other Subtractions rows (A, B, M/N) likewise. A field holds one value and a
+viewer regenerates every widget of it from /V, so a value written for either
+row prints on both — and nothing the pack writes can stop that. Declare such
+lines in `unfillable_lines` (line key -> `{field, why}`; Phase K re-map,
+2026-11-05, reworked 2026-11-11 after its review):
+
+- Leave the lines unmapped and give each its shared `field` and a `why` that
+  says what the filer does instead: hand-write the row on the printed return.
+  The guard is on the field as well as the key: the schema refuses a line that
+  is also in `fields[]`, and any `fields[]` entry bound to a declared shared
+  field under another key.
+- `fill_form` refuses a non-empty value on one, with that reason, and drops an
+  empty one (None, "", 0); `verify_form` treats `expected` the same way, so one
+  full return record passes both. `get_form_map` lists the lines, so the agent
+  can tell the user before filling.
+- A relation states the PRINTED arithmetic, unfillable operands included
+  ("19 == 14 + 15 + 16 + 17 + 18"). The line is hand-written, so the PDF cannot
+  show it, and a total that adds it must still include it: the caller declares
+  the amount in `verify_form`'s `expected` (in `verify_filing`, the item's
+  `expected`), the relation counts it and says so, and the assertion reads
+  SKIPPED with the instruction to hand-write it — in both tools, naming the
+  relation(s) that counted the amount, or saying that none reads the line (a
+  declared amount is taken on the caller's word, so it is always shown; a
+  member of a `sum(a..b)` range counts as read). Undeclared, the line counts as
+  zero like any blank; a relation that then fails says a hand-written amount
+  must be declared. Never shorten the relation: it would fail the correct
+  return of the one filer the declaration exists for, and pass a subtotal that
+  leaves the hand-written row out. (verify resolves an unfillable key as a
+  line, so a bare number is not read as a literal.)
+- A `cross_form` rule may not name one (the schema refuses it): the other
+  form's verify reads this form's PDF, which cannot carry the line.
+- verify fails a filled PDF whose shared field holds a value (typed in a viewer
+  after the fill, or written by another tool): it shows on every row the field
+  serves.
+- Record the defect in the pack header with the revision that introduced it,
+  and keep the watch: the next re-issue may separate the fields again, and
+  then the lines go back into `fields[]`.
+- Nothing else routes around it: a pack never pins a superseded revision it
+  cannot fetch (no archived copy of the prior Arizona revision exists), and the
+  filler never splits a field in the output.
+
 ## Cross-form references (`cross_form`)
 
 ```

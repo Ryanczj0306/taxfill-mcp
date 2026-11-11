@@ -32,6 +32,8 @@ on stderr).
    `ok` ignores SKIPPED checks: relay every section's `skipped` entry and every
    `fill_form` warning (headers to hand-write, guarded relations) to the user.
    `fill_form` builds the page-header mirrors you leave out (`mirrored`); paths may be `~/...`.
+   A line under `get_form_map`'s `unfillable_lines` is refused by `fill_form`: the user hand-writes it, every total
+   that adds it still includes the amount, and `verify_form`'s `expected` carries the amount so relations count it.
 4. `estimate_refund` is a labeled RANGE with assumptions, never fake precision — ESTIMATE for a closed
    year, PROJECTION for a planning year (TY2026 today: draft forms, rehearsal-only; see SKILL.md Recipe P;
    IRA basis / backdoor Roth / recharacterization: Recipe R).

@@ -1071,3 +1071,61 @@ def test_verify_measures_a_font_size_box_at_its_font_size(tmp_path: Path):
     assert width_verdict(_sized_pack(), "12312026") == FAIL
     assert width_verdict(_sized_pack(font_size=10), "12312026") == PASS
     assert width_verdict(_sized_pack(font_size=10), "12/31/2026") == FAIL
+
+
+# ── P-036 (2026-11-05, reworked 2026-11-11): a value on an unfillable line is refused; an empty one is dropped ─────
+
+SHARED_FIELD = "Page1[0].f1_99[0]"            # no PACK line maps it
+
+
+def _pack_with_unfillable_line(**overrides) -> FormPack:
+    data = PACK.model_dump()
+    data["unfillable_lines"] = {"16": {
+        "field": SHARED_FIELD,
+        "why": "the blank binds lines 16 and 27 to one field 'Partnership Income adjustment'; hand-write line 16",
+    }}
+    return FormPack.model_validate({**data, **overrides})
+
+
+@pytest.mark.parametrize("value", [5000, "5000", "1,234", 0.4, -5, "n/a", True, False, Decimal("12.50")])
+def test_a_value_on_an_unfillable_line_is_refused_with_its_reason(blank_pdf: Path, tmp_path: Path, value):
+    # A JSON caller sends strings as often as numbers, and False is a value, not "nothing": none may vanish silently.
+    pack = _pack_with_unfillable_line()
+    with pytest.raises(ValueError, match=r"line\(s\) \['16'\] cannot be written.*hand-write line 16.*hand-write each"):
+        fill_form(pack, {"name": "DEMO", "16": value}, blank_pdf, tmp_path / "out.pdf")
+    assert not (tmp_path / "out.pdf").exists()
+
+
+def test_the_refusal_says_what_to_do_about_the_totals(blank_pdf: Path, tmp_path: Path):
+    pack = _pack_with_unfillable_line()
+    with pytest.raises(ValueError) as exc:
+        fill_form(pack, {"16": 5000}, blank_pdf, tmp_path / "out.pdf")
+    message = str(exc.value)
+    assert "must still include the hand-written amount" in message and "expected={'16': <amount>}" in message
+    assert "relations do not count" not in message          # the pre-review wording, which was false advice
+
+
+@pytest.mark.parametrize("empty", [None, "", "  ", 0, "0", "0.00", Decimal("0.00"), 0.0])
+def test_an_empty_value_on_an_unfillable_line_is_dropped(blank_pdf: Path, tmp_path: Path, empty):
+    pack = _pack_with_unfillable_line()
+    result = fill_form(pack, {"name": "DEMO", "16": empty}, blank_pdf, tmp_path / "out.pdf")
+    assert "16" not in result.written and result.written[f"{ROOT}.Page1[0].f1_4[0]"] == "DEMO"
+    assert not any(SHARED_FIELD in name for name in result.written)
+
+
+def test_an_unfillable_line_is_not_an_unknown_line(blank_pdf: Path, tmp_path: Path):
+    # the refusal names the reason, never "unknown line key" with its "add the line to the pack" advice
+    pack = _pack_with_unfillable_line()
+    with pytest.raises(ValueError) as exc:
+        fill_form(pack, {"16": 1}, blank_pdf, tmp_path / "out.pdf")
+    assert "unknown line key" not in str(exc.value)
+
+
+def test_a_rehearsal_fill_refuses_an_unfillable_line_too(blank_pdf: Path, tmp_path: Path):
+    # rehearsal mode lifts the planning-year guard, nothing else
+    pack = _pack_with_unfillable_line(tax_year=2026, source_status="draft", draft_created="1/2/26")
+    with pytest.raises(ValueError, match=r"line\(s\) \['16'\] cannot be written"):
+        fill_form(pack, {"name": "DEMO", "16": 5000}, blank_pdf, tmp_path / "out.pdf", rehearsal=True)
+    result = fill_form(pack, {"name": "DEMO", "16": 0}, blank_pdf, tmp_path / "out.pdf", rehearsal=True)
+    assert "16" not in result.written
+

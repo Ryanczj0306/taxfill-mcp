@@ -191,7 +191,8 @@
   "relations": ["3 == 1 + 2", "5 == 3 + 4", "7 == 5 - 6", "10c == 10a + 10b", "23i == 23a + 23b + 23c + 23d + 23e + 23f + 23g + 23h", "26 == 21 + 22 + 23i + 24 + 25", "38 == 36 - 37", "44 == 42 + 43", "sch1_5 == sch1_1 + sch1_2 + sch1_3 + sch1_4", "sch2_3_yourself == sch2_1_yourself + sch2_2_yourself", "sch2_3_spouse == sch2_1_spouse + sch2_2_spouse"],
   "source_status": "final",
   "source_url": "https://www.revenue.wi.gov/TaxForms2023/2023-Form1f.pdf",
-  "tax_year": 2023
+  "tax_year": 2023,
+  "unfillable_lines": {}
  },
  "2024/wi_form1": {
   "acroform_root": "",
@@ -410,7 +411,8 @@
   "relations": ["3 == 1 + 2", "5 == 3 + 4", "7 == 5 - 6", "9 == max(0, 7 - 8)", "10c == 10a + 10b", "11 == max(0, 9 - 10c)", "13 == sch1_9", "15 == line15_qualifying_expenses * 0.5", "25 == line25_penalty_base * 0.33", "22 == max(0, 12 - 21)", "27 == 22 + 23 + 24 + 25 + 26", "37 == 28 + 29 + 30 + 31a + 31b + 32 + 33 + 34 + 35 + 36", "39 == 37 - 38", "45 == 43 + 44", "sch1_5 == sch1_1 + sch1_2 + sch1_3 + sch1_4", "sch1_7 == max(0, sch1_5 - sch1_6)", "sch1_9 == sch1_7 * 0.05", "sch2_3_yourself == sch2_1_yourself + sch2_2_yourself", "sch2_3_spouse == sch2_1_spouse + sch2_2_spouse", "sch2_5_yourself == max(0, sch2_3_yourself - sch2_4_yourself)", "sch2_5_spouse == max(0, sch2_3_spouse - sch2_4_spouse)", "sch3_2 == sch3_1a + sch3_1b + sch3_1c + sch3_1d + sch3_1e + sch3_1f + sch3_1g + sch3_1h", "24 == sch3_2"],
   "source_status": "final",
   "source_url": "https://www.revenue.wi.gov/TaxForms2024/2024-Form1f.pdf",
-  "tax_year": 2024
+  "tax_year": 2024,
+  "unfillable_lines": {}
  },
  "2025/wi_form1": {
   "acroform_root": "",
@@ -629,6 +631,7 @@
   "relations": ["3 == 1 + 2", "5 == 3 + 4", "7 == 5 - 6", "10c == 10a + 10b", "15 == line15_qualifying_expenses * 0.5", "25 == line25_penalty_base * 0.33", "27 == 22 + 23 + 24 + 25 + 26", "37 == 28 + 29 + 30 + 31a + 31b + 32 + 33 + 34 + 35 + 36", "39 == 37 - 38", "45 == 43 + 44", "sch1_5 == sch1_1 + sch1_2 + sch1_3 + sch1_4", "sch1_9 == sch1_7 * 0.05", "sch2_3_yourself == sch2_1_yourself + sch2_2_yourself", "sch2_3_spouse == sch2_1_spouse + sch2_2_spouse", "sch3_2 == sch3_1a + sch3_1b + sch3_1c + sch3_1d + sch3_1e + sch3_1f + sch3_1g + sch3_1h", "24 == sch3_2"],
   "source_status": "final",
   "source_url": "https://www.revenue.wi.gov/TaxForms2025/2025-Form1f.pdf",
-  "tax_year": 2025
+  "tax_year": 2025,
+  "unfillable_lines": {}
  }
 }

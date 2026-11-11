@@ -116,7 +116,8 @@
   "relations": ["4 == 1 + 2 + 3", "8 == 5 + 6 + 7", "9 == 4 - 8", "19 == 14 - 18", "23 == 19 + 20 + 21 + 22", "24 == 23", "30 == 25 + 26 + 27 + 28 + 29", "35 == 33 + 34"],
   "source_status": "final",
   "source_url": "https://taxarchive.illinois.gov/content/dam/soi/en/web/taxarchive/forms/income-tax/2023/individual/il-1040.pdf",
-  "tax_year": 2023
+  "tax_year": 2023,
+  "unfillable_lines": {}
  },
  "2024/il1040": {
   "acroform_root": "",
@@ -236,7 +237,8 @@
   "relations": ["4 == 1 + 2 + 3", "8 == 5 + 6 + 7", "9 == 4 - 8", "19 == 14 - 18", "23 == 19 + 20 + 21 + 22", "24 == 23", "31 == 25 + 26 + 27 + 28 + 29 + 30", "36 == 34 + 35"],
   "source_status": "final",
   "source_url": "https://taxarchive.illinois.gov/content/dam/soi/en/web/taxarchive/forms/income-tax/2024/individual/il-1040.pdf",
-  "tax_year": 2024
+  "tax_year": 2024,
+  "unfillable_lines": {}
  },
  "2025/il1040": {
   "acroform_root": "",
@@ -359,6 +361,7 @@
   "relations": ["4 == 1 + 2 + 3", "8 == 5 + 6 + 7", "9 == 4 - 8", "10 == 10a + 10b + 10c + 10d", "19 == 14 - 18", "23 == 19 + 20 + 21 + 22", "24 == 23", "31 == 25 + 26 + 27 + 28 + 29 + 30", "36 == 34 + 35"],
   "source_status": "final",
   "source_url": "https://tax.illinois.gov/content/dam/soi/en/web/tax/forms/incometax/documents/currentyear/individual/il-1040.pdf",
-  "tax_year": 2025
+  "tax_year": 2025,
+  "unfillable_lines": {}
  }
 }

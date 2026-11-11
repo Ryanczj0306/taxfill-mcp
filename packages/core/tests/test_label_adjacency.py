@@ -325,7 +325,7 @@ def test_an_undeclared_key_the_anchor_reads_makes_the_verdict_partial_whatever_i
         "PARTIAL 249/292 (line-bearing keys checked; floor 70%; undeclared keys the anchor reads a line beside "
         "(declare them): ws#_#)")
     assert L.below_floor(249, 292, 0.7, (), ("ltc.#",)) and not L.below_floor(249, 292, 0.7, (), ())
-    assert L.declare_families({"ws3_1c_gifts_cash_or_check": ("1c",), "ws3_7c_multiply_by_31pct": ("7c",),
+    assert L.declare_families({"ws3_1c_gifts_cash_or_check": ("1c",), "ws3_7c_multiply_by_rate": ("7c",),
                                "ltc.2": ("2",)}) == ("ltc.#", "ws#_#")
 
 
@@ -337,7 +337,7 @@ def test_dark_families_are_five_undeclared_keys_or_five_keys_none_checked():
     assert L.key_family("sch_m.34a.c") == "sch_m.#" and L.key_family("schedITbus_2_neg") == "schedITbus_#"
     assert L.tail_family("sch_m.34a.c") == "sch_m.#.c" and L.key_family("name.first") == "name.first"
     ws3 = {"ws3_1c_gifts_cash_or_check", "ws3_2c_other", "ws3_3c_carryover", "ws3_4c_add_1c_3c",
-           "ws3_5c_credit_contributions", "ws3_6c_subtract_5c_from_4c", "ws3_7c_multiply_by_31pct"}
+           "ws3_5c_credit_contributions", "ws3_6c_subtract_5c_from_4c", "ws3_7c_multiply_by_rate"}
     assert {L.key_family(k) for k in ws3} == {"ws#_#"} and len({L.tail_family(k) for k in ws3}) == 7
     assert L.dark_families(ws3) == ("ws#_#",)     # round 4 saw seven one-key families and no dark one
     # five declared keys none of which the gate checks are dark too; one checked key clears the family
@@ -993,7 +993,7 @@ PLANTED = {  # three line-bearing keys per pack the gate checked on NO widget be
     # fixer round 5: the round-4 verifier's plants among undeclared keys the anchor reads (each its own round-4
     # family, or a family under the 5-key threshold), which passed with verdict OK
     "states/az/2023/az140#ws3": ("ws3_1c_gifts_cash_or_check", "ws3_2c_other", "ws3_4c_add_1c_3c"),
-    "states/az/2023/az140py#ws3": ("ws3_3c_carryover", "ws3_5c_credit_contributions", "ws3_7c_multiply_by_31pct"),
+    "states/az/2023/az140py#ws3": ("ws3_3c_carryover", "ws3_5c_credit_contributions", "ws3_7c_multiply_by_rate"),
     "states/az/2025/az140#ws3": ("ws3_1c_gifts_cash_or_check", "ws3_5c_credit_contributions",
                                  "ws3_6c_subtract_5c_from_4c"),
     "states/mt/2023/form2#ltc": ("ltc.1", "ltc.2", "ltc.3"),

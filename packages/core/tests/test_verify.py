@@ -1957,3 +1957,189 @@ def test_confirmed_address_zip4_component_is_optional_precision():
     ok = verify_form(pack, disk_fields(pack, filled),
                      confirmed_current_address="100 Main St, Washington, DC 20001")
     assert ok.ok is True
+
+
+# ── P-036 (2026-11-11): unfillable lines — hand-written rows the PDF cannot show ──────────────────────────────────
+
+P036_SHARED = "Page1[0].f_shared_16_27[0]"
+
+
+def _p036_pack() -> FormPack:
+    """Lines 14-19 with the printed subtotal "19 == 14 + 15 + 16 + 17 + 18"; lines 16 and 27 share one field."""
+    return make_pack(
+        [money_field(k) for k in ("14", "15", "17", "18", "19")],
+        relations=["19 == 14 + 15 + 16 + 17 + 18"],
+        unfillable_lines={
+            "16": {"field": P036_SHARED, "why": "lines 16 and 27 share one field; hand-write line 16"},
+            "27": {"field": P036_SHARED, "why": "lines 16 and 27 share one field; hand-write line 27"},
+        },
+    )
+
+
+def test_p036_one_record_passes_fill_and_verify_when_the_unfillable_line_is_empty():
+    pack = _p036_pack()
+    record = {"14": 100000, "15": 0, "16": 0, "17": 0, "18": 0, "19": 100000, "27": None}
+    on_disk = disk_fields(pack, {"14": "100000", "15": "", "17": "", "18": "", "19": "100000"})
+    report = verify_form(pack, on_disk, expected={k: v for k, v in record.items() if k in ("14", "19", "16", "27")})
+    assert report.ok, [c.detail for c in report.assertions + report.relations if c.status == "FAIL"]
+    assert [c.line for c in report.assertions] == ["14", "19"]            # 16 and 27 were empty: nothing to check
+    (relation,) = report.relations
+    assert relation.status == "PASS" and "16" in relation.blank_as_zero   # a LINE read as blank, not the literal 16
+
+
+def test_p036_a_declared_hand_written_amount_is_counted_and_not_compared():
+    pack = _p036_pack()
+    on_disk = disk_fields(pack, {"14": "100000", "15": "", "17": "", "18": "", "19": "105000"})
+    report = verify_form(pack, on_disk, expected={"14": 100000, "16": "5,000", "19": 105000})
+    assert report.ok
+    skipped = [c for c in report.assertions if c.status == "SKIPPED"]
+    assert [c.line for c in skipped] == ["16"]
+    assert "hand-write '5,000'" in skipped[0].detail and "read the line counted 5000" in skipped[0].detail
+    assert "not in the TEST-1 pack's field map" not in skipped[0].detail
+    (relation,) = report.relations
+    assert (relation.status, relation.lhs, relation.rhs) == ("PASS", 105000, 105000)
+    assert "counted as declared (hand-written, not on the PDF): 16 = 5000" in relation.detail
+    # the subtotal that leaves the hand-written row out is the one that fails
+    wrong = disk_fields(pack, {"14": "100000", "15": "", "17": "", "18": "", "19": "100000"})
+    report = verify_form(pack, wrong, expected={"16": 5000})
+    assert not report.ok and report.relations[0].status == "FAIL"
+    assert "left side = 100000, right side = 105000" in report.relations[0].detail
+
+
+def test_p036_an_undeclared_hand_written_amount_fails_and_says_to_declare_it():
+    pack = _p036_pack()
+    on_disk = disk_fields(pack, {"14": "100000", "15": "", "17": "", "18": "", "19": "105000"})
+    report = verify_form(pack, on_disk, expected={"14": 100000, "19": 105000})
+    assert not report.ok
+    (relation,) = report.relations
+    assert relation.status == "FAIL" and "difference +5000" in relation.detail
+    assert "line(s) ['16'] cannot be written on this blank and count as 0 here" in relation.detail
+    assert "expected={'16': <amount>}" in relation.detail and "verify_filing" in relation.detail
+    # a relation with no unfillable operand keeps the ordinary remedy
+    plain = make_pack([money_field(k) for k in ("1", "2", "3")], relations=["3 == 1 + 2"])
+    detail = verify_form(plain, disk_fields(plain, {"1": "1", "2": "1", "3": "5"})).relations[0].detail
+    assert "cannot be written" not in detail and "either a line on the right is wrong" in detail
+
+
+def test_p036_a_value_in_the_shared_field_fails():
+    # typed into the PDF after the fill, or written by another tool: it shows on both rows
+    pack = _p036_pack()
+    on_disk = disk_fields(pack, {"14": "100000", "19": "100000"}) | {f"{ROOT}.{P036_SHARED}": "5000"}
+    report = verify_form(pack, on_disk)
+    assert not report.ok
+    (check,) = [c for c in report.assertions if c.status == "FAIL"]
+    assert check.line == "16 / 27" and check.actual == "5000"
+    assert "prints that one field on more than one row" in check.detail and "hand-write" in check.detail
+    for blank in ("", "  "):
+        assert verify_form(pack, on_disk | {f"{ROOT}.{P036_SHARED}": blank}).ok
+    # verify_filing reads the same field
+    filing = verify_filing([FilingItem(form_key="t1", pack=pack, fields=on_disk)])
+    assert not filing.ok and any(c.line == "t1: 16 / 27" and c.status == "FAIL" for c in filing.assertions)
+
+
+def test_p036_a_non_amount_on_an_unfillable_line_is_reported_and_not_counted():
+    pack = _p036_pack()
+    on_disk = disk_fields(pack, {"14": "100000", "19": "100000"})
+    report = verify_form(pack, on_disk, expected={"16": "see statement"})
+    (check,) = report.assertions
+    assert check.status == "SKIPPED" and "no relation counted it" in check.detail and report.ok
+
+
+def test_p036_the_recompute_of_an_unfillable_line_says_to_hand_write_and_declare_it():
+    pack = _p036_pack()
+    on_disk = disk_fields(pack, {"14": "100000", "19": "105000"})
+    report = verify_form(pack, on_disk, independent={"16": 5000})
+    (check,) = report.recompute
+    assert check.status == "FAIL" and "this blank cannot take the line" in check.detail
+    assert "fill the line via fill_form" not in check.detail and "expected={'16': 5000}" in check.detail
+    declared = verify_form(pack, on_disk, expected={"16": 5000}, independent={"16": 5000})
+    assert declared.ok and declared.recompute[0].status == "PASS"
+    # the plain helper, with no pack knowledge, keeps its ordinary message
+    assert "fill the line via fill_form" in independent_recompute({}, {"16": 5000})[0].detail
+
+
+def test_p036_verify_filing_counts_an_items_declared_amount():
+    pack = _p036_pack()
+    on_disk = disk_fields(pack, {"14": "100000", "15": "", "17": "", "18": "", "19": "105000"})
+    assert not verify_filing([FilingItem(form_key="t1", pack=pack, fields=on_disk)]).ok
+    report = verify_filing([FilingItem(form_key="t1", pack=pack, fields=on_disk, values={"16": 5000})])
+    assert report.ok and "16 = 5000" in report.relations[0].detail
+
+
+# ── P-036 re-verify (2026-11-11): the declaration is always visible, and says what it did ──────────────────────────
+
+
+def test_p036_the_skipped_row_names_the_relation_that_counted_the_amount_or_says_none_did():
+    pack = _p036_pack()
+    on_disk = disk_fields(pack, {"14": "100000", "15": "", "17": "", "18": "", "19": "105000"})
+    report = verify_form(pack, on_disk, expected={"16": 5000, "27": 777})
+    by_line = {c.line: c.detail for c in report.assertions if c.status == "SKIPPED"}
+    assert "The relation(s) that read the line counted 5000: 19 == 14 + 15 + 16 + 17 + 18" in by_line["16"]
+    # no relation of the pack reads line 27: nothing checked the amount, and the row must not say something did
+    assert "No relation of this pack reads the line, so nothing checked the amount" in by_line["27"]
+    assert "counted 777" not in by_line["27"]
+
+
+def test_p036_verify_filing_shows_every_declared_amount():
+    # A declared amount is taken on the caller's word, so it may close ANY gap in a relation: the report must show it.
+    pack = _p036_pack()
+    wrong = disk_fields(pack, {"14": "100000", "15": "", "17": "", "18": "", "19": "123456"})
+    report = verify_filing([FilingItem(form_key="t1", pack=pack, fields=wrong, values={"16": 23456})])
+    assert report.ok                                                    # the arithmetic closes with the declaration
+    (skipped,) = [c for c in report.assertions if c.status == "SKIPPED"]
+    assert skipped.line == "t1: 16" and "hand-write 23456" in skipped.detail and "counted 23456" in skipped.detail
+    # nothing declared, nothing shown
+    plain = disk_fields(pack, {"14": "100000", "19": "100000"})
+    assert not [c for c in verify_filing([FilingItem(form_key="t1", pack=pack, fields=plain)]).assertions
+                if c.status == "SKIPPED"]
+
+
+def test_p036_an_unfillable_member_of_a_sum_range_is_read_as_one():
+    pack = make_pack([money_field(k) for k in ("5a", "5b", "5d", "6")], relations=["6 == sum(5a..5d)"],
+                     unfillable_lines={"5c": {"field": P036_SHARED, "why": "rows 5c and 9c share one field; hand-write 5c"}})
+    on_disk = disk_fields(pack, {"5a": "1", "5b": "1", "5d": "1", "6": "13"})
+    undeclared = verify_form(pack, on_disk).relations[0]
+    assert undeclared.status == "FAIL" and "line(s) ['5c'] cannot be written on this blank" in undeclared.detail
+    declared = verify_form(pack, on_disk, expected={"5c": 10})
+    assert declared.ok and "counted as declared (hand-written, not on the PDF): 5c = 10" in declared.relations[0].detail
+    assert "6 == sum(5a..5d)" in next(c.detail for c in declared.assertions if c.status == "SKIPPED")
+
+
+def test_p036_the_unfillable_key_is_matched_whole():
+    # "16" unfillable beside mapped "16.a" and "160": only a relation that reads line 16 itself mentions it
+    pack = make_pack([money_field(k) for k in ("16.a", "160", "20")], relations=["20 == 16.a + 160"],
+                     unfillable_lines={"16": {"field": P036_SHARED, "why": "two rows, one field; hand-write line 16"}})
+    failing = verify_form(pack, disk_fields(pack, {"16.a": "1", "160": "1", "20": "5"})).relations[0]
+    assert failing.status == "FAIL" and "cannot be written" not in failing.detail
+    row = verify_form(pack, disk_fields(pack, {"16.a": "1", "160": "1", "20": "2"}), expected={"16": 9}).assertions[0]
+    assert "No relation of this pack reads the line" in row.detail
+
+
+@pytest.mark.parametrize(("declared", "counted"), [(-5000, -5000), ("(5,000)", -5000), ("5000 ", 5000)])
+def test_p036_a_negative_or_formatted_declared_amount_is_counted_as_written(declared, counted):
+    pack = _p036_pack()
+    on_disk = disk_fields(pack, {"14": "100000", "15": "", "17": "", "18": "", "19": str(100000 + counted)})
+    report = verify_form(pack, on_disk, expected={"16": declared})
+    assert report.ok and f"16 = {counted}" in report.relations[0].detail
+
+
+@pytest.mark.parametrize("value", [False, True])
+def test_p036_a_boolean_on_an_unfillable_line_is_a_value_not_nothing(value):
+    pack = _p036_pack()
+    report = verify_form(pack, disk_fields(pack, {"14": "1", "19": "1"}), expected={"16": value})
+    (row,) = report.assertions
+    assert row.status == "SKIPPED" and "no relation counted it" in row.detail
+
+
+def test_p036_an_explicit_values_entry_wins_over_the_expected_declaration():
+    pack = _p036_pack()
+    on_disk = disk_fields(pack, {"14": "100000", "15": "", "17": "", "18": "", "19": "107000"})
+    report = verify_form(pack, on_disk, expected={"16": 5000}, values={"16": 7000})
+    assert report.relations[0].status == "PASS" and "16 = 7000" in report.relations[0].detail
+
+
+@pytest.mark.parametrize("typed", ["0", "0.00", "5000"])
+def test_p036_any_value_in_the_shared_field_fails_even_a_zero(typed):
+    pack = _p036_pack()
+    on_disk = disk_fields(pack, {"14": "1", "19": "1"}) | {f"{ROOT}.{P036_SHARED}": typed}
+    assert not verify_form(pack, on_disk).ok          # a typed zero prints "0" on both rows too

@@ -923,6 +923,113 @@ def read_text_widgets(
 # ---------------------------------------------------------------------------
 
 
+def _nothing_to_write(value: object) -> bool:
+    """None, blank text or a zero amount — what fill_form drops on an unfillable line (filler._is_empty_value)."""
+    if value is None or isinstance(value, bool):
+        return value is None
+    text = value.strip() if isinstance(value, str) else str(value)
+    if not text:
+        return True
+    try:
+        return Decimal(text) == 0
+    except (InvalidOperation, ValueError):
+        return False
+
+
+def hand_written_amounts(pack: FormPack, expected: Mapping[str, object] | None) -> dict[str, Decimal]:
+    """The amounts ``expected`` declares for the pack's unfillable lines (P-036): line -> amount.
+
+    An unfillable line is hand-written on the printed return, so the PDF cannot show it; a total that adds it must
+    still include it. The caller declares the amount in ``expected`` and the relation math counts it. A value that
+    is empty or not a plain amount declares nothing.
+    """
+    amounts: dict[str, Decimal] = {}
+    for line, want in (expected or {}).items():
+        if line not in pack.unfillable_lines or _nothing_to_write(want):
+            continue
+        amount = parse_money(want)
+        if amount is not None:
+            amounts[line] = amount
+    return amounts
+
+
+def _unfillable_operands(equation: str, unfillable: Mapping[str, object]) -> list[str]:
+    """The unfillable lines a relation's equation reads, members of a ``sum(a..b)`` range included."""
+    if not unfillable:
+        return []
+    tokens = _tokenize(equation)
+    read: set[str] = set()
+    for i, (kind, text) in enumerate(tokens):
+        if kind not in ("lineid", "name"):
+            continue
+        read.add(text)
+        if tokens[i + 1 : i + 2] == [("op", "..")] and i + 2 < len(tokens):
+            start, end = _LETTER_RANGE_ENDPOINT_RE.fullmatch(text), _LETTER_RANGE_ENDPOINT_RE.fullmatch(tokens[i + 2][1])
+            if start and end and start.group(1) == end.group(1):
+                read.update(f"{start.group(1)}{chr(c)}" for c in range(ord(start.group(2)), ord(end.group(2)) + 1))
+    return [line for line in unfillable if line in read]
+
+
+def hand_written_check(pack: FormPack, line: str, want: object) -> AssertionCheck:
+    """The SKIPPED row for an amount the caller declares on an unfillable line (P-036).
+
+    The PDF cannot show the line, so nothing is compared; the row tells the reader to hand-write it and says what
+    the declaration did — counted by the relations that read the line, or by none (then nothing checked it).
+    """
+    amount = hand_written_amounts(pack, {line: want}).get(line)
+    readers = [r for r in pack.relations if line in _unfillable_operands(split_relation_guard(r)[0], {line: None})]
+    if amount is None:
+        effect = "It is not a plain amount, so no relation counted it"
+    elif readers:
+        effect = f"The relation(s) that read the line counted {irs_round(amount)}: " + "; ".join(readers)
+    else:
+        effect = ("No relation of this pack reads the line, so nothing checked the amount: every printed total "
+                  "that includes it is the filer's to confirm")
+    return AssertionCheck(
+        line=line,
+        status=SKIPPED,
+        expected=str(want),
+        detail=(
+            f"line '{line}' is not on this PDF and cannot be: {pack.unfillable_lines[line].why}. Not checked — "
+            f"hand-write {want!r} on the printed return's line. {effect}"
+        ),
+    )
+
+
+def shared_field_checks(pack: FormPack, fields: Mapping[str, str]) -> list[AssertionCheck]:
+    """FAIL for every field the pack declares shared between printed rows (P-036) that holds a value on disk.
+
+    fill_form never writes one, but a value typed into the PDF afterwards (or written by another tool) prints on
+    every row the field serves — the wrong-row defect the declaration exists to prevent.
+    """
+    rows: dict[str, list[str]] = {}
+    for line, entry in pack.unfillable_lines.items():
+        rows.setdefault(entry.field, []).append(line)
+    checks: list[AssertionCheck] = []
+    for name, lines in rows.items():
+        root = f"{pack.acroform_root}." if pack.acroform_root else ""
+        bare = name[len(root):] if root and name.startswith(root) else name
+        qualified = f"{root}{bare}"
+        raw = fields.get(qualified, fields.get(bare))
+        if raw is None or not raw.strip() or raw.strip() == "/Off":
+            continue
+        checks.append(
+            AssertionCheck(
+                line=" / ".join(sorted(lines)),
+                status=FAIL,
+                expected="",
+                actual=raw,
+                detail=(
+                    f"field '{qualified}' carries {raw!r}, and the blank prints that one field on more than one "
+                    f"row (lines {sorted(lines)}): the value shows on each of them. Clear the field (refill the "
+                    f"form with fill_form, which never writes it) and hand-write the amount on the row it "
+                    f"belongs to"
+                ),
+            )
+        )
+    return checks
+
+
 def assertion_diff(
     pack: FormPack,
     fields: Mapping[str, str],
@@ -940,6 +1047,14 @@ def assertion_diff(
     checks: list[AssertionCheck] = []
     for line, want in expected.items():
         pack_field = by_line.get(line)
+        if pack_field is None and line in pack.unfillable_lines:
+            # P-036: the pack knows the line but the blank cannot take it, so the PDF has nothing to compare. An
+            # empty value is the filler's "nothing to write" (the same record passes fill and verify); a value is the
+            # amount the caller says is hand-written, which the relations count (hand_written_amounts).
+            if _nothing_to_write(want):
+                continue
+            checks.append(hand_written_check(pack, line, want))
+            continue
         if pack_field is None:
             checks.append(
                 AssertionCheck(
@@ -1276,11 +1391,16 @@ def _check_relation(
     values: Mapping[str, float | int | Decimal],
     line_names: frozenset[str],
     box_checked=None,
+    unfillable: Mapping[str, object] | None = None,
 ) -> RelationCheck:
     """One relation, reported under its full pack string (guard clause included).
 
     ``box_checked(line) -> bool`` reads an ``unless`` guard's box from the on-disk dump (:func:`relations`); None
     means no dump was supplied, so a guard reads as unchecked and the relation is evaluated.
+
+    ``unfillable`` is the pack's ``unfillable_lines`` (P-036). Such a line is hand-written, so it reaches the math
+    only as a declared amount in ``values``; undeclared it counts as 0 like any blank, and a failure says that a
+    hand-written amount there must be declared.
     """
     equation, guard = split_relation_guard(relation)
     checked = box_checked(guard) if guard is not None and box_checked is not None else None
@@ -1347,6 +1467,12 @@ def _check_relation(
             ),
         )
     blank_note = f"; blank-as-zero: {', '.join(blanks)}" if blanks else ""
+    named = _unfillable_operands(equation, unfillable or {})      # sum(a..b) members included
+    declared = [k for k in named if k not in blanks]
+    undeclared = [k for k in named if k in blanks]
+    if declared:
+        blank_note += ("; counted as declared (hand-written, not on the PDF): "
+                       + ", ".join(f"{k} = {irs_round(values[k])}" for k in declared))
     if lhs_dollars == rhs_dollars:
         return RelationCheck(
             relation=relation,
@@ -1357,6 +1483,25 @@ def _check_relation(
             detail=f"{lhs_dollars} == {rhs_dollars} (whole dollars, IRS rounding){blank_note}",
         )
     left = equation.split("==", 1)[0].strip()
+    if undeclared:
+        # P-036: the pack cannot write these lines, so they read as 0 here. If the printed return carries a
+        # hand-written amount on one, the arithmetic is right only with that amount counted.
+        return RelationCheck(
+            relation=relation,
+            status=FAIL,
+            lhs=lhs_dollars,
+            rhs=rhs_dollars,
+            blank_as_zero=blanks,
+            detail=(
+                f"relation '{relation}' failed: left side = {lhs_dollars}, right side = {rhs_dollars} (difference "
+                f"{lhs_dollars - rhs_dollars:+d}){blank_note} — line(s) {undeclared} cannot be written on this "
+                f"blank and count as 0 here. If the printed return carries a hand-written amount there, declare it "
+                f"so this relation counts it: verify_form's expected (e.g. expected={{{undeclared[0]!r}: <amount>}}) "
+                f"or, in verify_filing, the item's expected. If nothing is hand-written there, a line on the right "
+                f"is wrong or the left side is (it must equal the right side, {rhs_dollars}); fix it and "
+                f"re-verify{guard_note}"
+            ),
+        )
     if left in line_names and left in blanks:
         # Phase K JK5: a blank total line (CA 540 line 33 after a fill through line 31) used to get "recompute the
         # input lines with calc" — no calc op makes a form's own subtraction; the relation already has the value.
@@ -1403,7 +1548,8 @@ def relations(
     on-disk money lines from the PDF dump itself — call them rather than
     feeding this function self-reported numbers.
     """
-    line_names = frozenset(f.line for f in pack.fields) | frozenset(values)
+    # P-036: an unfillable line is a LINE (a bare digit key must not read as a numeric literal), present or not.
+    line_names = frozenset(f.line for f in pack.fields) | frozenset(values) | frozenset(pack.unfillable_lines)
     by_line = {f.line: f for f in pack.fields}
 
     def box_checked(line: str) -> bool:
@@ -1417,7 +1563,8 @@ def relations(
         return _checkbox_member_selected(pack, pack_field, fields)
 
     reader = box_checked if fields is not None else None
-    return [_check_relation(relation, values, line_names, reader) for relation in pack.relations]
+    return [_check_relation(relation, values, line_names, reader, pack.unfillable_lines)
+            for relation in pack.relations]
 
 
 # ---------------------------------------------------------------------------
@@ -1547,6 +1694,7 @@ def _merge_disk_and_supplied(
 def independent_recompute(
     values: Mapping[str, float | int | Decimal],
     independent: Mapping[str, float | int],
+    unfillable: Mapping[str, object] | None = None,
 ) -> list[RecomputeCheck]:
     """Diff filled values against independently recomputed numbers.
 
@@ -1559,6 +1707,22 @@ def independent_recompute(
     for line, number in independent.items():
         recomputed = irs_round(number)
         filled_raw = values.get(line)
+        if filled_raw is None and line in (unfillable or {}):
+            # P-036: fill_form refuses this line, so "fill it" would be advice nobody can follow.
+            checks.append(
+                RecomputeCheck(
+                    line=line,
+                    status=FAIL,
+                    recomputed=recomputed,
+                    detail=(
+                        f"line '{line}' was independently recomputed as {recomputed}, but this blank cannot "
+                        f"take the line ({getattr(unfillable[line], 'why', unfillable[line])}). Hand-write "
+                        f"{recomputed} on the printed return and declare it to the verifier (expected="
+                        f"{{{line!r}: {recomputed}}}) so it is compared and counted in the relations"
+                    ),
+                )
+            )
+            continue
         if filled_raw is None:
             checks.append(
                 RecomputeCheck(
@@ -3209,13 +3373,16 @@ def verify_form(
         flag_checks = [_pitfall_p027(*widget_flag_problems(pdf_path, written_names))]
     widget_models = _coerce_widgets(widgets or [])
 
-    merged_values, value_checks = _merge_disk_and_supplied(pack, fields, values)
+    # P-036: the amounts `expected` declares for unfillable (hand-written) lines join the supplement, so the
+    # relations that add such a line count it; an explicit `values` entry for the same line wins.
+    supplied = {**hand_written_amounts(pack, expected), **(values or {})}
+    merged_values, value_checks = _merge_disk_and_supplied(pack, fields, supplied)
     assertion_checks = (
         assertion_diff(pack, fields, expected) if expected is not None else []
-    ) + value_checks
+    ) + value_checks + shared_field_checks(pack, fields)
     relation_checks = relations(pack, merged_values, fields=fields)
     recompute_checks = (
-        independent_recompute(merged_values, independent) if independent is not None else []
+        independent_recompute(merged_values, independent, pack.unfillable_lines) if independent is not None else []
     )
     # Widgets read off the filled PDF drop the mapped ReadOnly ones still
     # holding the blank's own text (see _drop_blank_owned); caller-supplied
@@ -3334,6 +3501,12 @@ def verify_filing(
     for item in filing_items:
         merged, checks = _merge_disk_and_supplied(item.pack, fields_by_key[item.form_key], item.values)
         values_by_key[item.form_key] = merged
+        # P-036: a field the pack declares shared between printed rows must be blank on disk; and an amount the
+        # item declares for an unfillable (hand-written) line is counted by its relations, so it is SHOWN — a
+        # declaration must never turn a relation green without a trace.
+        checks = checks + shared_field_checks(item.pack, fields_by_key[item.form_key]) + [
+            hand_written_check(item.pack, line, amount) for line, amount in item.values.items()
+            if line in item.pack.unfillable_lines and not _nothing_to_write(amount)]
         value_checks.extend(
             check.model_copy(update={"line": f"{item.form_key}: {check.line}"}) for check in checks
         )
@@ -3365,7 +3538,7 @@ def verify_filing(
             recompute_checks.extend(
                 check.model_copy(update={"line": f"{item.form_key}: {check.line}"})
                 for check in independent_recompute(
-                    values_by_key[item.form_key], independent[item.form_key]
+                    values_by_key[item.form_key], independent[item.form_key], item.pack.unfillable_lines
                 )
             )
         item_widgets = (

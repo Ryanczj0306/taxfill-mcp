@@ -265,6 +265,20 @@ class PackField(BaseModel):
         return self
 
 
+class UnfillableLine(BaseModel):
+    """One printed line the pack knows but cannot write (P-036): the AcroForm field the blank shares between this
+    row and another, and why — what the filer does instead."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    field: str = Field(description=(
+        "The AcroForm field (as fields[].field would name it) that the blank binds to this row AND to another "
+        "printed row. No fields[] entry may bind it, and verify fails a filled PDF that carries a value in it."))
+    why: str = Field(description=(
+        "Why the blank cannot take the value and what the filer does instead (hand-write the row on the printed "
+        "return). fill_form's refusal and get_form_map quote it."))
+
+
 class Signature(BaseModel):
     """Where the human signs (dev plan section 9: exact signature locations)."""
 
@@ -706,6 +720,21 @@ class FormPack(BaseModel):
             "Verified alone, the form is treated as filed by itself."
         ),
     )
+    unfillable_lines: dict[str, UnfillableLine] = Field(
+        default_factory=dict,
+        description=(
+            "Printed lines the pack KNOWS but cannot write (line key -> {field, why}), each left unmapped on purpose "
+            "(Phase K, 2026-11-05, P-036). The case: a re-issued blank binds two printed rows to ONE AcroForm field "
+            "— Arizona's 2026-11-02 revision of the 2025 Form 140 names line 16 and line 27 both 'Partnership Income "
+            "adjustment' — so a value written for either row prints on both (a field holds one value, and viewers "
+            "regenerate every widget of it from /V). fill_form refuses a value on such a line and says to hand-write "
+            "it on the printed return; get_form_map lists them so the agent can tell the user before filling. No "
+            "fields[] entry may bind a shared field. A relation states the PRINTED arithmetic, unfillable operands "
+            "included: verify counts the hand-written amount the caller declares in `expected` (zero when none is "
+            "declared) and fails a PDF whose shared field holds a value. A cross_form rule may not name one (the "
+            "other form's verify could not read it)."
+        ),
+    )
     mirrors: dict[str, str] = Field(
         default_factory=dict,
         description=(
@@ -865,6 +894,55 @@ class FormPack(BaseModel):
                 f"standalone_only_lines entries must be logical line keys (the 'line:' values) — "
                 f"{unknown_standalone} match no line in this pack"
             )
+        return self
+
+    @model_validator(mode="after")
+    def _check_unfillable_lines(self) -> "FormPack":
+        # P-036 (2026-11-05): a line is either written (fields[]) or declared unfillable with its shared field and
+        # its reason, never both — and the guard is on the FIELD as well as the key: a second key bound to the shared
+        # field would write both rows just the same. A relation MAY name an unfillable line (it states the printed
+        # arithmetic; verify resolves the operand as a line, counting the hand-written amount the caller declares),
+        # a cross_form rule may not: the form on the other side reads this one's PDF, which cannot carry the line.
+        lines = {f.line for f in self.fields}
+        both = sorted(k for k in self.unfillable_lines if k in lines)
+        if both:
+            raise ValueError(
+                f"unfillable_lines {both} are also mapped in fields[] — a line is either written or declared "
+                f"unfillable with its reason, never both"
+            )
+        no_why = sorted(k for k, entry in self.unfillable_lines.items() if not entry.why.strip())
+        if no_why:
+            raise ValueError(
+                f"unfillable_lines {no_why} need a reason: why the blank cannot take the value, and what the filer "
+                f"does instead (hand-write it on the printed return)"
+            )
+        no_field = sorted(k for k, entry in self.unfillable_lines.items() if not entry.field.strip())
+        if no_field:
+            raise ValueError(
+                f"unfillable_lines {no_field} need the shared field: the AcroForm field the blank binds to this row "
+                f"and to another, so no line can map it and verify can check it stays blank"
+            )
+        root = f"{self.acroform_root}." if self.acroform_root else ""
+
+        def _bare(name: str) -> str:               # the same field, with or without the pack's root in front
+            return name[len(root):] if root and name.startswith(root) else name
+
+        shared = {_bare(entry.field) for entry in self.unfillable_lines.values()}
+        bound = sorted(f.line for f in self.fields if _bare(f.field) in shared)
+        if bound:
+            raise ValueError(
+                f"line(s) {bound} map a field that unfillable_lines declares shared between printed rows "
+                f"({sorted(f.field for f in self.fields if _bare(f.field) in shared)}) — a value written to it "
+                f"prints on every row it serves; leave the field unmapped"
+            )
+        for rule in self.cross_form:
+            named = sorted(k for k in self.unfillable_lines
+                           if re.search(rf"(?<![\w.]){re.escape(k)}(?![\w.])", rule))
+            if named:
+                raise ValueError(
+                    f"cross_form rule {rule!r} names unfillable line(s) {named} — the other form's verify reads "
+                    f"this form's PDF, which cannot carry the line; drop the rule and say why beside it"
+                )
         return self
 
     @model_validator(mode="after")

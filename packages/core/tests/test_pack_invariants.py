@@ -875,6 +875,10 @@ NOT_A_MIRROR: tuple[NotAMirror, ...] = tuple(
 # table counted mirror/source key PAIRS found by shape (measured 2026-08-21);
 # since then it counts declarations, which also covers the keys no shape finds.
 IDENTITY_MIRROR_COUNTS: dict[str, int] = {
+    # Arizona's 2026-11-02 re-issue of the 2025 Form 140 gave page 1's last-name and SSN boxes their own fields, so
+    # the "Your Name (as shown on page 1)" / "Your Social Security Number" headers on pages 2-6 (fields "1b" / "1c",
+    # five widgets each) became mirrors of the page-1 lines (Phase K re-map, 2026-11-05; P-036 in the pack header).
+    "states/az/2025/az140/pack.yaml": 2,
     # Form 8863 page 2 repeats "Name(s) shown on return" and the three-cell "Your
     # social security number" on its own fields (name_p2, ssn_p2_area/_group/_serial);
     # the key-pairing never saw the `_p2` shape (declared Phase K JK28, 2026-10-23).
@@ -1239,12 +1243,12 @@ YEAR_BEARING_KEY_FAMILIES: tuple[YearFamily, ...] = (
     *(
         YearFamily(
             "az140", family, (),
-            "a STATUTORY year in the printed line's own name (pre-1990 pollution-control "
+            "a STATUTORY year in the printed line's own name (pre-1990 child-care-facility "
             "amortization / exploration expenses). It is fixed by law and never moves with "
             "tax_year, so no offset applies",
         )
         for family in (
-            "oa_N_amortization_pollution_facility_<Y>",
+            "oa_N_amortization_child_care_facility_<Y>",
             "os_O_exploration_expenses_pre<Y>",
         )
     ),
@@ -2037,3 +2041,100 @@ def test_money_comb_rows_are_live_and_justified():
         assert any(pf.format != MONEY_COMMA_CELLS for pf in lines), (
             f"MONEY_COMBS_WITHOUT_COMMA_CELLS row {key!r} has no money line on a comb widget without the format any "
             f"more — delete it")
+
+
+# ── P-036 review (2026-11-11): a relation operand that names no line ───────────────────────────────────────────────
+#
+# verify resolves an operand the pack does not map as a blank line (zero). A key renamed in fields[] and not in the
+# relations therefore loads, fills, and then fails every correct return: the AZ 2023 Form 140NR / 140PY packs kept
+# "ws3_7c_multiply_by_31pct" in three relations after the line became "ws3_7c_multiply_by_rate", and no gate
+# noticed (the golden pinned the dangling relations). A bare whole number that is not a line is a numeric literal by
+# the relation grammar, so it cannot be judged here; every other operand must be a line of the pack, or one it
+# declares unfillable.
+
+_RELATION_FUNCTIONS = frozenset({"sum", "max", "min"})
+
+
+def _relation_operands(relation: str) -> set[str]:
+    """Every operand a relation (guard included) names that is not a number: line ids and names."""
+    from taxfill_core.verify import _tokenize, split_relation_guard  # noqa: PLC0415
+
+    equation, guard = split_relation_guard(relation)
+    tokens = _tokenize(equation)
+    operands = {guard} if guard is not None else set()
+    for i, (kind, text) in enumerate(tokens):
+        if kind == "name" and text in _RELATION_FUNCTIONS and tokens[i + 1 : i + 2] == [("op", "(")]:
+            continue
+        if kind == "name" or (kind == "lineid" and not text.isdigit()):
+            operands.add(text)
+    return operands
+
+
+def test_every_relation_operand_is_a_line_of_its_pack():
+    dangling = {}
+    relations_read = 0
+    for pack_path in ALL_PACK_PATHS:
+        pack = _load(pack_path)
+        known = {f.line for f in pack.fields} | set(pack.unfillable_lines)
+        for relation in pack.relations:
+            relations_read += 1
+            missing = sorted(_relation_operands(relation) - known)
+            if missing:
+                dangling.setdefault(_pack_id(pack_path), []).append((relation, missing))
+    assert relations_read > 2000                       # the sweep read the repo's relations, not an empty list
+    assert not dangling, (
+        "a relation names an operand that is no line of its pack — verify would read it as a blank (zero) and fail "
+        f"every correct return; rename the operand with its line: {dangling}")
+
+
+def test_the_relation_operand_sweep_sees_a_renamed_line():
+    # the AZ case, in miniature: the line was renamed, the relation was not
+    assert _relation_operands("ws3_7c_multiply_by_31pct == ws3_6c_subtract_5c_from_4c * 0.31") == {
+        "ws3_7c_multiply_by_31pct", "ws3_6c_subtract_5c_from_4c"}
+    assert _relation_operands("19 == 14 + 15 + 16 + 17 + 18") == set()            # whole numbers: lines or literals
+    assert _relation_operands("3 == max(0, 1a - 2b.fed) unless box_x") == {"1a", "2b.fed", "box_x"}
+    assert _relation_operands("1z == sum(1a..1h)") == {"1z", "1a", "1h"}
+    az = _load(REPO_ROOT / "formpacks" / "states" / "az" / "2023" / "az140py" / "pack.yaml")
+    assert "54 == ws3_7c_multiply_by_rate" in az.relations
+
+
+# ── P-036 re-verify (2026-11-11): a declared shared field is a real field of the blank, on more than one row ───────
+
+UNFILLABLE_PACK_PATHS = [p for p in ALL_PACK_PATHS if "unfillable_lines:" in p.read_text(encoding="utf-8")]
+
+
+def test_the_packs_that_declare_unfillable_lines_are_the_known_ones():
+    assert [_pack_id(p) for p in UNFILLABLE_PACK_PATHS] == ["states-az-2025-az140"]
+
+
+@pytest.mark.network
+@pytest.mark.parametrize("pack_path", UNFILLABLE_PACK_PATHS, ids=_pack_id)
+def test_every_declared_shared_field_is_on_the_blank_with_widgets_on_more_than_one_row(pack_path: Path):
+    """A misspelled ``field`` would switch off both guards silently: the schema would find no line bound to it and
+    verify would find nothing to read. Each declared name must be a field of the pinned blank with two or more
+    widgets (the rows it serves), and unmapped."""
+    from pypdf import PdfReader  # noqa: PLC0415
+
+    from taxfill_core.fetch import fetch_pack_blank  # noqa: PLC0415
+
+    pack = _load(pack_path)
+    widgets: dict[str, int] = {}
+    for page in PdfReader(str(fetch_pack_blank(pack))).pages:
+        for annot in page.get("/Annots") or []:
+            annot = annot.get_object()
+            if annot.get("/Subtype") != "/Widget":
+                continue
+            parts, node = [], annot
+            while node is not None:
+                if node.get("/T") is not None:
+                    parts.append(str(node["/T"]))
+                node = node.get("/Parent")
+                node = node.get_object() if node is not None else None
+            name = ".".join(reversed(parts))
+            widgets[name] = widgets.get(name, 0) + 1
+    root = f"{pack.acroform_root}." if pack.acroform_root else ""
+    for line, entry in pack.unfillable_lines.items():
+        qualified = entry.field if root and entry.field.startswith(root) else f"{root}{entry.field}"
+        assert widgets.get(qualified, 0) >= 2, (
+            f"{_pack_id(pack_path)} line {line}: declared shared field {entry.field!r} has "
+            f"{widgets.get(qualified, 0)} widget(s) on the blank — it must name a field the blank prints on two rows")

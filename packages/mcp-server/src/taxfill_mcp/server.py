@@ -87,7 +87,7 @@ from taxfill_core.file_and_pay import DRAFT_NOTICE, FilingManifestItem
 from taxfill_core.residency import classify as _classify
 from taxfill_core.scenarios import compare_scenarios as _compare_scenarios
 from taxfill_core.schemas.profile import Profile
-from taxfill_core.verify import FilingItem, VerifyReport
+from taxfill_core.verify import FilingItem, VerifyReport, hand_written_amounts
 from taxfill_core.workspace import Position, Workspace, default_workspace_root
 
 from taxfill_mcp import __version__
@@ -457,6 +457,10 @@ def get_form_map(form: str, year: int, jurisdiction: str = "federal", source_url
     leave it out (e.g. CA Form 540's Sides 2-6 `name.full`); `mirror_abbreviations` lists, per
     mirror, the placeholders a header may shorten to an initial or leave out when the full name is
     too wide for its box (fill_form does that itself; every other placeholder stays whole).
+    `unfillable_lines` (line -> why; empty on most packs) lists printed lines the blank cannot take:
+    a re-issued blank that binds two printed rows to one field (AZ Form 140 2025, lines 16 and 27).
+    Tell the user BEFORE filling: fill_form refuses a value on one, the filer hand-writes that row
+    on the printed return, and every total that adds the line must still include the amount.
 
     NO PACK (form='unmapped', with source_url and blank_sha256 from fetch_blank): every AcroForm field of that blank
     with its kind, flags, options, whether it may ever be filled, and each box's pack-blind anchor (a printed line and
@@ -553,7 +557,10 @@ def fill_form(
     written comb widget whose cells crossed the separators printed in its box (the IRS 1040 /
     1040-X SSN dots) and that fill_form narrowed to the printed grid, as '<field> (page N): x
     <old> -> <new>'; nothing to do, it is reported so a reviewer knows the widget moved.
-    Rejects unknown lines and comb/length violations. No
+    Rejects unknown lines and comb/length violations, and a value on a line get_form_map lists
+    under `unfillable_lines` (the blank prints one field on two rows): leave that line out, tell the
+    user to hand-write it on the printed return, fill every total that adds it WITH the amount
+    counted, and give verify_form the amount in `expected`. No
     identifying-number or comb line takes the literal 'NRA' (P-026): an MFS filer whose
     nonresident-alien spouse has no SSN/ITIN (and needs none) writes 'NRA' in the MFS ENTRY
     SPACE (the Instructions for Form 1040: "enter 'NRA' in the entry space") —
@@ -635,6 +642,11 @@ def verify_form(
     passes only when the full name does not fit and it does; a header left blank because nothing
     allowed fits is not a failure (fill_form's warning says to hand-write it after printing).
 
+    A line get_form_map lists under `unfillable_lines` is hand-written, so the PDF cannot show it:
+    in `expected`, its amount is not compared (the assertion reads SKIPPED and says to hand-write
+    it) but IS counted by the relations that add the line — without it, a relation whose printed
+    sum includes the line fails and says so. A value found in the shared field itself fails.
+
     `independent` maps line id -> the amount YOU recomputed via the calc tool over the versioned
     tables (never copied from the form or from your own fill values) — e.g. {"16": 36036, "12": 27700}
     where 36036 came from calc(op="tax", args={"taxable_income": 205150, "filing_status":
@@ -699,6 +711,10 @@ def verify_filing(items: list[dict], independent: dict[str, dict[str, float]] | 
     per item, under the `overlay` section) instead of the AcroForm checks; the filing is ok only
     when every AcroForm item and every stamped item is. A hand-fill form has no fields to read
     back, so it takes no part in the cross-form identity and cross_form checks (`limits` says so).
+    An AcroForm item may carry `expected` too, for one purpose: the amounts hand-written on lines
+    its get_form_map lists under `unfillable_lines` ({line: amount}), which that form's relations
+    then count (verify_form's rule). Each declared amount comes back in `assertions.skipped`
+    ("hand-write ..."): relay it, and remember that a declared amount is taken on your word.
 
     An item whose form is 'unmapped' is refused: an unmapped draft takes no part in a filing's checks — verify it
     alone with verify_form(form='unmapped', ...). A PDF that is an unmapped draft is refused under any form key.
@@ -724,7 +740,17 @@ def verify_filing(items: list[dict], independent: dict[str, dict[str, float]] | 
                 )
             overlay_items.append((form_key, pack, it))
             continue
-        filing_items.append(FilingItem(form_key=form_key, pack=pack, pdf_path=Path(it["pdf_path"])))
+        # P-036: an AcroForm item's `expected` declares the amounts hand-written on the pack's unfillable lines
+        # (get_form_map's `unfillable_lines`), so the relations that add such a line count them.
+        item_expected = it.get("expected")
+        if item_expected is not None and not isinstance(item_expected, dict):
+            raise ValueError(
+                f"verify_filing item '{form_key}': `expected` must be a dict of line -> amount (the amounts "
+                f"hand-written on the lines get_form_map lists under `unfillable_lines`), got "
+                f"{type(item_expected).__name__}"
+            )
+        declared = {line: float(amount) for line, amount in hand_written_amounts(pack, item_expected).items()}
+        filing_items.append(FilingItem(form_key=form_key, pack=pack, pdf_path=Path(it["pdf_path"]), values=declared))
     if not filing_items:
         raise ValueError(
             "verify_filing needs at least one fillable (AcroForm) form — for print-only forms alone, call verify_form "

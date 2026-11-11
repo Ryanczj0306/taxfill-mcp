@@ -14,7 +14,7 @@ top_tier_kinds:
 - text
 passed: true
 adjudicated: 185
-test_runs: 8
+test_runs: 10
 history:
 - run: 1
   date: '2026-10-24'
@@ -128,6 +128,27 @@ history:
     (Phase J JT6, 2026-11-05, the same day as run 7''s Schedule C and SE). As before, the finals carry the same widgets one
     page lower (no cover sheet) and no /TU tooltips, so the anchor''s tooltip evidence disappears on these two packs; the
     selection''s two pdf_sha256 values follow the packs. No adjudicated item names either pack.'
+- run: 9
+  date: '2026-11-05'
+  method: jk15-v6
+  thresholds:
+    top: 3.0
+    med: 2.0
+  note: 'run 9, no method change: the 2025 Arizona Form 140 blank was re-pinned to azdor''s 2026-11-02 re-issue (Phase K freshness
+    re-map, 2026-11-05): the same widgets at the same places, 153 of them renamed from their line number to the row''s caption,
+    seven duplicate widgets dropped, and a re-tagged text layer. The selection''s pdf_sha256 follows the pack; the three adjudicated
+    items whose widget was renamed (3_2c, 3_4c, 3_5c on page 3) are re-keyed to the new names (the same boxes, the same blind
+    verdicts).'
+- run: 10
+  date: '2026-11-11'
+  method: jk15-v6
+  thresholds:
+    top: 3.0
+    med: 2.0
+  note: 'run 10, no method change: the nine signature-block boxes of Arizona Form 140 (occupations, the paid preparer''s firm,
+    address, TIN and phone) were keyed "81".."89" after the old revision''s widget names although the face prints no number
+    beside them; the re-map''s review renamed them (occupation, spouse_occupation, preparer_*), so they are no longer numbered
+    truth and leave the scored set of the one TEST pack that carried them (states/az/2025/az140).'
 criteria:
   test_packs_at_least_30: true
   test_federal_at_least_10: true
@@ -182,7 +203,7 @@ notes:
   labelled Yes/No, capped below the top tier (yes_no_pair). Text widgets are unchanged from jk15-v4. This table scores printed_line
   only; the labels are measured apart, in knowledge/anchor/labels.yaml (scripts/anchor_label_check.py), which licenses nothing.'
 measured:
-  selection_sha256: 46246f179e00dfb3
+  selection_sha256: faec69a53fd9ee2e
   selection_disclosure:
     siblings_across_split:
     - dev: states/al/al40
@@ -230,34 +251,34 @@ measured:
     states_distinct: 22
     tiers:
       top:
-        emitted: 1448
-        scored: 1094
-        agree: 1084
+        emitted: 1449
+        scored: 1093
+        agree: 1083
         disagree: 10
-        unscored: 354
+        unscored: 356
         provisional_precision: 0.9909
         wilson_95:
-        - 0.9833
+        - 0.9832
         - 0.995
       med:
-        emitted: 3355
-        scored: 561
-        agree: 406
+        emitted: 3345
+        scored: 559
+        agree: 404
         disagree: 155
-        unscored: 2794
-        provisional_precision: 0.7237
+        unscored: 2786
+        provisional_precision: 0.7227
         wilson_95:
-        - 0.6853
-        - 0.7591
+        - 0.6842
+        - 0.7582
       low:
-        emitted: 3576
-        scored: 38
-        agree: 38
+        emitted: 3578
+        scored: 39
+        agree: 39
         disagree: 0
-        unscored: 3538
+        unscored: 3539
         provisional_precision: 1.0
         wilson_95:
-        - 0.9082
+        - 0.9103
         - 1.0
       none:
         emitted: 827
@@ -269,9 +290,9 @@ measured:
         wilson_95: null
     top_by_kind:
       text:
-        emitted: 1435
-        scored: 1085
-        agree: 1076
+        emitted: 1436
+        scored: 1084
+        agree: 1075
         provisional_precision: 0.9917
         wilson_95:
         - 0.9843
@@ -287,8 +308,8 @@ measured:
     forms_with_a_mis_anchored_top_widget: 1
     per_form_any_mis_anchored_top_rate: 0.0278
     forms_with_top_tier: 36
-    widgets_with_truth: 1824
-    widgets_with_truth_but_no_printed_line: 131
+    widgets_with_truth: 1813
+    widgets_with_truth_but_no_printed_line: 122
   dev:
     packs: 33
     federal: 15
@@ -448,14 +469,14 @@ measured:
   unscored_sample:
     size: 48
     seed: 20261024
-    ids_sha256: 392398eb4c576c8b
+    ids_sha256: bea3680dd74b3dc5
 adjudication:
   adjudicated: 185
   unadjudicated: 0
   tiers:
     top:
-      scored: 1094
-      right: 1093
+      scored: 1093
+      right: 1092
       wrong: 1
       ambiguous: 0
       unadjudicated: 0
@@ -464,24 +485,24 @@ adjudication:
       - 0.9948
       - 0.9998
     med:
-      scored: 561
-      right: 555
+      scored: 559
+      right: 553
       wrong: 6
       ambiguous: 0
       unadjudicated: 0
       precision: 0.9893
       wilson_95:
-      - 0.9769
+      - 0.9768
       - 0.9951
     low:
-      scored: 38
-      right: 38
+      scored: 39
+      right: 39
       wrong: 0
       ambiguous: 0
       unadjudicated: 0
       precision: 1.0
       wilson_95:
-      - 0.9082
+      - 0.9103
       - 1.0
     none:
       scored: 0
@@ -493,8 +514,8 @@ adjudication:
       wilson_95: null
   top_by_kind:
     text:
-      scored: 1085
-      right: 1085
+      scored: 1084
+      right: 1084
       wrong: 0
       ambiguous: 0
       unadjudicated: 0
@@ -698,7 +719,7 @@ adjudication:
     groups:
     - text
     size: 48
-    population: 350
+    population: 352
     right: 48
     wrong: 0
     ambiguous: 0
@@ -710,14 +731,14 @@ adjudication:
   combined_top_estimate:
     groups:
     - text
-    scored_n: 1085
-    unscored_population: 350
+    scored_n: 1084
+    unscored_population: 352
     weights:
-      scored: 0.7561
-      unscored: 0.2439
+      scored: 0.7549
+      unscored: 0.2451
     precision: 1.0
     wilson_95:
-    - 0.9793
+    - 0.9792
     - 1.0
     how: each stratum's precision weighted by its size in the top tier; the interval is the same size-weighted mix of the
       two strata's 95% Wilson bounds (conservative)

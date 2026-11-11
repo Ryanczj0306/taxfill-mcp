@@ -324,7 +324,7 @@ shapes:
   # vision-read on its own face (work crops, not shipped). Blanks (first 16 hex of the sha256 each pack pins, matched
   # by the cached file; the others are listed above):
   #   states/az/2023/az140   6ac62b1984154d2a    states/az/2023/az140py 082ee7ac0e2b9a50    states/az/2023/az140nr c7b67205786808aa
-  #   states/az/2024/az140   3bcbe35485f97d52    states/az/2025/az140   91722910a79a8ec5    states/md/2023/md502   0f690e03e385c768
+  #   states/az/2024/az140   3bcbe35485f97d52    states/az/2025/az140   2acdda2a07ab46d7 (the 2026-11-02 re-issue; no printed word, rule or box moved)    states/md/2023/md502   0f690e03e385c768
   #   states/md/2024/md502   e72500955f3c032c    states/md/2025/md502   4f4d604f27cf6995    states/ny/2023/it201   b0c12743b32fb723
   #   states/ny/2024/it201   dc1562c7b4ddbf40    states/ny/2025/it201   cfe63039ffa4374f    federal/2026/sched_1a  e22aec7feb2f5b73
   #   federal/2023/f8863     dae8814d278f144b    federal/2024/f8863     71644cc3a12e89de    federal/2025/f8863     a251a1cfbd613d5d
@@ -337,9 +337,9 @@ shapes:
     pattern: '^ws3_(?P<n>\d)(?P<x>c)_'
     means: >-
       page 3's Standard Deduction Increase for Charitable Contributions worksheet, lines 1C-7C ("ws3_1c_gifts_cash_or_
-      check" = 1C ... "ws3_7c_multiply_by_31pct" = 7C; 140NR runs to 9C); the face prints "1C" ... "7C" beside the
+      check" = 1C ... "ws3_7c_multiply_by_rate" = 7C; 140NR runs to 9C); the face prints "1C" ... "7C" beside the
       boxes
-    examples: {ws3_1c_gifts_cash_or_check: "1c", ws3_4c_add_1c_3c: "4c", ws3_7c_multiply_by_31pct: "7c"}
+    examples: {ws3_1c_gifts_cash_or_check: "1c", ws3_4c_add_1c_3c: "4c", ws3_7c_multiply_by_rate: "7c"}
 
   - id: az140-lettered-boxes
     packs: [states/az/2023/az140, states/az/2023/az140py, states/az/2024/az140, states/az/2025/az140,

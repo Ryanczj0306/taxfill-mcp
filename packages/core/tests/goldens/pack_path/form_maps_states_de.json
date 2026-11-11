@@ -197,7 +197,8 @@
   "relations": ["15a == 1a + 2a + 3a + 4a + 5a + 6a + 7a.a + 7b.a + 8a + 9a + 10a + 11a + 12a + 13a + 14a", "15b == 1b + 2b + 3b + 4b + 5b + 6b + 7a.b + 7b.b + 8b + 9b + 10b + 11b + 12b + 13b + 14b", "17a == 15a - 16a", "17b == 15b - 16b", "20a == 18a + 19a", "20b == 18b + 19b", "21a == 17a + 20a", "21b == 17b + 20b", "27a == 22a + 23a + 24a + 25a + 26a.a + 26b.a", "27b == 22b + 23b + 24b + 25b + 26a.b + 26b.b", "28a == 21a - 27a", "28b == 21b - 27b", "30a == 28b - 29b", "30b == 28a - 29a", "34 == 31 + 32 + 33", "36 == 34 - 35", "37 == 30b", "40 == 38 + 39", "41 == 37 - 40", "42.box_a == 30a", "42.box_b == 30b", "46 == 43a + 43b + 44 + 45", "53 == 48 + 49 + 50 + 51 + 52", "63 == 61 + 62", "66 == 63 - 64 - 65"],
   "source_status": "final",
   "source_url": "https://revenuefiles.delaware.gov/2023/PIT-NON_2023-01_PaperInteractive.pdf",
-  "tax_year": 2023
+  "tax_year": 2023,
+  "unfillable_lines": {}
  },
  "2023/pit_res": {
   "acroform_root": "",
@@ -401,7 +402,8 @@
   "relations": ["4b == 1b + 2b + 3b", "16b == 13b + 14b + 15b", "21b == 19b + 20b", "25b == 23b + 24b"],
   "source_status": "final",
   "source_url": "https://revenuefiles.delaware.gov/2023/PIT-RES_2023-01_PaperInteractive.pdf",
-  "tax_year": 2023
+  "tax_year": 2023,
+  "unfillable_lines": {}
  },
  "2024/pit_res": {
   "acroform_root": "",
@@ -609,7 +611,8 @@
   "relations": ["4b == 1b + 2b + 3b", "9b == 5b + 6b + 7b + 8a.b + 8b.b", "10b == 4b - 9b", "12b == 10b - 11b", "17b == 13b + 14b + 15b + 16b", "19b == 17b - 18b", "22b == 20b + 21b", "23b == 12b - 22b", "26b == 24b + 25b", "32b == 27a.b + 27b.b + 28b + 29b + 30b + 31b", "50b == 48b + 49b", "53b == 50b - 51b - 52b"],
   "source_status": "final",
   "source_url": "https://revenuefiles.delaware.gov/2024/PIT_2024_Forms/PIT-RES_2024-01_PaperInteractive.pdf",
-  "tax_year": 2024
+  "tax_year": 2024,
+  "unfillable_lines": {}
  },
  "2025/pit_res": {
   "acroform_root": "",
@@ -817,6 +820,7 @@
   "relations": ["4b == 1b + 2b + 3b", "9b == 5b + 6b + 7b + 8a.b + 8b.b", "10b == 4b - 9b", "12b == 10b - 11b", "17b == 13b + 14b + 15b + 16b", "19b == 17b - 18b", "22b == 20b + 21b", "23b == 12b - 22b", "26b == 24b + 25b", "32b == 27a.b + 27b.b + 28b + 29b + 30b + 31b", "50b == 48b + 49b", "53b == 50b - 51b - 52b"],
   "source_status": "final",
   "source_url": "https://revenuefiles.delaware.gov/2025/PITForms_Instructions/PIT-RES_2025-01_PaperInteractiveIPM.pdf",
-  "tax_year": 2025
+  "tax_year": 2025,
+  "unfillable_lines": {}
  }
 }

@@ -112,7 +112,8 @@
   "relations": ["3 == 1 + 2", "6 == 4 + 5e", "19 == 17 + 18", "22 == 20 + 21", "23e == 23a + 23b + 23c + 23d", "24 == 22 + 23e", "25f == 25a + 25b + 25c + 25d + 25e", "31 == 29 + 30"],
   "source_status": "final",
   "source_url": "https://tax.vermont.gov/sites/tax/files/documents/IN-111-2023.pdf",
-  "tax_year": 2023
+  "tax_year": 2023,
+  "unfillable_lines": {}
  },
  "2024/in111": {
   "acroform_root": "",
@@ -220,7 +221,8 @@
   "relations": ["3 == 1 + 2", "6 == 4 + 5e", "7 == max(3 - 6, 0)", "10 == max(8 + 9, 0)", "13 == min(12, 1000.0)", "14 == max(10 - 13, 0)", "19 == 17 + 18", "20 == max(16 - 19, 0)", "23 == 20 + 21 + 22", "24e == 24a + 24b + 24c + 24d", "25 == 23 + 24e", "26f == 26a + 26b + 26c + 26d + 26e", "29 == 27 - 28a - 28b", "32 == 30 + 31"],
   "source_status": "final",
   "source_url": "https://tax.vermont.gov/sites/tax/files/documents/IN-111-2024.pdf",
-  "tax_year": 2024
+  "tax_year": 2024,
+  "unfillable_lines": {}
  },
  "2025/in111": {
   "acroform_root": "",
@@ -328,6 +330,7 @@
   "relations": ["3 == 1 + 2", "6 == 4 + 5e", "19 == 17 + 18", "23 == 20 + 21 + 22", "24e == 24a + 24b + 24c + 24d", "25 == 23 + 24e", "26f == 26a + 26b + 26c + 26d + 26e", "32 == 30 + 31"],
   "source_status": "final",
   "source_url": "https://tax.vermont.gov/sites/tax/files/documents/IN-111-2025.pdf",
-  "tax_year": 2025
+  "tax_year": 2025,
+  "unfillable_lines": {}
  }
 }

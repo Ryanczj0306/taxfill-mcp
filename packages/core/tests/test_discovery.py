@@ -121,3 +121,16 @@ def test_jd2_list_forms_for_one_year_is_fast_once_warm():
     started = time.perf_counter()
     forms = list_forms("federal", 2025)
     assert time.perf_counter() - started < 0.3 and len(forms) >= 37
+
+
+def test_get_form_map_lists_the_unfillable_lines():
+    # P-036 (2026-11-05): Arizona's 2026-11-02 revision of the 2025 Form 140 binds four pairs of printed rows to one
+    # field each; the map says so, so the agent can tell the user before filling. Every other pack lists none.
+    az = get_form_map("az140", 2025, "states/az")
+    assert set(az.unfillable_lines) == {"16", "27", "oa_A_married_separate", "os_A_married_separate",
+                                        "oa_B_141az_k1", "os_B_141az_k1",
+                                        "oa_M_disabilities_access", "os_N_americans_disabilities_access"}
+    assert all(isinstance(why, str) and "hand-write" in why for why in az.unfillable_lines.values())   # line -> why
+    assert not ({ln.line for ln in az.lines} & set(az.unfillable_lines))
+    assert get_form_map("f1040", 2025).unfillable_lines == {}
+

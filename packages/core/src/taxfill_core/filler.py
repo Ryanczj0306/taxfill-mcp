@@ -926,6 +926,19 @@ def comb_cell_grid(
     return None if best is None else (best[1], best[1] + n * best[2])
 
 
+def _is_empty_value(value: object) -> bool:
+    """None, blank text or a zero amount: nothing to write (P-036 drops such a value on an unfillable line)."""
+    if value is None or isinstance(value, bool):
+        return value is None
+    text = value.strip() if isinstance(value, str) else str(value)
+    if not text:
+        return True
+    try:
+        return Decimal(text) == 0
+    except (InvalidOperation, ValueError):
+        return False
+
+
 def _da_font_size(da: object) -> float:
     """The font size of a /DA string ('/Helv 8 Tf 0 g' -> 8.0); 0.0 for auto-size or when none is set."""
     match = _DA_FONT_SIZE.search(str(da)) if da is not None else None
@@ -1424,6 +1437,18 @@ def fill_form(
     out_path = user_path(out_path)
 
     by_line = {pf.line: pf for pf in pack.fields}
+    # P-036 (2026-11-05): a line the pack declares unfillable (two printed rows on one field) refuses a value; an
+    # empty one (None, "", 0) is simply dropped, so a caller's full return record still passes.
+    blocked = sorted(k for k, v in values.items() if k in pack.unfillable_lines and not _is_empty_value(v))
+    if blocked:
+        why = "; ".join(f"{k}: {pack.unfillable_lines[k].why}" for k in blocked)
+        raise ValueError(
+            f"line(s) {blocked} cannot be written on the {pack.form} ({pack.tax_year}) blank — {why}. Leave them out "
+            f"of values and hand-write each on the printed return. Every total that adds such a line must still "
+            f"include the hand-written amount: fill those totals with it counted, and give verify_form the amount "
+            f"in `expected` (e.g. expected={{{blocked[0]!r}: <amount>}}) so its relations count it too"
+        )
+    values = {k: v for k, v in values.items() if k not in pack.unfillable_lines}
     unknown = sorted(k for k in values if k not in by_line)
     if unknown:
         raise ValueError(

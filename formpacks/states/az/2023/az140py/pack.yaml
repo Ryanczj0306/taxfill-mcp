@@ -370,7 +370,7 @@ fields:
   - { line: "ws3_4c_add_1c_3c", field: "3_4c", type: money }  # 4C "Add lines 1C through 3C and enter the total"
   - { line: "ws3_5c_credit_contributions", field: "3_5c", type: money }  # 5C "Total charitable contributions made in 2023 for which you are claiming a credit under Arizona law ..."
   - { line: "ws3_6c_subtract_5c_from_4c", field: "3_6c", type: money }  # 6C "Subtract line 5C from line 4C and enter the difference. If less than zero, enter “0”"
-  - { line: "ws3_7c_multiply_by_31pct", field: "3_7c", type: money }  # 7C "Multiply line 6C by 31% (.31) and enter the result"
+  - { line: "ws3_7c_multiply_by_rate", field: "3_7c", type: money }  # 7C "Multiply line 6C by 31% (.31) and enter the result"
   # ===================================================== page 4 — Part 1: Dependents (Box 10a and 10b) continued from page 1, rows 10e-10o
   - { line: "10e_first_name", field: "10e First", type: text, maxlen: 13 }  # 10e (a) first name
   - { line: "10e_last_name", field: "10e Last", type: text, maxlen: 15 }  # 10e (a) last name
@@ -644,8 +644,8 @@ relations:
   - "88 == max(0, 72 - 87)"  # 88 "Subtract line 87 from line 72. If less than zero, enter amount owed on line 89"
   - "ws3_4c_add_1c_3c == ws3_1c_gifts_cash_or_check + ws3_2c_other_than_cash_or_check + ws3_3c_carryover"  # 4C "Add lines 1C through 3C"
   - "ws3_6c_subtract_5c_from_4c == max(0, ws3_4c_add_1c_3c - ws3_5c_credit_contributions)"  # 6C "Subtract line 5C from line 4C ... If less than zero, enter 0"
-  - "ws3_7c_multiply_by_31pct == ws3_6c_subtract_5c_from_4c * 0.31"  # 7C "Multiply line 6C by 31% (.31)"
-  - "54 == ws3_7c_multiply_by_31pct"  # page 3 "Enter the amount shown on line 7C on page 2, line 54"
+  - "ws3_7c_multiply_by_rate == ws3_6c_subtract_5c_from_4c * 0.31"  # 7C "Multiply line 6C by 31% (.31)"
+  - "54 == ws3_7c_multiply_by_rate"  # page 3 "Enter the amount shown on line 7C on page 2, line 54"
   - "oa_r_total_other_additions == oa_a_non_arizona_municipal_interest + oa_b_lump_sum_ordinary_income + oa_c_fiduciary_adjustment_141az_k1 + oa_d_partnership_income_adjustment + oa_e_items_previously_deducted + oa_f_claim_of_right_repaid_current_year + oa_ga_claim_of_right_repaid_prior_years + oa_gb_nol_claim_of_right + oa_ha_basis_qualified_small_business_credit + oa_hb_basis_agri_pollution_control_credit + oa_hc_basis_pollution_control_credit + oa_hd_agri_water_conservation_credit + oa_he_s_corp_agri_water_credit + oa_i_nonqualified_529_withdrawals + oa_j_medical_marijuana_dispensary_loss + oa_k_disabilities_access_expenditures + oa_l_childcare_facility_amortization + oa_m_net_capital_loss_legal_tender + oa_n_entity_level_income_tax + oa_o_motion_picture_production_costs + oa_p_adjustments_tax_credits + oa_q_other_adjustments"  # page 5 R "Add all amounts"
   - "31 == oa_r_total_other_additions"  # page 5 R "... enter the total here and on line 31"
   - "os_z_total_other_subtractions == os_a_government_pension_exclusion + os_b_uniformed_services_retired_pay + os_c_agricultural_crops_charity + os_d_american_indian_wages + os_e_active_service_reserves_guard_pay + os_f_arizona_municipal_interest + os_g_adoption_expense + os_h_wood_stove_fireplace + os_i_claim_of_right_repaid_prior_years + os_j_expenses_federal_credits + os_k_state_tuition_program_distributions + os_l_installment_sale_other_state + os_m_basis_adjustment_property_disposed + os_n_fiduciary_adjustment_141az_k1 + os_o_partnership_income_adjustment + os_p_net_operating_loss_adjustment + os_q_medical_marijuana_dispensary_income + os_r_long_term_care_premiums + os_s_disabilities_access_expenditures + os_t_exploration_expenses_deferred + os_u_sole_prop_marijuana_establishment + os_v_s_corp_marijuana_establishment + os_w_net_capital_gain_legal_tender + os_xa_virtual_currency_airdrop + os_xb_gas_fees_virtual_currency + os_y_other_adjustments"  # page 6 Z "Add all amounts"

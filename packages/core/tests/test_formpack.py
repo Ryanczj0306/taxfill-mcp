@@ -254,3 +254,88 @@ def test_font_size_is_a_finite_real_number_no_smaller_than_the_overlay_floor():
         raw["fields"][0]["font_size"] = bad
         with pytest.raises(ValidationError, match=why):
             FormPack.model_validate(raw)
+
+
+# ── P-036 (2026-11-05, reworked 2026-11-11): unfillable_lines — two printed rows on one field ─────────────────────
+
+WHY_16 = "the 2026-11-02 revision binds lines 16 and 27 to one field; hand-write line 16 on the printed return"
+SHARED = "Page1[0].shared_16_27[0]"          # a field no fixture line maps
+UNFILLABLE_16 = {"16": {"field": SHARED, "why": WHY_16}}
+
+
+def test_unfillable_lines_are_declared_with_their_shared_field_and_a_reason_and_left_unmapped():
+    data = fixture_dict()
+    data["unfillable_lines"] = UNFILLABLE_16
+    pack = FormPack.model_validate(data)
+    assert (pack.unfillable_lines["16"].field, pack.unfillable_lines["16"].why) == (SHARED, WHY_16)
+    assert "16" not in {f.line for f in pack.fields}
+    # the pre-review shape (line -> why, no field) is refused: without the field nothing can guard it
+    data["unfillable_lines"] = {"16": WHY_16}
+    with pytest.raises(ValidationError):
+        FormPack.model_validate(data)
+
+
+def test_an_unfillable_line_may_not_also_be_mapped():
+    data = fixture_dict()
+    data["unfillable_lines"] = {"1a": {"field": SHARED, "why": "the row shares a field"}}   # 1a is a fixture line
+    with pytest.raises(ValidationError, match="also mapped in fields"):
+        FormPack.model_validate(data)
+
+
+@pytest.mark.parametrize(("entry", "message"), [
+    ({"field": SHARED, "why": "  "}, "need a reason"),
+    ({"field": " ", "why": WHY_16}, "need the shared field"),
+    ({"why": WHY_16}, "field"),
+    ({"field": SHARED}, "why"),
+    ({"field": SHARED, "why": WHY_16, "note": "x"}, "note"),
+])
+def test_an_unfillable_line_needs_its_field_and_its_reason(entry: dict, message: str):
+    data = fixture_dict()
+    data["unfillable_lines"] = {"16": entry}
+    with pytest.raises(ValidationError, match=message):
+        FormPack.model_validate(data)
+
+
+def test_no_line_may_map_a_field_declared_shared():
+    # The guard is on the FIELD, not only the key: a second key bound to the shared field would write both rows.
+    data = fixture_dict()
+    mapped = data["fields"][0]
+    data["unfillable_lines"] = {"16": {"field": mapped["field"], "why": WHY_16}}
+    with pytest.raises(ValidationError, match="declares shared between printed rows"):
+        FormPack.model_validate(data)
+    data["unfillable_lines"] = UNFILLABLE_16
+    data["fields"] = [*data["fields"], {"line": "16.partnership", "field": SHARED, "type": "money"}]
+    with pytest.raises(ValidationError, match=r"line\(s\) \['16.partnership'\] map a field"):
+        FormPack.model_validate(data)
+
+
+def test_the_shared_field_guard_sees_a_root_qualified_name():
+    # The same field written with the pack's acroform_root in front, on either side, is still that field.
+    data = fixture_dict()
+    root, mapped = data["acroform_root"], data["fields"][0]
+    assert root and not mapped["field"].startswith(root)
+    data["unfillable_lines"] = {"16": {"field": f"{root}.{mapped['field']}", "why": WHY_16}}
+    with pytest.raises(ValidationError, match="declares shared between printed rows"):
+        FormPack.model_validate(data)
+    data["unfillable_lines"] = UNFILLABLE_16
+    data["fields"] = [*data["fields"], {"line": "16a", "field": f"{root}.{SHARED}", "type": "money"}]
+    with pytest.raises(ValidationError, match="declares shared between printed rows"):
+        FormPack.model_validate(data)
+
+
+def test_a_relation_may_name_an_unfillable_line_and_a_cross_form_rule_may_not():
+    # A relation states the printed arithmetic; verify resolves the unfillable key as a line (never the literal 16)
+    # and counts the hand-written amount the caller declares (test_verify). A cross_form rule cannot: the other
+    # form's verify reads this form's PDF, which cannot carry the line.
+    data = fixture_dict()
+    data["unfillable_lines"] = UNFILLABLE_16
+    data["relations"] = [*data["relations"], "19 == 14 + 15 + 16 + 17 + 18"]
+    assert "19 == 14 + 15 + 16 + 17 + 18" in FormPack.model_validate(data).relations
+    data["cross_form"] = [*data["cross_form"], "16 == f1040.11a"]
+    with pytest.raises(ValidationError, match="cross_form rule .* names unfillable line"):
+        FormPack.model_validate(data)
+    # The match is on this form's whole key: another form's line 16, a decimal and longer keys are not line 16.
+    for other in ("1a == f1040.16", "1a == f1040.11a * 16.5", "116 == f1040.16a"):
+        data["cross_form"] = [*data["cross_form"][:-1], other]
+        FormPack.model_validate(data)
+

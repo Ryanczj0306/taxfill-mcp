@@ -120,7 +120,8 @@
   "relations": ["6 == 4 + 5", "9 == 6 - (7 + 8)", "13 == 11 + 12", "15 == 13 - 14", "18 == max(9 - 17, 0)", "20 == max(16 - 19, 0)", "22 == max(10 - 20, 0)", "23 == 22", "27 == max(25 - 26, 0)", "32 == 27 + 28 + 29 + 30 + 31", "38 == 33 + 34 + 35 + 36 + 37", "39 == max(32 - 38, 0)", "41 == 39 + 40", "42 == max(38 - 32, 0)", "28 == contributions_total", "contributions_total == contrib_a.amount + contrib_b.amount + contrib_c.amount + contrib_d.amount", "43 == voluntary_subtractions_total", "withholding_total == withholding_tc40w + withholding_mineral + withholding_passthrough", "voluntary_subtractions_total == my529_deposit + refund_applied_to_next_year"],
   "source_status": "final",
   "source_url": "https://files.tax.utah.gov/tax/forms/2023/tc-40.pdf",
-  "tax_year": 2023
+  "tax_year": 2023,
+  "unfillable_lines": {}
  },
  "2024/tc40": {
   "acroform_root": "",
@@ -243,7 +244,8 @@
   "relations": ["6 == 4 + 5", "9 == 6 - (7 + 8)", "13 == 11 + 12", "15 == 13 - 14", "18 == max(9 - 17, 0)", "20 == max(16 - 19, 0)", "22 == max(10 - 20, 0)", "23 == 22", "27 == max(25 - 26, 0)", "32 == 27 + 28 + 29 + 30 + 31", "38 == 33 + 34 + 35 + 36 + 37", "39 == max(32 - 38, 0)", "41 == 39 + 40", "42 == max(38 - 32, 0)", "28 == contributions_total", "contributions_total == contrib_a.amount + contrib_b.amount + contrib_c.amount + contrib_d.amount", "43 == voluntary_subtractions_total", "withholding_total == withholding_tc40w + withholding_mineral + withholding_passthrough", "voluntary_subtractions_total == my529_deposit + refund_applied_to_next_year"],
   "source_status": "final",
   "source_url": "https://files.tax.utah.gov/tax/forms/2024/tc-40.pdf",
-  "tax_year": 2024
+  "tax_year": 2024,
+  "unfillable_lines": {}
  },
  "2025/tc40": {
   "acroform_root": "",
@@ -366,6 +368,7 @@
   "relations": ["6 == 4 + 5", "9 == 6 - (7 + 8)", "13 == 11 + 12", "15 == 13 - 14", "18 == max(9 - 17, 0)", "20 == max(16 - 19, 0)", "22 == max(10 - 20, 0)", "23 == 22", "27 == max(25 - 26, 0)", "32 == 27 + 28 + 29 + 30 + 31", "38 == 33 + 34 + 35 + 36 + 37", "39 == max(32 - 38, 0)", "41 == 39 + 40", "42 == max(38 - 32, 0)", "28 == contributions_total", "contributions_total == contrib_a.amount + contrib_b.amount + contrib_c.amount + contrib_d.amount", "43 == voluntary_subtractions_total", "withholding_total == withholding_tc40w + withholding_mineral + withholding_passthrough", "voluntary_subtractions_total == my529_deposit + refund_applied_to_next_year"],
   "source_status": "final",
   "source_url": "https://files.tax.utah.gov/tax/forms/2025/tc-40.pdf",
-  "tax_year": 2025
+  "tax_year": 2025,
+  "unfillable_lines": {}
  }
 }

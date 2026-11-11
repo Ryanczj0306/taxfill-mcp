@@ -151,3 +151,122 @@ def test_f1040x_2026_reposted_draft_page2_lands_in_the_printed_cells(tmp_path):
 def test_f1040x_2026_pins_the_reposted_draft():
     pack = load_pack(F1040X_2026)
     assert (pack.pdf_sha256, pack.draft_created) == (F1040X_DRAFT_10_9_26_SHA256, "10/9/26")
+
+
+# ── Arizona 2025 Form 140, re-issued 2026-11-02 (Phase K re-map 2026-11-05, P-036) ───────────────────────────────
+
+AZ140_2025 = REPO / "formpacks" / "states" / "az" / "2025" / "az140" / "pack.yaml"
+AZ140_2025_URL = "https://azdor.gov/sites/default/files/document/FORMS_INDIVIDUAL_2025_140_f.pdf"
+AZ140_2025_REISSUE_SHA256 = "2acdda2a07ab46d7f6bd701618e63d1af8d45ac7921c38572a740940437edf84"
+
+# line -> (demo value, the caption azdor's re-issue names the widget by). The re-issue renamed 153 widgets from their
+# line number to the row's caption, so the field NAME now states the row; each value must land in a field whose
+# name carries the caption, and the six keys renamed on the re-map must sit on the rows their new names say.
+AZ140_2025_CAPTIONED = {
+    "12": (123456, "Federal adjusted gross income"),
+    "home_address": ("1 DEMO ST", "Current Home Address"),
+    "29a": (2500, "Exclusion for federal, Arizona state or local government pensions"),
+    "oa_C_lump_sum": (10, "Lump-Sum Distributions"),
+    "oa_Fa_claim_of_right_prior_years": (11, "Claim of Right Adjustment for Amounts Repaid in Prior Taxable years"),
+    "oa_N_amortization_child_care_facility_1990": (12, "Child Care Facility before 1990"),
+    "oa_Q_motion_picture_production_costs": (13, "Motion Picture Productions Costs"),
+    "os_H_qualified_state_tuition_distributions": (14, "Qualified State Tuition Distributions"),
+    "os_J_agricultural_crops_donation": (15, "Agricultural Crops Given to Arizona Charitable Organizations"),
+    "os_M_long_term_care_insurance_premiums": (16, "Long-Term Care Insurance Premiums"),
+    "ws3_7c_multiply_by_rate": (34, "Multiply line 6C by 34%"),
+}
+AZ140_2025_IDENTITY = {"tp_first_name_and_initial": "TAYLOR F", "tp_last_name": "DEMO", "tp_ssn": "999887777"}
+# the four fields the re-issue gives to TWO printed rows each: never written (P-036)
+AZ140_2025_SHARED_FIELDS = ("Partnership Income adjustment", "Married Persons Filing Separate Returns",
+                            "Arizona Form 141AZ Schedule K-1 - Fiduciary Adjustment",
+                            "Americans with Disabilities Act - Access Expenditures")
+
+
+def test_az140_2025_pins_the_reissue():
+    pack = load_pack(AZ140_2025)
+    assert pack.pdf_sha256 == AZ140_2025_REISSUE_SHA256
+    assert set(pack.unfillable_lines) == {"16", "27", "oa_A_married_separate", "os_A_married_separate",
+                                          "oa_B_141az_k1", "os_B_141az_k1",
+                                          "oa_M_disabilities_access", "os_N_americans_disabilities_access"}
+    # each entry names the field its row shares, and no line maps one of them
+    assert {entry.field for entry in pack.unfillable_lines.values()} == set(AZ140_2025_SHARED_FIELDS)
+    assert not {pf.field for pf in pack.fields} & set(AZ140_2025_SHARED_FIELDS)
+    # the relation states the printed subtotal (review 2026-11-11): a hand-written line 16 belongs in line 19
+    assert "19 == 14 + 15 + 16 + 17 + 18" in pack.relations
+    # the signature block's boxes print no number: the old revision's widget names "81".."89" are not keys
+    lines = {pf.line for pf in pack.fields}
+    assert not lines & {str(n) for n in range(81, 90)}
+    assert {"occupation", "spouse_occupation", "preparer_firm_name", "preparer_zip_code", "preparer_phone"} <= lines
+
+
+@pytest.mark.network
+def test_az140_2025_reissue_values_land_in_the_captioned_fields(tmp_path):
+    pack = load_pack(AZ140_2025)
+    blank = _blank(AZ140_2025_URL, AZ140_2025_REISSUE_SHA256)
+    filled = tmp_path / "az140.pdf"
+    values = {**AZ140_2025_IDENTITY, "7_filing_status::single": True,
+              **{line: value for line, (value, _caption) in AZ140_2025_CAPTIONED.items()}}
+    fill_form(pack, values, blank, filled)
+    widgets = _widgets(filled)
+    field_of = {pf.line: pf.field for pf in pack.fields}
+    for line, (value, caption) in AZ140_2025_CAPTIONED.items():
+        name = field_of[line]
+        assert caption in name, f"{line} binds {name!r}, which does not name {caption!r}"
+        [(_page, _rect, _state, on_disk)] = widgets[name]
+        assert on_disk.replace(",", "") == str(value), (line, name, on_disk)
+    # the filing-status radio's export values are captions now
+    [single] = [(st, rect) for _p, rect, st, _v in widgets["Filing Status"] if st != "/Off"]
+    assert single[0] == "/Single"
+    # the page 2-6 headers mirror the page-1 identity (the shared field could only ever print the last name there)
+    assert {v for _p, _r, _s, v in widgets["1c"]} == {"999887777"} and len(widgets["1c"]) == 5
+    assert all(v.startswith("T") and v.endswith("DEMO") for _p, _r, _s, v in widgets["1b"]) and len(widgets["1b"]) == 5
+    assert widgets["Your Last Name"][0][3] == "DEMO" and widgets["Your SSN"][0][3] == "999887777"
+    # the four shared fields stay blank: nothing the pack writes can reach them
+    for shared in AZ140_2025_SHARED_FIELDS:
+        assert {v for _p, _r, _s, v in widgets[shared]} == {""}, shared
+
+
+@pytest.mark.network
+def test_az140_2025_refuses_a_value_on_a_row_that_shares_its_field(tmp_path):
+    pack = load_pack(AZ140_2025)
+    blank = _blank(AZ140_2025_URL, AZ140_2025_REISSUE_SHA256)
+    with pytest.raises(ValueError, match=r"line\(s\) \['16', 'oa_A_married_separate'\] cannot be written.*hand-write"):
+        fill_form(pack, {**AZ140_2025_IDENTITY, "16": 5000, "oa_A_married_separate": 1}, blank, tmp_path / "x.pdf")
+    assert not (tmp_path / "x.pdf").exists()
+
+
+
+@pytest.mark.network
+def test_az140_2025_a_hand_written_line_16_belongs_in_line_19(tmp_path):
+    """The review's case (2026-11-11): a filer with a partnership addition. Line 16 is refused, so it is left out
+    and hand-written; line 19 ("Add lines 14 through 18") is filled WITH it. verify passes once the amount is
+    declared, fails while it is not, and fails a PDF whose shared field was typed into afterwards."""
+    from pypdf import PdfReader, PdfWriter  # noqa: PLC0415
+
+    from taxfill_core.verify import verify_form  # noqa: PLC0415
+
+    pack = load_pack(AZ140_2025)
+    blank = _blank(AZ140_2025_URL, AZ140_2025_REISSUE_SHA256)
+    filled = tmp_path / "az140.pdf"
+    values = {**AZ140_2025_IDENTITY, "7_filing_status::single": True, "12": 100000, "14": 100000, "19": 105000}
+    fill_form(pack, values, blank, filled)
+
+    declared = verify_form(pack, filled, expected={**values, "16": 5000, "27": 0})
+    line_19 = next(c for c in declared.relations if c.relation.startswith("19 =="))
+    assert line_19.status == "PASS" and "16 = 5000" in line_19.detail, line_19.detail
+    assert [c.line for c in declared.assertions if c.status == "SKIPPED"] == ["16"]
+    assert not [c.detail for c in declared.assertions + declared.relations if c.status == "FAIL"]
+
+    undeclared = verify_form(pack, filled, expected=values)
+    line_19 = next(c for c in undeclared.relations if c.relation.startswith("19 =="))
+    assert line_19.status == "FAIL" and "line(s) ['16'] cannot be written on this blank" in line_19.detail
+
+    # someone types the amount into the PDF: the one field shows it on line 16 AND line 27
+    writer = PdfWriter(clone_from=PdfReader(str(filled)))
+    for page in writer.pages:
+        writer.update_page_form_field_values(page, {"Partnership Income adjustment": "5000"}, auto_regenerate=False)
+    typed = tmp_path / "typed.pdf"
+    writer.write(str(typed))
+    report = verify_form(pack, typed, expected={**values, "16": 5000})
+    shared = [c for c in report.assertions if c.line == "16 / 27"]
+    assert not report.ok and len(shared) == 1 and shared[0].status == "FAIL" and shared[0].actual == "5000"

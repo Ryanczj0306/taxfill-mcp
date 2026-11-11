@@ -688,39 +688,39 @@ fields:
     type: checkbox
     on_state: "/Choice2"
     group: deductions_43
-  - line: "81"
+  - line: "occupation"  # was "81", the old revision's widget name: the face prints no number beside this box
     field: "81"
     type: text
     maxlen: 32
-  - line: "82"
+  - line: "spouse_occupation"  # was "82", the old revision's widget name: the face prints no number beside this box
     field: "82"
     type: text
     maxlen: 32
-  - line: "83"
+  - line: "preparer_firm_name"  # was "83", the old revision's widget name: the face prints no number beside this box
     field: "83"
     type: text
     maxlen: 46
-  - line: "84"
+  - line: "preparer_street_address"  # was "84", the old revision's widget name: the face prints no number beside this box
     field: "84"
     type: text
     maxlen: 56
-  - line: "85"
+  - line: "preparer_tin"  # was "85", the old revision's widget name: the face prints no number beside this box
     field: "85"
     type: text
     maxlen: 25
-  - line: "86"
+  - line: "preparer_city"  # was "86", the old revision's widget name: the face prints no number beside this box
     field: "86"
     type: text
     maxlen: 36
-  - line: "87"
+  - line: "preparer_state"  # was "87", the old revision's widget name: the face prints no number beside this box
     field: "87"
     type: text
     maxlen: 8
-  - line: "88"
+  - line: "preparer_zip_code"  # was "88", the old revision's widget name: the face prints no number beside this box
     field: "88"
     type: text
     maxlen: 11
-  - line: "89"
+  - line: "preparer_phone"  # was "89", the old revision's widget name: the face prints no number beside this box
     field: "89"
     type: text
     maxlen: 23
@@ -743,7 +743,7 @@ fields:
   - line: "ws3_6c_subtract_5c_from_4c"
     field: "3_6c"
     type: money
-  - line: "ws3_7c_multiply_by_31pct"
+  - line: "ws3_7c_multiply_by_rate"
     field: "3_7c"
     type: money
   # ===================================================== page 4 Part 1 — additional dependents (10f-10p)
@@ -1548,7 +1548,7 @@ fields:
   - line: "oa_E_claim_of_right"
     field: "5E"
     type: money
-  - line: "oa_Fa_agri_water_conservation"
+  - line: "oa_Fa_claim_of_right_prior_years"
     field: "5Fa"
     type: money
   - line: "oa_Fb_net_operating_loss"
@@ -1584,7 +1584,7 @@ fields:
   - line: "oa_M_disabilities_access"
     field: "5M"
     type: money
-  - line: "oa_N_amortization_pollution_facility_1990"
+  - line: "oa_N_amortization_child_care_facility_1990"
     field: "5N"
     type: money
   - line: "oa_O_net_capital_loss_exchange"
@@ -1593,7 +1593,7 @@ fields:
   - line: "oa_P_entity_level_income_tax"
     field: "5P"
     type: money
-  - line: "oa_Q_entity_level_pte_credit"
+  - line: "oa_Q_motion_picture_production_costs"
     field: "5Q"
     type: money
   - line: "oa_R_adjustments_tax_credits"
@@ -1627,13 +1627,13 @@ fields:
   - line: "os_G_certain_expenses_federal_credits"
     field: "6G"
     type: money
-  - line: "os_H_agricultural_crops_donation"
+  - line: "os_H_qualified_state_tuition_distributions"
     field: "6H"
     type: money
   - line: "os_I_installment_sale_taxed_other_state"
     field: "6I"
     type: money
-  - line: "os_J_agri_water_conservation"
+  - line: "os_J_agricultural_crops_donation"
     field: "6J"
     type: money
   - line: "os_K_basis_adjustment_property"
@@ -1642,7 +1642,7 @@ fields:
   - line: "os_L_sole_prop_income_marijuana"
     field: "6L"
     type: money
-  - line: "os_M_long_term_care_savings"
+  - line: "os_M_long_term_care_insurance_premiums"
     field: "6M"
     type: money
   - line: "os_N_americans_disabilities_access"

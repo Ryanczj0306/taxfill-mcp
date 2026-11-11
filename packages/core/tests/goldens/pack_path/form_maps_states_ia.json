@@ -238,7 +238,8 @@
   "relations": ["d == a + b + c", "4 == 2 + 3", "7 == 5 + 6", "8 == d unless alt_tax_method", "11 == 8 + 9 + 10", "12 == max(7 - 11, 0) unless alt_tax_method", "14 == 12 - 13", "16 == 14 - 15", "18 == 16 - 17", "20 == 18 + 19", "22 == 20 + 21", "30 == 23 + 24 + 25 + 26 + 27 + 28 + 29", "36 == 36a + 36b", "37 == 34 + 35 + 36"],
   "source_status": "final",
   "source_url": "https://revenue.iowa.gov/media/2747/download",
-  "tax_year": 2023
+  "tax_year": 2023,
+  "unfillable_lines": {}
  },
  "2024/ia1040": {
   "acroform_root": "",
@@ -493,7 +494,8 @@
   "relations": ["d == a + b + c", "4 == 2 + 3", "7 == 5 + 6", "8 == d unless alt_tax_method", "11 == 8 + 9 + 10", "12 == max(7 - 11, 0) unless alt_tax_method", "14 == 12 - 13", "16 == 14 - 15", "18 == 16 - 17", "20 == 18 + 19", "21 == 21.fish_wildlife + 21.child_abuse", "22 == 20 + 21", "30 == 23 + 24 + 25 + 26 + 27 + 28 + 29", "31a == max(30 - 22, 0)", "36 == 36a + 36b", "37 == 34 + 35 + 36", "3 == s1.21", "s1.12a == s1.1a + s1.2a + s1.3a + s1.9a + s1.10a + s1.11a", "s1.12b == s1.1b + s1.2b + s1.3b + s1.4b + s1.5b + s1.6b + s1.7 + s1.8 + s1.9b + s1.11b", "s1.13 == s1.12a - s1.12b", "s1.20 == -(s1.15 + s1.16 + s1.17 + s1.19)", "s1.21 == s1.13 + s1.20"],
   "source_status": "final",
   "source_url": "https://revenue.iowa.gov/media/4090/download",
-  "tax_year": 2024
+  "tax_year": 2024,
+  "unfillable_lines": {}
  },
  "2025/ia1040": {
   "acroform_root": "",
@@ -754,6 +756,7 @@
   "relations": ["d == a + b + c", "4 == 2 + 3", "7 == 5 + 6", "8 == d unless alt_tax_method", "11 == 8 + 9 + 10", "12 == max(7 - 11, 0) unless alt_tax_method", "14 == 12 - 13", "16 == 14 - 15", "18 == 16 - 17", "20 == 18 + 19", "21 == 21.fish_wildlife + 21.child_abuse", "22 == 20 + 21", "30 == 23 + 24 + 25 + 26 + 27 + 28 + 29", "36 == 36a + 36b", "37 == 34 + 35 + 36", "3 == s1.21", "s1.12a == s1.1a + s1.2a + s1.3a + s1.9a + s1.10a + s1.11a", "s1.12b == s1.1b + s1.2b + s1.3b + s1.4b + s1.5b + s1.6b + s1.7 + s1.8 + s1.9b + s1.11b", "s1.13 == s1.12a - s1.12b", "s1.20 == -(s1.14 + s1.15 + s1.16 + s1.17 + s1.18 + s1.19)", "s1.21 == s1.13 + s1.20"],
   "source_status": "final",
   "source_url": "https://revenue.iowa.gov/media/4401/download",
-  "tax_year": 2025
+  "tax_year": 2025,
+  "unfillable_lines": {}
  }
 }

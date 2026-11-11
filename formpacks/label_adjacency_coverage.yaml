@@ -39,7 +39,7 @@
 # for an undeclared family, anchor-reads-no-designators for a declared one); a test holds that no row at or above
 # the floor holds an undeclared dark family, and the gate that the measured dark families equal the row's.
 # FIXER ROUND 5 (2026-10-24): round 4's family kept the descriptive tail, so AZ 140's charitable worksheet
-# ("ws3_1c_gifts_cash_or_check" ... "ws3_7c_multiply_by_31pct") made seven one-key families and a 3-cycle among them
+# ("ws3_1c_gifts_cash_or_check" ... "ws3_7c_multiply_by_rate") made seven one-key families and a 3-cycle among them
 # passed with the pack OK. A key's FAMILY is now the key up to and including its first line token, the tail dropped
 # ("ws#_#"); the none-checked half also groups round 4's uniform-tail families ("#.no"). THE DECLARE-ME RULE: an
 # undeclared key beside one of whose widgets the anchor reads a printed line puts the pack below the floor whatever
@@ -321,11 +321,11 @@ packs:
   states/ar/2023/ar1000nr: {checked: 91, lines: 113, mapped: 113, unread: 22, same_row: 64, cross_section: 5, descriptive: 22}
   states/ar/2024/ar1000f: {checked: 73, lines: 92, mapped: 92, unread: 19, same_row: 46, cross_section: 8, descriptive: 22}
   states/ar/2025/ar1000f: {checked: 74, lines: 93, mapped: 93, unread: 19, same_row: 46, cross_section: 8, descriptive: 22}
-  states/az/2023/az140: {checked: 260, lines: 291, mapped: 287, unread: 31, same_row: 176, cross_section: 2, descriptive: 73}
+  states/az/2023/az140: {checked: 260, lines: 282, mapped: 278, unread: 22, same_row: 176, cross_section: 2, descriptive: 73}
   states/az/2023/az140nr: {checked: 224, lines: 244, mapped: 241, unread: 20, same_row: 150, cross_section: 2, descriptive: 71}
   states/az/2023/az140py: {checked: 266, lines: 288, mapped: 284, unread: 22, same_row: 190, cross_section: 2, descriptive: 73}
-  states/az/2024/az140: {checked: 260, lines: 291, mapped: 287, unread: 31, same_row: 176, cross_section: 2, descriptive: 72}
-  states/az/2025/az140: {checked: 260, lines: 291, mapped: 287, unread: 31, same_row: 176, cross_section: 2, descriptive: 72}
+  states/az/2024/az140: {checked: 260, lines: 282, mapped: 278, unread: 22, same_row: 176, cross_section: 2, descriptive: 72}
+  states/az/2025/az140: {checked: 258, lines: 278, mapped: 276, unread: 20, same_row: 176, cross_section: 2, descriptive: 74}
   states/ca/2023/form540: {checked: 81, lines: 98, mapped: 98, unread: 17, same_row: 16, cross_section: 2, descriptive: 4}
   states/ca/2023/form540nr: {checked: 91, lines: 107, mapped: 107, unread: 16, same_row: 22, cross_section: 2, descriptive: 7}
   states/ca/2023/sched_ca_540: {checked: 232, lines: 243, mapped: 243, unread: 11, same_row: 193, cross_section: 121, descriptive: 1}

@@ -265,7 +265,8 @@
   "relations": ["3 == 1 + 2", "9d == 9a + 9b + 9c", "13a == 10a + 10b + 11 + 12a + 12b", "14g == 14a + 14b + 14c + 14d + 14e + 14f", "14i == 14g - 14h", "15c == 15a + 15b", "22 == min(19, 21)", "37 == 30 + 31 + 32 + 33 + 34 + 35 + 36"],
   "source_status": "final",
   "source_url": "https://tax.ri.gov/sites/g/files/xkgbur541/files/2023-12/2023_1040WE_w.pdf",
-  "tax_year": 2023
+  "tax_year": 2023,
+  "unfillable_lines": {}
  },
  "2024/ri1040": {
   "acroform_root": "topmostSubform[0]",
@@ -534,7 +535,8 @@
   "relations": ["3 == 1 + 2", "9d == 9a + 9b + 9c", "13a == 10a + 10b + 11 + 12a + 12b", "14g == 14a + 14b + 14c + 14d + 14e + 14f", "14i == 14g - 14h", "15c == 15a + 15b", "22 == min(19, 21)", "38 == 30 + 31 + 32 + 33 + 34 + 35 + 36 + 37"],
   "source_status": "final",
   "source_url": "https://tax.ri.gov/sites/g/files/xkgbur541/files/2024-12/2024_1040WE_w.pdf",
-  "tax_year": 2024
+  "tax_year": 2024,
+  "unfillable_lines": {}
  },
  "2025/ri1040": {
   "acroform_root": "topmostSubform[0]",
@@ -803,6 +805,7 @@
   "relations": ["3 == 1 + 2", "9d == 9a + 9b + 9c", "13a == 10a + 10b + 11 + 12a + 12b", "14g == 14a + 14b + 14c + 14d + 14e + 14f", "14i == 14g - 14h", "15c == 15a + 15b", "21 == 20 * 0.25", "22 == min(19, 21)", "29 == min(23, 27, 28)", "38 == 30 + 31 + 32 + 33 + 34 + 35 + 36 + 37", "schedule_w.16 == schedule_w.1.ri_withheld + schedule_w.2.ri_withheld + schedule_w.3.ri_withheld + schedule_w.4.ri_withheld + schedule_w.5.ri_withheld + schedule_w.6.ri_withheld + schedule_w.7.ri_withheld + schedule_w.8.ri_withheld + schedule_w.9.ri_withheld + schedule_w.10.ri_withheld + schedule_w.11.ri_withheld + schedule_w.12.ri_withheld + schedule_w.13.ri_withheld + schedule_w.14.ri_withheld + schedule_w.15.ri_withheld"],
   "source_status": "final",
   "source_url": "https://tax.ri.gov/sites/g/files/xkgbur541/files/2026-01/2025_1040WE_w.pdf",
-  "tax_year": 2025
+  "tax_year": 2025,
+  "unfillable_lines": {}
  }
 }

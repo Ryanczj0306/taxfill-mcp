@@ -1,5 +1,5 @@
 {
- "_note": "Phase J JS3a: the 16 rows the 2026-09-12 discovery run (wf_babce8da-141) recovered before it stalled \u2014 each blank found on the DOR's own site, downloaded twice with matching digests, its printed year read off page 1, and triaged against the TY2023 base pack. Seed for scaffold_state_year.py --rows; a row is a candidate, not a shipped pack (JS3b/JS5 still run fetch_blank, introspect, the vision audit and the golden round trip).",
+ "_note": "Phase J JS3a: the 16 rows the 2026-09-12 discovery run (wf_babce8da-141) recovered before it stalled — each blank found on the DOR's own site, downloaded twice with matching digests, its printed year read off page 1, and triaged against the TY2023 base pack. Seed for scaffold_state_year.py --rows; a row is a candidate, not a shipped pack (JS3b/JS5 still run fetch_blank, introspect, the vision audit and the golden round trip).",
  "rows": [
   {
    "state": "al",
@@ -46,11 +46,11 @@
    "year": 2025,
    "form": "Form 140",
    "url": "https://azdor.gov/sites/default/files/document/FORMS_INDIVIDUAL_2025_140_f.pdf",
-   "sha256": "91722910a79a8ec544b5b4aef87a56d2d1d2151fe96039dc02b681408db55778",
-   "verdict": "PORTABLE",
-   "acroform_fields": 406,
-   "base_mapped": 405,
-   "base_missing": 0,
+   "sha256": "2acdda2a07ab46d7f6bd701618e63d1af8d45ac7921c38572a740940437edf84",
+   "verdict": "RE-MAP",
+   "acroform_fields": 404,
+   "base_mapped": 252,
+   "base_missing": 153,
    "printed_year_verified": true
   },
   {
