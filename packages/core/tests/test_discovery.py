@@ -119,9 +119,14 @@ def test_jd2_list_forms_for_one_year_is_fast_once_warm():
     import time
 
     list_forms("federal", 2025)                         # the first call parses the 2025 packs once
-    started = time.perf_counter()
-    forms = list_forms("federal", 2025)
-    assert time.perf_counter() - started < 0.3 and len(forms) >= 37
+    # The best of three warm calls: one call measured 0.34 s on a loaded CI runner (2026-11-11; 0.013 s on a
+    # quiet machine), so a single wall-clock sample is noise, while a cache that stopped working would slow all three.
+    timings = []
+    for _ in range(3):
+        started = time.perf_counter()
+        forms = list_forms("federal", 2025)
+        timings.append(time.perf_counter() - started)
+    assert min(timings) < 0.3 and len(forms) >= 37
 
 
 def test_get_form_map_lists_the_unfillable_lines():
