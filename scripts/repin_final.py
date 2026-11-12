@@ -246,6 +246,7 @@ class Comparison:
     footer: tuple[str, str] | None = None                   # ("4/24/26", "8/18/26") when the footer date changed
     words_changed: list[dict] = field(default_factory=list)  # {"page", "draft", "final"}
     mapped_missing: list[str] = field(default_factory=list)
+    unmapped: int = 0                      # widget names of the final the pack binds no line to
     problems: list[str] = field(default_factory=list)
     clearing: list[str] | None = None      # label-adjacency exception rows the final clears (None: not measured)
     unexcused: list[str] | None = None     # label-adjacency disagreements the final brings
@@ -268,7 +269,7 @@ class Comparison:
             "draft_pages": self.draft.pages,
             "final_url": self.final_url, "final_sha256": self.final.sha256, "final_posted": self.final.posted,
             "final_created": self.final.created, "pages": self.final.pages, "widgets": len(self.final.widgets),
-            "cover_sheet_dropped": self.cover_sheet_dropped, "rects_moved": len(self.moved),
+            "unmapped": self.unmapped, "cover_sheet_dropped": self.cover_sheet_dropped, "rects_moved": len(self.moved),
             "largest_rect_delta": self.largest_delta, "words_changed": len(self.words_changed),
             "exceptions_cleared": exceptions_cleared, "verdict": self.verdict, "repinned": repinned,
         }
@@ -284,7 +285,8 @@ class Comparison:
             "appearance_changed": self.appearance, "rects_moved": self.moved, "rects_nudged": self.nudged,
             "largest_rect_delta": self.largest_delta,
             "banner_words": self.banner_words, "footer_created": list(self.footer) if self.footer else None,
-            "words_changed": self.words_changed, "mapped_missing": self.mapped_missing, "problems": self.problems,
+            "words_changed": self.words_changed, "mapped_missing": self.mapped_missing, "unmapped": self.unmapped,
+            "problems": self.problems,
             "exceptions_clearing": self.clearing, "label_adjacency_unexcused": self.unexcused,
             "ledger_row": self.ledger_row(None, len(self.clearing or [])),   # --write adds the date
         }
@@ -348,7 +350,10 @@ def compare(stem: str, pack_id: str, pack: FormPack, draft: bytes, final: bytes,
     _diff_words(c)
     root = f"{pack.acroform_root}." if pack.acroform_root else ""
     names = {w.name for w in c.final.widgets}
-    c.mapped_missing = sorted({root + f.field for f in pack.fields} - names)
+    unfillable = getattr(pack, "unfillable_lines", None) or {}   # a field the pack knows and refuses to write
+    mapped = {root + f.field for f in pack.fields} | {root + u.field for u in unfillable.values()}
+    c.mapped_missing = sorted(mapped - names)
+    c.unmapped = len(names - mapped)
     return c
 
 
@@ -397,7 +402,8 @@ LEDGER_HEADER = """\
 # read it (every row is its pack's pin; a pack's draft "Created" stamp lives on here after the re-pin).
 #   draft_* / final_*   the two blanks: url, sha256, the footer's "Created" date, pages; final_posted is the PDF's
 #                       own metadata date
-#   pages, widgets      of the final; cover_sheet_dropped: the draft's page 1 was the IRS cover sheet
+#   pages, widgets      of the final; unmapped: its widget names the pack binds no line to (on purpose, as on the
+#                       draft); cover_sheet_dropped: the draft's page 1 was the IRS cover sheet
 #   rects_moved         widgets with a /Rect edge 0.1 pt or more off the draft's; largest_rect_delta is the largest
 #                       difference of any edge in points, a nudge under 0.1 pt included
 #   words_changed       page words that differ beyond the DRAFT banners and the footer date (0 on every row:
@@ -408,7 +414,7 @@ LEDGER_HEADER = """\
 repins:
 """
 LEDGER_KEYS = ("pack", "stem", "draft_url", "draft_sha256", "draft_created", "draft_pages", "final_url",
-               "final_sha256", "final_posted", "final_created", "pages", "widgets", "cover_sheet_dropped",
+               "final_sha256", "final_posted", "final_created", "pages", "widgets", "unmapped", "cover_sheet_dropped",
                "rects_moved", "largest_rect_delta", "words_changed", "exceptions_cleared", "verdict", "repinned")
 _QUOTED = {"draft_created", "final_posted", "final_created", "repinned"}
 

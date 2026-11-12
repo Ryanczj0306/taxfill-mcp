@@ -3,7 +3,8 @@
 # read it (every row is its pack's pin; a pack's draft "Created" stamp lives on here after the re-pin).
 #   draft_* / final_*   the two blanks: url, sha256, the footer's "Created" date, pages; final_posted is the PDF's
 #                       own metadata date
-#   pages, widgets      of the final; cover_sheet_dropped: the draft's page 1 was the IRS cover sheet
+#   pages, widgets      of the final; unmapped: its widget names the pack binds no line to (on purpose, as on the
+#                       draft); cover_sheet_dropped: the draft's page 1 was the IRS cover sheet
 #   rects_moved         widgets with a /Rect edge 0.1 pt or more off the draft's; largest_rect_delta is the largest
 #                       difference of any edge in points, a nudge under 0.1 pt included
 #   words_changed       page words that differ beyond the DRAFT banners and the footer date (0 on every row:
@@ -24,6 +25,7 @@ repins:
   final_created: "5/15/26"
   pages: 2
   widgets: 109
+  unmapped: 0
   cover_sheet_dropped: true
   rects_moved: 0
   largest_rect_delta: 0.0
@@ -43,6 +45,7 @@ repins:
   final_created: "4/27/26"
   pages: 2
   widgets: 27
+  unmapped: 2
   cover_sheet_dropped: true
   rects_moved: 0
   largest_rect_delta: 0.0
@@ -62,6 +65,7 @@ repins:
   final_created: "9/18/26"
   pages: 3
   widgets: 160
+  unmapped: 0
   cover_sheet_dropped: true
   rects_moved: 0
   largest_rect_delta: 0.003
@@ -81,6 +85,7 @@ repins:
   final_created: "5/11/26"
   pages: 4
   widgets: 48
+  unmapped: 0
   cover_sheet_dropped: true
   rects_moved: 0
   largest_rect_delta: 0.05
@@ -100,6 +105,7 @@ repins:
   final_created: "8/18/26"
   pages: 2
   widgets: 41
+  unmapped: 0
   cover_sheet_dropped: false
   rects_moved: 35
   largest_rect_delta: 5.5
@@ -119,6 +125,7 @@ repins:
   final_created: "4/21/26"
   pages: 2
   widgets: 47
+  unmapped: 0
   cover_sheet_dropped: true
   rects_moved: 0
   largest_rect_delta: 0.0

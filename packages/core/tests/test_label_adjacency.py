@@ -181,7 +181,12 @@ def test_the_exceptions_table_names_real_widgets_of_shipped_packs_by_their_key_l
     # four booklets, 40NR line 13's a / b boxes read 12a / 12b)
     # Phase K JK10b (2026-11-11): 84 the MO-1040 bundle's shapes brought in (the Worksheet for Line 1's federal-line
     # column, 48; MO-CRP line 7's G sharing options over five copies, 30; MO-CR's 6Y and Schedule 1's 4Y, 6)
-    assert len(exceptions) == 491
+    # Since 2026-11-12 a re-pin (scripts/repin_final.py) records the rows its final cleared in the finals ledger
+    # (formpacks/federal/repins.yaml, exceptions_cleared), so this pin is the rows ever adjudicated less those: a
+    # re-pin moves it without an edit here, and any other added or dropped row still fails. 492 = today's 491 + the
+    # one Form 2555 row above.
+    from repins import ledger  # noqa: PLC0415
+    assert len(exceptions) == 492 - sum(row["exceptions_cleared"] for row in ledger().values())
     from taxfill_core.schemas.formpack import load_pack
 
     packs: dict[str, object] = {}

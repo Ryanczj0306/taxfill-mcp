@@ -39,6 +39,7 @@ import pytest
 import yaml
 from pydantic import ValidationError
 
+from repins import draft_created, repin_final, row_of
 from taxfill_core.knowledge import (
     FormLineEntry,
     FormLineError,
@@ -69,18 +70,20 @@ EXPECTED: dict[str, dict[int, str]] = {
     "f1040.ira_taxable": {y: "4b" for y in range(2019, 2027)},
 }
 READ = {k: "2026-09-27" for k in ("f1040.agi", "f1040.total_tax", "f1040.ira_distributions", "f1040.ira_taxable")}
-# JT6 (2026-11-05): a 2026 key whose form has posted its FINAL is recorded as final (irs-prior, no draft stamp);
-# the value is the date the final face was read. Schedule SE's final (11/03/26) is identical to its 4/27/26 draft.
-FINAL_2026 = {"sched_se.ss_wages": "2026-11-05"}
-DRAFT_CREATED = {
-    "sched1.other_income": "4/24/26",
-    "f1040nr.treaty_exempt": "8/19/26",
-    "f8959.withholding_part": "5/27/26",
-    "f1040.additional_medicare_withholding": "8/19/26",
-    "f1040.agi": "8/19/26",
-    "f1040.total_tax": "8/19/26",
-    "f1040.ira_distributions": "8/19/26",
-    "f1040.ira_taxable": "8/19/26",
+# The 2026 face each key reads: the IRS file stem of its form and the "Created" stamp of the draft it was read on.
+# JT6: while that form's pack pins the draft the entry is draft-sourced; once the pack is re-pinned to the final
+# (a row in formpacks/federal/repins.yaml) the entry must be recorded final, read on the re-pin date. Schedule SE
+# was the first (2026-11-05). A re-pin edits nothing here.
+FACE_2026 = {
+    "sched1.other_income": ("f1040s1", "4/24/26"),
+    "f1040nr.treaty_exempt": ("f1040nr", "8/19/26"),
+    "f8959.withholding_part": ("f8959", "5/27/26"),
+    "f1040.additional_medicare_withholding": ("f1040", "8/19/26"),
+    "sched_se.ss_wages": ("f1040sse", "4/27/26"),
+    "f1040.agi": ("f1040", "8/19/26"),
+    "f1040.total_tax": ("f1040", "8/19/26"),
+    "f1040.ira_distributions": ("f1040", "8/19/26"),
+    "f1040.ira_taxable": ("f1040", "8/19/26"),
 }
 
 
@@ -121,21 +124,29 @@ def test_every_year_records_every_jf6a_key_with_its_face(key: str, year: int):
     assert year in EXPECTED[key], f"{year} is not pinned: read its {key} face and extend EXPECTED"
     entry = form_line_entry(year, key)
     assert entry.line == EXPECTED[key][year], f"{key} {year}"
-    final_2026 = year == 2026 and key in FINAL_2026
-    assert entry.read == (FINAL_2026[key] if final_2026 else READ.get(key, "2026-09-24"))
-    if year == 2026 and not final_2026:
-        assert entry.line_source == f"draft Created {DRAFT_CREATED[key]}"
-        assert entry.url.startswith("https://www.irs.gov/pub/irs-dft/") and entry.url.endswith("--dft.pdf")
-        if EXPECTED[key][year] is None:          # recorded absent, with its reason (f1040.total_tax, JF6c)
-            assert entry.absent
-            with pytest.raises(FormLineError):
-                form_line(year, key)
-        else:
-            assert form_line(year, key) == EXPECTED[key][year] + DRAFT
-    else:
+    if year != 2026:
+        assert entry.read == READ.get(key, "2026-09-24")
         assert entry.line_source == "final"
         assert entry.url.startswith("https://www.irs.gov/pub/irs-prior/") and entry.url.endswith(f"--{year}.pdf")
         assert form_line(year, key) == EXPECTED[key][year]
+        return
+    stem, created = FACE_2026[key]
+    _pid, _path, pack = repin_final.packs_by_stem(2026)[stem]
+    assert draft_created(pack) == created, key          # the draft the face was read on, before or after a re-pin
+    row = row_of(pack)
+    marker = ""
+    if row is None:                                      # the form's pack still pins that draft
+        assert (entry.line_source, entry.url) == (f"draft Created {created}", pack.source_url), key
+        assert entry.read == READ.get(key, "2026-09-24")
+        marker = DRAFT
+    else:                                                # re-pinned: the entry must be recorded final
+        assert (entry.line_source, entry.url, entry.read) == ("final", row["final_url"], row["repinned"]), key
+    if EXPECTED[key][year] is None:                      # recorded absent, with its reason (f1040.total_tax, JF6c)
+        assert entry.absent
+        with pytest.raises(FormLineError):
+            form_line(year, key)
+    else:
+        assert form_line(year, key) == EXPECTED[key][year] + marker
 
 
 def test_a_2026_draft_entry_carries_the_draft_suffix():

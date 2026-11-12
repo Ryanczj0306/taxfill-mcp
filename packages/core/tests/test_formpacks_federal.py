@@ -37,6 +37,7 @@ from pathlib import Path
 import pytest
 
 from pdf_fixtures import make_acroform_pdf
+from repins import draft_created, ledger, page_on_draft, row_of
 from taxfill_core.fetch import OfflineFetchError, fetch_pack_blank
 from taxfill_core.filler import fill_form
 from taxfill_core.render import render_pdf
@@ -1570,7 +1571,7 @@ def _fed_pack(year: int, form_key: str) -> FormPack:
 
 def test_jt3a_the_2026_f1040_keys_follow_the_printed_draft_face():
     pack = _fed_pack(2026, "f1040")
-    assert (pack.source_status, pack.draft_created) == ("draft", "8/19/26")
+    assert draft_created(pack) == "8/19/26"
     lines = {f.line: f for f in pack.fields}
     # The draft adds 12f, 24a-c and 32a-c; 24 and 32 and the 2025 decline-ACTC box are gone.
     assert {"12f", "24a", "24b", "24c", "32a", "32b", "32c"} <= set(lines)
@@ -1624,7 +1625,7 @@ def test_jt3a_the_schedule_1a_hookup_matches_the_form_lines_registry(year: int):
 
 def test_jt3a_the_2026_schedule_1a_maps_the_redesigned_face():
     pack = _fed_pack(2026, "sched_1a")
-    assert (pack.source_status, pack.draft_created, pack.acroform_root) == ("draft", "6/16/26", "form1[0]")
+    assert (draft_created(pack), pack.acroform_root) == ("6/16/26", "form1[0]")
     lines = {f.line: f for f in pack.fields}
     assert len(lines) == 185
     # The per-employer / per-business tables: rows a-e, each column its own key.
@@ -1649,7 +1650,7 @@ def test_jt3a_the_2026_schedule_1a_maps_the_redesigned_face():
 
 def test_jt3b_the_2026_schedule_2_keys_follow_the_renumbered_face():
     pack = _fed_pack(2026, "sched_2")
-    assert (pack.source_status, pack.draft_created) == ("draft", "4/27/26")
+    assert draft_created(pack) == "4/27/26"
     lines = {f.line: f for f in pack.fields}
     assert len(lines) == 68
     # Section A 13a-13o/13z (2025 17a-17o/17z), Section B 16a-c / 17a-d / 18 / 19a-c, Section C 21.
@@ -1667,7 +1668,7 @@ def test_jt3b_the_2026_schedule_2_keys_follow_the_renumbered_face():
 
 def test_jt3b_the_2026_f8959_reorders_its_parts_under_the_same_field_names():
     old, new = _fed_pack(2025, "f8959"), _fed_pack(2026, "f8959")
-    assert (new.source_status, new.draft_created) == ("draft", "5/27/26")
+    assert draft_created(new) == "5/27/26"
     # The same 26 widgets in the same line order: only the MEANING of lines 8-18 moved.
     assert [(f.line, f.field) for f in old.fields] == [(f.line, f.field) for f in new.fields]
     # 2025: SE in Part II (8-13), RRTA in Part III (14-17), one total on line 18 -> Schedule 2 line 11.
@@ -1691,7 +1692,7 @@ def test_jt3b_the_2026_f8959_math_holds_on_a_demo_wage_and_se_return():
 
 def test_jt3b_the_2026_f8889_is_the_2025_map_with_the_draft_metadata():
     old, new = _fed_pack(2025, "f8889"), _fed_pack(2026, "f8889")
-    assert (new.source_status, new.draft_created) == ("draft", "4/30/26")
+    assert draft_created(new) == "4/30/26"
     assert [(f.line, f.field, f.type, f.on_state, f.group) for f in old.fields] == [
         (f.line, f.field, f.type, f.on_state, f.group) for f in new.fields]
     assert old.relations == new.relations and new.cross_form == []
@@ -1725,7 +1726,7 @@ def test_jt3b_every_form_lines_entry_names_a_line_its_years_pack_maps(year: int)
 
 def test_jt3c_the_2026_f8606_rebinds_every_widget_and_swaps_the_preparer_pair():
     old, new = _fed_pack(2025, "f8606"), _fed_pack(2026, "f8606")
-    assert (new.source_status, new.draft_created) == ("final", None)   # the final posted 2026-11-10 (JT6)
+    assert draft_created(new) == "4/21/26"   # authored on that draft; the final posted 2026-11-10 (JT6)
     o, n = ({f.line: f.field for f in p.fields} for p in (old, new))
     # One city/state/ZIP box became three, so lines 1-14 moved +2 (and the zero padding went).
     assert "mailing_address.city_state_zip" in o and "mailing_address.city_state_zip" not in n
@@ -1743,7 +1744,7 @@ def test_jt3c_the_2026_f8606_rebinds_every_widget_and_swaps_the_preparer_pair():
 
 def test_jt3c_the_2026_schedule_1_is_the_2025_map_with_two_rebinds():
     old, new = _fed_pack(2025, "sched_1"), _fed_pack(2026, "sched_1")
-    assert (new.source_status, new.draft_created) == ("draft", "4/24/26")
+    assert draft_created(new) == "4/24/26"
     o, n = ({f.line: (f.field, f.type) for f in p.fields} for p in (old, new))
     assert set(o) == set(n) and old.relations == new.relations
     moved = {k for k in o if o[k] != n[k]}
@@ -1754,7 +1755,7 @@ def test_jt3c_the_2026_schedule_1_is_the_2025_map_with_two_rebinds():
 
 def test_jt3c_the_2026_schedule_3_reserves_5b_and_adds_13e():
     pack = _fed_pack(2026, "sched_3")
-    assert (pack.source_status, pack.draft_created) == ("draft", "4/27/26")
+    assert draft_created(pack) == "4/27/26"
     lines = {f.line: f.field for f in pack.fields}
     assert "5b" not in lines and "6e" not in lines and lines["13e"] == "Page1[0].f1_34[0]"
     assert (lines["13z"], lines["14"], lines["15"]) == ("Page1[0].f1_36[0]", "Page1[0].f1_37[0]", "Page1[0].f1_38[0]")
@@ -1804,7 +1805,7 @@ def test_jt3d_the_2026_f1040es_rebinds_every_voucher_by_position():
 @pytest.mark.parametrize("form_key", ["sched_b", "sched_d", "f8949"])
 def test_jt3d_the_identical_topology_drafts_keep_the_2025_map(form_key: str):
     old, new = _fed_pack(2025, form_key), _fed_pack(2026, form_key)
-    assert new.source_status == "draft" and new.draft_created
+    assert draft_created(new)                               # authored on a draft, whichever blank it pins today
     assert [(f.line, f.field, f.type, f.on_state, f.group, f.maxlen) for f in old.fields] == [
         (f.line, f.field, f.type, f.on_state, f.group, f.maxlen) for f in new.fields]
     assert (old.relations, old.cross_form) == (new.relations, new.cross_form)
@@ -1827,8 +1828,8 @@ def test_jt5a_the_near_ports_read_their_drafts():
     se = load_pack(REPO_ROOT / "formpacks/federal/2026/sched_se/pack.yaml")
     ext = load_pack(REPO_ROOT / "formpacks/federal/2026/f4868/pack.yaml")
     niit = load_pack(REPO_ROOT / "formpacks/federal/2026/f8960/pack.yaml")
-    assert {(p.form, p.source_status, p.draft_created) for p in (se, ext, niit)} == {
-        ("Schedule SE (Form 1040)", "final", None), ("4868", "draft", "5/13/26"), ("8960", "draft", "6/1/26")}
+    assert {(p.form, draft_created(p)) for p in (se, ext, niit)} == {
+        ("Schedule SE (Form 1040)", "4/27/26"), ("4868", "5/13/26"), ("8960", "6/1/26")}
     # Schedule SE's draft (Created 4/27/26) became the final on 2026-11-03: see test_jt6_* below.
     fields = {f.line: f.field for f in se.fields}
     assert (fields["5a"], fields["8a"]) == ("Page1[0].f1_10[0]", "Page1[0].f1_14[0]")      # the ReadOrder wrappers went
@@ -1852,9 +1853,8 @@ def test_jt5b_the_credit_and_exclusion_ports_read_their_drafts():
     ctc = load_pack(REPO_ROOT / "formpacks/federal/2026/sched_8812/pack.yaml")
     feie = load_pack(REPO_ROOT / "formpacks/federal/2026/f2555/pack.yaml")
     edu = load_pack(REPO_ROOT / "formpacks/federal/2026/f8863/pack.yaml")
-    # JT6: Form 2555's final posted 2026-11-05 and Schedule 8812's 2026-11-09; Form 8863 is still a draft.
-    assert [(p.source_status, p.draft_created) for p in (ctc, feie, edu)] == [
-        ("final", None), ("final", None), ("draft", "4/28/26")]
+    # The drafts JT5b read (Form 2555's final posted 2026-11-05 and Schedule 8812's 2026-11-09, JT6).
+    assert [draft_created(p) for p in (ctc, feie, edu)] == ["4/24/26", "9/18/26", "4/28/26"]
     # The 2026 Schedule 8812 reads AGI from line 11b of either parent (the 1040-NR legs joined in JT5c).
     assert set(ctc.cross_form) == {"1 == f1040.11b", "14 == f1040.19", "27 == f1040.28",
                                    "1 == f1040nr.11b", "14 == f1040nr.19", "27 == f1040nr.28"}
@@ -1866,7 +1866,7 @@ def test_jt5b_the_credit_and_exclusion_ports_read_their_drafts():
 
 def test_jt5c_the_1040nr_draft_rebinds_the_new_lines():
     old, new = _fed_pack(2025, "f1040nr"), _fed_pack(2026, "f1040nr")
-    assert (new.source_status, new.draft_created, new.signature.page) == ("draft", "8/19/26", 3)
+    assert (draft_created(new), page_on_draft(new, new.signature.page)) == ("8/19/26", 3)
     assert new.mailing is None                              # the 2026 instructions (the addresses) are not posted
     f = {pf.line: pf.field for pf in new.fields}
     assert {"12", "24", "32", "28.do_not_claim_actc"}.isdisjoint(f)
@@ -1899,7 +1899,7 @@ def test_jt5c_the_nr_legs_join_the_2026_schedules():
 def test_jt5c_the_8843_and_schedule_a_nr_drafts():
     old, new = _fed_pack(2025, "f8843"), _fed_pack(2026, "f8843")
     # Form 8843's final posted 2026-11-05 (JT6): no cover sheet, so the "Sign here" block is PDF page 2 (draft: 3).
-    assert (new.source_status, new.draft_created, new.signature.page) == ("final", None, 2)
+    assert (draft_created(new), page_on_draft(new, new.signature.page)) == ("5/11/26", 3)
     # Line 4a prints "2026 2025 2024" (the same three boxes); lines 7 and 11 ask about the six prior years:
     # 2020-2025 on the 2026 form (2025: 2019-2024).
     f4a = {pf.line: pf.field for pf in new.fields if pf.line.startswith("4a.")}
@@ -1907,7 +1907,7 @@ def test_jt5c_the_8843_and_schedule_a_nr_drafts():
     assert {pf.line for pf in new.fields if pf.line.startswith("7.")} == {f"7.{y}" for y in range(2020, 2026)}
     assert {pf.line for pf in old.fields if pf.line.startswith("7.")} == {f"7.{y}" for y in range(2019, 2025)}
     sa = _fed_pack(2026, "sched_a_nr")
-    assert (sa.source_status, sa.draft_created) == ("draft", "5/18/26")
+    assert draft_created(sa) == "5/18/26"
     assert "1b == min(1a, 40400)" in sa.relations            # the draft's "$40,400" (2025: $40,000)
 
 
@@ -1929,7 +1929,7 @@ def test_the_2025_schedule_c_27a_27b_keys_follow_the_printed_rows():
 
 def test_jt5d_schedule_a_renumbers_the_gift_and_other_lines():
     old, new = _fed_pack(2025, "sched_a"), _fed_pack(2026, "sched_a")
-    assert (new.source_status, new.draft_created, len(new.fields)) == ("draft", "5/12/26", 47)
+    assert (draft_created(new), len(new.fields)) == ("5/12/26", 47)
     f = {pf.line: pf.field for pf in new.fields}
     # 8d is live again (mortgage insurance premiums) and 8e sums it.
     assert f["8d"] == "Page1[0].f1_19[0]" and "8e == 8a + 8b + 8c + 8d" in new.relations
@@ -1947,7 +1947,7 @@ def test_jt5d_schedule_a_renumbers_the_gift_and_other_lines():
 
 def test_jt5d_schedule_c_splits_the_address_and_line_16():
     new = _fed_pack(2026, "sched_c")
-    assert (new.source_status, new.draft_created, len(new.fields)) == ("final", None, 109)   # final since 2026-11-05
+    assert (draft_created(new), len(new.fields)) == ("5/15/26", 109)   # its final posted 10/29/26 (JT6)
     f = {pf.line: pf for pf in new.fields}
     assert [k for k in f if k.startswith("business_address.")] == [
         "business_address.street", "business_address.apt", "business_address.city", "business_address.state",
@@ -1963,7 +1963,7 @@ def test_jt5d_schedule_c_splits_the_address_and_line_16():
 
 def test_jt5d_schedule_e_splits_the_address_and_line_13():
     old, new = _fed_pack(2025, "sched_e"), _fed_pack(2026, "sched_e")
-    assert (new.source_status, new.draft_created, len(new.fields)) == ("draft", "5/6/26", 193)
+    assert (draft_created(new), len(new.fields)) == ("5/6/26", 193)
     f = {pf.line: pf.field for pf in new.fields}
     assert f["1a.b.zip"] == "Page1[0].Line1aTable[0].RowB[0].f1_12[0]" and "1a.b" in {pf.line for pf in old.fields}
     # TRAP: the 2025 "13 Other interest" is 13b; 13a is the NEW vehicle loan; the 13 header row is shaded.
@@ -1978,7 +1978,7 @@ def test_jt5d_schedule_e_splits_the_address_and_line_13():
 
 def test_jt5e_form_8962_brings_back_line_6_and_drops_the_repayment_cap():
     new = _fed_pack(2026, "f8962")
-    assert (new.source_status, new.draft_created, len(new.fields)) == ("draft", "4/21/26", 141)
+    assert (draft_created(new), len(new.fields)) == ("4/21/26", 141)
     f = {pf.line: pf for pf in new.fields}
     assert [(k, f[k].field, f[k].on_state) for k in ("6.no", "6.yes")] == [
         ("6.no", "Page1[0].c1_3[0]", "/1"), ("6.yes", "Page1[0].c1_3[1]", "/2")]
@@ -1989,7 +1989,7 @@ def test_jt5e_form_8962_brings_back_line_6_and_drops_the_repayment_cap():
 
 def test_jt5e_form_2441_transposes_the_provider_table():
     old, new = _fed_pack(2025, "f2441"), _fed_pack(2026, "f2441")
-    assert (new.source_status, new.draft_created) == ("draft", "4/30/26")
+    assert draft_created(new) == "4/30/26"
     assert [pf.line for pf in old.fields] == [pf.line for pf in new.fields]      # the keys survive
     f = {pf.line: pf.field for pf in new.fields}
     assert f["care_provider_2.address"] == "Page1[0].PartITable[0].Row1b[0].Provider2[0].f1_7[0]"
@@ -2001,7 +2001,7 @@ def test_jt5e_form_2441_transposes_the_provider_table():
 
 def test_jt5e_form_1116_moves_part_ii_and_re_letters_its_columns():
     new = _fed_pack(2026, "f1116")
-    assert (new.source_status, new.draft_created, len(new.fields)) == ("draft", "7/1/26", 130)
+    assert (draft_created(new), len(new.fields)) == ("7/1/26", 130)
     f = {pf.line: pf for pf in new.fields}
     # TRAP: the U.S.-dollar dividends column is (r) now (2025: q); (q) is the foreign-currency "other".
     assert f["line_a.r"].field == "Page2[0].Table_Part2_ColsR-W[0].RowA[0].f2_22[0]" and f["line_a.r"].type == "money"
@@ -2013,7 +2013,7 @@ def test_jt5e_form_1116_moves_part_ii_and_re_letters_its_columns():
 
 def test_jt5e_form_8938_rev_12_2026_keeps_the_map_with_unpadded_names():
     old, new = _fed_pack(2025, "f8938"), _fed_pack(2026, "f8938")
-    assert (new.source_status, new.draft_created) == ("draft", "9/2/26")
+    assert draft_created(new) == "9/2/26"
     import re  # noqa: PLC0415
     assert [(pf.line, re.sub(r"_0(\d)\[", r"_\1[", pf.field), pf.on_state) for pf in old.fields] == [
         (pf.line, pf.field, pf.on_state) for pf in new.fields]
@@ -2032,7 +2032,7 @@ def test_jt5e_the_foreign_tax_credit_op_points_at_the_2026_pack():
 
 def test_jt5f_the_1040x_rev_12_2026_tracks_the_2026_form_1040():
     old, new = _fed_pack(2025, "f1040x"), _fed_pack(2026, "f1040x")
-    assert (new.source_status, new.draft_created, new.signature.page, len(new.fields)) == ("draft", "10/9/26", 3, 187)
+    assert (draft_created(new), page_on_draft(new, new.signature.page), len(new.fields)) == ("10/9/26", 3, 187)
     f = {pf.line: pf for pf in new.fields}
     # New lines: 2a-2c, 11a-11c and 17a-17c; 11 and 17 are split, so the bare keys went. The Created 10/9/26
     # re-post (Phase K drift re-map, 2026-10-23) dropped the 8/19/26 draft's direct deposit: line 22 is one line.
@@ -2049,7 +2049,7 @@ def test_jt5f_the_1040x_rev_12_2026_tracks_the_2026_form_1040():
 def test_jt5f_schedule_3a_is_a_new_form_key_with_its_unconditional_legs():
     assert "sched_3a" in KNOWN_FORM_KEYS
     new = _fed_pack(2026, "sched_3a")
-    assert (new.source_status, new.draft_created, new.acroform_root, len(new.fields)) == ("draft", "6/24/26", "form1[0]", 16)
+    assert (draft_created(new), new.acroform_root, len(new.fields)) == ("6/24/26", "form1[0]", 16)
     assert set(new.relations) == {"5 == 3 - 4", "6 == max(0, 2 - 5)"}
     assert set(new.cross_form) == {"1a == f1040.32a", "1b == f1040.31", "3 == f1040.24a", "3 == f1040nr.24a",
                                    "4 == sched_2.20"}
@@ -2175,15 +2175,13 @@ def test_conventions_lists_exactly_the_known_form_keys():
     assert f"these {len(KNOWN_FORM_KEYS)} federal keys" in text[start:end]
 
 
-# ── JT6, the first TY2026 finals (2026-11-05) ─────────────────────────────────────────────────────────────────────
+# ── JT6, the TY2026 finals: every re-pin is a ledger row (formpacks/federal/repins.yaml) ──────────────────────────
 
-# form key -> (the irs-prior final, its sha256, the final's pages, the widgets on the final blank). The IRS cover
-# sheet promised "no changes between the last posted draft and the final"; the re-pin held it to that, widget by
-# widget. Every final has one page fewer than its draft (the cover sheet) and no /TU tooltips. 2026-11-11 added
-# Schedule 8812 (posted 11/09/26) and Form 8606 (11/10/26). Schedule 8812 is the first exception on both counts:
-# its 4/24/26 draft had no cover sheet (two pages before and after), and its final was cut from a LATER cycle
-# (footer "Created 8/18/26") whose 35 text boxes sit a fraction of a point off the draft's — names, types, flags
-# and rows unchanged (the pack header lists the moves).
+# The six finals re-pinned by hand before scripts/repin_final.py existed, as typed then: form key -> (the irs-prior
+# final, its sha256, the final's pages, the widgets on the final blank). A frozen cross-check of the ledger rows the
+# script backfilled from its own comparison; a later re-pin adds a ledger row and NO entry here. Schedule 8812 is the
+# one whose draft had no cover sheet and whose final moved 35 text boxes a fraction of a point (verdict
+# geometry_moved).
 JT6_FIRST_FINALS = {
     "sched_c": ("https://www.irs.gov/pub/irs-prior/f1040sc--2026.pdf",
                 "cc44e7d1150e54d991835814c1191f60a32617730ca9e50e6f532b51293a86b4", 2, 109),
@@ -2202,18 +2200,45 @@ JT6_FIRST_FINALS = {
 JT6_UNMAPPED_ON_PURPOSE = {"sched_se": {"Page1[0].f1_13[0]", "Page2[0].f2_1[0]"}}
 
 
-def test_jt6_the_first_finals_are_repinned_and_stay_rehearsal_only():
-    """The 2026 Schedule C (posted 10/29/26) and Schedule SE (11/03/26) finals: each pack pins the irs-prior final
-    with no draft stamp, keeps the map JT5a/JT5d read, and — the year still provisional — fills only in rehearsal."""
-    from taxfill_core.filler import rehearsal_only  # noqa: PLC0415
-    for key, (url, sha, _pages, _widgets) in JT6_FIRST_FINALS.items():
-        pack = _fed_pack(2026, key)
-        assert (pack.source_url, pack.pdf_sha256, pack.source_status, pack.draft_created) == (url, sha, "final", None), key
-        assert rehearsal_only(pack), key
+def test_jt6_the_first_six_finals_are_in_the_ledger_as_they_were_typed():
+    rows = ledger()
+    for key, (url, sha, pages, widgets) in JT6_FIRST_FINALS.items():
+        row = rows[f"federal/2026/{key}"]
+        assert (row["final_url"], row["final_sha256"], row["pages"], row["widgets"]) == (url, sha, pages, widgets), key
+        assert row["unmapped"] == len(JT6_UNMAPPED_ON_PURPOSE.get(key, ())), key
+    assert {key: rows[f"federal/2026/{key}"]["verdict"] for key in JT6_FIRST_FINALS} == {
+        **dict.fromkeys(JT6_FIRST_FINALS, "identical"), "sched_8812": "geometry_moved"}
+    moved = rows["federal/2026/sched_8812"]
+    assert (moved["rects_moved"], moved["cover_sheet_dropped"], moved["final_created"]) == (35, False, "8/18/26")
     assert len(_fed_pack(2026, "sched_c").fields) == 109 and len(_fed_pack(2026, "sched_se").fields) == 25
     assert _fed_pack(2026, "f8843").signature.page == 2   # the draft's cover sheet put it on page 3
     assert _fed_pack(2026, "f8606").signature.page == 2   # likewise (2026-11-11)
     assert _fed_pack(2026, "sched_8812").signature is None and len(_fed_pack(2026, "sched_8812").fields) == 41
+
+
+def test_jt6_every_ledger_row_is_its_packs_pin_and_the_pack_stays_rehearsal_only():
+    """Each re-pinned pack pins exactly the ledger's irs-prior final with no draft stamp, was written only on an
+    identical or geometry_moved verdict, and — while its year is provisional — fills only in rehearsal."""
+    from taxfill_core.filler import rehearsal_only  # noqa: PLC0415
+    from taxfill_core.knowledge import provisional_marker  # noqa: PLC0415
+    rows = ledger()
+    assert len(rows) >= len(JT6_FIRST_FINALS)
+    for pid, row in rows.items():
+        _fed, year, key = pid.split("/")
+        pack = _fed_pack(int(year), key)
+        assert (pack.source_url, pack.pdf_sha256, pack.source_status, pack.draft_created) == (
+            row["final_url"], row["final_sha256"], "final", None), pid
+        assert row["final_url"] == f"https://www.irs.gov/pub/irs-prior/{row['stem']}--{year}.pdf", pid
+        assert row["draft_url"] == f"https://www.irs.gov/pub/irs-dft/{row['stem']}--dft.pdf", pid
+        assert row["draft_sha256"] != row["final_sha256"] and row["draft_created"] and row["final_posted"], pid
+        assert row["verdict"] in ("identical", "geometry_moved") and row["words_changed"] == 0, pid
+        assert (row["verdict"] == "geometry_moved") == (row["rects_moved"] > 0), pid   # no /DA or /Q move so far
+        assert row["pages"] == row["draft_pages"] - row["cover_sheet_dropped"], pid
+        assert row_of(pack) == row, pid
+        if pack.signature is not None:
+            assert 1 <= pack.signature.page <= row["pages"], pid
+        if provisional_marker("federal", int(year)) is not None:
+            assert rehearsal_only(pack), pid
 
 
 def _widget_names(pdf_path: Path) -> tuple[int, list[str]]:
@@ -2237,15 +2262,17 @@ def _widget_names(pdf_path: Path) -> tuple[int, list[str]]:
 
 
 @pytest.mark.network
-def test_jt6_the_first_finals_carry_every_mapped_widget_and_nothing_unmapped():
-    """On each final blank: one page fewer than the draft (the cover sheet is gone; Schedule 8812's draft never had
-    one), every mapped field is a widget, and every widget is mapped except the ones the pack leaves out on purpose."""
-    for key, (_url, _sha, final_pages, widgets) in JT6_FIRST_FINALS.items():
-        pack = _fed_pack(2026, key)
+def test_jt6_every_repinned_final_carries_every_mapped_widget_and_nothing_else_unmapped():
+    """On each final blank the ledger records: its pages and widgets, every mapped field a widget, and no widget
+    unmapped beyond the ones the pack left out on purpose (named for the first six, counted for every row)."""
+    for pid, row in ledger().items():
+        _fed, year, key = pid.split("/")
+        pack = _fed_pack(int(year), key)
         pages, names = _widget_names(fetch_pack_blank(pack))
-        assert (pages, len(names)) == (final_pages, widgets), (key, pages, len(names))
+        assert (pages, len(names)) == (row["pages"], row["widgets"]), (pid, pages, len(names))
         root = pack.acroform_root + "."
-        mapped = {root + f.field for f in pack.fields}
-        assert mapped <= set(names), (key, sorted(mapped - set(names)))
-        assert set(names) - mapped == {root + n for n in JT6_UNMAPPED_ON_PURPOSE.get(key, set())}, key
-
+        mapped = {root + f.field for f in pack.fields} | {root + u.field for u in pack.unfillable_lines.values()}
+        assert mapped <= set(names), (pid, sorted(mapped - set(names)))
+        assert len(set(names) - mapped) == row["unmapped"], (pid, sorted(set(names) - mapped))
+        if key in JT6_FIRST_FINALS:
+            assert set(names) - mapped == {root + n for n in JT6_UNMAPPED_ON_PURPOSE.get(key, set())}, pid

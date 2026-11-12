@@ -38,6 +38,25 @@ cw = _load("check_watches")
 cf = sys.modules["check_finals"]
 
 TODAY = dt.date(2026, 10, 24)
+
+# The TY2026 packs that never were drafts, form key -> IRS file stem. A re-pinned draft joins the non-draft set
+# through its ledger row (formpacks/federal/repins.yaml), never by an edit here.
+NEVER_DRAFTS_2026 = {"f1040es": "f1040es", "f8316": "f8316", "f843": "f843", "f8833": "f8833", "fw7": "fw7"}
+
+
+def _nondraft_stems_2026() -> list[str]:
+    """The stems nondraft_packs(2026) must list, in its order (by pack directory)."""
+    from repins import repinned_keys  # noqa: PLC0415
+    repinned = repinned_keys(2026)
+    assert len(repinned) >= 6 and not set(repinned) & set(NEVER_DRAFTS_2026)
+    return [stem for _key, stem in sorted((NEVER_DRAFTS_2026 | repinned).items())]
+
+
+def _draft_stems_2026() -> set[str]:
+    """The IRS stems of the TY2026 packs still pinned to a draft, read off the packs themselves."""
+    from taxfill_core.schemas.formpack import load_pack  # noqa: PLC0415
+    packs = [load_pack(p) for p in sorted((REPO / "formpacks" / "federal" / "2026").glob("*/pack.yaml"))]
+    return {p.source_url.rsplit("/", 1)[-1].removesuffix("--dft.pdf") for p in packs if p.source_status == "draft"}
 NEC = "https://www.irs.gov/pub/irs-dft/f1040nrn--dft.pdf"
 OI = "https://www.irs.gov/pub/irs-dft/f1040nro--dft.pdf"
 BASE_LM = "Tue, 13 May 2025 02:10:13 GMT"
@@ -133,9 +152,11 @@ def _main(web: _Web, argv: list[str], runner: _Runner | None = None, today: dt.d
 def test_the_named_targets_are_the_roadmap_s():
     assert [b.stem for b in cw.DRAFT_BASELINES] == ["f1040nrn", "f1040nro"]
     assert all(b.last_modified == dt.date(2025, 5, 13) for b in cw.DRAFT_BASELINES)
-    # JT6 (2026-11-05): the Schedule C and SE finals joined the non-draft set (sorted by pack directory).
-    assert [s for s, _, _ in cw.nondraft_packs(2026)] == [
-        "f1040es", "f2555", "f8316", "f843", "f8606", "f8833", "f8843", "fw7", "f1040s8", "f1040sc", "f1040sse"]
+    # JT6: each re-pinned final joins the non-draft set (sorted by pack directory); 2026-11-11 it read f1040es,
+    # f2555, f8316, f843, f8606, f8833, f8843, fw7, f1040s8, f1040sc, f1040sse.
+    assert [s for s, _, _ in cw.nondraft_packs(2026)] == _nondraft_stems_2026()
+    assert {"f1040es", "f8316", "f843", "f8833", "fw7", "f2555", "f8606", "f8843", "f1040s8", "f1040sc",
+            "f1040sse"} <= set(_nondraft_stems_2026())
     rows = cw.state_targets(2026)
     tier1 = [r["state"].lower() for r in yaml.safe_load((REPO / "scripts" / "tier1_states.yaml").read_text())["tier1"]]
     assert sorted({r["state"] for r in rows}) == sorted(tier1) and len(tier1) == 12
@@ -255,9 +276,8 @@ def test_a_provisional_next_year_pack_does_not_move_the_watches_off_the_season(t
     year = cf.provisional_year(tmp_path)
     assert year == 2026
     stems = [w.stem for w in cf.watch_list(year, repo=tmp_path)]
-    assert len(stems) > 10 and "f1040" in stems
-    assert [s for s, _, _ in cw.nondraft_packs(year, tmp_path)] == [
-        "f1040es", "f2555", "f8316", "f843", "f8606", "f8833", "f8843", "fw7", "f1040s8", "f1040sc", "f1040sse"]
+    assert set(stems) == _draft_stems_2026() | set(cf.PUBLICATIONS) and len(stems) == len(set(stems))
+    assert [s for s, _, _ in cw.nondraft_packs(year, tmp_path)] == _nondraft_stems_2026()
 
 
 def test_a_release_on_the_last_day_of_october_survives_the_month_rollover():

@@ -2,7 +2,19 @@
 
 import pytest
 
+from repins import repinned_keys
 from taxfill_core.discovery import FormMap, FormSummary, get_form_map, list_forms
+
+# The TY2026 packs authored drafts-first on an irs-dft early release (JT3a-JT5f, JR4b, JP5c). Each stays a draft until
+# its final posts and scripts/repin_final.py moves it, with a row in formpacks/federal/repins.yaml: a re-pin edits
+# neither this roster nor the test below.
+AUTHORED_ON_DRAFTS_2026 = {
+    "f1040", "sched_1a", "sched_2", "f8959", "f8889", "sched_1", "sched_3", "f8606", "sched_b", "sched_d", "f8949",
+    "sched_se", "f4868", "f8960", "sched_8812", "f2555", "f8863", "f1040nr", "sched_a_nr", "f8843",
+    "sched_a", "sched_c", "sched_e", "f8962", "f2441", "f1116", "f8938",
+    "f1040x", "sched_3a", "f5329", "f2210"}
+# The TY2026 packs that never were drafts: a continuous-use revision or the form's own final (JT3d, JT5a).
+NEVER_DRAFTS_2026 = {"f8833", "f1040es", "f843", "fw7", "f8316"}
 
 
 def test_list_all_packs():
@@ -45,16 +57,22 @@ def test_list_all_packs():
     # sched_3a drafts = 145, + JR4a's 2025 f5329 (a NEW form key) = 146, + JR4b's 2023 / 2024 ports and
     # the 2026 f5329 draft = 149, + JP5c's NEW f2210 (2025 final and the 2026 draft) = 151.
     assert len([s for s in allf if s.jurisdiction == "federal"]) == 151
-    ty2026 = {s.form_key: s.source_status for s in allf if s.tax_year == 2026}
-    # JT6 (2026-11-05): sched_c and sched_se moved from draft to final when their 2026 finals posted, f2555 and
-    # f8843 the same day; 2026-11-11: sched_8812 (posted 11/09/26) and f8606 (11/10/26).
-    assert {k for k, v in ty2026.items() if v == "draft"} == {
-        "f1040", "sched_1a", "sched_2", "f8959", "f8889", "sched_1", "sched_3", "sched_b", "sched_d", "f8949",
-        "f4868", "f8960", "f8863", "f1040nr", "sched_a_nr",
-        "sched_a", "sched_e", "f8962", "f2441", "f1116", "f8938",
-        "f1040x", "sched_3a", "f5329", "f2210"}
-    assert {k for k, v in ty2026.items() if v == "final"} == {
-        "f8833", "f1040es", "f843", "fw7", "f8316", "sched_c", "sched_se", "f2555", "f8843", "sched_8812", "f8606"}
+    ty2026 = {s.form_key: s for s in allf if s.tax_year == 2026}
+    drafts = {k for k, s in ty2026.items() if s.source_status == "draft"}
+    finals = {k for k, s in ty2026.items() if s.source_status == "final"}
+    # JT6: a draft moves to final only through a re-pin, and every re-pin is a ledger row. So the drafts are the
+    # drafts-first roster less the ledger's packs, and the finals are the five that never were drafts plus them
+    # (2026-11-12: sched_c, sched_se, f2555, f8843, sched_8812 and f8606 are re-pinned).
+    repinned = set(repinned_keys(2026))
+    assert repinned <= AUTHORED_ON_DRAFTS_2026 and len(repinned) >= 6
+    assert drafts == AUTHORED_ON_DRAFTS_2026 - repinned
+    assert finals == NEVER_DRAFTS_2026 | repinned
+    # The status agrees with the URL: a draft is the irs-dft early release, a re-pinned final the irs-prior revision.
+    for key in drafts:
+        assert "/pub/irs-dft/" in ty2026[key].source_url and ty2026[key].source_url.endswith("--dft.pdf"), key
+    for key, stem in repinned_keys(2026).items():
+        assert ty2026[key].source_url == f"https://www.irs.gov/pub/irs-prior/{stem}--2026.pdf", key
+    assert not any("/pub/irs-dft/" in ty2026[key].source_url for key in finals)
     assert {s.source_status for s in allf if s.tax_year != 2026} == {"final"}
 
     # State packs. 42 for TY2023 (the C1 resident sweep: 38 states/DC with an
