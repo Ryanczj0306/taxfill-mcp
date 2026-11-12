@@ -11,6 +11,7 @@ from pathlib import Path
 
 import pytest
 
+from repins import draft_created
 from taxfill_core.fetch import cached_blank_path
 from taxfill_core.filler import fill_form, rehearsal_only
 from taxfill_core.penalty import form2210_lines, underpayment_penalty
@@ -130,5 +131,5 @@ def test_jp5c_the_packs_bind_the_tables_and_leave_the_shaded_cells_unmapped():
     assert new["ai.9b.d"] == "Page3[0].Part1Table[0].Line9b[0].f3_40[0]"
     assert (old["ai.36.d"], new["ai.36.d"]) == ("Page3[0].PartIITable[0].Line36[0].f3_144[0]",
                                                "Page3[0].PartIITable[0].Line36[0].f3_148[0]")
-    assert _pack(2026).source_status == "draft" and _pack(2026).draft_created == "4/16/26"
+    assert draft_created(_pack(2026)) == "4/16/26"       # the draft it was authored on (repins.draft_created)
     assert _pack(2025).cross_form == _pack(2026).cross_form == ["1 == f1040nr.22"]

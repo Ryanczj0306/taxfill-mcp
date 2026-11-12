@@ -23,6 +23,7 @@ from pathlib import Path
 import pytest
 from pypdf import PdfReader
 
+from repins import draft_created, draft_sha256
 from taxfill_core.fetch import OfflineFetchError, fetch_blank
 from taxfill_core.filler import fill_form
 from taxfill_core.schemas.formpack import load_pack
@@ -150,7 +151,8 @@ def test_f1040x_2026_reposted_draft_page2_lands_in_the_printed_cells(tmp_path):
 
 def test_f1040x_2026_pins_the_reposted_draft():
     pack = load_pack(F1040X_2026)
-    assert (pack.pdf_sha256, pack.draft_created) == (F1040X_DRAFT_10_9_26_SHA256, "10/9/26")
+    # The draft the pack was re-mapped on: its own pin until the final is re-pinned, the ledger's after (JT6).
+    assert (draft_sha256(pack), draft_created(pack)) == (F1040X_DRAFT_10_9_26_SHA256, "10/9/26")
 
 
 # ── Arizona 2025 Form 140, re-issued 2026-11-02 (Phase K re-map 2026-11-05, P-036) ───────────────────────────────

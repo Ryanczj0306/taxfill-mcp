@@ -43,6 +43,7 @@ from pydantic import ValidationError
 from taxfill_core.calc import TREATY_INCOME_CLASSES, treaty_benefit
 from taxfill_core.knowledge import (
     TreatyKnowledge,
+    form_line_entry,
     is_official_gov_host,
     list_treaty_countries,
     load_treaty,
@@ -654,7 +655,10 @@ def test_p016_a_2026_resident_line_carries_the_draft_suffix():
     work = treaty_benefit(
         "korea", "student_wages", 2_000, year=2026, resident_alien=True, knowledge_dir=KNOWLEDGE_DIR
     ).work
-    assert "line 8z (2026 DRAFT form — re-verify at final)" in work
+    # JT6: the entry is draft-sourced until Schedule 1's final is re-pinned; the work text must follow it.
+    draft = form_line_entry(2026, "sched1.other_income").is_draft
+    assert ("line 8z (2026 DRAFT form — re-verify at final)" in work) == draft
+    assert "line 8z" in work and ("DRAFT form" in work) == draft
 
 
 def test_p016_nothing_exempt_means_nothing_to_report_and_no_number_moves():

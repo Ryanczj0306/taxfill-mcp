@@ -39,7 +39,7 @@ import pytest
 import yaml
 from pydantic import ValidationError
 
-from repins import draft_created, repin_final, row_of
+from repins import draft_created, ledger, pack_of_stem, repin_final, row_of
 from taxfill_core.knowledge import (
     FormLineEntry,
     FormLineError,
@@ -87,6 +87,23 @@ FACE_2026 = {
 }
 
 
+def _face_2026(key: str, entry: FormLineEntry, *, read_on_draft: str) -> str:
+    """Hold a 2026 entry to the blank its form's pack pins today, and return the marker form_line() must add: while
+    the pack pins the draft the entry is draft-sourced (that draft's URL and "Created" stamp, read on
+    ``read_on_draft``) and renders with DRAFT; once the pack is re-pinned (a ledger row) the entry must be recorded
+    final, on the row's final and re-pin date, and renders bare."""
+    pack = pack_of_stem(2026, repin_final.irs_stem(entry.url))
+    row = row_of(pack)
+    if row is None:
+        assert pack.source_status == "draft", key
+        assert (entry.line_source, entry.url) == (f"draft Created {pack.draft_created}", pack.source_url), key
+        assert entry.read == read_on_draft and entry.is_draft, key
+        return DRAFT
+    assert (entry.line_source, entry.url, entry.read) == ("final", row["final_url"], row["repinned"]), key
+    assert not entry.is_draft, key
+    return ""
+
+
 def _copy_knowledge(tmp_path: Path) -> Path:
     base = tmp_path / "knowledge"
     (base / "federal").mkdir(parents=True)
@@ -131,16 +148,8 @@ def test_every_year_records_every_jf6a_key_with_its_face(key: str, year: int):
         assert form_line(year, key) == EXPECTED[key][year]
         return
     stem, created = FACE_2026[key]
-    _pid, _path, pack = repin_final.packs_by_stem(2026)[stem]
-    assert draft_created(pack) == created, key          # the draft the face was read on, before or after a re-pin
-    row = row_of(pack)
-    marker = ""
-    if row is None:                                      # the form's pack still pins that draft
-        assert (entry.line_source, entry.url) == (f"draft Created {created}", pack.source_url), key
-        assert entry.read == READ.get(key, "2026-09-24")
-        marker = DRAFT
-    else:                                                # re-pinned: the entry must be recorded final
-        assert (entry.line_source, entry.url, entry.read) == ("final", row["final_url"], row["repinned"]), key
+    assert (repin_final.irs_stem(entry.url), draft_created(pack_of_stem(2026, stem))) == (stem, created), key
+    marker = _face_2026(key, entry, read_on_draft=READ.get(key, "2026-09-24"))
     if EXPECTED[key][year] is None:                      # recorded absent, with its reason (f1040.total_tax, JF6c)
         assert entry.absent
         with pytest.raises(FormLineError):
@@ -149,12 +158,23 @@ def test_every_year_records_every_jf6a_key_with_its_face(key: str, year: int):
         assert form_line(year, key) == EXPECTED[key][year] + marker
 
 
-def test_a_2026_draft_entry_carries_the_draft_suffix():
-    """P-015: a line read off an IRS draft never renders as if it were final."""
-    assert form_line(2026, "sched1.other_income") == "8z (2026 DRAFT form — re-verify at final)"
-    assert form_line(2026, "f1040.additional_medicare_withholding") == "25c (2026 DRAFT form — re-verify at final)"
-    entry = form_line_entry(2026, "sched1.other_income")
-    assert entry.is_draft and entry.line == "8z"  # the bare designator, for keying data
+def test_a_2026_draft_entry_carries_the_draft_suffix(tmp_path: Path):
+    """P-015: a line read off an IRS draft never renders as if it were final. JT6: an entry stays draft-sourced
+    exactly as long as its form's pack pins the draft, so the shipped entries are held to that, and the draft
+    rendering itself is exercised on a copy whose entry is draft-sourced whatever the ledger says today."""
+    for key, line in (("sched1.other_income", "8z"), ("f1040.additional_medicare_withholding", "25c")):
+        entry = form_line_entry(2026, key)
+        marker = _face_2026(key, entry, read_on_draft="2026-09-24")
+        assert entry.line == line  # the bare designator, for keying data
+        assert form_line(2026, key) == line + marker
+    base = _copy_knowledge(tmp_path)
+    path = base / "federal" / "2026.yaml"
+    data = yaml.safe_load(path.read_text(encoding="utf-8"))
+    data["form_lines"]["sched1.other_income"].update(
+        line_source="draft Created 4/24/26", url="https://www.irs.gov/pub/irs-dft/f1040s1--dft.pdf")
+    path.write_text(yaml.safe_dump(data, sort_keys=False, allow_unicode=True), encoding="utf-8")
+    assert form_line(2026, "sched1.other_income", base_dir=base) == "8z (2026 DRAFT form — re-verify at final)"
+    assert form_line_entry(2026, "sched1.other_income", base_dir=base).is_draft
 
 
 @pytest.mark.parametrize("year", [2018, 2027, 1990])
@@ -891,10 +911,20 @@ _EXCERPTED = [
 ]
 
 
+def _excerpt(entry: FormLineEntry) -> str:
+    """The excerpt of the face ``entry`` cites. A re-pinned final prints its draft's words (the ledger row says
+    words_changed 0), so the draft's excerpt stands for the final (JT6)."""
+    if entry.url in _FACE_EXCERPTS:
+        return _FACE_EXCERPTS[entry.url]
+    row = next(r for r in ledger().values() if r["final_url"] == entry.url)
+    assert row["words_changed"] == 0
+    return _FACE_EXCERPTS[row["draft_url"]]
+
+
 @pytest.mark.parametrize("year,key", _EXCERPTED)
 def test_the_face_check_passes_the_real_entry_on_its_face(year: int, key: str):
     entry = form_line_entry(year, key)
-    assert face_quote_problems(entry, _FACE_EXCERPTS[entry.url]) == []
+    assert face_quote_problems(entry, _excerpt(entry)) == []
 
 
 @pytest.mark.parametrize(
@@ -916,7 +946,9 @@ def test_the_face_check_passes_the_real_entry_on_its_face(year: int, key: str):
         (2019, "f8959.withholding_part", {"line": "IV", "printed": "Part IV Withholding Reconciliation"},
          "'Part IV Withholding Reconciliation' is not on the face"),
         (2019, "sched1.other_income", {"printed": "8 Other income. List kind and amount"}, "is not on the face"),
-        (2026, "sched1.other_income", {"line_source": "draft Created 9/1/26"}, "'Created 9/1/26' is not on the face"),
+        (2026, "sched1.other_income", {"line_source": "draft Created 9/1/26",
+                                       "url": "https://www.irs.gov/pub/irs-dft/f1040s1--dft.pdf"},
+         "'Created 9/1/26' is not on the face"),
         # Phase K JK31: a caption that lost its first letter is inside the face's word, not on the face
         (2022, "f1040.ctc", {"printed": "19 hild tax credit or credit for other dependents from Schedule 8812"},
          "is on the face only inside a longer word"),
@@ -926,7 +958,7 @@ def test_the_face_check_catches_a_renumbered_line_that_kept_its_words(year, key,
     """P-015: the face re-read checks the NUMBER, not only the words around it."""
     entry = form_line_entry(year, key)
     wrong = FormLineEntry(**{**entry.model_dump(), **change})
-    problems = face_quote_problems(wrong, _FACE_EXCERPTS[entry.url])
+    problems = face_quote_problems(wrong, _excerpt(entry))
     assert any(problem in p for p in problems), problems
 
 
@@ -1008,10 +1040,12 @@ JF6B_EXPECTED: dict[str, dict[int, str | None]] = {
 def test_jf6b_every_year_records_every_key_with_its_face(key: str, year: int):
     entry = form_line_entry(year, key)
     assert entry.line == JF6B_EXPECTED[key][year], (key, year, entry.line)
+    if year == 2026:        # the draft while its form's pack pins it, the final once re-pinned (JT6)
+        _face_2026(key, entry, read_on_draft="2026-09-27")
+        return
     assert entry.read == "2026-09-27"
     stem = entry.url.rsplit("/", 1)[-1].split("--")[0]
-    face = f"irs-dft/{stem}--dft.pdf" if year == 2026 else f"irs-prior/{stem}--{year}.pdf"
-    assert entry.url.endswith(face)
+    assert entry.url.endswith(f"irs-prior/{stem}--{year}.pdf")
 
 
 def _addmed_parts(year: int) -> list[str]:

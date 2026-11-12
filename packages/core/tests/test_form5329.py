@@ -12,6 +12,7 @@ from pathlib import Path
 
 import pytest
 
+from repins import draft_created, page_on_draft
 from taxfill_core.estimate import IncomeSnapshot, RetirementDistribution, estimate_refund, form5329_lines
 from taxfill_core.fetch import cached_blank_path
 from taxfill_core.filler import fill_form
@@ -149,7 +150,7 @@ def test_jr4b_the_2023_part_ix_is_the_pre_2024_layout():
 def test_jr4b_the_2026_draft_moves_page_1_by_two_and_adds_the_trump_account_parts():
     pack = _pack(2026)
     lines = {f.line: f.field for f in pack.fields}
-    assert (pack.source_status, pack.draft_created, pack.signature.page) == ("draft", "7/31/26", 4)
+    assert (draft_created(pack), page_on_draft(pack, pack.signature.page)) == ("7/31/26", 4)
     assert [lines[k] for k in ("mailing_address.city", "mailing_address.state", "mailing_address.zip")] == [
         "Page1[0].f1_5[0]", "Page1[0].f1_6[0]", "Page1[0].f1_7[0]"]
     assert (lines["1"], lines["2.exception_number"], lines["25"]) == (

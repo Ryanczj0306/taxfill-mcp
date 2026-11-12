@@ -6,6 +6,7 @@ typing "draft" or "final": the pack's own pin while it is the draft, the ledger'
 """
 from __future__ import annotations
 
+import functools
 import importlib.util
 import sys
 from pathlib import Path
@@ -28,8 +29,9 @@ def _script(name: str):
 repin_final = _script("repin_final")
 
 
+@functools.lru_cache(maxsize=None)
 def ledger() -> dict[str, dict]:
-    """pack id ("federal/2026/sched_c") -> its ledger row."""
+    """pack id ("federal/2026/sched_c") -> its ledger row (read once; do not mutate)."""
     return repin_final.load_ledger(REPO)
 
 
@@ -51,6 +53,24 @@ def draft_created(pack: FormPack) -> str | None:
         return None
     assert (pack.pdf_sha256, pack.draft_created) == (row["final_sha256"], None), pack.source_url
     return row["draft_created"]
+
+
+def draft_sha256(pack: FormPack) -> str | None:
+    """The sha256 of the draft ``pack`` was authored on (see :func:`draft_created`); None if it never was a draft."""
+    if pack.source_status == "draft":
+        return pack.pdf_sha256
+    row = row_of(pack)
+    return row["draft_sha256"] if row is not None else None
+
+
+@functools.lru_cache(maxsize=None)
+def _packs_by_stem(year: int) -> dict:
+    return repin_final.packs_by_stem(year, REPO)
+
+
+def pack_of_stem(year: int, stem: str) -> FormPack:
+    """The federal pack of ``year`` that mirrors the IRS file ``stem`` (f1040s1 -> sched_1), draft or re-pinned."""
+    return _packs_by_stem(year)[stem][2]
 
 
 def page_on_draft(pack: FormPack, page: int) -> int:
