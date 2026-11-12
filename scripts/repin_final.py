@@ -27,7 +27,9 @@ draft_created, signature.page by the cover-sheet offset, one header line); knowl
 adjudications.yaml; the form's ``form_lines`` entries in knowledge/federal/<year>.yaml, each caption first checked
 VERBATIM on the final (scripts/check_quotes.py); the ledger row in formpacks/federal/repins.yaml. Then it removes
 the label-adjacency exception rows that cleared themselves, rewrites the pack's coverage row, and regenerates the
-pack-path golden and the doc counts. A second --write changes nothing. Exit 2: written, with follow-ups by hand.
+pack-path golden and the doc counts. A batch is planned whole before a byte is written, and a second --write changes
+nothing. Exit: 0 (a compare exits 0 whatever its verdicts); 1 nothing written (a fetch or cache problem, a refused
+--write, a caption that is not verbatim); 2 written, but a regeneration step needs a hand.
 
 Never done here: reading the render (a human or agent step), the anchor benchmark (three commands, printed, once
 per batch), the knowledge blocks that still cite a draft (listed).
@@ -422,10 +424,12 @@ _QUOTED = {"draft_created", "final_posted", "final_created", "repinned"}
 def load_ledger(repo: Path = REPO) -> dict[str, dict]:
     """pack id -> its ledger row. A row with a missing or unknown key, or a second row for a pack, is refused."""
     path = repo / LEDGER
-    if not path.is_file():
-        return {}
+    return parse_ledger(path.read_text(encoding="utf-8")) if path.is_file() else {}
+
+
+def parse_ledger(text: str) -> dict[str, dict]:
     rows: dict[str, dict] = {}
-    for row in (yaml.safe_load(path.read_text(encoding="utf-8")) or {}).get("repins") or []:
+    for row in (yaml.safe_load(text) or {}).get("repins") or []:
         if set(row) != set(LEDGER_KEYS):
             raise RepinError(f"{LEDGER.as_posix()}: the row for {row.get('pack')!r} must carry exactly "
                              f"{', '.join(LEDGER_KEYS)}")
@@ -632,71 +636,94 @@ def form_lines_text(text: str, c: Comparison, final: bytes, date: str, rel: str)
     return out, moved, []
 
 
+class Tree:
+    """The repo's text files with a batch's pending edits on top, so every re-pin of a batch is planned and
+    validated before one byte is written: a batch is written whole or not at all."""
+
+    def __init__(self, repo: Path):
+        self.repo = repo
+        self.pending: dict[Path, str] = {}
+
+    def read(self, rel: Path) -> str | None:
+        if rel in self.pending:
+            return self.pending[rel]
+        return (self.repo / rel).read_text(encoding="utf-8") if (self.repo / rel).is_file() else None
+
+    def put(self, rel: Path, text: str) -> bool:
+        if text == self.read(rel):
+            return False
+        self.pending[rel] = text
+        return True
+
+    def write(self) -> None:
+        for rel, text in self.pending.items():
+            (self.repo / rel).parent.mkdir(parents=True, exist_ok=True)
+            (self.repo / rel).write_text(text, encoding="utf-8")
+
+
 @dataclass
 class Plan:
-    texts: dict[Path, str] = field(default_factory=dict)   # repo-relative path -> new text
+    edited: list[Path] = field(default_factory=list)       # repo-relative paths this re-pin changes
     notes: list[str] = field(default_factory=list)
     reminders: list[str] = field(default_factory=list)     # the steps this script never does
 
 
-def plan_write(c: Comparison, pack_path: Path, final: bytes, *, date: str, repo: Path = REPO,
+def plan_write(c: Comparison, pack_rel: Path, final: bytes, tree: Tree, *, date: str,
                exceptions_cleared: int = 0) -> Plan:
-    """Every text edit of one re-pin, computed and validated in memory; nothing is written. Idempotent: a pack
-    already pinned to this final keeps its text, its ledger row and its date."""
+    """Every text edit of one re-pin, computed and validated on ``tree``; nothing is written to disk. Idempotent: a
+    pack already pinned to this final keeps its text, its ledger row and its date."""
     if c.verdict not in WRITABLE:
         raise RepinError(f"{c.stem}: verdict {c.verdict}; --write is for {' or '.join(WRITABLE)} only")
     plan = Plan()
     year = int(c.pack.split("/")[1])
-    old = pack_path.read_text(encoding="utf-8")
-    transition = load_pack(pack_path).source_status == "draft"
-    ledger = load_ledger(repo)
 
-    def put(rel: Path, new: str, was: str) -> None:
-        if new != was:
-            plan.texts[rel] = new
+    def put(rel: Path, new: str) -> None:
+        if tree.put(rel, new):
+            plan.edited.append(rel)
 
+    old = tree.read(pack_rel)
+    transition = FormPack.model_validate(yaml.safe_load(old)).source_status == "draft"
     if transition:
         new = pack_text(old, c, date)
         repinned = FormPack.model_validate(yaml.safe_load(new))
-        assert (repinned.source_url, repinned.pdf_sha256, repinned.source_status) == (c.final_url, c.final.sha256, "final")
-        put(pack_path.relative_to(repo), new, old)
+        if (repinned.source_url, repinned.pdf_sha256, repinned.source_status) != (c.final_url, c.final.sha256, "final"):
+            raise RepinError(f"{pack_rel.as_posix()}: the text edit did not produce the final's pin; edit it by hand")
+        put(pack_rel, new)
         if repinned.signature is not None and c.offset:
             plan.notes.append(f"signature.page is now {repinned.signature.page}")
 
     rel = Path("knowledge") / "anchor" / "selection.yaml"
-    if (repo / rel).is_file():
-        was = (repo / rel).read_text(encoding="utf-8")
-        put(rel, selection_text(was, c), was)
+    if (was := tree.read(rel)) is not None:
+        put(rel, selection_text(was, c))
     rel = Path("knowledge") / "anchor" / "adjudications.yaml"
-    if transition and (repo / rel).is_file():
-        was = (repo / rel).read_text(encoding="utf-8")
+    if transition and (was := tree.read(rel)) is not None:
         new, n = adjudications_text(was, c)
-        put(rel, new, was)
+        put(rel, new)
         if n:
             plan.notes.append(f"{n} adjudication id(s) re-keyed one page lower")
 
     rel = Path("knowledge") / "federal" / f"{year}.yaml"
-    was = (repo / rel).read_text(encoding="utf-8")
-    new, moved, failed = form_lines_text(was, c, final, date, rel.as_posix())
+    new, moved, failed = form_lines_text(tree.read(rel), c, final, date, rel.as_posix())
     if failed:
         raise RepinError(f"{c.stem}: {len(failed)} form_lines caption(s) are not VERBATIM on the final; nothing "
                          "was written. Re-read them on the final face and correct `printed`:\n    "
                          + "\n    ".join(failed))
-    put(rel, new, was)
+    put(rel, new)
     if moved:
         plan.notes.append(f"form_lines recorded final, captions verbatim on the final: {', '.join(moved)}")
-    still = [i for i, line in enumerate(new.split("\n"), 1) if c.draft_url in line or f"{c.stem}--dft.pdf" in line]
+    still = [i for i, line in enumerate(new.split("\n"), 1) if f"{c.stem}--dft.pdf" in line]
     if still:
         plan.reminders.append(f"{rel.as_posix()} still cites the draft {c.stem}--dft.pdf on line(s) "
-                               f"{', '.join(map(str, still[:12]))}{' …' if len(still) > 12 else ''}: re-verify "
-                               "those blocks on the final (JT6 Knowledge)")
+                              f"{', '.join(map(str, still[:12]))}{' …' if len(still) > 12 else ''}: re-verify "
+                              "those blocks on the final (JT6 Knowledge)")
 
+    was = tree.read(LEDGER)
+    ledger = parse_ledger(was) if was is not None else {}
     rows = list(ledger.values())
     mine = ledger.get(c.pack)
     if mine is None or mine["final_sha256"] != c.final.sha256:
         rows = [r for r in rows if r["pack"] != c.pack] + [c.ledger_row(date, exceptions_cleared)]
-    was = (repo / LEDGER).read_text(encoding="utf-8") if (repo / LEDGER).is_file() else ""
-    put(LEDGER, ledger_text(was or LEDGER_HEADER, rows), was)
+    put(LEDGER, ledger_text(was or LEDGER_HEADER, rows))
     return plan
 
 
@@ -798,11 +825,11 @@ outside the repo):
     uv run python scripts/anchor_benchmark.py --check"""
 
 
-def posted_stems(year: int) -> list[str]:
+def posted_stems(year: int, say=print) -> list[str]:
     stems = []
     for watched in check_finals.watch_list(year):
         code = check_finals.head_status(watched.final_url(year))
-        print(f"  {code}  {watched.final_url(year)}")
+        say(f"  {code}  {watched.final_url(year)}")
         if code == 200:
             stems.append(watched.stem)
     return stems
@@ -830,7 +857,7 @@ def main(argv: list[str] | None = None, *, repo: Path = REPO, cache_dir: Path | 
         stems = list(dict.fromkeys([*args.stems, *local]))
         if not stems:
             say(f"=== HEAD of every watched TY{year} stem ===")
-            stems = posted_stems(year)
+            stems = posted_stems(year, say)
         ledger = load_ledger(repo)
         work = []
         for stem in stems:
@@ -876,34 +903,36 @@ def main(argv: list[str] | None = None, *, repo: Path = REPO, cache_dir: Path | 
         return 1
     follow_ups: list[str] = []
     reminders: list[str] = []
-    wrote = False
-    try:
-        for c, pack_path, _pack, final in work:
-            cleared = len(c.clearing or [])
-            plan = plan_write(c, pack_path, final, date=args.date, repo=repo, exceptions_cleared=cleared)
-            if cached_blank_path(c.final_url, c.final.sha256, cache_dir=cache_dir) is None:
-                with tempfile.TemporaryDirectory() as tmp:
-                    (Path(tmp) / "final.pdf").write_bytes(final)
-                    seed_blank(Path(tmp) / "final.pdf", c.final_url, c.final.sha256, cache_dir=cache_dir)
-            for rel, text in plan.texts.items():
-                (repo / rel).write_text(text, encoding="utf-8")
-            wrote = wrote or bool(plan.texts)
-            say(f"{c.stem}: wrote " + (", ".join(p.as_posix() for p in plan.texts) or "nothing (already re-pinned)"))
-            for note in plan.notes:
-                say(f"    {note}")
-            reminders += plan.reminders
-            if regen and repo == REPO:
-                final_path = cached_blank_path(c.final_url, c.final.sha256, cache_dir=cache_dir)
-                removed = clear_exceptions(c.pack, final_path, follow_ups)
-                if removed:
-                    say(f"    {len(removed)} label-adjacency exception row(s) cleared themselves and were removed: "
-                        + ", ".join(removed))
-            if c.verdict == GEOMETRY_MOVED:
-                reminders.append(f"{c.stem}: geometry moved ({len(c.moved)} boxes, largest {c.largest_delta} pt); "
-                                  "the render must have been READ (--render DIR)")
+    tree = Tree(repo)
+    try:                                  # plan the whole batch first: one failure and nothing is written
+        plans = [plan_write(c, pack_path.relative_to(repo), final, tree, date=args.date,
+                            exceptions_cleared=len(c.clearing or [])) for c, pack_path, _pack, final in work]
     except RepinError as exc:
         print(f"repin_final: {exc}", file=sys.stderr)
         return 1
+    tree.write()
+    wrote = bool(tree.pending)
+    for (c, _path, _pack, final), plan in zip(work, plans):
+        if cached_blank_path(c.final_url, c.final.sha256, cache_dir=cache_dir) is None:
+            with tempfile.TemporaryDirectory() as tmp:     # the tools find the final by its pin, with no download
+                (Path(tmp) / "final.pdf").write_bytes(final)
+                seed_blank(Path(tmp) / "final.pdf", c.final_url, c.final.sha256, cache_dir=cache_dir)
+        say(f"{c.stem}: wrote " + (", ".join(p.as_posix() for p in plan.edited) or "nothing (already re-pinned)"))
+        for note in plan.notes:
+            say(f"    {note}")
+        reminders += plan.reminders
+        if regen and repo == REPO:
+            final_path = cached_blank_path(c.final_url, c.final.sha256, cache_dir=cache_dir)
+            removed = clear_exceptions(c.pack, final_path, follow_ups)
+            if removed:
+                say(f"    {len(removed)} label-adjacency exception row(s) cleared themselves and were removed: "
+                    + ", ".join(removed))
+            if len(removed) != len(c.clearing or []) and plan.edited:
+                follow_ups.append(f"{c.stem}: the ledger row says exceptions_cleared {len(c.clearing or [])} and "
+                                  f"{len(removed)} row(s) were removed; correct the row")
+        if c.verdict == GEOMETRY_MOVED:
+            reminders.append(f"{c.stem}: geometry moved ({len(c.moved)} boxes, largest {c.largest_delta} pt); "
+                             "the render must have been READ (--render DIR)")
     if regen and repo == REPO and work:
         regenerate([c.pack for c, *_ in work], follow_ups)
         say("regenerated: the label-adjacency coverage rows, the pack-path golden, the doc counts")

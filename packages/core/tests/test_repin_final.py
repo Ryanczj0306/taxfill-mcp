@@ -291,6 +291,28 @@ def test_write_stops_when_a_form_lines_caption_is_not_verbatim_on_the_final(repo
     assert _snapshot(root) == before
 
 
+def test_a_batch_is_written_whole_or_not_at_all(repo, tmp_path, capsys):
+    """Two finals in one --write: the second form's caption is not on its final, so the first is not written either."""
+    root, cache, draft = repo
+    seed_blank(tmp_path / "ftest--dft.pdf", "https://www.irs.gov/pub/irs-dft/fother--dft.pdf",
+               hashlib.sha256(draft).hexdigest(), cache_dir=cache)
+    other = root / "formpacks" / "federal" / "2026" / "fother" / "pack.yaml"
+    other.parent.mkdir()
+    other.write_text((root / "formpacks" / PID / "pack.yaml").read_text().replace("ftest--dft", "fother--dft"))
+    _final(tmp_path / "final.pdf")
+    before = _snapshot(root)
+    argv = ["--year", "2026", "--final", f"ftest={tmp_path / 'final.pdf'}", "--final", f"fother={tmp_path / 'final.pdf'}"]
+    assert R.main([*argv, "--write"], repo=root, cache_dir=cache, regen=False) == 1
+    assert "other.form" in capsys.readouterr().err and _snapshot(root) == before
+    # With the caption corrected to what the face prints, the same batch is written, both packs.
+    path = root / "knowledge/federal/2026.yaml"
+    path.write_text(path.read_text().replace('line: "9"', 'line: "2"').replace(
+        "9 Some other line of some other form", "2 Taxable interest from the synthetic bank"))
+    assert R.main([*argv, "--write"], repo=root, cache_dir=cache, regen=False) == 0
+    assert set(R.load_ledger(root)) == {PID, "federal/2026/fother"}
+    assert {load_pack(p).source_status for p in (other, root / "formpacks" / PID / "pack.yaml")} == {"final"}
+
+
 def test_a_final_pack_without_a_ledger_row_or_with_another_final_is_refused(repo, tmp_path, capsys):
     root, _cache, _draft_bytes = repo
     _final(tmp_path / "final.pdf")
