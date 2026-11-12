@@ -5,6 +5,7 @@ against an independent calc call — never a hand-computed magic number.
 """
 
 from datetime import date
+from decimal import Decimal
 
 import pytest
 
@@ -3898,7 +3899,8 @@ _SPOUSE_CAPPED_SUMMED = frozenset({"traditional_ira_excess", "roth_ira_excess"})
 _SPOUSE_CONCATENATED = frozenset({"ss_withheld_by_employer", "aotc_qualified_expenses", "medicare_tax_withheld",
                                   "retirement_distributions", "w2s"})   # JT4a: each person's W-2s   # JR3a (test_jr3a_the_joint_view_keeps_each_spouses_1099rs)
 _SPOUSE_BOX_SUMMED = frozenset({"medicare_wages", "ss_wages"})  # summed, box 1 standing in for a missing one (JF3)
-_SPOUSE_OPTIONAL_SUMMED = frozenset({"itemized_deductions"})  # None unless either spouse itemizes
+# None unless either spouse gives it (itemized_deductions; JW2a: other_state_local_taxes)
+_SPOUSE_OPTIONAL_SUMMED = frozenset({"itemized_deductions", "other_state_local_taxes"})
 _HOUSEHOLD_LEVEL = frozenset({"dependent_care_persons"})  # the same persons: the MAX, never doubled
 _SPOUSE_FIELD = frozenset({"spouse"})  # the nesting itself: the joint view has none
 
@@ -3974,6 +3976,14 @@ def _spouse_coverage_gaps(combine) -> list[str]:
         "itemized_deductions": None, "spouse": spouse.model_copy(update={"itemized_deductions": None})}))
     if joint.itemized_deductions != 700 or both.itemized_deductions != 750 or neither.itemized_deductions is not None:
         gaps.append("itemized_deductions")
+    # other_state_local_taxes (JW2a): the same rule, cents kept.
+    salt_one = combine(primary.model_copy(update={"other_state_local_taxes": Decimal("10.25"), "spouse": spouse}))
+    salt_both = combine(primary.model_copy(update={
+        "other_state_local_taxes": Decimal("10.25"),
+        "spouse": spouse.model_copy(update={"other_state_local_taxes": Decimal("5.50")})}))
+    if (salt_one.other_state_local_taxes, salt_both.other_state_local_taxes, joint.other_state_local_taxes) != (
+            Decimal("10.25"), Decimal("15.75"), None):
+        gaps.append("other_state_local_taxes")
     return gaps
 
 

@@ -61,9 +61,9 @@ import re
 from datetime import date
 from decimal import Decimal
 from pathlib import Path
-from typing import Any, Literal, NamedTuple
+from typing import Annotated, Any, Literal, NamedTuple
 
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import BaseModel, BeforeValidator, ConfigDict, Field, model_validator
 
 from taxfill_core import residency
 from taxfill_core.calc import (
@@ -213,13 +213,30 @@ def _retirement_taxable(item: RetirementDistribution) -> tuple[int, str | None]:
     return max(0, item.taxable_amount - item.rolled_over), note
 
 
+def _printed_money(value: Any) -> Any:
+    """A money box as the document prints it — 34180, 34180.25, "34,180.25", "$34,180.25" — cents kept."""
+    if isinstance(value, float):
+        return Decimal(str(value))
+    if isinstance(value, str):
+        return value.replace(",", "").replace("$", "").strip()
+    return value
+
+
+# JW2a (walkthrough P1-18): a W-2 prints dollars and cents, so a box is taken as printed and the cents are
+# kept until a total is formed — Instructions for Form 1040 (2025), Rounding Off to Whole Dollars: "To round,
+# drop amounts under 50 cents and increase amounts from 50 to 99 cents to the next dollar", and "If you have
+# to add two or more amounts to figure the amount to enter on a line, include cents when adding the amounts
+# and round off only the total."
+PrintedMoney = Annotated[Decimal, BeforeValidator(_printed_money), Field(ge=0)]
+
+
 class W2Box12(BaseModel):
     """One box 12 entry (JT4a)."""
 
     model_config = ConfigDict(extra="forbid")
 
     code: str = Field(description="The code as printed (D, W, TT, ...) — knowledge/forms/w2_box12_codes.yaml.")
-    amount: int = Field(ge=0)
+    amount: PrintedMoney = Field(description="The amount as printed, cents included.")
 
 
 class W2Facts(BaseModel):
@@ -231,33 +248,55 @@ class W2Facts(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     employer: str = Field(default="", description="Which W-2 (employer name), for the assumptions.")
-    box1: int = Field(default=0, ge=0, description="Wages, tips, other compensation.")
-    box2: int = Field(default=0, ge=0, description="Federal income tax withheld.")
-    box3: int = Field(default=0, ge=0, description="Social security wages.")
-    box4: int = Field(default=0, ge=0, description="Social security tax withheld.")
-    box5: int = Field(default=0, ge=0, description="Medicare wages and tips.")
-    box6: int = Field(default=0, ge=0, description="Medicare tax withheld.")
-    box7: int = Field(default=0, ge=0, description="Social security tips.")
-    box10: int = Field(default=0, ge=0, description="Dependent care benefits.")
+    box1: PrintedMoney = Field(default=Decimal(0), description="Wages, tips, other compensation.")
+    box2: PrintedMoney = Field(default=Decimal(0), description="Federal income tax withheld.")
+    box3: PrintedMoney = Field(default=Decimal(0), description="Social security wages.")
+    box4: PrintedMoney = Field(default=Decimal(0), description="Social security tax withheld.")
+    box5: PrintedMoney = Field(default=Decimal(0), description="Medicare wages and tips.")
+    box6: PrintedMoney = Field(default=Decimal(0), description="Medicare tax withheld.")
+    box7: PrintedMoney = Field(default=Decimal(0), description="Social security tips.")
+    box10: PrintedMoney = Field(default=Decimal(0), description="Dependent care benefits.")
     box12: list[W2Box12] = Field(default_factory=list)
     box14b: list[str] = Field(default_factory=list, description="2026 onward: Treasury Tipped Occupation Code(s).")
+    box17: PrintedMoney = Field(
+        default=Decimal(0),
+        description="State income tax withheld — the total of the form's box 17 lines (JW2a). It is never added to "
+                    "federal_withholding; the estimate weighs it against the standard deduction.",
+    )
 
     def coded(self, *codes: str) -> int:
-        return sum(e.amount for e in self.box12 if e.code.strip().upper() in codes)
+        """The box 12 total for the given codes, in whole dollars (cents added first, then rounded)."""
+        return irs_round(sum((e.amount for e in self.box12 if e.code.strip().upper() in codes), Decimal(0)))
 
 
 _W2_402G_CODES = ("D", "E", "F", "S", "AA", "BB")   # IRC 402(g)(3) and 402A(c)(1) (w2_box12_codes.yaml)
 
 
+def _whole(amounts) -> int:
+    """Whole dollars from amounts as printed: the cents are added first and only the total is rounded."""
+    return irs_round(sum(amounts, Decimal(0)))
+
+
+def _coded_total(w2s: list[W2Facts], *codes: str) -> int:
+    """The box 12 total for the given codes across every W-2, in whole dollars."""
+    return _whole(e.amount for w in w2s for e in w.box12 if e.code.strip().upper() in codes)
+
+
 def _w2_aggregates(w2s: list[W2Facts]) -> dict[str, Any]:
     return {
-        "wages": sum(w.box1 for w in w2s),
-        "ss_wages": sum(w.box3 + w.box7 for w in w2s),
-        "medicare_wages": sum(w.box5 for w in w2s),
-        "ss_withheld_by_employer": [w.box4 for w in w2s if w.box4],
-        "medicare_tax_withheld": [w.box6 for w in w2s if w.box6],
-        "dependent_care_benefits": sum(w.box10 for w in w2s),
+        "wages": _whole(w.box1 for w in w2s),
+        "ss_wages": _whole(w.box3 + w.box7 for w in w2s),
+        "medicare_wages": _whole(w.box5 for w in w2s),
+        # One entry per employer, each its own printed amount rounded.
+        "ss_withheld_by_employer": [r for w in w2s if (r := irs_round(w.box4))],
+        "medicare_tax_withheld": [r for w in w2s if (r := irs_round(w.box6))],
+        "dependent_care_benefits": _whole(w.box10 for w in w2s),
     }
+
+
+def _state_local_tax_paid(snap: "IncomeSnapshot") -> int:
+    """The state and local tax this snapshot shows (JW2a): the W-2s' box 17 plus other_state_local_taxes."""
+    return _whole([*(w.box17 for w in snap.w2s), snap.other_state_local_taxes or Decimal(0)])
 
 
 class IncomeSnapshot(BaseModel):
@@ -525,6 +564,18 @@ class IncomeSnapshot(BaseModel):
     aca_slcsp: int = Field(default=0, ge=0, description="Form 1095-A line 33B — annual SLCSP premiums.")
     aca_aptc: int = Field(default=0, ge=0, description="Form 1095-A line 33C — annual advance PTC paid.")
     itemized_deductions: int | None = Field(default=None, ge=0, description="Total itemized deductions, if itemizing.")
+    other_state_local_taxes: PrintedMoney | None = Field(
+        default=None,
+        description=(
+            "JW2a: state and local taxes paid in the year that are NOT in the W-2s' box 17, as printed (cents "
+            "kept): W-2 box 19 local income tax, a mandatory state disability or family leave contribution in box "
+            "14, state estimated payments, real estate tax, the value-based part of a yearly vehicle fee — and box "
+            "17 itself when no w2s are given. Never priced on its own: with no itemized_deductions, the estimate "
+            "weighs box 17 plus this figure, after the year's limit (tax.salt_cap), against the standard "
+            "deduction. Leave it out of itemized_deductions' place: when you know the whole Schedule A total, "
+            "pass that instead. None = not collected."
+        ),
+    )
     spouse: "IncomeSnapshot | None" = Field(
         default=None,
         description="The spouse's own amounts (enables a true two-return MFS comparison). One level only.",
@@ -561,12 +612,12 @@ class IncomeSnapshot(BaseModel):
             elif (sorted(given) if isinstance(given, list) else given) != (
                     sorted(value) if isinstance(value, list) else value):
                 mismatches.append(f"{key} {given!r} vs the W-2s' {value!r}")
-        box2 = sum(w.box2 for w in w2s)
+        box2 = _whole(w.box2 for w in w2s)
         if out.get("federal_withholding") in (None, 0):
             out["federal_withholding"] = box2
         elif out["federal_withholding"] < box2:
             mismatches.append(f"federal_withholding {out['federal_withholding']} is below the W-2s' box 2 total {box2}")
-        tt = sum(w.coded("TT") for w in w2s)
+        tt = _coded_total(w2s, "TT")
         if tt and out.get("qualified_overtime_premium") in (None, 0):
             out["qualified_overtime_premium"] = tt
         if mismatches:
@@ -670,6 +721,11 @@ class IncomeSnapshot(BaseModel):
                 None
                 if self.itemized_deductions is None and s.itemized_deductions is None
                 else (self.itemized_deductions or 0) + (s.itemized_deductions or 0)
+            ),
+            other_state_local_taxes=(
+                None
+                if self.other_state_local_taxes is None and s.other_state_local_taxes is None
+                else (self.other_state_local_taxes or Decimal(0)) + (s.other_state_local_taxes or Decimal(0))
             ),
         )
 
@@ -1069,7 +1125,8 @@ class Roadmap(BaseModel):
     )
     missing_documents: list[str] = Field(
         default_factory=list,
-        description="Income documents not yet in hand (status != 'have') — honest gaps, never invented.",
+        description="Income documents not yet in hand (status 'missing') — honest gaps, never invented. A document "
+                    "recorded 'not_applicable' is an answer, not a gap, and is never listed.",
     )
     estimated_time: str = Field(default="", description="Coarse honest estimate of time to finish.")
 
@@ -3600,7 +3657,9 @@ def _build_roadmap(profile: Profile, year: int, result=None, *, kind: str = "eit
         elif ident is not None and ident.us_person is not None and ident.us_person.value is False:
             forms = ["Form 1040-NR", "Form 8843"]
 
-    missing = sorted({d.kind for d in profile.income_documents if d.status != "have"})
+    # JW2a (P1-07): only 'missing' is a gap — 'not_applicable' records a NO (intake's 1095-A and
+    # foreign-account answers), so it is never reported as missing.
+    missing = sorted({d.kind for d in profile.income_documents if d.status == "missing"})
 
     if missing:
         time = "Roughly 1-2 hours once the missing documents are in hand."
@@ -5981,7 +6040,7 @@ def estimate_refund(
     for who, snap in per_person:
         if not snap.w2s:
             continue
-        deferred = sum(w.coded(*_W2_402G_CODES) for w in snap.w2s)
+        deferred = _coded_total(snap.w2s, *_W2_402G_CODES)
         limit = getattr(getattr(limits, "elective_deferral_402g", None), "limit", None) if limits else None
         if limit is not None and deferred > int(limit):
             assumptions.append(
@@ -5990,7 +6049,7 @@ def estimate_refund(
                 f"catch-up. The limit is per PERSON across every employer; the excess is income for {year} and must "
                 f"be distributed by April 15 of the next year (calc op elective_deferral_room names the room and the "
                 f"catch-ups). Not priced here.")
-        hsa_w = sum(w.coded("W") for w in snap.w2s)
+        hsa_w = _coded_total(snap.w2s, "W")
         if hsa_w and snap.pre_agi_adjustments:
             assumptions.append(
                 f"Check the HSA figure: {who} has W-2 box 12 code W (${hsa_w:,}) and pre_agi_adjustments were "
@@ -6402,7 +6461,7 @@ def estimate_refund(
             "and married is never inferred from income data); confirming your marital status enables "
             "the MFJ/MFS spouse-split comparison and would change this estimate materially."
         )
-    pending = [d for d in profile.income_documents if d.status != "have"]
+    pending = [d for d in profile.income_documents if d.status == "missing"]   # never 'not_applicable' (JW2a)
     if pending:
         kinds = ", ".join(sorted({d.kind for d in pending}))
         changes.append(f"You have unconfirmed or missing documents ({kinds}); confirming them changes income and tightens this estimate.")
