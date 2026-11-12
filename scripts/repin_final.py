@@ -556,8 +556,8 @@ def pack_text(text: str, c: Comparison, date: str) -> str:
         elif re.search(r"^signature:[ \t]*(#.*)?\n(?:[ \t]+.*\n)*?[ \t]+page:", text, flags=re.M):
             text = _sub_once(r"^(signature:[ \t]*(?:#.*)?\n(?:[ \t]+.*\n)*?[ \t]+page:[ \t]*)(\d+)[^\n]*$", block,
                              text, "pack signature.page")
-    header = (f"# RE-PINNED TO THE IRS FINAL {date} (scripts/repin_final.py; verdict {c.verdict}; row in "
-              f"{LEDGER.as_posix()}). The text below was written on the draft.\n")
+    header = (f"# RE-PINNED TO THE IRS FINAL {date}, verdict {c.verdict} (scripts/repin_final.py; "
+              f"{LEDGER.as_posix()}).\n")
     return header + text
 
 
@@ -775,7 +775,7 @@ def render(c: Comparison, pack: FormPack, final: bytes, out_dir: Path) -> list[s
     checks = [f"{c.stem}: READ {len(pages)} page(s) in {home_display(out_dir)} against {c.stem}_sentinels.json "
               f"({len(rows)} sentinels): each value sits in the box of its own printed line, none clipped"]
     if moved:
-        checks.append(f"{c.stem}: the {len(moved)} moved boxes first: "
+        checks.append(f"{c.stem}: first the lines whose box moved ({len(moved)} boxes): "
                       + ", ".join(r["line"] for r in rows if r["moved"]))
     if c.cover_sheet_dropped and pack.signature is not None:
         on_final = pack.signature.page - (c.offset if pack.source_status == "draft" else 0)
@@ -870,6 +870,7 @@ def main(argv: list[str] | None = None, *, repo: Path = REPO, cache_dir: Path | 
         return 1
     follow_ups: list[str] = []
     reminders: list[str] = []
+    wrote = False
     try:
         for c, pack_path, _pack, final in work:
             cleared = len(c.clearing or [])
@@ -880,6 +881,7 @@ def main(argv: list[str] | None = None, *, repo: Path = REPO, cache_dir: Path | 
                     seed_blank(Path(tmp) / "final.pdf", c.final_url, c.final.sha256, cache_dir=cache_dir)
             for rel, text in plan.texts.items():
                 (repo / rel).write_text(text, encoding="utf-8")
+            wrote = wrote or bool(plan.texts)
             say(f"{c.stem}: wrote " + (", ".join(p.as_posix() for p in plan.texts) or "nothing (already re-pinned)"))
             for note in plan.notes:
                 say(f"    {note}")
@@ -899,7 +901,7 @@ def main(argv: list[str] | None = None, *, repo: Path = REPO, cache_dir: Path | 
     if regen and repo == REPO and work:
         regenerate([c.pack for c, *_ in work], follow_ups)
         say("regenerated: the label-adjacency coverage rows, the pack-path golden, the doc counts")
-    if work:
+    if wrote:
         say("\nNOT DONE HERE:")
         for item in reminders:
             say(f"  - {item}")
