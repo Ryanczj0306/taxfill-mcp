@@ -1,0 +1,128 @@
+# The TY2026+ finals ledger (Phase J JT6): one row per draft pack re-pinned to its IRS final. Written by
+# scripts/repin_final.py --write from its own comparison of the pinned draft and the final; never typed. The tests
+# read it (every row is its pack's pin; a pack's draft "Created" stamp lives on here after the re-pin).
+#   draft_* / final_*   the two blanks: url, sha256, the footer's "Created" date, pages; final_posted is the PDF's
+#                       own metadata date
+#   pages, widgets      of the final; cover_sheet_dropped: the draft's page 1 was the IRS cover sheet
+#   rects_moved         widgets with a /Rect edge 0.1 pt or more off the draft's; largest_rect_delta is the largest
+#                       difference of any edge in points, a nudge under 0.1 pt included
+#   words_changed       page words that differ beyond the DRAFT banners and the footer date (0 on every row:
+#                       anything else is needs_remap and is never written)
+#   exceptions_cleared  label-adjacency exception rows the final cleared (formpacks/label_adjacency_exceptions.yaml)
+#   verdict             identical | geometry_moved (the render was read); repinned: the date the pack moved
+
+repins:
+- pack: federal/2026/sched_c
+  stem: f1040sc
+  draft_url: https://www.irs.gov/pub/irs-dft/f1040sc--dft.pdf
+  draft_sha256: 287b4510dd847c11f6cbbcc98fee05ac5ff187cc18e1413f8759a4a7cd802224
+  draft_created: "5/15/26"
+  draft_pages: 3
+  final_url: https://www.irs.gov/pub/irs-prior/f1040sc--2026.pdf
+  final_sha256: cc44e7d1150e54d991835814c1191f60a32617730ca9e50e6f532b51293a86b4
+  final_posted: "2026-10-29"
+  final_created: "5/15/26"
+  pages: 2
+  widgets: 109
+  cover_sheet_dropped: true
+  rects_moved: 0
+  largest_rect_delta: 0.0
+  words_changed: 0
+  exceptions_cleared: 0
+  verdict: identical
+  repinned: "2026-11-05"
+- pack: federal/2026/sched_se
+  stem: f1040sse
+  draft_url: https://www.irs.gov/pub/irs-dft/f1040sse--dft.pdf
+  draft_sha256: a59fa5dcf2f0a8a5a71c46aa3837e9e8e605eeecc0a666bcb784a368900d141c
+  draft_created: "4/27/26"
+  draft_pages: 3
+  final_url: https://www.irs.gov/pub/irs-prior/f1040sse--2026.pdf
+  final_sha256: a42f5a19c0e84a966a49b5f4ca021d3f49c4fda2e087da0b00bf2003525f8655
+  final_posted: "2026-11-03"
+  final_created: "4/27/26"
+  pages: 2
+  widgets: 27
+  cover_sheet_dropped: true
+  rects_moved: 0
+  largest_rect_delta: 0.0
+  words_changed: 0
+  exceptions_cleared: 0
+  verdict: identical
+  repinned: "2026-11-05"
+- pack: federal/2026/f2555
+  stem: f2555
+  draft_url: https://www.irs.gov/pub/irs-dft/f2555--dft.pdf
+  draft_sha256: 4057a14f7d9ed31a328c6a7ccb4e17d127addd4d3b0be05cf85a78320eb7e775
+  draft_created: "9/18/26"
+  draft_pages: 4
+  final_url: https://www.irs.gov/pub/irs-prior/f2555--2026.pdf
+  final_sha256: a88984fa3dd5b5846cc446032aaa2e0a6489d5efc8ac63f62632613c7e3d6b11
+  final_posted: "2026-11-05"
+  final_created: "9/18/26"
+  pages: 3
+  widgets: 160
+  cover_sheet_dropped: true
+  rects_moved: 0
+  largest_rect_delta: 0.003
+  words_changed: 0
+  exceptions_cleared: 1
+  verdict: identical
+  repinned: "2026-11-05"
+- pack: federal/2026/f8843
+  stem: f8843
+  draft_url: https://www.irs.gov/pub/irs-dft/f8843--dft.pdf
+  draft_sha256: fa350c49d804c21e3ca9bc3edaf1ef9ce9ed71cd302b47ee919383438d792826
+  draft_created: "5/11/26"
+  draft_pages: 5
+  final_url: https://www.irs.gov/pub/irs-prior/f8843--2026.pdf
+  final_sha256: 6e32cbf67c45464e7d93ee4c184a0be775bffd59f7574d054064ee4476b46c08
+  final_posted: "2026-11-05"
+  final_created: "5/11/26"
+  pages: 4
+  widgets: 48
+  cover_sheet_dropped: true
+  rects_moved: 0
+  largest_rect_delta: 0.05
+  words_changed: 0
+  exceptions_cleared: 0
+  verdict: identical
+  repinned: "2026-11-05"
+- pack: federal/2026/sched_8812
+  stem: f1040s8
+  draft_url: https://www.irs.gov/pub/irs-dft/f1040s8--dft.pdf
+  draft_sha256: 0638b2863bdaeadfd3fccee12a9145bf92a442d8de156584c5602cc7e3881422
+  draft_created: "4/24/26"
+  draft_pages: 2
+  final_url: https://www.irs.gov/pub/irs-prior/f1040s8--2026.pdf
+  final_sha256: 05b96bd809b37cfd0c223ac0909d2d82645eb8bfd6244701189f40ab8a4ab45c
+  final_posted: "2026-11-09"
+  final_created: "8/18/26"
+  pages: 2
+  widgets: 41
+  cover_sheet_dropped: false
+  rects_moved: 35
+  largest_rect_delta: 5.5
+  words_changed: 0
+  exceptions_cleared: 0
+  verdict: geometry_moved
+  repinned: "2026-11-11"
+- pack: federal/2026/f8606
+  stem: f8606
+  draft_url: https://www.irs.gov/pub/irs-dft/f8606--dft.pdf
+  draft_sha256: 4d7e8fe466cf0534817d78bc5e6e84d78971b59cbbed0523eaa6448a20c2f2a6
+  draft_created: "4/21/26"
+  draft_pages: 3
+  final_url: https://www.irs.gov/pub/irs-prior/f8606--2026.pdf
+  final_sha256: eeb2c5a11da6903e30c468572da0242c28f19ee135b9853562d7ce9fc037cb56
+  final_posted: "2026-11-10"
+  final_created: "4/21/26"
+  pages: 2
+  widgets: 47
+  cover_sheet_dropped: true
+  rects_moved: 0
+  largest_rect_delta: 0.0
+  words_changed: 0
+  exceptions_cleared: 0
+  verdict: identical
+  repinned: "2026-11-11"

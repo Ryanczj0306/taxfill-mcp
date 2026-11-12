@@ -261,7 +261,7 @@ class Comparison:
             return NEEDS_REMAP
         return GEOMETRY_MOVED if self.moved or self.appearance else IDENTICAL
 
-    def ledger_row(self, repinned: str, exceptions_cleared: int) -> dict:
+    def ledger_row(self, repinned: str | None, exceptions_cleared: int) -> dict:
         return {
             "pack": self.pack, "stem": self.stem,
             "draft_url": self.draft_url, "draft_sha256": self.draft.sha256, "draft_created": self.draft.created,
@@ -286,6 +286,7 @@ class Comparison:
             "banner_words": self.banner_words, "footer_created": list(self.footer) if self.footer else None,
             "words_changed": self.words_changed, "mapped_missing": self.mapped_missing, "problems": self.problems,
             "exceptions_clearing": self.clearing, "label_adjacency_unexcused": self.unexcused,
+            "ledger_row": self.ledger_row(None, len(self.clearing or [])),   # --write adds the date
         }
 
 
