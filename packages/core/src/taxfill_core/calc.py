@@ -5293,6 +5293,16 @@ _IRC_408O_NONDEDUCTIBLE = (
     "IRC 408(o)(1): \"designated nondeductible contributions may be made on behalf of an individual to an "
     "individual retirement plan\""
 )
+# IRC 219(g)(4) (read 2026-11-12 at uscode.house.gov), with Pub. 590-A (2025) Tables 1-2 and 1-3, footnote 2:
+# "If you didn't live with your spouse at any time during the year, your filing status is considered Single for
+# this purpose" and "You are entitled to the full deduction if you didn't live with your spouse at any time
+# during the year."
+_IRC_219G4_LIVED_APART = (
+    "MFS but lived apart from the spouse ALL year: IRC 219(g)(4) — separate filers who \"live apart at all times "
+    "during such taxable year\" \"shall not be treated as married individuals for purposes of this subsection\" — "
+    "so the single range applies and the spouse's plan does not count (whether you lived apart all year is your "
+    "judgment of the facts)."
+)
 _IRC_219B1_COMPENSATION = (
     "IRC 219(b)(1): the deduction \"shall not exceed the lesser of\" the dollar limit or \"an amount equal to the "
     "compensation includible in the individual's gross income for such taxable year\""
@@ -5441,21 +5451,44 @@ def ira_contribution_eligibility(
                 "exists ONLY for active participants; with no coverage anywhere the deduction is "
                 "unlimited by MAGI (on a joint return also pass spouse_covered_by_employer_plan)"
             )
+        # IRC 219(g)(4): separate filers who lived apart all year are not married for the phase-out — the single
+        # range, and the spouse's plan does not count.
+        mfs_apart = mfs and mfs_lived_apart_all_year
+        if mfs_apart:
+            notes.append(_IRC_219G4_LIVED_APART)
+        # A spouse's plan counts (IRC 219(g)(1)) only for a married filer not living apart: a joint return, or a
+        # separate return of spouses who lived together at some time in the year. A qualifying surviving spouse
+        # has no spouse (Pub. 590-A Table 1-3: "single, head of household, or qualifying surviving spouse").
+        spouse_counts = filing_status == "married_filing_jointly" or (mfs and not mfs_apart)
         if not covered_by_employer_plan:
-            if mfj_like and spouse_covered_by_employer_plan is None:
+            if spouse_counts and spouse_covered_by_employer_plan is None:
                 raise ValueError(
-                    "on a joint return with covered_by_employer_plan=False, pass "
-                    "spouse_covered_by_employer_plan (True/False) — a covered SPOUSE triggers the "
-                    "higher spousal phase-out range"
+                    "a married filer with covered_by_employer_plan=False must pass spouse_covered_by_employer_plan "
+                    "(True/False) — a covered SPOUSE brings the phase-out back: the higher spousal range on a "
+                    "joint return, $0-$10,000 on a separate return (IRC 219(g)(1), (g)(7); Pub 590-A Table 1-3). A "
+                    "separate filer who lived apart from the spouse all year sets mfs_lived_apart_all_year instead"
                 )
-            if mfj_like and spouse_covered_by_employer_plan:
-                rng = ira.deduction_magi_phaseout_active.married_filing_jointly_spouse_covered
-                notes.append("Not covered yourself, but the spouse is: the higher spousal range applies.")
+            if spouse_counts and spouse_covered_by_employer_plan:
+                if mfs:
+                    rng = ira.deduction_magi_phaseout_active.married_filing_separately
+                    notes.append(
+                        "Not covered yourself, but the spouse is, and you file separately: the married-filing-"
+                        "separately range applies (IRC 219(g)(1), (g)(3)(B)(iii); Pub 590-A Table 1-3)."
+                    )
+                else:
+                    rng = ira.deduction_magi_phaseout_active.married_filing_jointly_spouse_covered
+                    notes.append("Not covered yourself, but the spouse is: the higher spousal range applies.")
             else:
-                # No employer plan anywhere: fully deductible regardless of MAGI.
+                # No plan that counts: fully deductible regardless of MAGI.
+                if spouse_counts:
+                    who = "neither spouse is an active participant in an employer plan"
+                elif mfs_apart:
+                    who = ("you are not an active participant in an employer plan and, living apart from your "
+                           "spouse all year, your spouse's plan does not count (IRC 219(g)(4))")
+                else:
+                    who = "you are not an active participant in an employer plan"
                 work = (
-                    f"Traditional-IRA deduction {year}: neither spouse is an active participant in an "
-                    f"employer plan, so NO MAGI phase-out applies — deductible up to the "
+                    f"Traditional-IRA deduction {year}: {who}, so NO MAGI phase-out applies — deductible up to the "
                     f"${full_limit:,} limit (IRC 219; Pub 590-A). Contributed ${contributed_i:,} -> "
                     f"excess ${max(0, contributed_i - full_limit):,}."
                 )
@@ -5470,7 +5503,7 @@ def ira_contribution_eligibility(
                     work=work, citation=ira.citation,
                 )
         else:
-            if mfs:
+            if mfs and not mfs_apart:
                 rng = ira.deduction_magi_phaseout_active.married_filing_separately
             elif mfj_like:
                 rng = ira.deduction_magi_phaseout_active.married_filing_jointly_covered
@@ -5521,20 +5554,32 @@ def ira_contribution_eligibility(
     ]
     work_lines.extend(notes)
     if ira_type != "roth":
+        rate = f"{ira.excess_excise_rate:%}"
         if nondeductible:
+            if excess:
+                head = (f"WITHIN THE LIMIT: of the first ${full_limit:,} contributed (the limit), ${deductible:,} is "
+                        f"deductible and ${nondeductible:,} is a NONDEDUCTIBLE contribution")
+                tail = (f"so no {rate} excise applies to that ${nondeductible:,} and it does not need to be withdrawn; "
+                        f"the ${excess:,} over the limit is the excess, below.")
+            else:
+                head = (f"NOT AN EXCESS: of the ${contributed_i:,} contributed, ${deductible:,} is deductible and "
+                        f"${nondeductible:,} is a NONDEDUCTIBLE contribution")
+                tail = f"so no {rate} excise applies to it and it does not need to be withdrawn or recharacterized."
             work_lines.append(
-                f"NOT AN EXCESS: of the ${contributed_i:,} contributed, ${deductible:,} is deductible and "
-                f"${nondeductible:,} is a NONDEDUCTIBLE contribution — allowed at any MAGI and reported on Form 8606 "
-                f"line 1, where it becomes basis. {_IRC_408O_NONDEDUCTIBLE}; {_IRC_4973B_WITHOUT_219G} — the "
-                f"phase-out reduces the deduction, never the amount that may be contributed, so no "
-                f"{ira.excess_excise_rate:%} excise applies to it and nothing needs to be withdrawn or recharacterized."
+                f"{head} — allowed at any MAGI and reported on Form 8606 line 1, where it becomes basis. "
+                f"{_IRC_408O_NONDEDUCTIBLE}; {_IRC_4973B_WITHOUT_219G} — the phase-out reduces the deduction, never "
+                f"the amount that may be contributed, {tail}"
             )
         elif contributed_i:
-            work_lines.append(f"Of the ${contributed_i:,} contributed, ${deductible:,} is deductible.")
+            work_lines.append(
+                f"Of the ${min(contributed_i, full_limit):,} contributed within the limit, ${deductible:,} is deductible."
+            )
         work_lines.append(
             f"This op tests the traditional IRA dollar limit only (${full_limit:,}); the limit is shared with Roth "
-            f"IRA contributions for the year (calc op contribution_limits). {_IRC_219B1_COMPENSATION}: with less "
-            f"taxable compensation than the contribution, the difference is an excess this op does not see."
+            f"IRA contributions for the year (calc op contribution_limits). {_IRC_219B1_COMPENSATION} — on a joint "
+            f"return the spouse with less compensation counts the couple's combined compensation less the other "
+            f"spouse's IRA contributions (IRC 219(c)). A contribution over the compensation so measured is an excess "
+            f"this op does not see."
         )
     if excess:
         if dec31_value is None:
@@ -5560,9 +5605,14 @@ def ira_contribution_eligibility(
             f"EXCESS: contributed ${contributed_i:,} -> ${excess:,} over {over_what}. {charge} Fixable "
             f"WITHOUT the excise by withdrawing the contribution plus its net income by the due date of your "
             f"{year} return INCLUDING extensions — {_excess_correction_deadline(pack, year)}. {_IRC_408D4A}; "
-            f"{_IRC_4973_NOT_CONTRIBUTED[ira_type]}. And {_I5329_SECTION_9100}. Or recharacterize it by the same "
-            f"deadline: calc op ira_recharacterization (the contribution and its net income moved trustee to "
-            f"trustee to the other IRA type)."
+            f"{_IRC_4973_NOT_CONTRIBUTED[ira_type]}. And {_I5329_SECTION_9100}. "
+            + (
+                "Or recharacterize it by the same deadline: calc op ira_recharacterization (the contribution and its "
+                "net income moved trustee to trustee to the other IRA type)."
+                if ira_type == "roth" else
+                "Recharacterizing does not cure it: the limit is one limit across traditional and Roth IRAs, so the "
+                "same amount would be an excess in the Roth IRA."
+            )
         )
     if ira_type == "roth":
         work_lines.append(

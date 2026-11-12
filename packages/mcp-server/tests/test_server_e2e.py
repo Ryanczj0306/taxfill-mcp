@@ -141,6 +141,20 @@ def test_calc_tax_matches_engine():
     assert data["citation"]["url"].startswith("https://www.irs.gov/")
 
 
+def test_calc_ira_deduction_split_over_mcp():
+    """JW1 / P-037: over MCP the deduction path returns the split, and a nondeductible contribution within the limit
+    is not an excess (the backdoor-Roth fact pattern the first end-to-end walkthrough hit)."""
+    data = _data(_run(_call("calc", {"op": "ira_contribution_eligibility", "args": {
+        "magi": 187385, "filing_status": "single", "year": 2025, "ira_type": "traditional_deduction",
+        "contributed": 7000, "covered_by_employer_plan": True}})))
+    assert (data["allowed"], data["deductible"], data["nondeductible"]) == (0, 0, 7000)
+    assert (data["excess"], data["excise_per_year"]) == (0, 0)
+    assert "NOT AN EXCESS:" in data["work"] and "Form 8606 line 1" in data["work"]
+    roth = _data(_run(_call("calc", {"op": "ira_contribution_eligibility", "args": {
+        "magi": 200000, "filing_status": "single", "year": 2025, "ira_type": "roth", "contributed": 7000}})))
+    assert (roth["excess"], roth["deductible"], roth["nondeductible"]) == (7000, None, None)
+
+
 def test_calc_phase_f_ops_are_dispatched():
     # One golden per new op (full derivations live in the core test suite).
     qd = _data(_run(_call("calc", {"op": "tax_with_preferential_rates", "args": {

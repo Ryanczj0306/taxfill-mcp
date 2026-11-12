@@ -205,12 +205,13 @@ def test_jf1b4_the_traditional_path_quotes_its_own_subsection_and_no_roth_input(
         200_000, "single", 2025, ira_type="traditional_deduction", covered_by_employer_plan=True, contributed=9_000,
     )
     assert (r.excess, r.excise_per_year) == (2_000, 120) and "$2,000 over the $7,000 contribution limit" in r.work
+    assert "recharacterize it by the same deadline" not in r.work   # P-037: it cannot cure an over-the-limit excess
     assert "roth_ira_dec31_value" not in r.work and "4973(f)" not in r.work
     assert "IRC 4973(b)" in r.work and "individual retirement account or the individual retirement annuity" in r.work
     assert "April 15, 2026 (the 2025 pack's due date), or October 15, 2026 if you extend" in r.work
 
 
-# ── JW1 (2026-11-12, walkthrough P1): the deduction phase-out never creates an excess ──────────────
+# ── JW1 / P-037 (2026-11-12, walkthrough P1): the deduction phase-out never creates an excess ──────
 
 
 def test_jw1_a_nondeductible_traditional_contribution_within_the_limit_is_not_an_excess():
@@ -244,6 +245,94 @@ def test_jw1_the_phase_out_splits_a_contribution_and_only_the_part_over_the_limi
     assert (below.deductible, below.nondeductible, below.excess) == (7_000, 0, 0) and "NOT AN EXCESS" not in below.work
     # The compensation cap of IRC 219(b)(1) is outside the op's inputs, and the work says so.
     assert "compensation includible in the individual's gross income" in below.work
+
+
+def test_jw1_the_split_follows_what_was_contributed():
+    """P-037: `deductible` and `nondeductible` are parts of the amount actually contributed, not of the limit."""
+    kw = dict(filing_status="single", year=2025, ira_type="traditional_deduction", covered_by_employer_plan=True)
+    above = ira_contribution_eligibility(200_000, contributed=3_000, **kw)          # allowed 0
+    assert (above.deductible, above.nondeductible, above.excess) == (0, 3_000, 0)
+    within = ira_contribution_eligibility(84_000, contributed=3_000, **kw)          # allowed 3,500
+    assert (within.allowed, within.deductible, within.nondeductible, within.excess) == (3_500, 3_000, 0, 0)
+    no_plan = ira_contribution_eligibility(200_000, "single", 2025, ira_type="traditional_deduction",
+                                           covered_by_employer_plan=False, contributed=3_000)
+    assert (no_plan.deductible, no_plan.nondeductible, no_plan.excess) == (3_000, 0, 0)
+    for r in (above, within):
+        assert r.deductible + r.nondeductible + r.excess == 3_000
+        # The year-end sentence speaks of deductibility on this path, never of an excess that "flips".
+        assert "excess under today's status" not in r.work and "Deductibility is tested at YEAR END" in r.work
+
+
+def test_jw1_an_excess_beside_a_nondeductible_part_is_worded_apart():
+    """P-037 (the fix's review): with $8,000 contributed the first $7,000 is split and only the $1,000 over the limit
+    is the excess; the line about the split must not say that nothing needs to be withdrawn."""
+    r = ira_contribution_eligibility(84_000, "single", 2025, ira_type="traditional_deduction",
+                                     covered_by_employer_plan=True, contributed=8_000)
+    split = next(line for line in r.work.splitlines() if line.startswith("WITHIN THE LIMIT:"))
+    assert "of the first $7,000 contributed (the limit), $3,500 is deductible and $3,500 is a NONDEDUCTIBLE" in split
+    assert "the $1,000 over the limit is the excess" in split and "NOT AN EXCESS" not in r.work
+    assert "does not need to be withdrawn or recharacterized" not in r.work
+    # A traditional excess is over the one limit shared with Roth IRAs: moving it to a Roth IRA cures nothing.
+    excess = next(line for line in r.work.splitlines() if line.startswith("EXCESS:"))
+    assert "Recharacterizing does not cure it" in excess and "Or recharacterize it by the same deadline" not in excess
+    roth = ira_contribution_eligibility(200_000, "single", 2025, ira_type="roth", contributed=7_000)
+    assert "Or recharacterize it by the same deadline: calc op ira_recharacterization" in roth.work
+
+
+def test_jw1_the_compensation_caveat_carries_the_joint_return_rule():
+    r = ira_contribution_eligibility(100_000, "married_filing_jointly", 2025, ira_type="traditional_deduction",
+                                     covered_by_employer_plan=True, contributed=7_000)
+    assert "on a joint return the spouse with less compensation counts the couple's combined compensation" in r.work
+    assert "IRC 219(c)" in r.work
+
+
+def test_jw1_a_separate_filer_whose_spouse_is_covered_is_phased_out_from_zero():
+    """IRC 219(g)(1) applies when "an individual or the individual's spouse is an active participant", and a married
+    individual filing separately has an applicable dollar amount of zero ((g)(3)(B)(iii)); Pub. 590-A (2025) Table
+    1-3: "married filing separately with a spouse who is covered by a plan at work: less than $10,000 a partial
+    deduction; $10,000 or more no deduction". Before 2026-11-12 the op returned the full deduction and said neither
+    spouse was covered."""
+    kw = dict(filing_status="married_filing_separately", year=2025, ira_type="traditional_deduction",
+              covered_by_employer_plan=False, contributed=7_000)
+    with pytest.raises(ValueError, match="must pass spouse_covered_by_employer_plan"):
+        ira_contribution_eligibility(50_000, **kw)
+    covered_spouse = ira_contribution_eligibility(50_000, spouse_covered_by_employer_plan=True, **kw)
+    assert covered_spouse.phaseout == {"start": 0, "end": 10_000}
+    assert (covered_spouse.deductible, covered_spouse.nondeductible, covered_spouse.excess) == (0, 7_000, 0)
+    assert "neither spouse" not in covered_spouse.work
+    partial = ira_contribution_eligibility(5_000, spouse_covered_by_employer_plan=True, **kw)
+    assert (partial.deductible, partial.nondeductible) == (3_500, 3_500)
+    neither = ira_contribution_eligibility(50_000, spouse_covered_by_employer_plan=False, **kw)
+    assert (neither.deductible, neither.nondeductible) == (7_000, 0) and "neither spouse" in neither.work
+
+
+def test_jw1_separate_filers_who_lived_apart_all_year_take_the_single_rules():
+    """IRC 219(g)(4): they "shall not be treated as married individuals for purposes of this subsection". Pub. 590-A
+    (2025) Table 1-2 footnote 2 (the single range) and Table 1-3 footnote 2 (the full deduction whatever the spouse's
+    plan). Before 2026-11-12 the deduction path ignored mfs_lived_apart_all_year."""
+    kw = dict(filing_status="married_filing_separately", year=2025, ira_type="traditional_deduction",
+              mfs_lived_apart_all_year=True, contributed=7_000)
+    covered = ira_contribution_eligibility(50_000, covered_by_employer_plan=True, **kw)
+    assert covered.phaseout == {"start": 79_000, "end": 89_000} and covered.deductible == 7_000
+    assert "shall not be treated as married individuals for purposes of this subsection" in covered.work
+    together = ira_contribution_eligibility(50_000, "married_filing_separately", 2025, ira_type="traditional_deduction",
+                                            covered_by_employer_plan=True, contributed=7_000)
+    assert together.phaseout == {"start": 0, "end": 10_000} and together.deductible == 0
+    # Not covered, living apart: the spouse's plan does not count, and the op does not ask for it.
+    apart = ira_contribution_eligibility(500_000, covered_by_employer_plan=False, **kw)
+    assert (apart.deductible, apart.nondeductible) == (7_000, 0)
+    assert "your spouse's plan does not count (IRC 219(g)(4))" in apart.work and "neither spouse" not in apart.work
+
+
+def test_jw1_a_qualifying_surviving_spouse_is_not_asked_about_a_spouse():
+    # Pub. 590-A (2025) Table 1-3: "single, head of household, or qualifying surviving spouse: any amount: a full
+    # deduction"; Table 1-2 puts a covered one on the joint range.
+    r = ira_contribution_eligibility(500_000, "qualifying_surviving_spouse", 2025, ira_type="traditional_deduction",
+                                     covered_by_employer_plan=False, contributed=7_000)
+    assert (r.deductible, r.nondeductible) == (7_000, 0) and "you are not an active participant" in r.work
+    covered = ira_contribution_eligibility(130_000, "qualifying_surviving_spouse", 2025,
+                                           ira_type="traditional_deduction", covered_by_employer_plan=True)
+    assert covered.phaseout == {"start": 126_000, "end": 146_000} and covered.allowed == 5_600
 
 
 def test_jw1_the_no_plan_path_and_the_roth_path_keep_their_meaning():

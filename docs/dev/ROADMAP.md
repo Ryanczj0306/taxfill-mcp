@@ -31,7 +31,7 @@ plan for what is **not yet done**, as of **2026-10-09** (re-planned 2026-10-09 �
 
 ## Where we are (verified)
 
-Done and on `main` (**15,719 tests** — offline 12,090 + live-.gov 3629; derived
+Done and on `main` (**15,729 tests** — offline 12,100 + live-.gov 3629; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -247,6 +247,8 @@ Since 2026-10-15 (Phase K JK1) Phases C and D hold no open box: C2 and D2 are cl
 | 31 | JK19 Fallback pilot on 5 long-tail forms | M | JK18 | — | 2027-01-11 |
 | 32 | JK12 v0.2 release | S | JT6, first JS7a batch (fallback only if JK15 passed and the JK19 report exists) | the user pushes the tag | 2027-02-01 |
 | 33 | JK26 TY2025 knowledge migration to v2 | XL | JK21-JK24, KG8 ends | — | 2027-04-16 (not before) |
+| 34 | JW1 Walkthrough P1: the IRA excess defect | S | — | — | **done 2026-11-12** |
+| 35 | JW2 Walkthrough P1: Form 8995, six product gaps, the rule that cannot be followed | M–L | JW1 | — | before the next persona |
 
 ### K-P0 — Land the sunk cost, then stop
 
@@ -492,6 +494,38 @@ What the code reads: calc applies roughly 4% of state bytes and ~11% of federal 
   - Rewrite the consumers: calc.py:11021-11040, statescope.py:196-254, file_and_pay.py:938-966, filing_summary.py:270-280. Rewrite the narrative-pinning tests (test_state_knowledge.py:96-131, :219, :298, :324, :397, :414, :431; test_statescope.py:108-220; the test_state_law_change_sweep.py:36 count). JK23 becomes enforcing.
   - Rewrite the stale comment at statescope.py:283 ("No pack carries convenience rules yet"; state packs now carry them) with the consumer (2026-10-09 ledger).
   - **Acceptance:** the state_tax golden is defined as the tax figure plus the set of calc-surfaced caveats, and every one is unchanged (the work string's wording may change). state_scope still names each credit with its line and link. The registry loses no URL.
+
+### K-W — Walkthrough findings (the first end-to-end walkthrough, 2026-11-12)
+
+An agent given only the installed wheel's 23 tools and skills/claude/SKILL.md prepared a fictitious filer's TY2025 federal and California returns (KG10: a single California software engineer; a W-2 with RSU, ESPP, HSA and 401(k) amounts, a consolidated 1099, a backdoor Roth; 14 forms). An independent preparer worked the same file by hand from IRS and FTB sources, and an adjudicator read every line of both against those sources. **No filed money line was wrong:** federal refund $1,066 and California refund $722 on both sides, in 136 tool calls and 19 minutes. The return came out right because the agent overrode or supplemented the product at the points below. Measured on the way: the 23 tool descriptions total 83,450 characters (`calc` 46,325, `estimate_refund` 13,736) and SKILL.md 83,519; the run's results totalled 906,561 characters. The harness, the persona's documents and the adjudication are scratch, outside the repo.
+
+- [x] **JW1 — `ira_contribution_eligibility` called a nondeductible traditional IRA contribution an excess — DONE 2026-11-12** (P1-02, blocker)
+  - On the `traditional_deduction` path the part of a contribution above the deductible amount came back as `excess`, with a 6% excise every year and advice to withdraw or recharacterize it: for a covered single filer above the range, $7,000 contributed gave excess 7,000 and $420 a year. IRC 4973(b) computes the IRC 219 deduction "without regard to section 219(g)", so the phase-out never creates an excess. The result now splits the contribution into `deductible` and `nondeductible` (IRC 408(o); Form 8606 line 1), and `excess` is only the amount over the contribution limit. The Roth path is unchanged. Pitfall P-037. Tests: `test_jw1_*` in test_contribution_limits.py and one over MCP in test_server_e2e.py; the test that pinned the old text now uses a $9,000 contribution.
+  - **Review (one adversarial verifier, 2026-11-12): the law, the quotes and 6,264 computed cases held; five findings fixed.** The excess line offered recharacterization, which cannot cure a contribution over the one limit shared with Roth IRAs; a result with both a nondeductible part and an excess said nothing needed to be withdrawn; the compensation caveat left out the joint-return rule (IRC 219(c)); and two older errors on the same path: a separate filer whose spouse is covered got the full deduction (now the $0-$10,000 range, IRC 219(g)(1) and (g)(3)(B)(iii)), and `mfs_lived_apart_all_year` was ignored (now the single rules, IRC 219(g)(4)). A qualifying surviving spouse who is not covered is no longer asked about a spouse.
+- [ ] **JW2 — The rest of walkthrough P1: one blocker and seven majors** (M–L; in this order)
+  - **P1-01 (blocker), Form 8995.** No pack and no QBI op, so 1099-DIV box 5 (section 199A dividends, usual for an index-fund holder) ends in an unmapped draft the filer copies by hand. Add the f8995 pack with its face relations and `15 == f1040.13a`, a calc op for the simplified computation, and an extraction finding when box 5 is over zero.
+  - **P1-03, file_and_pay for California.** The assemble list is one literal for every state (file_and_pay.py:1493). It omits the FTB rule to attach a copy of the federal return when that return carries forms other than Schedule A or B. Add a cited assembly block to knowledge/states/ca/2025.yaml and a flag for an attached unmapped draft.
+  - **P1-04, verify_filing on names.** Form 1040's "first name and middle initial" box and Form 540's separate first-name box share the identity key `name.first`, so a correct filing fails on "Avery J." against "Avery" (verify.py `_identity_checks`). Compare first name plus initial, or split the key.
+  - **P1-05, green on unchecked lines.** sched_ca_540 has `relations: []` and `cross_form: []`. Nothing ties Form 540 lines 14, 16 and 18 to Schedule CA, Form 1040 line 12e to Schedule A line 17, 4b to Form 8606, 25c to Form 8959 line 24, 13a to anything, or Schedule D to the Form 8949 totals; Schedule A has no line 5e cap rule. Add the rules, and have the skill say the gate is "relations pass" where no calc op exists.
+  - **P1-06, intake.** `ready_to_fill` is true with identity, a filing status and one document (intake.py:1876-1886). Nothing asks about itemizing (the state tax and disability amounts on the W-2 decided it here), HSA coverage, IRA basis, equity basis, payments or the extension. Add document-driven follow-ups and keep `ready_to_fill` false while they are open.
+  - **P1-07, estimate_refund.** It returned a single point ($565 against the final $1,066), the roadmap ["Form 1040"] for any U.S. person (estimate.py:3599) and no state figure. It reported `not_applicable` documents as missing (estimate.py:3603 and :6405 test `!= 'have'`). It has no input for state tax withheld, so the standard deduction is assumed with no comparison.
+  - **P1-08, California adjustments.** knowledge/states/ca/2025.yaml says nothing about HSA contributions (Schedule CA line 1h column C), HSA earnings or interest on U.S. obligations. Missing the HSA addition would understate California tax by about $400 on this file. Add a cited adjustments block and emit it from state_scope and from extraction.
+  - **P1-09, hard rule 1.** 44 figures were the agent's own arithmetic: all of Schedule A, the Schedule B and D totals, Form 8959 Part V, Schedule CA. No op computes them, and `tax.salt_cap` (knowledge/federal/2025.yaml:645) is read by no op. Add ops for Schedule A with the cap and for Form 8959 Part V, or reword the rule to allow form-face addition that pack relations prove.
+  - **Minors, recorded and not scheduled.**
+    - P1-10: the profile shape is documented nowhere (five of the run's seven tool errors); `answers_into` names no exact field.
+    - P1-11: f8959 relation `10 == 4` is unconditional and forces Part II on a wage-only filer.
+    - P1-12: filing_summary and file_and_pay do not notice a late return or a filed extension.
+    - P1-13: extract_document shows an EIN-format payer TIN in SSN format (extract.py:1487-1491).
+    - P1-14: the routing-number refusal names a checksum when the prefix rule is what failed, and one bad bank field rejects the whole profile.
+    - P1-15: oversized results: list_document_kinds 129,404 characters; extract_document 112,443 for a Form 1095-C with six values read; get_form_map up to 40,796; calc results of 19-24k.
+    - P1-16: get_form_map returns line ids without printed labels; the skill's verify example uses the 2023 line id `12` (2025 is `12e`).
+    - P1-17: get_sources matches only registry keys and its description does not say so; the unmapped `declared_relations` example omits the braces.
+    - P1-18: inputs that refuse the document as printed: W-2 cents in estimate_refund's `w2s`, a per-share price in espp_disposition (Form 1099-B gives proceeds), a phone number with dashes on Form 540.
+    - P1-19: the Form 3922 caveat says none of the income is on the W-2, false after a same-year disqualifying sale.
+    - P1-20: no AMT screening (Form 6251).
+    - From JW1's review, same op: with no plan that counts, a contribution over the limit gets `excess` but no remedy text; a contribution of $7,000.50 prints a $1 excess with a $0 excise; the split line does not say Form 8606 must be filed even when no return is; the sources.yaml row for IRC 4973 names only 4973(f) (adding 4973(b) moved three unrelated query routes, so it was left).
+  - **JK32 inputs from the same run.** Claude Code's documentation says it cuts a tool description past 16,384 characters when the tool loads through tool search, and past 4,096 when it loads upfront (code.claude.com/docs/en/mcp, read 2026-11-12 through a fetch tool; re-read the page before acting on the numbers). `calc` and `estimate_refund` are over the second limit and `calc` over both.
+  - **Next personas:** an F-1 nonresident with a treaty claim (the user writes in Chinese); joint filers with children.
 
 ### Deferred (on demand, Phase K re-plan)
 

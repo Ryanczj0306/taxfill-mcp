@@ -1080,10 +1080,12 @@ def calc(op: str, args: dict[str, Any]) -> dict:
       shows the year-end-status rule: the same MAGI can be excess under one status and compliant
       under another (e.g. MFS vs MFJ), because eligibility follows the Dec 31 filing status. The
       deduction path needs the employer-plan coverage facts; no coverage anywhere = no phase-out.
-      On that path `allowed` is the DEDUCTIBLE amount and the result splits the contribution into
-      `deductible` and `nondeductible` (Form 8606 line 1 basis): a traditional contribution within
-      the limit is never an excess — IRC 4973(b) ignores the 219(g) phase-out — so `excess` is only
-      the amount over the contribution limit.
+      On that path `allowed` is the most that can be deducted and the result splits the contribution
+      into `deductible` and `nondeductible` (Form 8606 line 1 basis): a traditional contribution
+      within the limit is never an excess — IRC 4973(b) ignores the 219(g) phase-out — so `excess` is
+      only the amount over the contribution limit, which recharacterizing cannot cure. A separate
+      filer passes spouse_covered_by_employer_plan too, or mfs_lived_apart_all_year (IRC 219(g)(4):
+      the single rules).
       roth_ira_dec31_value (Roth only: all Roth IRAs' Dec 31 value, that year's contributions made
       the next year included) applies IRC 4973(a)'s cap — the excise "shall not exceed 6 percent of
       the value of the account" — so excise = 6% x min(excess, value). The work names the fix's
