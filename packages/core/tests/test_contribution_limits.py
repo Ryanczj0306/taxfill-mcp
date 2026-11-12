@@ -199,12 +199,63 @@ def test_jf1b4_a_pack_with_no_deadlines_block_says_so(planning_year, synthetic_p
 
 
 def test_jf1b4_the_traditional_path_quotes_its_own_subsection_and_no_roth_input():
+    # $9,000 into a traditional IRA is $2,000 over the 2025 limit: THAT is the excess (JW1 — before, the fixture was
+    # $7,000, a contribution within the limit, which is never an excess).
     r = ira_contribution_eligibility(
-        200_000, "single", 2025, ira_type="traditional_deduction", covered_by_employer_plan=True, contributed=7_000,
+        200_000, "single", 2025, ira_type="traditional_deduction", covered_by_employer_plan=True, contributed=9_000,
     )
+    assert (r.excess, r.excise_per_year) == (2_000, 120) and "$2,000 over the $7,000 contribution limit" in r.work
     assert "roth_ira_dec31_value" not in r.work and "4973(f)" not in r.work
     assert "IRC 4973(b)" in r.work and "individual retirement account or the individual retirement annuity" in r.work
     assert "April 15, 2026 (the 2025 pack's due date), or October 15, 2026 if you extend" in r.work
+
+
+# ── JW1 (2026-11-12, walkthrough P1): the deduction phase-out never creates an excess ──────────────
+
+
+def test_jw1_a_nondeductible_traditional_contribution_within_the_limit_is_not_an_excess():
+    """The backdoor-Roth fact pattern: an active participant above the IRC 219(g) range puts the full limit into a
+    traditional IRA. The deduction is $0 and the whole amount is nondeductible basis (Form 8606 line 1); IRC 4973(b)
+    computes the 219 deduction "without regard to section 219(g)", so there is no excess and no excise. Before
+    2026-11-12 the op reported excess 7,000 and $420 a year, and told the filer to withdraw or recharacterize."""
+    r = ira_contribution_eligibility(
+        187_385, "single", 2025, ira_type="traditional_deduction", covered_by_employer_plan=True, contributed=7_000,
+    )
+    assert (r.allowed, r.deductible, r.nondeductible) == (0, 0, 7_000)
+    assert (r.excess, r.excise_per_year) == (0, 0)
+    assert not any(line.startswith("EXCESS:") for line in r.work.splitlines()) and "NOT AN EXCESS:" in r.work
+    assert "Form 8606 line 1" in r.work
+    assert "shall be computed without regard to section 219(g)" in r.work          # IRC 4973(b)
+    assert "designated nondeductible contributions may be made" in r.work          # IRC 408(o)(1)
+    assert "withdrawing the contribution" not in r.work and "recharacterize it by the same deadline" not in r.work
+
+
+def test_jw1_the_phase_out_splits_a_contribution_and_only_the_part_over_the_limit_is_excess():
+    kw = dict(filing_status="single", year=2025, ira_type="traditional_deduction", covered_by_employer_plan=True)
+    # MAGI $84,000 is the middle of the 2025 single range ($79,000-$89,000): half of $7,000 is deductible.
+    within = ira_contribution_eligibility(84_000, contributed=7_000, **kw)
+    assert (within.allowed, within.deductible, within.nondeductible, within.excess) == (3_500, 3_500, 3_500, 0)
+    # $8,000 contributed: the same split of the first $7,000, and $1,000 over the limit is the excess (6% = $60).
+    over = ira_contribution_eligibility(84_000, contributed=8_000, **kw)
+    assert (over.deductible, over.nondeductible, over.excess, over.excise_per_year) == (3_500, 3_500, 1_000, 60)
+    assert "EXCESS: contributed $8,000 -> $1,000 over the $7,000 contribution limit" in over.work
+    # Below the range everything is deductible; nothing is nondeductible and nothing is excess.
+    below = ira_contribution_eligibility(60_000, contributed=7_000, **kw)
+    assert (below.deductible, below.nondeductible, below.excess) == (7_000, 0, 0) and "NOT AN EXCESS" not in below.work
+    # The compensation cap of IRC 219(b)(1) is outside the op's inputs, and the work says so.
+    assert "compensation includible in the individual's gross income" in below.work
+
+
+def test_jw1_the_no_plan_path_and_the_roth_path_keep_their_meaning():
+    none_covered = ira_contribution_eligibility(
+        500_000, "married_filing_jointly", 2025, ira_type="traditional_deduction", contributed=9_000,
+        covered_by_employer_plan=False, spouse_covered_by_employer_plan=False,
+    )
+    assert (none_covered.deductible, none_covered.nondeductible, none_covered.excess) == (7_000, 0, 2_000)
+    # A Roth contribution over the MAGI-reduced amount IS an excess (IRC 4973(f)); the split does not apply to it.
+    roth = ira_contribution_eligibility(200_000, "single", 2025, ira_type="roth", contributed=7_000)
+    assert (roth.allowed, roth.excess, roth.excise_per_year) == (0, 7_000, 420)
+    assert roth.deductible is None and roth.nondeductible is None and "EXCESS:" in roth.work
 
 
 def test_jf1b4_an_october_15_on_a_weekend_names_irc_7503():

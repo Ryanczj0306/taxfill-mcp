@@ -5226,7 +5226,25 @@ class IraEligibilityResult(BaseModel):
     full_limit: int = Field(description="The unreduced limit used (incl. the age-50 catch-up when claimed).")
     phaseout: dict[str, int] = Field(description="{start, end} of the range applied.")
     magi_position: Literal["below", "within", "above"]
-    excess: int = Field(description="max(0, contributed - allowed) — the amount the 6% excise bites.")
+    excess: int = Field(
+        description=(
+            "The amount the 6% excise bites. Roth: max(0, contributed - allowed). Traditional deduction path: "
+            "max(0, contributed - full_limit) — IRC 4973(b) measures a traditional IRA's excess against the IRC 219 "
+            "limit computed without regard to the 219(g) phase-out, so a contribution within the limit is never "
+            "an excess; the part above `allowed` is `nondeductible`."
+        )
+    )
+    deductible: int | None = Field(
+        default=None,
+        description="Traditional deduction path only: the part of `contributed` that is deductible (the IRA deduction line).",
+    )
+    nondeductible: int | None = Field(
+        default=None,
+        description=(
+            "Traditional deduction path only: the part of `contributed` within the limit that is NOT deductible — a "
+            "designated nondeductible contribution (IRC 408(o)), reported on Form 8606 line 1, where it becomes basis."
+        ),
+    )
     excise_per_year: int = Field(
         description=(
             "IRC 4973(a): 6% of the excess — capped at 6% of the Roth IRAs' year-end value when "
@@ -5265,6 +5283,20 @@ _IRC_4973_NOT_CONTRIBUTED = {
         "an amount not contributed\""
     ),
 }
+# The traditional path (2026-11-12; 26 U.S.C. 4973(b), 408(o) and 219(b)(1), read at uscode.house.gov): the
+# active-participant phase-out of IRC 219(g) reduces the DEDUCTION, never the amount that may be contributed.
+_IRC_4973B_WITHOUT_219G = (
+    "IRC 4973(b): \"the amount allowable as a deduction under section 219 shall be computed without regard to "
+    "section 219(g)\""
+)
+_IRC_408O_NONDEDUCTIBLE = (
+    "IRC 408(o)(1): \"designated nondeductible contributions may be made on behalf of an individual to an "
+    "individual retirement plan\""
+)
+_IRC_219B1_COMPENSATION = (
+    "IRC 219(b)(1): the deduction \"shall not exceed the lesser of\" the dollar limit or \"an amount equal to the "
+    "compensation includible in the individual's gross income for such taxable year\""
+)
 _I1040_EXTENSION = (
     "\"You can get an automatic 6-month extension if, no later than the date your return is due, you file Form "
     "4868\" (Instructions for Form 1040)"
@@ -5317,6 +5349,13 @@ def ira_contribution_eligibility(
     """The Pub 590-A reduced-limit worksheet: how much Roth IRA contribution (or
     traditional-IRA DEDUCTION) the MAGI actually allows — and the 6%-per-year
     excise on any excess already contributed.
+
+    The two paths measure the excess differently. A ROTH contribution over the
+    MAGI-reduced amount is an excess. A TRADITIONAL contribution is an excess only
+    over the contribution limit: IRC 4973(b) computes the IRC 219 deduction
+    "without regard to section 219(g)", so the active-participant phase-out splits
+    a contribution within the limit into ``deductible`` and ``nondeductible``
+    (IRC 408(o), Form 8606 line 1) and never creates an excess.
 
     This op exists because the error is common and silent: a filer
     contributing to a Roth IRA with MAGI above the phase-out — a 6%-per-year
@@ -5425,6 +5464,7 @@ def ira_contribution_eligibility(
                     allowed=full_limit, full_limit=full_limit,
                     phaseout={"start": 0, "end": 0}, magi_position="below",
                     excess=excess, excise_per_year=irs_round(ira.excess_excise_rate * excess),
+                    deductible=min(contributed_i, full_limit), nondeductible=0,
                     inputs={"magi": irs_round(magi_d), "filing_status": filing_status, "year": year,
                             "ira_type": ira_type, "contributed": contributed_i},
                     work=work, citation=ira.citation,
@@ -5452,7 +5492,17 @@ def ira_contribution_eligibility(
         if 0 < allowed < ira.worksheet.minimum_if_partial:
             allowed = ira.worksheet.minimum_if_partial
 
-    excess = max(0, contributed_i - allowed)
+    deductible: int | None = None
+    nondeductible: int | None = None
+    if ira_type == "roth":
+        excess = max(0, contributed_i - allowed)
+    else:
+        # IRC 4973(b): a traditional IRA's excess is what was contributed over the IRC 219 limit "computed without
+        # regard to section 219(g)". The phase-out only splits a contribution within the limit into its deductible
+        # part and its nondeductible part (IRC 408(o); Form 8606 line 1) — never into an excess.
+        deductible = min(contributed_i, allowed)
+        nondeductible = min(contributed_i, full_limit) - deductible
+        excess = max(0, contributed_i - full_limit)
     # IRC 4973(a)'s cap (JF1b.4): the excise never exceeds 6% of the year-end value.
     excise_base = excess if dec31_value is None else min(excess, dec31_value)
     excise = irs_round(ira.excess_excise_rate * excise_base)
@@ -5470,6 +5520,22 @@ def ira_contribution_eligibility(
         + ".",
     ]
     work_lines.extend(notes)
+    if ira_type != "roth":
+        if nondeductible:
+            work_lines.append(
+                f"NOT AN EXCESS: of the ${contributed_i:,} contributed, ${deductible:,} is deductible and "
+                f"${nondeductible:,} is a NONDEDUCTIBLE contribution — allowed at any MAGI and reported on Form 8606 "
+                f"line 1, where it becomes basis. {_IRC_408O_NONDEDUCTIBLE}; {_IRC_4973B_WITHOUT_219G} — the "
+                f"phase-out reduces the deduction, never the amount that may be contributed, so no "
+                f"{ira.excess_excise_rate:%} excise applies to it and nothing needs to be withdrawn or recharacterized."
+            )
+        elif contributed_i:
+            work_lines.append(f"Of the ${contributed_i:,} contributed, ${deductible:,} is deductible.")
+        work_lines.append(
+            f"This op tests the traditional IRA dollar limit only (${full_limit:,}); the limit is shared with Roth "
+            f"IRA contributions for the year (calc op contribution_limits). {_IRC_219B1_COMPENSATION}: with less "
+            f"taxable compensation than the contribution, the difference is an excess this op does not see."
+        )
     if excess:
         if dec31_value is None:
             charge = (
@@ -5489,23 +5555,31 @@ def ira_contribution_eligibility(
                 f"${excise_base:,} = ${excise:,}, EVERY year until it is withdrawn or absorbed — {_IRC_4973A_CAP} "
                 f"(Form 5329 Part IV)."
             )
+        over_what = "the allowed amount" if ira_type == "roth" else f"the ${full_limit:,} contribution limit"
         work_lines.append(
-            f"EXCESS: contributed ${contributed_i:,} -> ${excess:,} over the allowed amount. {charge} Fixable "
+            f"EXCESS: contributed ${contributed_i:,} -> ${excess:,} over {over_what}. {charge} Fixable "
             f"WITHOUT the excise by withdrawing the contribution plus its net income by the due date of your "
             f"{year} return INCLUDING extensions — {_excess_correction_deadline(pack, year)}. {_IRC_408D4A}; "
             f"{_IRC_4973_NOT_CONTRIBUTED[ira_type]}. And {_I5329_SECTION_9100}. Or recharacterize it by the same "
             f"deadline: calc op ira_recharacterization (the contribution and its net income moved trustee to "
             f"trustee to the other IRA type)."
         )
-    work_lines.append(
-        f"Eligibility is tested at YEAR END: {ira.eligibility_tested_at} A contribution that is excess "
-        f"under today's status can flip to compliant on a year-end married-filing-jointly return "
-        f"(the MFJ range is far higher) — and the reverse."
-    )
+    if ira_type == "roth":
+        work_lines.append(
+            f"Eligibility is tested at YEAR END: {ira.eligibility_tested_at} A contribution that is excess "
+            f"under today's status can flip to compliant on a year-end married-filing-jointly return "
+            f"(the MFJ range is far higher) — and the reverse."
+        )
+    else:
+        work_lines.append(
+            f"Deductibility is tested at YEAR END: {ira.eligibility_tested_at} A contribution that is nondeductible "
+            f"under today's status can become deductible on a year-end married-filing-jointly return "
+            f"(the MFJ range is far higher) — and the reverse."
+        )
     return IraEligibilityResult(
         allowed=allowed, full_limit=full_limit,
         phaseout={"start": rng.start, "end": rng.end}, magi_position=position,
-        excess=excess, excise_per_year=excise,
+        excess=excess, excise_per_year=excise, deductible=deductible, nondeductible=nondeductible,
         inputs={"magi": irs_round(magi_d), "filing_status": filing_status, "year": year,
                 "ira_type": ira_type, "contributed": contributed_i, "age_50_plus": age_50_plus,
                 **({"roth_ira_dec31_value": dec31_value} if dec31_value is not None else {})},
