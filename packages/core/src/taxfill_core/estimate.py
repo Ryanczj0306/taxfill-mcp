@@ -6865,10 +6865,18 @@ def estimate_refund(
     if pending:
         kinds = ", ".join(sorted({d.kind for d in pending}))
         changes.append(f"You have unconfirmed or missing documents ({kinds}); confirming them changes income and tightens this estimate.")
+    # JW2a: a 1095-A the profile records as not_applicable (no Marketplace coverage) is not a missing input.
+    no_marketplace = any(
+        "1095A" in re.sub(r"[^0-9A-Z]", "", d.kind.upper()) for d in profile.income_documents
+    ) and all(
+        d.status == "not_applicable" for d in profile.income_documents
+        if "1095A" in re.sub(r"[^0-9A-Z]", "", d.kind.upper())
+    )
     changes.append(
         "Child Tax Credit, EITC, education credits, and the premium tax credit are estimated when "
         "their inputs are present; missing inputs (dependent dates of birth and SSNs, Form 1098-T "
-        "expenses, Form 1095-A amounts, your own age for the childless EITC) keep those parts "
+        "expenses, " + ("" if no_marketplace else "Form 1095-A amounts, ")
+        + "your own age for the childless EITC) keep those parts "
         "directional — providing them changes the number."
     )
     if income.self_employment_net >= 400:

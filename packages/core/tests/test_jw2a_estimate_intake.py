@@ -85,6 +85,11 @@ def test_1a_only_not_applicable_documents_leave_nothing_missing():
     assert est.roadmap.missing_documents == []
     assert not any("unconfirmed or missing documents" in line for line in est.what_would_change_it)
     assert "in hand" in est.roadmap.estimated_time
+    # The standing "missing inputs" line names the 1095-A only when no answer says there is none.
+    assert not any("1095-A" in line for line in est.what_would_change_it)
+    for other in (_filer(_doc("W-2")), _filer(_doc("W-2"), _doc("1095-A", "missing"))):
+        unanswered = estimate_refund(other, YEAR, IncomeSnapshot(wages=177_425, federal_withholding=34_180))
+        assert any("missing inputs" in line and "Form 1095-A amounts" in line for line in unanswered.what_would_change_it)
 
 
 # ── 1b: W-2 boxes as printed ───────────────────────────────────────────────────────────────────────
