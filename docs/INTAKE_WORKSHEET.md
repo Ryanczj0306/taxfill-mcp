@@ -151,7 +151,7 @@ Other income (amount if any; "none" if none; "don't know" if unsure):
 
 **Deductions you may be able to itemize** ("none" if none; "don't know" if unsure):
 
-- W-2 Box 14 amounts (state disability insurance, paid family leave — label + amount): __________
+- W-2 Box 14 (14a from 2026) amounts (state disability insurance, paid family leave — label + amount): __________
 - Other state / local taxes (local income tax, state estimated payments, value-based vehicle licence fee): __________
 - Real estate tax: __________　Home mortgage interest (Form 1098): __________
 - Gifts to charity: __________　Large medical / dental costs: __________

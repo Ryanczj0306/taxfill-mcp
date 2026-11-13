@@ -170,7 +170,7 @@ Other income (amount if any; "none" if none; "don't know" if unsure):
 
 **Deductions you may be able to itemize** ("none" if none; "don't know" if unsure):
 
-- W-2 Box 14 amounts (state disability insurance, paid family leave — label + amount): __________
+- W-2 Box 14 (14a from 2026) amounts (state disability insurance, paid family leave — label + amount): __________
 - Other state / local taxes (local income tax, state estimated payments, value-based vehicle licence fee): __________
 - Real estate tax: __________　Home mortgage interest (Form 1098): __________
 - Gifts to charity: __________　Large medical / dental costs: __________
@@ -352,7 +352,7 @@ H-1B 生效，都要单独一行。**
 
 **可能可以逐项扣除（itemize）的支出**（没有写"无"，不确定写"不知道"）：
 
-- W-2 Box 14 的金额（州残障保险 SDI、带薪家庭假 —— 名称 + 金额）：__________
+- W-2 Box 14（2026 年起为 14a）的金额（州残障保险 SDI、带薪家庭假 —— 名称 + 金额）：__________
 - 其他州 / 地方税（地方所得税、州预缴税、按车辆价值计的年度牌照费）：__________
 - 房产税：__________　房贷利息（Form 1098）：__________
 - 慈善捐赠：__________　大额医疗 / 牙科支出：__________

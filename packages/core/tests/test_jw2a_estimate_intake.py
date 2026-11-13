@@ -448,6 +448,15 @@ def test_2a_one_document_is_no_longer_ready_and_the_result_says_what_holds_it_ba
     assert all("'none' and 'unknown' are answers" in q.disambiguation for q in cl.next_questions if q.section == _DP)
 
 
+def test_2a_the_w2_other_box_is_named_as_the_years_form_prints_it():
+    def prompt(year):
+        cl = intake_checklist(_filer(_doc("W-2")), tax_year=year)
+        return next(q.prompt for q in cl.next_questions if q.id == f"{_DP}.w2_box14")
+
+    assert "does box 14 show" in prompt(2025) and "does box 14 show" in prompt(None)
+    assert "does box 14a (box 14 before 2026) show" in prompt(2026)
+
+
 def test_2a_every_filer_is_asked_the_four_questions_even_with_no_documents():
     cl = intake_checklist(tax_year=YEAR)
     assert _dp_ids(cl) == [f"{_DP}.{f}" for f in _EVERY_FILER]

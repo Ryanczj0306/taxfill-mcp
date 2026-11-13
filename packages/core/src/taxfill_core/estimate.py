@@ -3673,7 +3673,8 @@ _SALT_CLOSE_SHARE = Decimal("0.5")
 # taxes were based on value alone and were imposed on a yearly basis ... You can deduct only the part of the fee
 # that was based on the car's value." Line 3 of the form: "Multiply line 2 by 7.5% (0.075)". Lines 5b, 8a, 11.
 _ITEMS_TO_COLLECT: tuple[str, ...] = (
-    "other state and local taxes: a mandatory state disability or family leave contribution (often W-2 box 14; "
+    "other state and local taxes: a mandatory state disability or family leave contribution (often W-2 box 14, "
+    "box 14a from 2026; "
     "the Schedule A line 5a instructions list the funds that count), local income tax (W-2 box 19), state "
     "estimated payments, and the value-based part of a yearly vehicle licence or registration fee (line 5c)",
     "real estate tax on a home you own (line 5b)",

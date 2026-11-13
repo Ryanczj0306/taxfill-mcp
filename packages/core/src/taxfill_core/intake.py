@@ -1626,6 +1626,8 @@ def _deductions_payments_questions(profile: Profile, out: list[IntakeQuestion], 
     yr = str(tax_year) if tax_year is not None else "the tax year"
     prior = str(tax_year - 1) if tax_year is not None else "the prior year"
     kinds = [d.kind for d in profile.income_documents if d.status != "not_applicable"]
+    # The W-2's "Other" box is box 14 through 2025 and box 14a from 2026 (the W-2 DocSpec in extract.py).
+    box14 = "box 14a (box 14 before 2026)" if tax_year is not None and tax_year >= 2026 else "box 14"
     asked: list[str] = []
 
     def ask(field: str, prompt: str, why: str, extra: str = "") -> None:
@@ -1637,7 +1639,7 @@ def _deductions_payments_questions(profile: Profile, out: list[IntakeQuestion], 
 
     ask("itemizable_items",
         f"For {yr}, did you pay any of these, and how much: state or local taxes beyond the state income tax "
-        f"withheld on a W-2 (a state disability or family leave amount in W-2 box 14, local income tax, state "
+        f"withheld on a W-2 (a state disability or family leave amount in W-2 {box14}, local income tax, state "
         f"estimated payments, the value-based part of a yearly vehicle licence fee); real estate tax; home mortgage "
         f"interest; gifts to charity; large medical or dental costs?",
         "These are the Schedule A items: together with the state income tax withheld (W-2 box 17) they decide "
@@ -1660,8 +1662,8 @@ def _deductions_payments_questions(profile: Profile, out: list[IntakeQuestion], 
         "An overpayment applied from the prior return counts as an estimated payment for this year.")
     if any(_mentions_w2(k) for k in kinds):
         ask("w2_box14",
-            "On each W-2, what does box 14 show? Give each label and amount — for example a state disability "
-            "insurance (SDI) or paid family leave contribution.",
+            f"On each W-2, what does {box14} show? Give each label and amount — for example a state disability "
+            f"insurance (SDI) or paid family leave contribution.",
             "A mandatory state disability or family leave contribution is a state and local tax on Schedule A "
             "(the line 5a instructions list the funds that count) and can decide itemizing.",
             "Pass a qualifying amount in estimate_refund's other_state_local_taxes.")
