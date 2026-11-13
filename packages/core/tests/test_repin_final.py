@@ -14,7 +14,7 @@ from pathlib import Path
 import pytest
 import yaml
 from pypdf import PdfReader, PdfWriter
-from pypdf.generic import NameObject, TextStringObject
+from pypdf.generic import ArrayObject, DecodedStreamObject, FloatObject, NameObject, TextStringObject
 
 from pdf_fixtures import make_acroform_pdf
 from repins import REPO, ledger, repin_final as R
@@ -38,13 +38,16 @@ BANNERS = [(72, 760, "TREASURY/IRS AND OMB USE ONLY DRAFT"), (300, 740, "DRAFT �
            (300, 60, "DRAFT — DO NOT FILE")]
 
 
-def _fields(page: int, *, x1: float = 400, rename: str | None = None, maxlen: int = 9, tooltip: bool = False):
+def _fields(page: int, *, x1: float = 400, y1: float = 636, yc: float = 556, swap: bool = False,
+            rename: str | None = None, maxlen: int = 9, tooltip: bool = False):
+    """Two text boxes (144 x 18 pt, rows 40 pt apart) and a 14 pt checkbox; ``swap``: the two text boxes trade
+    rectangles."""
     spec = [
-        {"name": f"{ROOT}.Page1[0].f1_1[0]", "kind": "text", "page": page, "x": x1, "y": 636, "maxlen": maxlen,
-         "hierarchical": True},
-        {"name": f"{ROOT}.Page1[0].{rename or 'f1_2[0]'}", "kind": "text", "page": page, "x": 400, "y": 596,
-         "hierarchical": True},
-        {"name": f"{ROOT}.Page1[0].c1_1[0]", "kind": "checkbox", "page": page, "x": 400, "y": 556, "on_value": "/1",
+        {"name": f"{ROOT}.Page1[0].f1_1[0]", "kind": "text", "page": page, "x": x1, "y": 596 if swap else y1,
+         "maxlen": maxlen, "hierarchical": True},
+        {"name": f"{ROOT}.Page1[0].{rename or 'f1_2[0]'}", "kind": "text", "page": page, "x": 400,
+         "y": 636 if swap else 596, "hierarchical": True},
+        {"name": f"{ROOT}.Page1[0].c1_1[0]", "kind": "checkbox", "page": page, "x": 400, "y": yc, "on_value": "/1",
          "hierarchical": True},
     ]
     return [s | {"tooltip": s["name"]} for s in spec] if tooltip else spec
@@ -181,6 +184,38 @@ def test_an_edge_under_the_move_threshold_is_a_nudge_not_a_move(repo, tmp_path):
     assert R.RECT_NOISE < 0.05 < R.MOVE_THRESHOLD
 
 
+@pytest.mark.parametrize("change, out_of_place", [
+    ({"y1": 636 - 18}, ["f1_1[0]"]),                       # one box height down: on the next row of an IRS face
+    ({"y1": 636 - 6}, ["f1_1[0]"]),                        # a third of its height: 67% left, under three quarters
+    ({"y1": 636 + 40}, ["f1_1[0]"]),                       # a whole synthetic row up
+    ({"x1": 400 + 94.6}, ["f1_1[0]"]),                     # into another column
+    ({"swap": True}, ["f1_1[0]", "f1_2[0]"]),              # two boxes trade rectangles: same names, wrong lines
+    ({"yc": 556 - 14}, ["c1_1[0]"]),                       # a checkbox one box lower
+])
+def test_a_box_that_left_its_draft_rectangle_needs_a_remap_and_no_acknowledgement_writes_it(
+        repo, tmp_path, capsys, change, out_of_place):
+    root, cache, _draft_bytes = repo
+    c = _compare(repo, _final(tmp_path / "final.pdf", **change))
+    assert c.verdict == "needs_remap" and len(c.moved) == len(c.displaced) == len(out_of_place)
+    assert [row.split(":")[0].rsplit(".", 1)[1] for row in c.displaced] == out_of_place
+    assert not (c.added or c.removed or c.changed or c.words_changed or c.mapped_missing or c.problems)
+    assert R.report(c).count("OUT OF PLACE: ") == len(out_of_place) and c.as_json()["rects_displaced"] == c.displaced
+    before = _snapshot(root)
+    assert _main(repo, tmp_path / "final.pdf", "--write", "--moved-read", "ftest") == 1
+    assert "--write refused, nothing edited" in capsys.readouterr().err
+    assert _snapshot(root) == before and not (root / R.LEDGER).exists()
+    assert cached_blank_path(FINAL_URL, c.final.sha256, cache_dir=cache) is None
+
+
+def test_a_box_moved_inside_its_draft_rectangle_is_geometry_moved_up_to_a_quarter_of_its_extent(repo, tmp_path):
+    c = _compare(repo, _final(tmp_path / "final.pdf", y1=636 - 4, x1=400 + 30))        # 78% and 79% shared
+    assert (c.verdict, len(c.moved), c.displaced) == ("geometry_moved", 1, [])
+    assert R._shared((0, 0, 100, 10), (25, 0, 125, 10)) == (R.KEEP_SHARE, 1.0)       # the bound itself is in place
+    assert R._shared((0, 0, 100, 10), (0, 10, 100, 20)) == (1.0, 0.0)                # touching rows share nothing
+    assert R._shared((0, 0, 100, 10), (0, -15, 100, 25)) == (1.0, 0.25)              # a box grown over three rows
+    assert 0.5 < R.KEEP_SHARE <= 0.9          # above one half (no two boxes can swap), below Schedule 8812's 0.908
+
+
 @pytest.mark.parametrize("change, finding", [
     ({"rename": "f1_9[0]"}, "added"),                      # a renamed widget: one removed, one added, a mapped one gone
     ({"maxlen": 11}, "changed"),
@@ -256,6 +291,74 @@ def test_write_repins_the_pack_and_every_dependent_file_and_is_idempotent(repo, 
     assert _main(repo, tmp_path / "final.pdf", "--write", "--date", "2027-01-15") == 0   # a second --write, later
     assert _snapshot(root) == after
     assert "wrote nothing (already re-pinned)" in capsys.readouterr().out
+
+
+def test_a_geometry_moved_write_needs_the_operators_moved_read(repo, tmp_path, capsys, monkeypatch):
+    """A moved form is written only on --moved-read STEM: never unacknowledged, never in the call that renders,
+    never in the default batch."""
+    root, cache, _draft_bytes = repo
+    final = _final(tmp_path / "final.pdf", x1=400.75)
+    sha = hashlib.sha256(final).hexdigest()
+    before = _snapshot(root)
+
+    def refused(code: int, needle: str) -> None:
+        assert code == 1 and needle in capsys.readouterr().err
+        assert _snapshot(root) == before and not (root / R.LEDGER).exists()
+        assert cached_blank_path(FINAL_URL, sha, cache_dir=cache) is None
+
+    refused(_main(repo, tmp_path / "final.pdf", "--write"), "then --write --moved-read ftest")
+    refused(_main(repo, tmp_path / "final.pdf", "--write", "--moved-read", "ftest", "--render", str(tmp_path / "png")),
+            "a render this call makes has not been read")
+    assert not (tmp_path / "png").exists()                      # refused before a page was rendered
+    refused(_main(repo, tmp_path / "final.pdf", "--moved-read", "ftest"), "--moved-read is said with --write")
+    refused(_main(repo, tmp_path / "final.pdf", "--write", "--moved-read", "fother"), "then --write --moved-read ftest")
+
+    monkeypatch.setattr(R, "posted_stems", lambda year, say=print: ["ftest"])        # the default batch: no stem named
+    monkeypatch.setattr(R, "fetch_twice", lambda url: final)
+    refused(R.main(["--year", "2026", "--write"], repo=root, cache_dir=cache, regen=False),
+            "then --write --moved-read ftest")
+    refused(R.main(["--year", "2026", "--write", "--moved-read", "ftest"], repo=root, cache_dir=cache, regen=False),
+            "the default batch never writes a geometry_moved form")
+
+    assert _main(repo, tmp_path / "final.pdf", "--write", "--moved-read", "ftest", "--date", "2026-12-01") == 0
+    assert "written on --moved-read ftest" in capsys.readouterr().out
+    [row] = R.load_ledger(root).values()
+    assert (row["verdict"], row["rects_moved"], row["largest_rect_delta"]) == ("geometry_moved", 1, 0.75)
+    assert load_pack(root / "formpacks" / PID / "pack.yaml").pdf_sha256 == sha
+    assert "(the render was read)" not in (root / R.LEDGER).read_text()   # the ledger cannot know; it says who said so
+    assert "--moved-read STEM" in R.LEDGER_HEADER and "--moved-read STEM" in (REPO / R.LEDGER).read_text()
+
+
+def test_moved_read_for_a_form_that_did_not_move_is_refused(repo, tmp_path, capsys):
+    root, _cache, _draft_bytes = repo
+    _final(tmp_path / "final.pdf")
+    before = _snapshot(root)
+    assert _main(repo, tmp_path / "final.pdf", "--write", "--moved-read", "ftest") == 1
+    assert "not a geometry_moved form of this batch" in capsys.readouterr().err and _snapshot(root) == before
+
+
+def test_write_is_refused_when_the_final_brings_a_new_label_adjacency_disagreement(repo, tmp_path, capsys, monkeypatch):
+    """Whatever the verdict: the print can move under boxes that stayed, and the gate's preview sees it BEFORE the
+    write. (The preview itself runs on real packs only; here it is replaced, the cached layer runs the real one.)"""
+    root, cache, _draft_bytes = repo
+    final = _final(tmp_path / "final.pdf")
+    c = _compare(repo, final)
+    assert c.verdict == "identical" and R.write_refusals([c], []) == []
+    c.unexcused = [f"{PID}:p1:{ROOT}.Page1[0].f1_2[0]:w0 anchor=3 keys=['2']"]
+    [reason] = R.write_refusals([c], [])
+    assert "1 label-adjacency disagreement(s) the draft did not have" in reason and "anchor=3 keys=['2']" in reason
+    with pytest.raises(R.RepinError, match="new label-adjacency disagreement"):
+        R.plan_write(c, Path("formpacks") / PID / "pack.yaml", final, R.Tree(root), date="2026-12-01")
+
+    monkeypatch.setattr(R, "REPO", root)                       # main previews the gate only in its own repo
+    monkeypatch.setattr(R, "label_adjacency_preview",
+                        lambda c, pack, final: (setattr(c, "clearing", []), setattr(c, "unexcused", ["x anchor=3"])))
+    before = _snapshot(root)
+    assert R.main(["--year", "2026", "--final", f"ftest={tmp_path / 'final.pdf'}", "--write"], repo=root,
+                  cache_dir=cache) == 1
+    assert "label-adjacency disagreement(s) the draft did not have (x anchor=3)" in capsys.readouterr().err
+    assert _snapshot(root) == before and not (root / R.LEDGER).exists()
+    assert cached_blank_path(FINAL_URL, c.final.sha256, cache_dir=cache) is None
 
 
 def test_write_refuses_a_final_with_a_renamed_widget_and_edits_nothing(repo, tmp_path, capsys):
@@ -397,7 +500,12 @@ def test_write_from_the_draft_state_reproduces_todays_pins_and_is_idempotent(key
     (root / R.LEDGER).write_text(R.ledger_text(R.LEDGER_HEADER, others))
     assert _snapshot(root) != committed
 
-    argv = ["--year", "2026", "--final", f"{row['stem']}={final_path}", "--write", "--date", row["repinned"]]
+    argv = ["--year", "2026", "--final", f"{row['stem']}={final_path}", "--write"]
+    if row["verdict"] == "geometry_moved":                    # Schedule 8812: refused until its render is said read
+        before = _snapshot(root)
+        assert R.main(argv, repo=root, regen=False) == 1 and _snapshot(root) == before
+        argv += ["--moved-read", row["stem"]]
+    argv += ["--date", row["repinned"]]
     assert R.main(argv, repo=root, regen=False) == 0
     after = _snapshot(root)
     ledger_rel = R.LEDGER.as_posix()
@@ -418,3 +526,95 @@ def test_write_from_the_draft_state_reproduces_todays_pins_and_is_idempotent(key
 def _sans_page_comment(text: str) -> str:
     """A pack's text without the comment beside signature.page: the hand re-pins wrote their own there."""
     return re.sub(r"(?m)^(signature:[ \t]*\{[^}\n]*\}|[ \t]+page:[ \t]*\d+)[ \t]*#[^\n]*$", r"\1", text)
+
+
+# ── adversarial finals cut from the real ones (the verifier's cases, 2026-11-13) ──────────────────────────────
+
+
+def _edited(final: bytes, edit, tmp_path: Path) -> bytes:
+    """The real final with ``edit(writer, find)`` applied; ``find(suffix)`` is the widget whose name ends with it."""
+    import io
+
+    writer = PdfWriter(clone_from=PdfReader(io.BytesIO(final)))
+
+    def find(suffix: str):
+        for page in writer.pages:
+            for ref in page.get("/Annots", []):
+                annot = ref.get_object()
+                if annot.get("/Subtype") == "/Widget" and R._qualified_name(annot).endswith(suffix):
+                    return annot
+        raise KeyError(suffix)
+
+    edit(writer, find)
+    with (tmp_path / "edited.pdf").open("wb") as fh:
+        writer.write(fh)
+    return (tmp_path / "edited.pdf").read_bytes()
+
+
+def _rect(annot) -> list[float]:
+    return [float(v) for v in annot["/Rect"]]
+
+
+def _set_rect(annot, rect) -> None:
+    annot[NameObject("/Rect")] = ArrayObject([FloatObject(v) for v in rect])
+
+
+def _shift(suffix: str, dx: float, dy: float):
+    def edit(_writer, find) -> None:
+        x0, y0, x1, y1 = _rect(find(suffix))
+        _set_rect(find(suffix), [x0 + dx, y0 + dy, x1 + dx, y1 + dy])
+    return edit
+
+
+def _swap(first: str, second: str):
+    def edit(_writer, find) -> None:
+        a, b = _rect(find(first)), _rect(find(second))
+        _set_rect(find(first), b)
+        _set_rect(find(second), a)
+    return edit
+
+
+@pytest.mark.parametrize("key, edit, out_of_place", [
+    ("f8606", _shift("Page1[0].f1_12[0]", 0, -12), 1),                    # line 2's box on line 3's row
+    ("f8606", _shift("Page1[0].f1_12[0]", 0, -24), 1),
+    ("f8606", _shift("Page1[0].f1_12[0]", 0, -3), 1),                     # a quarter of a row is already too far
+    ("f8606", _shift("Page1[0].f1_19[0]", 94.6, 0), 1),                   # into the outer amount column
+    ("f8606", _swap("Page1[0].f1_12[0]", "Page1[0].f1_13[0]"), 2),        # two rows trade boxes
+    ("f8606", _swap("Page1[0].f1_20[0]", "Page1[0].f1_21[0]"), 2),        # two boxes of one row trade places
+    ("sched_8812", _swap("Page1[0].c1_1[0]", "Page1[0].c1_1[1]"), 2),     # two checkboxes, among the 35 real moves
+], ids=["row_down", "two_rows_down", "quarter_row", "other_column", "rows_swapped", "same_row_swapped",
+        "checkboxes_swapped"])
+def test_a_real_final_with_a_box_on_another_line_needs_a_remap(key: str, edit, out_of_place: int, tmp_path: Path):
+    row, draft, final = _cached_pair(key)
+    pack = load_pack(REPO / "formpacks" / "federal" / "2026" / key / "pack.yaml")
+    c = R.compare(row["stem"], row["pack"], pack, draft, _edited(final, edit, tmp_path), draft_url=row["draft_url"],
+                  final_url=row["final_url"])
+    assert c.verdict == "needs_remap" and len(c.displaced) == out_of_place
+    assert len(c.moved) == out_of_place + row["rects_moved"]              # Schedule 8812's own 35 are still in place
+    assert not (c.added or c.removed or c.changed or c.words_changed or c.mapped_missing or c.problems)
+    assert f"{row['stem']}: verdict needs_remap, a re-map by hand" in R.write_refusals([c], [row["stem"]])
+
+
+def test_print_shifted_under_unmoved_boxes_is_identical_and_still_refused_by_the_label_adjacency_preview(tmp_path):
+    """Every printed mark of Form 8606's page 1 moved 12 pt down, no widget touched: the compare reads words, not
+    their places, so the verdict stays identical; the gate's preview lists the boxes that left their lines and
+    --write stops on it."""
+    row, draft, final = _cached_pair("f8606")
+    pack = load_pack(REPO / "formpacks" / "federal" / "2026" / "f8606" / "pack.yaml")
+
+    def edit(writer, _find) -> None:
+        page = writer.pages[0]
+        stream = DecodedStreamObject()
+        stream.set_data(b"q 1 0 0 1 0 -12 cm\n" + page.get_contents().get_data() + b"\nQ\n")
+        page[NameObject("/Contents")] = writer._add_object(stream)
+
+    shifted = _edited(final, edit, tmp_path)
+    c = R.compare(row["stem"], row["pack"], pack, draft, shifted, draft_url=row["draft_url"], final_url=row["final_url"])
+    assert c.verdict == "identical" and c.unexcused is None
+    R.label_adjacency_preview(c, pack, shifted)
+    assert len(c.unexcused) >= 4 and all(item.startswith("federal/2026/f8606:p1:") for item in c.unexcused)
+    [reason] = R.write_refusals([c], [])
+    assert "label-adjacency disagreement(s) the draft did not have" in reason
+    real = R.compare(row["stem"], row["pack"], pack, draft, final, draft_url=row["draft_url"], final_url=row["final_url"])
+    R.label_adjacency_preview(real, pack, final)
+    assert real.unexcused == [] and R.write_refusals([real], []) == []     # the real final passes the same gate

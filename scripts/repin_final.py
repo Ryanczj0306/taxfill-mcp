@@ -7,7 +7,8 @@ A draft pack (``source_status: draft``, irs.gov/pub/irs-dft/<stem>--dft.pdf) mov
     repin_final.py [STEM ...]                 # compare; default: every watched stem that answers 200
     repin_final.py --final STEM=PATH ...      # compare against a local final PDF (replays, tests)
     repin_final.py STEM ... --render DIR      # sentinel fill of the final + PNG pages, to be READ
-    repin_final.py STEM ... --write           # edit the pins; refused (exit 1, nothing edited) on needs_remap
+    repin_final.py STEM ... --write           # edit the pins; refused (exit 1, nothing edited) as WRITE says below
+    repin_final.py STEM ... --write --moved-read STEM   # a geometry_moved form: "I have read its render"
     repin_final.py ... --json                 # the comparison as JSON
 
 COMPARE (writes nothing). The final is fetched twice and must hash equal; the pinned draft comes from the blank
@@ -17,10 +18,13 @@ draft's cover sheet was dropped (read from the pages); every widget matched by f
 DRAFT banners and the footer "Created" date may differ. Verdict:
 
     identical       nothing but the banners (and tooltips, XFA) differs
-    geometry_moved  same names, types, flags, states and words; a /Rect edge moved 0.1 pt or more, or a /DA or
-                    /Q changed: READ THE RENDER (a smaller /Rect difference is reported as a nudge)
-    needs_remap     a widget added, removed, renamed, retyped or on another page; a flag, /MaxLen or /AP state
-                    changed; a mapped field missing; words changed beyond banners and footer; pages unexplained
+    geometry_moved  same names, types, flags, states and words; a /Rect edge moved 0.1 pt or more while the box
+                    still shares three quarters of its width and of its height with its draft rectangle, or a
+                    /DA or /Q changed: READ THE RENDER (a smaller /Rect difference is reported as a nudge)
+    needs_remap     a widget added, removed, renamed, retyped or on another page; a box OUT OF PLACE (it shares
+                    less than three quarters of its width or height with its draft rectangle: another row,
+                    another column, two boxes swapped); a flag, /MaxLen or /AP state changed; a mapped field
+                    missing; words changed beyond banners and footer; pages unexplained
 
 WRITE edits, as text (the hand-written comments stay): the pack (source_url, pdf_sha256, source_status,
 draft_created, signature.page by the cover-sheet offset, one header line); knowledge/anchor/selection.yaml and
@@ -28,7 +32,14 @@ adjudications.yaml; the form's ``form_lines`` entries in knowledge/federal/<year
 VERBATIM on the final (scripts/check_quotes.py); the ledger row in formpacks/federal/repins.yaml. Then it removes
 the label-adjacency exception rows that cleared themselves, rewrites the pack's coverage row, and regenerates the
 pack-path golden and the doc counts. A batch is planned whole before a byte is written, and a second --write changes
-nothing. Exit: 0 (a compare exits 0 whatever its verdicts); 1 nothing written (a fetch or cache problem, a refused
+nothing. --write is REFUSED for the whole batch, with nothing edited, when any form of it
+  - is needs_remap;
+  - brings a label-adjacency disagreement the draft did not have (whatever its verdict: the print can move under
+    boxes that stayed);
+  - is geometry_moved and was not acknowledged with --moved-read STEM. That flag is the operator's statement that
+    the render of that form was read, so it is refused together with --render (a render made by this call has not
+    been read) and when no stem is named (the default batch never writes a moved form).
+Exit: 0 (a compare exits 0 whatever its verdicts); 1 nothing written (a fetch or cache problem, a refused
 --write, a caption that is not verbatim); 2 written, but a regeneration step needs a hand.
 
 Never done here: reading the render (a human or agent step), the anchor benchmark (three commands, printed, once
@@ -70,6 +81,13 @@ WRITABLE = (IDENTICAL, GEOMETRY_MOVED)
 # real move is 0.25 pt).
 MOVE_THRESHOLD = 0.1
 RECT_NOISE = 0.005       # an edge within this is the same edge (Form 2555: 17 boxes 0.003 pt apart); not listed
+# A moved box is IN PLACE while, on each axis, it shares at least this much of the larger of its two extents with its
+# draft rectangle. Less, and it sits on another row or in another column (or two boxes swapped): needs_remap, since
+# no reading of a render makes the pack's map right. Schedule 8812's real moves share 0.908 or more (5.5 pt sideways
+# in a 59.5 pt box, 0.5 pt up in a 14 pt one); a box one 12 pt row down shares nothing, 3 pt down in an 11 pt box
+# 0.727. Above one half the centre of a box cannot leave its draft rectangle, so two boxes that were apart on an
+# axis keep their order on it: under this bound the reading order of a page's boxes cannot change.
+KEEP_SHARE = 0.75
 
 # What a draft prints and its final does not (every TY2026 draft, read 2026-11-12).
 _BANNER_RE = re.compile(r"TREASURY/IRS AND OMB USE ONLY DRAFT(?: Version \S+ Cycle \d+)?|DRAFT [—–-] DO NOT FILE")
@@ -243,6 +261,7 @@ class Comparison:
     appearance: list[str] = field(default_factory=list)     # /DA, /Q
     moved: list[dict] = field(default_factory=list)         # {"name", "index", "page", "delta": [dx0, dy0, dx1, dy1]}
     nudged: list[dict] = field(default_factory=list)        # the same, for a difference under MOVE_THRESHOLD
+    displaced: list[str] = field(default_factory=list)      # moved boxes that left their draft rectangle (KEEP_SHARE)
     max_delta: float = 0.0                                  # the largest /Rect edge difference of any widget
     banner_words: int = 0
     footer: tuple[str, str] | None = None                   # ("4/24/26", "8/18/26") when the footer date changed
@@ -259,7 +278,7 @@ class Comparison:
 
     @property
     def verdict(self) -> str:
-        if (self.problems or self.added or self.removed or self.changed or self.words_changed
+        if (self.problems or self.added or self.removed or self.changed or self.displaced or self.words_changed
                 or self.mapped_missing):
             return NEEDS_REMAP
         return GEOMETRY_MOVED if self.moved or self.appearance else IDENTICAL
@@ -285,6 +304,7 @@ class Comparison:
             "page_offset": self.offset, "cover_sheet_dropped": self.cover_sheet_dropped,
             "widgets_added": self.added, "widgets_removed": self.removed, "widgets_changed": self.changed,
             "appearance_changed": self.appearance, "rects_moved": self.moved, "rects_nudged": self.nudged,
+            "rects_displaced": self.displaced,
             "largest_rect_delta": self.largest_delta,
             "banner_words": self.banner_words, "footer_created": list(self.footer) if self.footer else None,
             "words_changed": self.words_changed, "mapped_missing": self.mapped_missing, "unmapped": self.unmapped,
@@ -313,6 +333,16 @@ def _diff_words(c: Comparison) -> None:
             c.words_changed.append({"page": i + 1, "draft": " ".join(was), "final": " ".join(now)})
 
 
+def _shared(was: tuple[float, ...], now: tuple[float, ...]) -> tuple[float, float]:
+    """(the share of the width, the share of the height) two rectangles have in common, each of the larger of the
+    two extents on that axis: 1.0 for the same span, 0.0 for spans that only touch or lie apart."""
+    def axis(a0: float, a1: float, b0: float, b1: float) -> float:
+        longest = max(a1 - a0, b1 - b0)
+        return max(0.0, min(a1, b1) - max(a0, b0)) / longest if longest > 0 else float((a0, a1) == (b0, b1))
+
+    return axis(was[0], was[2], now[0], now[2]), axis(was[1], was[3], now[1], now[3])
+
+
 def _diff_widgets(c: Comparison) -> None:
     draft = {w.key: w for w in c.draft.widgets}
     final = {w.key: w for w in c.final.widgets}
@@ -337,6 +367,10 @@ def _diff_widgets(c: Comparison) -> None:
         if largest > RECT_NOISE:
             row = {"name": now.name, "index": now.index, "page": now.page, "delta": delta}
             (c.moved if largest >= MOVE_THRESHOLD else c.nudged).append(row)
+            wide, high = _shared(was.rect, now.rect)
+            if largest >= MOVE_THRESHOLD and min(wide, high) < KEEP_SHARE:
+                c.displaced.append(f"{label(now)}: shares {wide:.0%} of its width and {high:.0%} of its height "
+                                   "with its draft rectangle")
 
 
 def compare(stem: str, pack_id: str, pack: FormPack, draft: bytes, final: bytes, *, draft_url: str,
@@ -377,8 +411,9 @@ def report(c: Comparison) -> str:
     for what, rows in (("added", c.added), ("removed", c.removed), ("changed", c.changed),
                        ("appearance", c.appearance), ("mapped but missing", c.mapped_missing)):
         lines += [f"      {what}: {r}" for r in rows]
-    lines.append(f"  rectangles: {len(c.moved)} moved, {len(c.nudged)} nudged under {MOVE_THRESHOLD} pt"
-                 + (f"; largest delta {c.largest_delta} pt" if c.max_delta else ""))
+    lines.append(f"  rectangles: {len(c.moved)} moved ({len(c.displaced)} OUT OF PLACE), {len(c.nudged)} nudged under "
+                 f"{MOVE_THRESHOLD} pt" + (f"; largest delta {c.largest_delta} pt" if c.max_delta else ""))
+    lines += [f"      OUT OF PLACE: {r}" for r in c.displaced]
     for what, rows in (("", c.moved), ("nudge ", c.nudged)):
         for m in rows:
             dx0, dy0, dx1, dy1 = m["delta"]
@@ -392,7 +427,7 @@ def report(c: Comparison) -> str:
                      f"{len(c.unexcused or [])} new disagreement(s)")
         lines += [f"      clears: {r}" for r in c.clearing] + [f"      NEW: {r}" for r in c.unexcused or []]
     if c.verdict == GEOMETRY_MOVED:
-        lines.append("  -> geometry moved: run --render and READ every page before --write")
+        lines.append(f"  -> geometry moved: run --render DIR, READ every page, then --write --moved-read {c.stem}")
     return "\n".join(lines)
 
 
@@ -411,7 +446,9 @@ LEDGER_HEADER = """\
 #   words_changed       page words that differ beyond the DRAFT banners and the footer date (0 on every row:
 #                       anything else is needs_remap and is never written)
 #   exceptions_cleared  label-adjacency exception rows the final cleared (formpacks/label_adjacency_exceptions.yaml)
-#   verdict             identical | geometry_moved (the render was read); repinned: the date the pack moved
+#   verdict             identical | geometry_moved (boxes moved inside their own draft rectangles; --write takes
+#                       it only with --moved-read STEM, the operator's statement that the render was read);
+#                       repinned: the date the pack moved
 
 repins:
 """
@@ -674,6 +711,9 @@ def plan_write(c: Comparison, pack_rel: Path, final: bytes, tree: Tree, *, date:
     pack already pinned to this final keeps its text, its ledger row and its date."""
     if c.verdict not in WRITABLE:
         raise RepinError(f"{c.stem}: verdict {c.verdict}; --write is for {' or '.join(WRITABLE)} only")
+    if c.unexcused:
+        raise RepinError(f"{c.stem}: the final brings {len(c.unexcused)} new label-adjacency disagreement(s); "
+                         "--write is refused")
     plan = Plan()
     year = int(c.pack.split("/")[1])
 
@@ -779,6 +819,31 @@ def regenerate(pack_ids: list[str], follow_ups: list[str]) -> None:
     _run(["scripts/sync_doc_counts.py", "--write"], "sync_doc_counts.py --write", follow_ups)
 
 
+def write_refusals(comparisons: list[Comparison], moved_read: list[str]) -> list[str]:
+    """Why --write must not touch this batch; empty when it may be written. One reason refuses the whole batch.
+    ``moved_read`` are the stems the operator acknowledged with --moved-read."""
+    out = []
+    for c in comparisons:
+        if c.verdict not in WRITABLE:
+            out.append(f"{c.stem}: verdict {c.verdict}, a re-map by hand")
+        if c.unexcused:
+            shown = "; ".join(c.unexcused[:4]) + (" …" if len(c.unexcused) > 4 else "")
+            out.append(f"{c.stem}: the final brings {len(c.unexcused)} label-adjacency disagreement(s) the draft "
+                       f"did not have ({shown}): a box no longer sits beside its printed line. Re-map or adjudicate "
+                       "by hand")
+        if c.verdict == GEOMETRY_MOVED and c.stem not in moved_read:
+            out.append(f"{c.stem}: geometry moved ({len(c.moved)} boxes, largest {c.largest_delta} pt"
+                       f"{'; ' + str(len(c.appearance)) + ' with another /DA or /Q' if c.appearance else ''}) and "
+                       f"nobody said its render was read. Run --render DIR, READ every page, then --write "
+                       f"--moved-read {c.stem}")
+    moved = {c.stem for c in comparisons if c.verdict == GEOMETRY_MOVED}
+    stray = [stem for stem in dict.fromkeys(moved_read) if stem not in moved]
+    if stray:
+        out.append(f"--moved-read {' '.join(stray)}: not a geometry_moved form of this batch (an acknowledgement "
+                   "of a render there was no reason to read)")
+    return out
+
+
 # ── the render ───────────────────────────────────────────────────────────────
 
 
@@ -841,7 +906,11 @@ def main(argv: list[str] | None = None, *, repo: Path = REPO, cache_dir: Path | 
     ap.add_argument("stems", nargs="*", help="IRS file stems (f1040, f1040s1 ...); default: every posted watched stem")
     ap.add_argument("--final", action="append", default=[], metavar="STEM=PATH", help="a local final PDF for a stem")
     ap.add_argument("--year", type=int, help="the tax year (default: the oldest provisional year)")
-    ap.add_argument("--write", action="store_true", help="edit the pins (identical or geometry_moved only)")
+    ap.add_argument("--write", action="store_true", help="edit the pins (identical, or geometry_moved with "
+                    "--moved-read; never with a new label-adjacency disagreement)")
+    ap.add_argument("--moved-read", action="append", default=[], metavar="STEM",
+                    help="with --write: you have READ the render of this geometry_moved form (never with --render, "
+                    "never without naming the stems)")
     ap.add_argument("--render", type=Path, metavar="DIR", help="sentinel fill of each final, pages as PNG, into DIR")
     ap.add_argument("--date", default=dt.date.today().isoformat(), help="the re-pin date recorded (default: today)")
     ap.add_argument("--json", action="store_true", help="print the comparisons as JSON instead of the report")
@@ -850,6 +919,14 @@ def main(argv: list[str] | None = None, *, repo: Path = REPO, cache_dir: Path | 
     try:
         dt.date.fromisoformat(args.date)
         local = dict(item.split("=", 1) for item in args.final)
+        if args.moved_read and not args.write:
+            raise RepinError("--moved-read is said with --write: it states that a geometry_moved render was read")
+        if args.moved_read and args.render:
+            raise RepinError("--moved-read with --render: a render this call makes has not been read. Render first, "
+                             "READ every page, then --write --moved-read STEM without --render")
+        if args.moved_read and not (args.stems or local):
+            raise RepinError("--moved-read without a named stem: the default batch never writes a geometry_moved "
+                             "form. Name the stems of the batch")
         year = args.year or check_finals.provisional_year(repo)
         if year is None:
             raise RepinError("no provisional federal year: nothing to re-pin (pass --year)")
@@ -896,10 +973,9 @@ def main(argv: list[str] | None = None, *, repo: Path = REPO, cache_dir: Path | 
     if not args.write:
         return 0
 
-    refused = [c.stem for c, *_ in work if c.verdict not in WRITABLE]
+    refused = write_refusals([c for c, *_ in work], args.moved_read)
     if refused:
-        print(f"repin_final: --write refused, nothing edited: {', '.join(refused)} need(s) a re-map by hand",
-              file=sys.stderr)
+        print("repin_final: --write refused, nothing edited:\n  - " + "\n  - ".join(refused), file=sys.stderr)
         return 1
     follow_ups: list[str] = []
     reminders: list[str] = []
@@ -930,9 +1006,9 @@ def main(argv: list[str] | None = None, *, repo: Path = REPO, cache_dir: Path | 
             if len(removed) != len(c.clearing or []) and plan.edited:
                 follow_ups.append(f"{c.stem}: the ledger row says exceptions_cleared {len(c.clearing or [])} and "
                                   f"{len(removed)} row(s) were removed; correct the row")
-        if c.verdict == GEOMETRY_MOVED:
-            reminders.append(f"{c.stem}: geometry moved ({len(c.moved)} boxes, largest {c.largest_delta} pt); "
-                             "the render must have been READ (--render DIR)")
+        if c.verdict == GEOMETRY_MOVED and plan.edited:
+            say(f"    geometry moved ({len(c.moved)} boxes, largest {c.largest_delta} pt): written on --moved-read "
+                f"{c.stem}, the operator's statement that the render was read")
     if regen and repo == REPO and work:
         regenerate([c.pack for c, *_ in work], follow_ups)
         say("regenerated: the label-adjacency coverage rows, the pack-path golden, the doc counts")

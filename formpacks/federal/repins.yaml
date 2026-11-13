@@ -10,7 +10,9 @@
 #   words_changed       page words that differ beyond the DRAFT banners and the footer date (0 on every row:
 #                       anything else is needs_remap and is never written)
 #   exceptions_cleared  label-adjacency exception rows the final cleared (formpacks/label_adjacency_exceptions.yaml)
-#   verdict             identical | geometry_moved (the render was read); repinned: the date the pack moved
+#   verdict             identical | geometry_moved (boxes moved inside their own draft rectangles; --write takes
+#                       it only with --moved-read STEM, the operator's statement that the render was read);
+#                       repinned: the date the pack moved
 
 repins:
 - pack: federal/2026/sched_c
