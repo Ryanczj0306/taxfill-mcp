@@ -32,7 +32,7 @@ from taxfill_core.knowledge import form_line
 from taxfill_core.schemas.profile import Answer, Profile
 from taxfill_core.worksheet import intake_worksheet
 
-__all__ = ["IntakeQuestion", "RequiredDocument", "IntakeChecklist", "intake_checklist"]
+__all__ = ["IntakeQuestion", "RequiredDocument", "IntakeChecklist", "example_profile", "intake_checklist"]
 
 # Section order = the §2 interview flow. Questions are returned in this order.
 SECTIONS = (
@@ -62,7 +62,11 @@ class IntakeQuestion(BaseModel):
         default=None,
         description="Built-in clarification for a predictably-misanswered question (P-002/P-004/filing status).",
     )
-    answers_into: str = Field(description="Profile path the answer populates, e.g. 'identity.mailing_address'.")
+    answers_into: str = Field(
+        description="The exact profile field path(s) the answer populates, comma-separated when several — dots "
+                    "descend, '[]' is one entry of a list, and a year-keyed section takes the tax year as the "
+                    "next segment: 'identity.mailing_address', 'income_documents[]', "
+                    "'state_footprint.2025.lived[]'. A leaf answer is {value, provenance} (example_profile).")
 
 
 class RequiredDocument(BaseModel):
@@ -94,6 +98,16 @@ class IntakeChecklist(BaseModel):
     )
     progress: str = Field(default="", description="Human-readable progress, e.g. '3 of 9 sections started'.")
     notes: list[str] = Field(default_factory=list, description="Gating explanations and assumptions surfaced to the user.")
+    example_profile: dict | None = Field(
+        default=None,
+        description=(
+            "JW2a: present ONLY on the start state (empty profile) — a small profile in the exact shape the tools "
+            "accept, with fictitious values: a leaf answer is {value, provenance}; provenance.kind is "
+            "'user_stated', 'document' (with file and optionally page) or 'computed'; year-keyed sections "
+            "(state_footprint, deductions_and_payments, ...) use the tax year as the key; dates are YYYY-MM-DD. "
+            "It validates as a Profile. Build the filer's own profile in this shape; never save the example."
+        ),
+    )
     worksheet: str | None = Field(
         default=None,
         description=(
@@ -892,7 +906,7 @@ def _household_questions(
                       f"could work or look for work?",
                       "Care paid so you could work can be worth the child and dependent care credit "
                       "(Form 2441) — a credit that is silently lost if nobody asks.",
-                      "income_documents",
+                      "income_documents[]",
                       disambiguation="If yes, add a 'dependent care provider statement' entry to the "
                                      "document inventory (status 'have' or 'missing') — Form 2441 "
                                      "requires each provider's name, address, and TIN (SSN or EIN), and "
@@ -1208,7 +1222,7 @@ def _remote_employer_followup(profile: Profile, out: list[IntakeQuestion], tax_y
                   f"employer sit?",
                   "A convenience-of-the-employer state can source remote wages to the EMPLOYER's state — a "
                   "second state return that 'where did you work' alone never reveals.",
-                  "state_footprint",
+                  f"state_footprint.{tax_year if tax_year is not None else '<tax_year>'}.worked[].employer_state",
                   disambiguation="Set employer_state (two-letter code) on each remote work period. If the "
                                  "employer sits in the same state you worked from, set employer_state equal to "
                                  "state — an explicit answer ends this question; leaving it blank does not."))
@@ -1240,7 +1254,7 @@ def _state_footprint_questions(profile: Profile, out: list[IntakeQuestion], tax_
                       f"{' and where you '.join(missing)} (with exact date ranges).",
                       "It determines which state returns (if any) you must file and how income is sourced."
                       + stale_note,
-                      "state_footprint",
+                      f"state_footprint.{tax_year}.lived[], state_footprint.{tax_year}.worked[]",
                       disambiguation="One segment per row of the worksheet's Part 4 table: dates, lived state, "
                                      "worked state, remote or not, and the employer's state when it differs from "
                                      "where you worked. Never answer with a single state name — 'I'm in CA' and "
@@ -1254,7 +1268,7 @@ def _state_footprint_questions(profile: Profile, out: list[IntakeQuestion], tax_
                   "For the tax year, cut the year into SEGMENTS: for each, where you LIVED and where you "
                   "WORKED, with exact date ranges.",
                   "It determines which state returns (if any) you must file and how income is sourced.",
-                  "state_footprint",
+                  "state_footprint.<tax_year>.lived[], state_footprint.<tax_year>.worked[]",
                   disambiguation="One segment per row of the worksheet's Part 4 table: dates, lived state, "
                                  "worked state, remote or not, and the employer's state when it differs from "
                                  "where you worked. Never answer with a single state name — 'I'm in CA' and "
@@ -1354,7 +1368,7 @@ def _income_document_questions(profile: Profile, out: list[IntakeQuestion], tax_
         out.append(_q("income_documents.inventory", "income_documents",
                       "What income documents did you receive (W-2, 1099-NEC/INT/DIV/B, 1098-T, K-1, …)?",
                       "Every income document maps to lines on the return; missing ones leave gaps.",
-                      "income_documents",
+                      "income_documents[]",
                       disambiguation="Include 'have', 'still need', and 'not applicable' for each — we file from "
                                      "documents, never from memory."))
     # Marketplace coverage is the one document users predictably forget to volunteer,
@@ -1368,7 +1382,7 @@ def _income_document_questions(profile: Profile, out: list[IntakeQuestion], tax_
                       f"healthcare.gov or a state exchange — at any point in {yr}?",
                       "Marketplace coverage comes with Form 1095-A; if advance premium tax credit was paid, the "
                       "return MUST reconcile it on Form 8962 — omitting it gets the refund frozen (IRS letter 12C).",
-                      "income_documents",
+                      "income_documents[]",
                       disambiguation="If yes, add a 1095-A entry to the document inventory (status 'have', or "
                                      "'missing' until you find it). If no, add a 1095-A entry with status "
                                      "'not_applicable' so the interview records the answer and stops asking."))
@@ -1401,7 +1415,7 @@ def _income_document_questions(profile: Profile, out: list[IntakeQuestion], tax_
                       "Non-willful FBAR penalties start at $10,000 (inflation-adjusted to $16,536 "
                       "for penalties assessed on or after 2025-01-17) — the steepest exposure "
                       "anywhere in this return.",
-                      "income_documents",
+                      "income_documents[]",
                       disambiguation="Answer with the account's HIGHEST balance during the year, not "
                                      "its year-end balance, and count every account: the FBAR test is "
                                      "$10,000 AGGREGATE across all of them at any one time, so two "
@@ -1483,7 +1497,7 @@ def _income_document_questions(profile: Profile, out: list[IntakeQuestion], tax_
                              "of rules, one relating to resident aliens for the period of residence and the other "
                              "relating to nonresident aliens for the period of nonresidence\" — and the rest is "
                              "taxed like any resident's interest." if dual_asked else ""),
-                          "income_documents",
+                          "income_documents[].kind",
                           disambiguation="Record the character in the 1099-INT entry's kind — e.g. "
                                          "'1099-INT (bank deposit)' or '1099-INT (not a deposit — brokerage/bond "
                                          "interest)' — so the interview stops asking. When running "
@@ -1522,7 +1536,7 @@ def _income_document_questions(profile: Profile, out: list[IntakeQuestion], tax_
                       "resident-period interest. Without the amount the estimate taxes all of it. A §6013(g)/(h) "
                       "election ends the exclusion (1.871-13 \"does not apply to alien individuals treated as "
                       "residents for the entire taxable year under section 6013 (g) or (h)\").",
-                      "income_documents",
+                      "income_documents[].kind",
                       disambiguation="Take the amount from the account statements (0 is a valid answer) — the law "
                                      "keys on receipt, so never prorate the year's total by days. Record it in the "
                                      "1099-INT entry's kind — e.g. '1099-INT (bank deposit; $120 before the "
@@ -1692,7 +1706,7 @@ def _banking_questions(profile: Profile, out: list[IntakeQuestion]) -> None:
     out.append(_q("banking.account", "banking",
                   "For a refund by direct deposit (or to pay electronically), what are your bank routing and account numbers?",
                   "Direct deposit is the fastest refund; we checksum-validate the routing number.",
-                  "banking",
+                  "banking.routing_number, banking.account_number, banking.account_type",
                   disambiguation="Optional, but strongly advised for a refund: the IRS is phasing out paper refund checks "
                                  "(irs.gov/ModernPayments: the \"phase out of paper tax refund checks beginning "
                                  "Sept. 30, 2025, to the extent permitted by law\"); without an account the "
@@ -1825,7 +1839,8 @@ def _retirement_questions(profile: Profile, out: list[IntakeQuestion], notes: li
                       f"TAX CHARACTER — pre-tax 401(k) vs Roth 401(k), traditional vs Roth IRA, HSA?",
                       "Pre-tax dollars lower this year's box 1 wages; Roth dollars do not — the split moves "
                       "every MAGI test differently, and a budget that ignores it prices the wrong year.",
-                      "retirement_contributions",
+                      ", ".join(f"retirement_contributions.{tax_year}.{f}" for f in (
+                          "pretax_401k", "roth_401k", "traditional_ira", "roth_ira", "hsa")),
                       disambiguation="Amounts per year, not per paycheck; $0 is an answer (an empty section "
                                      "means 'not asked'). Pre-tax + Roth 401(k) SHARE one 402(g) limit — check "
                                      "calc op contribution_limits for the year's caps, and run "
@@ -1851,7 +1866,7 @@ def _prior_filings_questions(profile: Profile, out: list[IntakeQuestion], tax_ye
         out.append(_q("prior_filings.history", "prior_filings",
                       "Which prior years have you filed, and are any years late or unfiled?",
                       "Late filings affect penalties and the 3-year refund statute of limitations.",
-                      "prior_filings"))
+                      "prior_filings.filed_years, prior_filings.late_filing_context"))
         return
     # A mid-year PLANNING session cannot answer "am I withholding enough?"
     # without the prior return's AGI and total tax (the IRC 6654 safe harbor —
@@ -1871,7 +1886,7 @@ def _prior_filings_questions(profile: Profile, out: list[IntakeQuestion], tax_ye
                       f"{form_line(tax_year - 1, 'f1040.total_tax')})?",
                       "They set your estimated-tax safe harbor — withholding at least 100%/110% of last "
                       "year's tax avoids an underpayment penalty even if this year's income jumps.",
-                      "prior_filings",
+                      "prior_filings.prior_year_agi, prior_filings.prior_year_total_tax",
                       disambiguation=f"Read both straight off the {tax_year - 1} Form 1040: line "
                                      f"{form_line(tax_year - 1, 'f1040.agi')} (adjusted gross income) and line "
                                      f"{form_line(tax_year - 1, 'f1040.total_tax')} (total tax). The 110% tier applies when "
@@ -2039,6 +2054,52 @@ def _ready_to_fill(profile: Profile) -> bool:
     return have_income
 
 
+_EXAMPLE_YEAR = 2025   # the year the example is keyed by when the caller names none — illustrative only
+
+
+def example_profile(tax_year: int | None = None) -> dict:
+    """A small profile in the exact shape the tools accept, as JSON-ready data (JW2a, walkthrough P1-10).
+
+    Fictitious values. It shows the three things the walkthrough's agent had to learn from validation errors: a
+    leaf answer is ``{value, provenance}``; ``provenance.kind`` is ``user_stated``, ``document`` (with ``file``
+    and optionally ``page``) or ``computed``; and a year-keyed section (``state_footprint``,
+    ``deductions_and_payments``) takes the tax year as its key and date ranges as its rows. A test validates it
+    against :class:`Profile`.
+    """
+    year = tax_year if tax_year is not None else _EXAMPLE_YEAR
+    stated = {"kind": "user_stated"}
+
+    def answer(value):
+        return {"value": value, "provenance": stated}
+
+    whole_year = {"start": f"{year}-01-01", "end": f"{year}-12-31", "provenance": stated}
+    return {
+        "identity": {
+            "name": answer("Avery Example"),
+            "tax_id": answer("999-88-0001"),
+            "us_person": answer(True),
+            "mailing_address": answer("100 Example Street, San Jose, CA 95113"),
+        },
+        "household": {"marital_status": answer("unmarried"), "filing_status": answer("single")},
+        "state_footprint": {str(year): {
+            "lived": [{"state": "CA", **whole_year}],
+            "worked": [{"state": "CA", "remote": False, **whole_year}],
+        }},
+        "income_documents": [
+            {"kind": "W-2", "status": "have", "file": "documents/w2.pdf",
+             "provenance": {"kind": "document", "file": "documents/w2.pdf", "page": 1}},
+            {"kind": "1099-INT", "status": "missing", "provenance": stated},
+            {"kind": "1095-A", "status": "not_applicable", "provenance": stated},
+        ],
+        "deductions_and_payments": {str(year): {
+            "itemizable_items": answer("state disability insurance 1,200.50 in W-2 box 14; gifts to charity 600"),
+            "estimated_payments": answer("none"),
+            "extension": answer("unknown"),
+        }},
+        "prior_filings": {"filed_years": answer([year - 1])},
+    }
+
+
 def intake_checklist(profile: Profile | None = None, *, tax_year: int | None = None) -> IntakeChecklist:
     """Return the next interview questions + required documents for a partial profile.
 
@@ -2092,6 +2153,8 @@ def intake_checklist(profile: Profile | None = None, *, tax_year: int | None = N
         # being interviewed cold. Any started section drops it — from then on
         # the targeted questions above carry the interview.
         worksheet=intake_worksheet() if started == 0 else None,
+        # ... and the profile's shape (JW2a, P1-10), so no agent has to learn it from validation errors.
+        example_profile=example_profile(tax_year) if started == 0 else None,
     )
 
 

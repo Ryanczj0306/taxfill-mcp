@@ -4,14 +4,21 @@ Every person here is fictitious. The figures are the walkthrough filer's: single
 2025, one W-2 (box 1 177,425; box 2 34,180; box 17 14,250; box 14 state disability insurance 2,479.50).
 """
 
+import ast
+import re
+import types
+import typing
 from datetime import date
 from decimal import Decimal
+from pathlib import Path
 
 import pytest
+from pydantic import BaseModel
 
 from taxfill_core.calc import standard_deduction
 from taxfill_core.estimate import IncomeSnapshot, W2Facts, _salt_limit, estimate_refund
-from taxfill_core.intake import intake_checklist
+from taxfill_core import intake as intake_module
+from taxfill_core.intake import example_profile, intake_checklist
 from taxfill_core.knowledge import load_knowledge
 from taxfill_core.schemas.profile import (
     Answer,
@@ -489,3 +496,150 @@ def test_2a_the_answers_live_in_additive_optional_fields():
     assert again.deductions_and_payments[YEAR].extension is None
     with pytest.raises(ValueError, match="a blank answer records nothing"):
         DeductionsAndPaymentsYear(extension=_ans("  "))
+
+
+# ── 2b: the profile is discoverable ────────────────────────────────────────────────────────────────
+
+
+def _unwrap(annotation):
+    """The annotation without ``| None``."""
+    if typing.get_origin(annotation) in (typing.Union, types.UnionType):
+        inner = [a for a in typing.get_args(annotation) if a is not type(None)]
+        assert len(inner) == 1, annotation
+        return inner[0]
+    return annotation
+
+
+def _is_answer(tp) -> bool:
+    return isinstance(tp, type) and issubclass(tp, Answer)
+
+
+def _is_section(tp) -> bool:
+    return isinstance(tp, type) and issubclass(tp, BaseModel) and not _is_answer(tp)
+
+
+def _path_problem(path: str) -> str | None:
+    """None when ``path`` names an exact Profile field: dots descend, ``[]`` / ``[n]`` is a list entry, and a
+    year-keyed mapping takes a year (digits, or the placeholder ``<tax_year>``) as its next segment. A path that
+    stops at a whole section (a model, or a year-keyed mapping of models) is not exact."""
+    current, via_entry = Profile, False
+    for part in path.split("."):
+        if typing.get_origin(current) is dict:
+            if not re.fullmatch(r"\d{4}|<tax_year>", part):
+                return f"{path}: {part!r} should be a tax year"
+            current, via_entry = _unwrap(typing.get_args(current)[1]), False
+            continue
+        name, bracket, _ = part.partition("[")
+        if not _is_section(current) or name not in current.model_fields:
+            return f"{path}: no field {name!r} there"
+        current, via_entry = _unwrap(current.model_fields[name].annotation), False
+        if bracket:
+            if typing.get_origin(current) is not list or not re.fullmatch(r"\[\d*\]", bracket + part.partition("[")[2]):
+                return f"{path}: {name!r} is not a list"
+            current, via_entry = _unwrap(typing.get_args(current)[0]), True
+    if _is_section(current) and not via_entry:
+        return f"{path}: stops at the section {current.__name__}, not a field"
+    if typing.get_origin(current) is dict and _is_section(_unwrap(typing.get_args(current)[1])):
+        return f"{path}: stops at a year-keyed section — name the year and the field"
+    return None
+
+
+def _problems(answers_into: str) -> list[str]:
+    return [p for p in (_path_problem(path.strip()) for path in answers_into.split(",")) if p]
+
+
+def test_2b_the_path_check_itself_tells_a_field_from_a_section():
+    for good in ("identity.name", "income_documents[]", "income_documents[].kind", "household.dependents[0].dob",
+                 "state_footprint.2025.lived[]", "state_footprint.<tax_year>.worked[].employer_state",
+                 "prior_filings.return_forms.2024", "deductions_and_payments.2025.extension",
+                 "residency_facts.days_in_us", "banking.routing_number, banking.account_number"):
+        assert _problems(good) == [], good
+    # The values main carried for these questions: a section, not a field.
+    for bad in ("state_footprint", "banking", "prior_filings", "retirement_contributions", "identity.nmae",
+                "state_footprint.lived", "deductions_and_payments.2025", "income_documents.kind"):
+        assert _problems(bad), bad
+
+
+def test_2b_every_question_in_the_source_names_an_exact_field_path():
+    # Every _q(...) call in intake.py, reached by a test or not: its answers_into (the fifth argument), with the
+    # names an f-string uses replaced by sample values, must resolve against the Profile schema.
+    samples = {"tax_year": "2025", "prior": "2024", "key": "2025", "i": "0", "_DP": "deductions_and_payments",
+               "field": "extension", "f": "hsa"}
+
+    def render(node) -> list[str]:
+        if isinstance(node, ast.Constant):
+            return [node.value]
+        if isinstance(node, ast.JoinedStr):
+            out = ""
+            for piece in node.values:
+                if isinstance(piece, ast.Constant):
+                    out += piece.value
+                else:
+                    names = {n.id for n in ast.walk(piece.value) if isinstance(n, ast.Name)}
+                    assert names and names <= set(samples), f"line {node.lineno}: add a sample for {names}"
+                    # "{tax_year if tax_year is not None else '<tax_year>'}" renders as the year.
+                    out += samples[sorted(names)[0]]
+            return [out]
+        if isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute) and node.func.attr == "join":
+            return render(node.args[0].elt)          # ", ".join(f"...{f}" for f in (...))
+        raise AssertionError(f"line {node.lineno}: answers_into is built in a way this test cannot read")
+
+    tree = ast.parse(Path(intake_module.__file__).read_text(encoding="utf-8"))
+    calls = [n for n in ast.walk(tree)
+             if isinstance(n, ast.Call) and isinstance(n.func, ast.Name) and n.func.id == "_q"]
+    assert len(calls) >= 45
+    problems = []
+    for call in calls:
+        for text in render(call.args[4]):
+            problems += [f"line {call.lineno}: {p}" for p in _problems(text)]
+            if text in Profile.model_fields:
+                problems.append(f"line {call.lineno}: {text!r} is a whole section")
+    assert problems == []
+
+
+def test_2b_the_questions_a_run_returns_name_exact_field_paths():
+    from taxfill_core.schemas.profile import Immigration, VisaPeriod
+
+    visa = Profile(identity=Identity(us_person=_ans(False)), immigration=Immigration(
+        visa_timeline=[VisaPeriod(status="F-1", start=date(2024, 8, 1), provenance=US)]))
+    remote = _filer(_doc("W-2"), _doc("1099-R"), _doc("1099-B"), _doc("1099-DIV"))
+    remote.state_footprint[YEAR].worked[0].remote = True
+    profiles = [None, visa, remote, _filer(_doc("W-2")), Profile(household=Household(marital_status=_ans("married")))]
+    seen = set()
+    for profile in profiles:
+        for year in (None, YEAR, 2026):
+            for q in intake_checklist(profile, tax_year=year).next_questions:
+                assert _problems(q.answers_into) == [], (q.id, q.answers_into)
+                seen.add(q.id)
+    for qid in ("income_documents.inventory", "state_footprint.lived_worked", "state_footprint.remote_employer_state",
+                "banking.account", "prior_filings.history", "retirement.deferral_split",
+                "deductions_and_payments.itemizable_items", "deductions_and_payments.ira_basis"):
+        assert qid in seen, qid
+    by_id = {q.id: q.answers_into for q in intake_checklist(remote, tax_year=YEAR).next_questions}
+    assert by_id["state_footprint.remote_employer_state"] == "state_footprint.2025.worked[].employer_state"
+    assert by_id["prior_filings.history"] == "prior_filings.filed_years, prior_filings.late_filing_context"
+    assert by_id["deductions_and_payments.extension"] == "deductions_and_payments.2025.extension"
+    assert by_id["banking.account"] == "banking.routing_number, banking.account_number, banking.account_type"
+
+
+def test_2b_the_empty_profile_result_carries_an_example_profile_that_validates():
+    start = intake_checklist(tax_year=YEAR)
+    example = start.example_profile
+    assert example == example_profile(YEAR) and start.worksheet is not None
+    profile = Profile.model_validate(example)                      # the shape the tools accept
+    assert Profile.model_validate(profile.model_dump(mode="json")) == profile
+    # The three things the walkthrough's agent learned from validation errors.
+    assert example["identity"]["name"] == {"value": "Avery Example", "provenance": {"kind": "user_stated"}}
+    assert {d["provenance"]["kind"] for d in example["income_documents"]} == {"document", "user_stated"}
+    assert set(example["state_footprint"]) == {"2025"} and set(example["state_footprint"]["2025"]) == {"lived", "worked"}
+    assert {d["status"] for d in example["income_documents"]} == {"have", "missing", "not_applicable"}
+    # Small, fictitious, and gone once the interview has started.
+    assert len(str(example)) < 2_000 and "Example" in example["identity"]["name"]["value"]
+    assert example["identity"]["tax_id"]["value"].startswith("999-88-")
+    assert intake_checklist().example_profile["prior_filings"]["filed_years"]["value"] == [2024]
+    assert intake_checklist(Profile(identity=Identity(us_person=_ans(True)))).example_profile is None
+    # It is a usable starting point: the interview reads it and asks only what it lacks.
+    ids = {q.id for q in intake_checklist(profile, tax_year=YEAR).next_questions}
+    assert "identity.name" not in ids and "state_footprint.lived_worked" not in ids
+    assert "deductions_and_payments.estimated_payments" not in ids
+    assert "deductions_and_payments.prior_year_overpayment_applied" in ids

@@ -765,7 +765,7 @@ def test_dependent_care_question_fires_when_dependents_exist():
     assert "TIN" in d                      # Form 2441 Part I needs the provider TIN
     assert "dependent_care_credit" in d    # the calc op is named
     assert "not_applicable" in d
-    assert q.answers_into == "income_documents"
+    assert q.answers_into == "income_documents[]"
 
 
 def test_dependent_care_question_names_both_spouses_when_married():
@@ -1601,7 +1601,7 @@ def test_p013_dual_status_owner_is_asked_the_interest_character():
 def test_p013_dual_status_deposit_1099_int_is_asked_the_period():
     cl = intake_checklist(_dual_with(_doc("1099-INT (bank deposit)")), tax_year=2025)
     q = next(q for q in cl.next_questions if q.id == _PERIOD_Q)
-    assert q.section == "income_documents" and q.answers_into == "income_documents"
+    assert q.section == "income_documents" and q.answers_into == "income_documents[].kind"
     assert q.prompt.startswith("Your residency result is a DUAL-STATUS year for 2025")
     assert "BEFORE the residency starting date" in q.prompt and "IRC 7701(b)(3)(D)" in q.prompt
     assert "1.871-13(a)(1)" in q.why and "871(i)(2)(A)" in q.why and "Without the amount the estimate taxes all" in q.why
