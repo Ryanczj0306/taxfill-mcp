@@ -587,7 +587,7 @@ class IncomeSnapshot(BaseModel):
         default=None,
         description=(
             "JW2a: foreign income tax paid, as printed (Form 1099-DIV box 7, or a payer's statement). NOT priced: "
-            "the foreign tax credit is not in this estimate — the roadmap names Schedule 3 line 1 and Form 1116, "
+            "the foreign tax credit is not in this estimate — the roadmap names Schedule 3 and Form 1116, "
             "and the assumptions say the credit is not estimated. None = not collected."
         ),
     )
@@ -1176,7 +1176,8 @@ class ItemizingComparison(BaseModel):
                     "other_statuses is not empty; 'not_estimated': the year's pack carries no limit "
                     "(tax.salt_cap), so the comparison was not made.")
     state_local_tax_paid: int = Field(description="W-2 box 17 plus other_state_local_taxes, whole dollars.")
-    limit: int | None = Field(description="The year's limit on that deduction for this return (Schedule A line 5e).")
+    limit: int | None = Field(
+        description="The year's limit on that deduction for this return (Schedule A's state and local taxes line).")
     deductible: int | None = Field(description="The smaller of the two: what the tax alone gives as itemized.")
     standard_deduction: int = Field(description="The standard deduction it is weighed against.")
     itemized_bottom_line: int | None = Field(
@@ -3674,25 +3675,27 @@ _SALT_CLOSE_SHARE = Decimal("0.5")
 # that was based on the car's value." Line 3 of the form: "Multiply line 2 by 7.5% (0.075)". Lines 5b, 8a, 11.
 _ITEMS_TO_COLLECT: tuple[str, ...] = (
     "other state and local taxes: a mandatory state disability or family leave contribution (often W-2 box 14, "
-    "box 14a from 2026; "
-    "the Schedule A line 5a instructions list the funds that count), local income tax (W-2 box 19), state "
-    "estimated payments, and the value-based part of a yearly vehicle licence or registration fee (line 5c)",
-    "real estate tax on a home you own (line 5b)",
-    "home mortgage interest (Form 1098; line 8a)",
-    "gifts to charity (lines 11-12)",
-    "medical and dental costs, if large: only the part over 7.5% of AGI counts (lines 1-4)",
+    "box 14a from 2026; the Schedule A instructions for state and local income taxes list the funds that count), "
+    "local income tax (W-2 box 19), state estimated payments, and the value-based part of a yearly vehicle licence "
+    "or registration fee",
+    "real estate tax on a home you own",
+    "home mortgage interest (Form 1098)",
+    "gifts to charity",
+    "medical and dental costs, if large: only the part over 7.5% of AGI counts",
 )
 
 
+# The State and Local Tax Deduction Worksheet, Instructions for Schedule A (2025), read 2026-11-12 and again
+# 2026-11-13: line 1 "Enter $40,000"; lines 5-7, the amount over "$500,000 ($250,000 if married filing separately)"
+# times "30% (0.30)"; line 9 "Enter the larger of the amount on line 8 or $10,000"; line 10 "the smaller of the
+# amount on line 9 (half the amount on line 9 if married filing separately) or the amount from Schedule A, line
+# 5d". So a separate return halves the RESULT (the block's cap_mfs / cap), which is also what makes its floor the
+# block's floor_mfs. The worksheet's income figure is AGI plus the Puerto Rico, Form 2555 and Form 4563 amounts.
 def _salt_limit(block: dict, agi: int, status: str) -> tuple[int, bool]:
     """(the year's limit on the state and local tax deduction for one return, whether the income phase-down
-    reduced it) — knowledge ``tax.salt_cap``, applied as the State and Local Tax Deduction Worksheet in the
-    Instructions for Schedule A (2025) applies it: line 1 "Enter $40,000"; lines 5-7, the amount over "$500,000
-    ($250,000 if married filing separately)" times "30% (0.30)"; line 9 "Enter the larger of the amount on line
-    8 or $10,000"; line 10 "the smaller of the amount on line 9 (half the amount on line 9 if married filing
-    separately) or the amount from Schedule A, line 5d". So a separate return halves the RESULT (the block's
-    cap_mfs / cap), which is also what makes its floor the block's floor_mfs. AGI stands in for the worksheet's
-    line 4 (the Puerto Rico, Form 2555 and Form 4563 add-backs are not modeled)."""
+    reduced it) — knowledge ``tax.salt_cap``, applied as the Schedule A instructions' State and Local Tax
+    Deduction Worksheet applies it (quoted in the comment above). AGI stands in for the worksheet's income
+    figure: the Puerto Rico, Form 2555 and Form 4563 add-backs are not modeled."""
     phase = block.get("phase_down") or {}
     mfs = status == _MFS
     cap = Decimal(str(block["cap"]))
@@ -3727,24 +3730,23 @@ _ROADMAP_NOTE = (
 )
 
 
+# Sources for _likely_forms, read 2026-11-12/13. Instructions for Form 1040 (2025) — line 7a: "If you sold a capital
+# asset, such as a stock, bond, or digital asset, you must complete and attach Form 8949 and Schedule D" (two
+# exceptions follow); Schedule 2 line 11: "See Form 8959 and its instructions if the total of your 2025 wages and
+# any self-employment income was more than" the status's amount (knowledge tax.additional_medicare_tax carries
+# them, and the estimate prices the tax); Schedule 3 line 1: "If you paid income tax to a foreign country or U.S.
+# territory, you may be able to take this credit. Generally, you must complete and attach Form 1116 to do so", then
+# "Exception. You don't have to complete Form 1116 to take this credit if all of the following apply" (five
+# conditions; the entry points there and repeats none of them). Instructions for Form 8889 (2025), Who Must File:
+# "You, your employer, or someone else made contributions to your HSA." Instructions for Form 8606 (2025), Who Must
+# File: "You made nondeductible contributions to a traditional IRA for 2025", "You received distributions from a
+# traditional IRA in 2025 and your basis in these IRAs is more than zero", "You converted an amount from a
+# traditional IRA to a Roth IRA in 2025."
 def _likely_forms(
     income: IncomeSnapshot, year: int, lines: list[CompositionLine], itemizing: "ItemizingComparison | None",
 ) -> list[str]:
-    """The schedules and forms a Form 1040 filer's inputs imply (JW2a, P1-07) — each from an input that is present.
-
-    Instructions for Form 1040 (2025), read 2026-11-12 — line 7a: "If you sold a capital asset, such as a stock,
-    bond, or digital asset, you must complete and attach Form 8949 and Schedule D" (two exceptions follow);
-    Schedule 2 line 11: "See Form 8959 and its instructions if the total of your 2025 wages and any
-    self-employment income was more than" the status's amount (knowledge tax.additional_medicare_tax carries
-    them, and the estimate prices the tax). Instructions for Form 8889 (2025), Who Must File: "You, your
-    employer, or someone else made contributions to your HSA." Instructions for Form 8606 (2025), Who Must File:
-    "You made nondeductible contributions to a traditional IRA for 2025", "You received distributions from a
-    traditional IRA in 2025 and your basis in these IRAs is more than zero", "You converted an amount from a
-    traditional IRA to a Roth IRA in 2025." Schedule 3 line 1 (same instructions): "If you paid income tax to a
-    foreign country or U.S. territory, you may be able to take this credit. Generally, you must complete and
-    attach Form 1116 to do so", then "Exception. You don't have to complete Form 1116 to take this credit if all
-    of the following apply" (five conditions; the entry points there and repeats none of them).
-    """
+    """The schedules and forms a Form 1040 filer's inputs imply (JW2a, P1-07) — each from an input that is
+    present. The entries name forms, never line numbers (P-015); the sources are quoted in the comment above."""
     people = [income, *([income.spouse] if income.spouse is not None else [])]
     out: list[str] = []
     slots = {ln.slot: ln for ln in lines}
@@ -3796,9 +3798,9 @@ def _likely_forms(
                    "Tax threshold for this filing status, or Medicare tax was withheld above the regular rate.")
     foreign_tax = _foreign_tax_paid(income)
     if foreign_tax:
-        out.append(f"Likely: Schedule 3 (Form 1040), line 1 — ${foreign_tax:,} of foreign tax was given; Form 1116 "
-                   f"unless the exception in the Form 1040 instructions (Schedule 3, line 1) applies. The foreign "
-                   f"tax credit is not in this estimate.")
+        out.append(f"Likely: Schedule 3 (Form 1040), the foreign tax credit — ${foreign_tax:,} of foreign tax was "
+                   f"given; Form 1116 unless the exception in the Form 1040 instructions (Foreign Tax Credit) "
+                   f"applies. The credit is not in this estimate.")
     if any(p.self_employment_net for p in people):
         out.append("Likely: Schedule C (Form 1040) — self-employment income or loss was given"
                    + ("; and Schedule SE — self-employment tax is in this estimate."
@@ -5670,8 +5672,8 @@ def estimate_refund(
         foreign_tax_note = (
             f"NOT ESTIMATED — the foreign tax credit: ${foreign_tax:,} of foreign tax was given "
             f"(foreign_tax_paid) and no credit for it is in this estimate, so the refund is understated (or the "
-            f"amount owed overstated) by up to that amount — the credit is figured on Schedule 3, line 1, with "
-            f"Form 1116 unless the exception in the Form 1040 instructions applies."
+            f"amount owed overstated) by up to that amount — the credit is claimed on Schedule 3 (Form 1040), "
+            f"with Form 1116 unless the exception in the Form 1040 instructions applies."
         )
         assumptions.append(foreign_tax_note)
     salt_not_deducted: str | None = None

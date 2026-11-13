@@ -370,7 +370,7 @@ def test_1d_foreign_tax_is_named_in_the_roadmap_and_never_priced():
     plain = estimate_refund(profile, YEAR, IncomeSnapshot(**base))
     est = estimate_refund(profile, YEAR, IncomeSnapshot(**base, foreign_tax_paid="41.60"))
     assert _entry(plain, "Likely: Schedule 3") is None
-    entry = _entry(est, "Likely: Schedule 3 (Form 1040), line 1")
+    entry = _entry(est, "Likely: Schedule 3 (Form 1040), the foreign tax credit")
     assert "$42 of foreign tax" in entry and "Form 1116" in entry
     assert (est.low, est.point, est.high) == (plain.low, plain.point, plain.high)   # no credit is priced
     note = next(a for a in est.assumptions if a.startswith("NOT ESTIMATED — the foreign tax credit"))

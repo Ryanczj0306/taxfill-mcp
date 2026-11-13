@@ -1654,8 +1654,8 @@ def _deductions_payments_questions(profile: Profile, out: list[IntakeQuestion], 
     ask("extension",
         f"Did you file an extension for {yr} (federal Form 4868, or a state extension), and did you pay anything "
         f"with it?",
-        "An amount paid with an extension request is a payment on the return (Schedule 3, line 10 on the 2025 "
-        "form); the extension gives more time to file, not to pay.")
+        "An amount paid with an extension request is a payment on the return (Schedule 3); the extension gives "
+        "more time to file, not to pay.")
     ask("prior_year_overpayment_applied",
         f"Was any of your {prior} refund applied to {yr} estimated tax instead of being paid out (federal or "
         f"state)?",
@@ -1665,7 +1665,8 @@ def _deductions_payments_questions(profile: Profile, out: list[IntakeQuestion], 
             f"On each W-2, what does {box14} show? Give each label and amount — for example a state disability "
             f"insurance (SDI) or paid family leave contribution.",
             "A mandatory state disability or family leave contribution is a state and local tax on Schedule A "
-            "(the line 5a instructions list the funds that count) and can decide itemizing.",
+            "(its instructions for state and local income taxes list the funds that count) and can decide "
+            "itemizing.",
             "Pass a qualifying amount in estimate_refund's other_state_local_taxes.")
         ask("hsa_coverage",
             f"Does any W-2 show box 12 code W (employer contributions to a health savings account)? If so, for "
