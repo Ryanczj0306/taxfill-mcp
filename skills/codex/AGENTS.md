@@ -36,7 +36,11 @@ on stderr).
    that adds it still includes the amount, and `verify_form`'s `expected` carries the amount so relations count it.
 4. `estimate_refund` is a labeled RANGE with assumptions, never fake precision — ESTIMATE for a closed
    year, PROJECTION for a planning year (TY2026 today: draft forms, rehearsal-only; see SKILL.md Recipe P;
-   IRA basis / backdoor Roth / recharacterization: Recipe R).
+   IRA basis / backdoor Roth / recharacterization: Recipe R). Pass W-2s as printed in `income.w2s` (`box17`)
+   plus `other_state_local_taxes`: `itemizing_comparison` says when to compare itemizing, and
+   `roadmap.returns_and_forms` lists the likely forms and the state return(s) (figures are federal only).
+   `intake_checklist({})` returns `example_profile` (the profile's exact shape); `ready_to_fill` waits for the
+   deductions-and-payments answers (`ready_to_fill_blockers`).
 5. Review draft only: the user signs and mails paper. No e-file.
 6. Year/benefit not in the shipped packs → `get_sources`, cite .gov, or refuse.
 7. No pack for a form → at most an UNMAPPED DRAFT — NOT FILING-GRADE (below); never

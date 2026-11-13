@@ -12,7 +12,7 @@ files in [`skills/`](../skills/) teach this flow, with copy-paste recipes per sc
 
 | Tool | Purpose |
 |---|---|
-| `intake_checklist` | Next interview questions + required documents |
+| `intake_checklist` | Next interview questions + required documents. The empty-profile result carries the onboarding `worksheet` and `example_profile` (the profile's exact shape); each question's `answers_into` is the exact field path; `ready_to_fill` waits for the deductions-and-payments answers (`ready_to_fill_blockers`) |
 | `list_document_kinds` | The supported tax-document types and their official box layouts — read this before `extract_document` |
 | `extract_document` | Structure + validate your reading of a W-2/1099/1098/1042-S/etc. into provenance-tagged fields |
 | `residency` | Federal NRA/RA/dual-status via the Substantial Presence Test, work shown |
@@ -23,7 +23,7 @@ files in [`skills/`](../skills/) teach this flow, with copy-paste recipes per sc
 | `verify_form` / `verify_filing` | Assertion diffs, relation math, clipping scan, checkbox audit, cross-form consistency, page-header mirrors. `verify_form` with `form="unmapped"` gives the UNMAPPED verdict; both refuse an unmapped draft on the pack path |
 | `render_form` | Page PNGs returned as MCP image content for agent vision review |
 | `calc` | Deterministic tax math — 40 ops (`calc(op, args)`). Tax computation: `tax`, `tax_with_preferential_rates`, `standard_deduction`, `se_tax`, `additional_medicare_tax`, `niit`, `taxable_social_security`, `excess_ss`, `employee_fica`, `capital_loss_limitation`, `state_tax`; Credits and deductions: `child_tax_credit`, `eitc`, `dependent_care_credit`, `education_credits`, `ptc_annual`, `ptc_monthly`, `foreign_tax_credit_election`, `student_loan_interest_deduction`, `schedule_1a_deductions`, `charitable_deduction`, `hsa_deduction`, `treaty_benefit`, `claim_of_right_repayment`; Retirement and equity: `contribution_limits`, `elective_deferral_room`, `ira_contribution_eligibility`, `ira_pro_rata`, `ira_net_income_attributable`, `ira_recharacterization`, `roth_conversion`, `espp_disposition`; Planning and payments: `estimated_tax_safe_harbor`, `underpayment_penalty`, `withholding_projection`, `paystub_to_w2`, `annualize_ytd`, `marginal_dollar_savings`, `magi_ladder`, `foreign_asset_reporting` |
-| `estimate_refund` | Early refund/owed range from a partial profile, with composition and assumption list — labeled ESTIMATE for a closed year and PROJECTION for a planning year (a provisional pack, today TY2026) |
+| `estimate_refund` | Early refund/owed range from a partial profile, with composition and assumption list — labeled ESTIMATE for a closed year and PROJECTION for a planning year (a provisional pack, today TY2026). Takes W-2s as printed (`w2s`, with `box17`) and `other_state_local_taxes`: `itemizing_comparison` weighs the state and local tax against the standard deduction, and `roadmap.returns_and_forms` lists the likely schedules and forms plus the state return(s) (dollar figures are federal only) |
 | `compare_scenarios` | Two or more what-if scenarios diffed against the first, with an exact per-slot ledger and a sequential input walk that telescopes to the headline delta |
 | `get_sources` | Ranked official .gov sources per topic (freshness protocol) |
 | `filing_summary` | Plain-language bottom line per jurisdiction before printing |

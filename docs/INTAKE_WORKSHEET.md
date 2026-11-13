@@ -137,8 +137,10 @@ Other income (amount if any; "none" if none; "don't know" if unsure):
 | Type | Document | Amount | Notes |
 |---|---|---|---|
 | Bank interest | 1099-INT | | |
-| Dividends | 1099-DIV | | |
-| Stock / crypto sales | 1099-B | | cost basis, buy/sell dates |
+| Dividends | 1099-DIV | | box 5, box 7 (foreign tax paid) |
+| Stock / crypto sales | 1099-B | | cost basis, buy/sell dates; employer stock (RSU / ESPP / options)? Form 3922 / 3921 |
+| IRA distribution / Roth conversion | 1099-R, 5498 | | basis (last Form 8606), other traditional / SEP / SIMPLE IRAs, their Dec 31 total value |
+| HSA (W-2 box 12 code W) | | | months covered by a high-deductible plan; self-only or family |
 | RSU / option vests or exercises | usually inside the W-2 | | vest dates, share counts |
 | Freelance / gig work | 1099-NEC | | |
 | Tuition | 1098-T | | do scholarships exceed tuition? |
@@ -147,11 +149,22 @@ Other income (amount if any; "none" if none; "don't know" if unsure):
 | Marketplace health coverage (healthcare.gov / state exchange) | 1095-A | | **always disclose it** — omitting it freezes the refund |
 | Foreign income / foreign accounts | | | |
 
+**Deductions you may be able to itemize** ("none" if none; "don't know" if unsure):
+
+- W-2 Box 14 amounts (state disability insurance, paid family leave — label + amount): __________
+- Other state / local taxes (local income tax, state estimated payments, value-based vehicle licence fee): __________
+- Real estate tax: __________　Home mortgage interest (Form 1098): __________
+- Gifts to charity: __________　Large medical / dental costs: __________
+  > Together with the state income tax withheld (W-2 Box 17), these decide whether itemizing
+  > beats the standard deduction.
+
 ## Part 6 · Tax already paid (required to compute owe-vs-refund)
 
 - Federal withheld (so far / projected full-year): __________
 - State withheld: __________
 - Quarterly estimated payments you made (Form 1040-ES): __________ (dates + amounts)
+- Extension filed (Form 4868, or a state one)? __________　Amount paid with it: __________
+- Part of last year's refund applied to this year's estimated tax: __________
 - Last year (____) you filed:　□ 1040 (as a resident, whole year)　□ 1040-NR (as a nonresident)　□ dual-status (a 1040 with a 1040-NR statement, or the reverse)　□ joint 1040 with the §6013(g)/(h) election for a nonresident spouse　□ didn't file
   > Which return you filed last year also feeds the residency check: if you were a U.S. resident for
   > any part of last year and are one again this year, this year counts from January 1.

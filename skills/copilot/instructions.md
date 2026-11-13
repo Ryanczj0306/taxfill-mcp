@@ -17,7 +17,7 @@ entry and `fill_form` warning to the user (`ok` ignores them; `fill_form` builds
 the page-header mirrors you leave out, `mirrored`; paths may be `~/...`; a line under `get_form_map`'s
 `unfillable_lines` is refused — the user hand-writes it, totals still include it, and `verify_form`'s `expected`
 carries the amount); `estimate_refund` is a
-labeled range with assumptions (ESTIMATE for a closed year, PROJECTION for a planning year — TY2026 today, rehearsal-only; SKILL.md Recipes P and R cover planning and IRA basis); review draft only
+labeled range with assumptions (ESTIMATE for a closed year, PROJECTION for a planning year — TY2026 today, rehearsal-only; SKILL.md Recipes P and R cover planning and IRA basis) — pass W-2s as printed in `income.w2s` (`box17`) plus `other_state_local_taxes`, and read `itemizing_comparison` and `roadmap.returns_and_forms` (likely forms + state returns; figures are federal only); `intake_checklist({})` returns `example_profile` (the profile's exact shape) and `ready_to_fill` waits for the deductions-and-payments answers (`ready_to_fill_blockers`); review draft only
 (user signs and mails paper — no e-file); for a year/benefit not in the shipped
 packs, resolve via `get_sources` (.gov) and cite, or refuse; write every filled PDF
 to an ABSOLUTE `out_path` under the year's workspace `drafts/` folder

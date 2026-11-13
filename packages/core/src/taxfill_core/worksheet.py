@@ -156,8 +156,10 @@ Other income (amount if any; "none" if none; "don't know" if unsure):
 | Type | Document | Amount | Notes |
 |---|---|---|---|
 | Bank interest | 1099-INT | | |
-| Dividends | 1099-DIV | | |
-| Stock / crypto sales | 1099-B | | cost basis, buy/sell dates |
+| Dividends | 1099-DIV | | box 5, box 7 (foreign tax paid) |
+| Stock / crypto sales | 1099-B | | cost basis, buy/sell dates; employer stock (RSU / ESPP / options)? Form 3922 / 3921 |
+| IRA distribution / Roth conversion | 1099-R, 5498 | | basis (last Form 8606), other traditional / SEP / SIMPLE IRAs, their Dec 31 total value |
+| HSA (W-2 box 12 code W) | | | months covered by a high-deductible plan; self-only or family |
 | RSU / option vests or exercises | usually inside the W-2 | | vest dates, share counts |
 | Freelance / gig work | 1099-NEC | | |
 | Tuition | 1098-T | | do scholarships exceed tuition? |
@@ -166,11 +168,22 @@ Other income (amount if any; "none" if none; "don't know" if unsure):
 | Marketplace health coverage (healthcare.gov / state exchange) | 1095-A | | **always disclose it** — omitting it freezes the refund |
 | Foreign income / foreign accounts | | | |
 
+**Deductions you may be able to itemize** ("none" if none; "don't know" if unsure):
+
+- W-2 Box 14 amounts (state disability insurance, paid family leave — label + amount): __________
+- Other state / local taxes (local income tax, state estimated payments, value-based vehicle licence fee): __________
+- Real estate tax: __________　Home mortgage interest (Form 1098): __________
+- Gifts to charity: __________　Large medical / dental costs: __________
+  > Together with the state income tax withheld (W-2 Box 17), these decide whether itemizing
+  > beats the standard deduction.
+
 ## Part 6 · Tax already paid (required to compute owe-vs-refund)
 
 - Federal withheld (so far / projected full-year): __________
 - State withheld: __________
 - Quarterly estimated payments you made (Form 1040-ES): __________ (dates + amounts)
+- Extension filed (Form 4868, or a state one)? __________　Amount paid with it: __________
+- Part of last year's refund applied to this year's estimated tax: __________
 - Last year (____) you filed:　□ 1040 (as a resident, whole year)　□ 1040-NR (as a nonresident)　□ dual-status (a 1040 with a 1040-NR statement, or the reverse)　□ joint 1040 with the §6013(g)/(h) election for a nonresident spouse　□ didn't file
   > Which return you filed last year also feeds the residency check: if you were a U.S. resident for
   > any part of last year and are one again this year, this year counts from January 1.
@@ -325,8 +338,10 @@ H-1B 生效，都要单独一行。**
 | 类型 | 文件 | 金额 | 备注 |
 |---|---|---|---|
 | 银行利息 | 1099-INT | | |
-| 股息 | 1099-DIV | | |
-| 卖股票 / 加密货币 | 1099-B | | 成本价、买入卖出日期 |
+| 股息 | 1099-DIV | | 第 5 栏、第 7 栏（已缴外国税） |
+| 卖股票 / 加密货币 | 1099-B | | 成本价、买入卖出日期；是否雇主股票（RSU / ESPP / 期权）？Form 3922 / 3921 |
+| IRA 取款 / 转 Roth | 1099-R、5498 | | basis（上一份 Form 8606）、其他 traditional / SEP / SIMPLE IRA、它们 12 月 31 日的总市值 |
+| HSA（W-2 Box 12 代码 W） | | | 高免赔额医保覆盖的月份；self-only 还是 family |
 | RSU / 期权 归属或行权 | 通常已在 W-2 里 | | 归属日、股数 |
 | 自由职业 / 接活 | 1099-NEC | | |
 | 学费 | 1098-T | | 奖学金是否超过学费 |
@@ -335,11 +350,21 @@ H-1B 生效，都要单独一行。**
 | Marketplace 医保（healthcare.gov / 州交易所） | 1095-A | | **有就一定要说**，漏了退税会被冻结 |
 | 海外收入 / 海外账户 | | | |
 
+**可能可以逐项扣除（itemize）的支出**（没有写"无"，不确定写"不知道"）：
+
+- W-2 Box 14 的金额（州残障保险 SDI、带薪家庭假 —— 名称 + 金额）：__________
+- 其他州 / 地方税（地方所得税、州预缴税、按车辆价值计的年度牌照费）：__________
+- 房产税：__________　房贷利息（Form 1098）：__________
+- 慈善捐赠：__________　大额医疗 / 牙科支出：__________
+  > 这些加上 W-2 Box 17 的州所得税扣缴，决定逐项扣除是否比标准扣除更划算。
+
 ## 第 6 部分 · 已经交了多少税（算"还要补/能退"必需）
 
 - 联邦已扣缴（到目前为止 / 预计全年）：__________
 - 州已扣缴：__________
 - 自己交过的季度预缴（Form 1040-ES）：__________ （日期 + 金额）
+- 申请过延期吗（Form 4868 或州的延期）？__________　随延期申请缴的金额：__________
+- 上一年退税中转作今年预缴税的部分：__________
 - 上一年（____ 年）报的是 □ 1040（全年按居民报）　□ 1040-NR（按非居民报）　□ 双重身份申报（1040 附 1040-NR 声明，或反过来）　□ 与配偶按 §6013(g)/(h) 选择合报的 1040　□ 没报
   > 上一年报的是哪种表，也会影响今年的居民身份判定：上一年任何时候是美国税务居民、今年又是居民的话，
   > 今年从 1 月 1 日起就算居民。

@@ -1496,8 +1496,20 @@ def intake_checklist(profile: dict | None = None, tax_year: int | None = None) -
     worksheet (markdown) to hand a no-experience user BEFORE interviewing them — status and
     state facts as date-ranged SEGMENTS, never single words. Record their answers into the
     profile and re-call; the interview then asks only what is still missing.
+
+    The start state also returns `example_profile`: the exact profile shape (a leaf answer is
+    {value, provenance}; year-keyed sections), fictitious values. Each question's `answers_into` is
+    the exact field path. `ready_to_fill` stays false while a deductions-and-payments question is open
+    (`ready_to_fill_blockers`); record each answer in words under deductions_and_payments.<year> —
+    "none" and "unknown" are answers.
     """
-    prof = Profile.model_validate(profile) if profile else None
+    try:
+        prof = Profile.model_validate(profile) if profile else None
+    except ValidationError as exc:
+        raise ValueError(
+            f"invalid `profile` — {_validation_problems(exc)}. The shape is in `example_profile` (call "
+            f"intake_checklist with no profile); each question's `answers_into` names the field path."
+        ) from None
     return _dump(_intake_checklist(prof, tax_year=tax_year))
 
 
@@ -1600,7 +1612,8 @@ def estimate_refund(profile: dict, year: int, income: dict) -> dict:
     """Early bottom-line range from a partial profile + confirmed income amounts — labeled ESTIMATE for a closed
     year and PROJECTION for a planning year (a provisional knowledge pack, today TY2026).
 
-    `income` fields (whole dollars; every field optional, defaults 0; unknown fields rejected):
+    `income` fields (whole dollars, W-2 boxes as printed; every field optional, defaults 0; unknown fields
+    rejected):
     - income: wages (W-2 box 1), federal_withholding (withheld + estimated payments), interest,
       bank_deposit_interest (the DEPOSIT subset of interest — US bank / savings institution /
       insurance-company deposit, not effectively connected; excluded for a nonresident under
@@ -1631,13 +1644,17 @@ def estimate_refund(profile: dict, year: int, income: dict) -> dict:
       above-the-line), treaty_exempt_income (1042-S box 2 — agent-confirmed treaty amount; the
       assumption names where it is reported for the profile's residency: Schedule OI for a
       nonresident, in parentheses on Schedule 1's other-income line for a resident alien),
-      itemized_deductions? (only if itemizing; else standard deduction — NRAs itemize only)
+      itemized_deductions? (only if itemizing; else standard deduction — NRAs itemize only),
+      other_state_local_taxes? (JW2a: state and local taxes paid beyond W-2 box 17 — box 14 disability or
+      family leave, box 19, state estimated payments, real estate tax, a value-based vehicle fee; never priced
+      alone), foreign_tax_paid? (1099-DIV box 7; named in the roadmap, the credit is NOT estimated)
     - Schedule 1-A (JF7, P.L. 119-21, TY2025-2028 — BELOW AGI, after the deduction; never pre_agi_adjustments
       or itemized_deductions): qualified_tips, qualified_overtime_premium (the FLSA premium half only),
       car_loan_interest; the senior deduction is derived from the profile's date of birth and SSN
       (senior_taxpayer / senior_spouse override it). MFS forfeits tips, overtime and the senior deduction,
       not car-loan interest; a year whose pack lacks the block reports it in missing_blocks
-    - w2s (JT4a): each Form W-2 as read {employer?, box1..box7, box10, box12: [{code, amount}], box14b?} — the
+    - w2s (JT4a): each Form W-2 as printed, cents allowed {employer?, box1..box7, box10, box12: [{code,
+      amount}], box14b?, box17? (state income tax)} — the
       aggregates (wages, ss_wages, medicare_wages, the box 4 / box 6 lists, dependent_care_benefits from box 10,
       qualified_overtime_premium from code TT) derive from them, and an aggregate also given must agree; the
       assumptions flag a 402(g) excess across employers and a code W figure deducted again
@@ -1654,6 +1671,12 @@ def estimate_refund(profile: dict, year: int, income: dict) -> dict:
     - ACA (Form 1095-A line 33): aca_premiums, aca_slcsp, aca_aptc
     - spouse: nested income object with the spouse's OWN amounts (same fields; enables a true
       two-return MFS comparison — otherwise amounts are couple-combined)
+
+    Itemizing (JW2a): with no itemized_deductions, result.itemizing_comparison weighs the state and local tax
+    given (box 17 + other_state_local_taxes, after the year's limit) against the standard deduction — over it,
+    the range includes the itemized outcome; at least half of it, the result lists what else to collect.
+    result.roadmap.returns_and_forms lists the LIKELY schedules and forms the inputs imply (not exhaustive) and
+    the state return(s) the state footprint requires; every dollar figure is the federal return only.
 
     Schedule 3-A (JT1c, 2026 onward, P-023): the refunded portion of the EIC, the ACTC and the refundable
     AOTC — the part over the subtitle A tax — is a PRWORA "Federal public benefit" under the PROPOSED rule
@@ -1747,8 +1770,8 @@ def estimate_refund(profile: dict, year: int, income: dict) -> dict:
     except ValidationError as exc:
         raise ValueError(
             f"invalid `profile` — {_validation_problems(exc)}. Top-level profile sections: "
-            f"{', '.join(Profile.model_fields)}; build it with intake_checklist and pass its "
-            f"answers back unchanged."
+            f"{', '.join(Profile.model_fields)}; build it with intake_checklist (its empty-profile result "
+            f"carries `example_profile`, the exact shape) and pass its answers back unchanged."
         ) from None
     try:
         snapshot = IncomeSnapshot.model_validate(income)
