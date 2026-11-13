@@ -3900,7 +3900,7 @@ _SPOUSE_CONCATENATED = frozenset({"ss_withheld_by_employer", "aotc_qualified_exp
                                   "retirement_distributions", "w2s"})   # JT4a: each person's W-2s   # JR3a (test_jr3a_the_joint_view_keeps_each_spouses_1099rs)
 _SPOUSE_BOX_SUMMED = frozenset({"medicare_wages", "ss_wages"})  # summed, box 1 standing in for a missing one (JF3)
 # None unless either spouse gives it (itemized_deductions; JW2a: other_state_local_taxes)
-_SPOUSE_OPTIONAL_SUMMED = frozenset({"itemized_deductions", "other_state_local_taxes"})
+_SPOUSE_OPTIONAL_SUMMED = frozenset({"itemized_deductions", "other_state_local_taxes", "foreign_tax_paid"})
 _HOUSEHOLD_LEVEL = frozenset({"dependent_care_persons"})  # the same persons: the MAX, never doubled
 _SPOUSE_FIELD = frozenset({"spouse"})  # the nesting itself: the joint view has none
 
@@ -3984,6 +3984,13 @@ def _spouse_coverage_gaps(combine) -> list[str]:
     if (salt_one.other_state_local_taxes, salt_both.other_state_local_taxes, joint.other_state_local_taxes) != (
             Decimal("10.25"), Decimal("15.75"), None):
         gaps.append("other_state_local_taxes")
+    # foreign_tax_paid (JW2a): the same rule again.
+    ftc_one = combine(primary.model_copy(update={"foreign_tax_paid": Decimal("10.25"), "spouse": spouse}))
+    ftc_both = combine(primary.model_copy(update={
+        "foreign_tax_paid": Decimal("10.25"), "spouse": spouse.model_copy(update={"foreign_tax_paid": Decimal("5.50")})}))
+    if (ftc_one.foreign_tax_paid, ftc_both.foreign_tax_paid, joint.foreign_tax_paid) != (
+            Decimal("10.25"), Decimal("15.75"), None):
+        gaps.append("foreign_tax_paid")
     return gaps
 
 

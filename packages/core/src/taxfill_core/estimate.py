@@ -93,6 +93,7 @@ __all__ = [
     "DeltaLine",
     "MissingBlock",
     "StatusComparison",
+    "ItemizingComparison",
     "Roadmap",
     "RefundEstimate",
     "estimate_refund",
@@ -292,6 +293,12 @@ def _w2_aggregates(w2s: list[W2Facts]) -> dict[str, Any]:
         "medicare_tax_withheld": [r for w in w2s if (r := irs_round(w.box6))],
         "dependent_care_benefits": _whole(w.box10 for w in w2s),
     }
+
+
+def _foreign_tax_paid(snap: "IncomeSnapshot") -> int:
+    """The foreign tax this snapshot shows (JW2a), a spouse's included — named in the roadmap, never priced."""
+    people = [snap, *([snap.spouse] if snap.spouse is not None else [])]
+    return _whole(p.foreign_tax_paid or Decimal(0) for p in people)
 
 
 def _state_local_tax_paid(snap: "IncomeSnapshot") -> int:
@@ -576,6 +583,14 @@ class IncomeSnapshot(BaseModel):
             "pass that instead. None = not collected."
         ),
     )
+    foreign_tax_paid: PrintedMoney | None = Field(
+        default=None,
+        description=(
+            "JW2a: foreign income tax paid, as printed (Form 1099-DIV box 7, or a payer's statement). NOT priced: "
+            "the foreign tax credit is not in this estimate — the roadmap names Schedule 3 line 1 and Form 1116, "
+            "and the assumptions say the credit is not estimated. None = not collected."
+        ),
+    )
     spouse: "IncomeSnapshot | None" = Field(
         default=None,
         description="The spouse's own amounts (enables a true two-return MFS comparison). One level only.",
@@ -726,6 +741,11 @@ class IncomeSnapshot(BaseModel):
                 None
                 if self.other_state_local_taxes is None and s.other_state_local_taxes is None
                 else (self.other_state_local_taxes or Decimal(0)) + (s.other_state_local_taxes or Decimal(0))
+            ),
+            foreign_tax_paid=(
+                None
+                if self.foreign_tax_paid is None and s.foreign_tax_paid is None
+                else (self.foreign_tax_paid or Decimal(0)) + (s.foreign_tax_paid or Decimal(0))
             ),
         )
 
@@ -1121,7 +1141,17 @@ class Roadmap(BaseModel):
 
     returns_and_forms: list[str] = Field(
         default_factory=list,
-        description="Which federal returns/forms this filer needs (best-effort from residency / us_person).",
+        description=(
+            "The federal return (best-effort from residency / us_person), then — JW2a — each schedule or form an "
+            "input that is present implies for a Form 1040 filer, marked 'Likely:' (a 'Compare:' entry when the "
+            "deduction method is open), then one 'State return' entry per state the profile's state footprint "
+            "requires (taxfill_core.statescope; state tax is never estimated). Not exhaustive: see `note`."
+        ),
+    )
+    note: str = Field(
+        default="",
+        description="How to read returns_and_forms: what 'Likely:' means, that the list is not exhaustive, and "
+                    "that this estimate's dollar figures are the federal return only.",
     )
     missing_documents: list[str] = Field(
         default_factory=list,
@@ -1129,6 +1159,37 @@ class Roadmap(BaseModel):
                     "recorded 'not_applicable' is an answer, not a gap, and is never listed.",
     )
     estimated_time: str = Field(default="", description="Coarse honest estimate of time to finish.")
+
+
+class ItemizingComparison(BaseModel):
+    """JW2a (walkthrough P1-07): the state and local tax the inputs already show, weighed against the standard
+    deduction when no itemized total was given. The figures are the PRIMARY status's return (on a two-return
+    married-filing-separately pair, your own return's)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    verdict: Literal["exceeds_standard", "close", "below", "not_estimated"] = Field(
+        description="For the primary status. 'exceeds_standard': the tax alone, after the year's limit, is more "
+                    "than the standard deduction the point uses, and the range holds the figure that itemizes it; "
+                    "'close': it is at least half of that standard deduction (this estimate's threshold, not a tax "
+                    "rule) and other items could close the gap; 'below': under half — reported only when "
+                    "other_statuses is not empty; 'not_estimated': the year's pack carries no limit "
+                    "(tax.salt_cap), so the comparison was not made.")
+    state_local_tax_paid: int = Field(description="W-2 box 17 plus other_state_local_taxes, whole dollars.")
+    limit: int | None = Field(description="The year's limit on that deduction for this return (Schedule A line 5e).")
+    deductible: int | None = Field(description="The smaller of the two: what the tax alone gives as itemized.")
+    standard_deduction: int = Field(description="The standard deduction it is weighed against.")
+    itemized_bottom_line: int | None = Field(
+        default=None,
+        description="The signed bottom line under the primary status when that tax alone is itemized — in the "
+                    "range (None unless it differs from the point).")
+    other_statuses: dict[str, int] = Field(
+        default_factory=dict,
+        description="Other candidate statuses under which that tax alone beats the status's standard deduction: "
+                    "status -> the signed bottom line itemizing it, which the range holds.")
+    collect: list[str] = Field(description="The other Schedule A items to collect before settling the deduction.")
+    message: str = Field(description="The finding in words (the same text is in assumptions; what_would_change_it "
+                                     "says what to collect).")
 
 
 class RefundEstimate(BaseModel):
@@ -1159,6 +1220,11 @@ class RefundEstimate(BaseModel):
         description="Side-by-side status comparison (eval (l)); present whenever >=2 candidate statuses were computed.",
     )
     roadmap: Roadmap | None = Field(default=None, description="Returns/forms, missing documents, and time-to-finish.")
+    itemizing_comparison: ItemizingComparison | None = Field(
+        default=None,
+        description="JW2a: set when state and local tax is known, no itemized total was given, and that tax alone "
+                    "exceeds or comes close to the standard deduction (or the year's pack has no limit to apply).",
+    )
     provisional: dict | None = Field(
         default=None,
         description=(
@@ -3499,6 +3565,10 @@ _FORM_8843_UNDER_ELECTION = (
 )
 
 
+def _phrase(v: int) -> str:
+    return f"a refund of about ${v:,}" if v > 0 else (f"owing about ${-v:,}" if v < 0 else "breaking even")
+
+
 def _signed_dollars(value: int) -> str:
     return f"{'+' if value >= 0 else '-'}${abs(value):,}"
 
@@ -3591,17 +3661,183 @@ def _unsettled_residency_notes(
     return notes
 
 
-def _build_roadmap(profile: Profile, year: int, result=None, *, kind: str = "either") -> Roadmap:
+# ── JW2a (walkthrough P1-07): the state and local tax the inputs show, against the standard deduction ──────
+# "Close" is this estimate's own threshold, not a tax rule: the tax alone, after the limit, is at least half
+# of the standard deduction, so the other Schedule A items (below) could plausibly carry the total past it.
+_SALT_CLOSE_SHARE = Decimal("0.5")
+# Schedule A (Form 1040) (2025) and its instructions, read 2026-11-12. Line 5a: "State and local income taxes
+# withheld from your salary during 2025. Your Form(s) W-2 will show these amounts", and "Mandatory contributions
+# you made to the California, New Jersey, or New York Nonoccupational Disability Benefit Fund; Rhode Island
+# Temporary Disability Benefit Fund; or Washington State Supplemental Workmen's Compensation Fund", and
+# "Mandatory contributions to state family leave programs". Line 5c: personal property taxes "but only if the
+# taxes were based on value alone and were imposed on a yearly basis ... You can deduct only the part of the fee
+# that was based on the car's value." Line 3 of the form: "Multiply line 2 by 7.5% (0.075)". Lines 5b, 8a, 11.
+_ITEMS_TO_COLLECT: tuple[str, ...] = (
+    "other state and local taxes: a mandatory state disability or family leave contribution (often W-2 box 14; "
+    "the Schedule A line 5a instructions list the funds that count), local income tax (W-2 box 19), state "
+    "estimated payments, and the value-based part of a yearly vehicle licence or registration fee (line 5c)",
+    "real estate tax on a home you own (line 5b)",
+    "home mortgage interest (Form 1098; line 8a)",
+    "gifts to charity (lines 11-12)",
+    "medical and dental costs, if large: only the part over 7.5% of AGI counts (lines 1-4)",
+)
+
+
+def _salt_limit(block: dict, agi: int, status: str) -> tuple[int, bool]:
+    """(the year's limit on the state and local tax deduction for one return, whether the income phase-down
+    reduced it) — knowledge ``tax.salt_cap``, applied as the State and Local Tax Deduction Worksheet in the
+    Instructions for Schedule A (2025) applies it: line 1 "Enter $40,000"; lines 5-7, the amount over "$500,000
+    ($250,000 if married filing separately)" times "30% (0.30)"; line 9 "Enter the larger of the amount on line
+    8 or $10,000"; line 10 "the smaller of the amount on line 9 (half the amount on line 9 if married filing
+    separately) or the amount from Schedule A, line 5d". So a separate return halves the RESULT (the block's
+    cap_mfs / cap), which is also what makes its floor the block's floor_mfs. AGI stands in for the worksheet's
+    line 4 (the Puerto Rico, Form 2555 and Form 4563 add-backs are not modeled)."""
+    phase = block.get("phase_down") or {}
+    mfs = status == _MFS
+    cap = Decimal(str(block["cap"]))
+    limit, reduced = cap, False
+    threshold = phase.get("magi_threshold_mfs" if mfs else "magi_threshold")
+    if threshold is not None and agi > int(threshold):
+        limit = max(cap - Decimal(str(phase["reduction_rate"])) * (agi - int(threshold)), Decimal(str(phase["floor"])))
+        reduced = limit < cap
+    if mfs:
+        limit = limit * Decimal(str(block["cap_mfs"])) / cap
+    return irs_round(limit), reduced
+
+
+def _salt_source(paid_box17: int, paid_other: int) -> str:
+    parts = [f"W-2 box 17 ${paid_box17:,}"] if paid_box17 else []
+    if paid_other:
+        parts.append(f"other_state_local_taxes ${paid_other:,}")
+    return " + ".join(parts)
+
+
+# Schedule B (Form 1040), read on each year's form (2023, 2024, 2025; the 2026 draft created 4/7/26): "Note: If
+# line 4 is over $1,500, you must complete Part III" and the same for line 6; Instructions for Form 1040 (2025),
+# line 2b: "you must fill in and attach Schedule B if the total is over $1,500 or any of the other conditions
+# listed at the beginning of the Schedule B instructions applies to you", and line 3b the same for dividends.
+_SCHEDULE_B_OVER: dict[int, int] = {2023: 1500, 2024: 1500, 2025: 1500, 2026: 1500}
+_ROADMAP_NOTE = (
+    "Entries marked 'Likely:' are derived from the inputs given so far — a schedule or form is listed only when "
+    "an input that implies it is present — so the list is NOT exhaustive and each entry is to confirm against the "
+    "form's own instructions. The dollar figures in this estimate are the FEDERAL return only: a 'State return' "
+    "entry names a return the state footprint requires (state_scope has the role, forms and warnings), and no "
+    "state tax is estimated."
+)
+
+
+def _likely_forms(
+    income: IncomeSnapshot, year: int, lines: list[CompositionLine], itemizing: "ItemizingComparison | None",
+) -> list[str]:
+    """The schedules and forms a Form 1040 filer's inputs imply (JW2a, P1-07) — each from an input that is present.
+
+    Instructions for Form 1040 (2025), read 2026-11-12 — line 7a: "If you sold a capital asset, such as a stock,
+    bond, or digital asset, you must complete and attach Form 8949 and Schedule D" (two exceptions follow);
+    Schedule 2 line 11: "See Form 8959 and its instructions if the total of your 2025 wages and any
+    self-employment income was more than" the status's amount (knowledge tax.additional_medicare_tax carries
+    them, and the estimate prices the tax). Instructions for Form 8889 (2025), Who Must File: "You, your
+    employer, or someone else made contributions to your HSA." Instructions for Form 8606 (2025), Who Must File:
+    "You made nondeductible contributions to a traditional IRA for 2025", "You received distributions from a
+    traditional IRA in 2025 and your basis in these IRAs is more than zero", "You converted an amount from a
+    traditional IRA to a Roth IRA in 2025." Schedule 3 line 1 (same instructions): "If you paid income tax to a
+    foreign country or U.S. territory, you may be able to take this credit. Generally, you must complete and
+    attach Form 1116 to do so", then "Exception. You don't have to complete Form 1116 to take this credit if all
+    of the following apply" (five conditions; the entry points there and repeats none of them).
+    """
+    people = [income, *([income.spouse] if income.spouse is not None else [])]
+    out: list[str] = []
+    slots = {ln.slot: ln for ln in lines}
+    deduction = slots.get("deduction")
+    if deduction is not None and deduction.label.startswith("Less: itemized deductions") and deduction.amount:
+        out.append(f"Likely: Schedule A (Form 1040) — this estimate itemizes ${-deduction.amount:,}.")
+    elif itemizing is not None and itemizing.verdict == "exceeds_standard":
+        out.append(
+            f"Likely: Schedule A (Form 1040) — the state and local tax already known (${itemizing.deductible:,} "
+            f"after the limit) is more than the ${itemizing.standard_deduction:,} standard deduction; total the "
+            f"schedule and pass itemized_deductions.")
+    elif itemizing is not None:
+        out.append(
+            f"Compare: Schedule A (Form 1040) or the standard deduction — state and local tax of "
+            f"${itemizing.state_local_tax_paid:,} is already known against a ${itemizing.standard_deduction:,} "
+            f"standard deduction; collect the other itemized deductions before settling (itemizing_comparison).")
+    interest = sum(p.interest for p in people)
+    dividends = sum(p.dividends for p in people)
+    over = _SCHEDULE_B_OVER.get(year)
+    if over is None:
+        if interest or dividends:
+            out.append(f"Likely: Schedule B (Form 1040) if taxable interest or ordinary dividends pass the {year} "
+                       f"form's threshold (not carried here for {year}) — ${interest:,} and ${dividends:,} were given.")
+    elif interest > over or dividends > over:
+        which = [part for part, on in (
+            (f"taxable interest of ${interest:,}", interest > over),
+            (f"ordinary dividends of ${dividends:,}", dividends > over)) if on]
+        out.append(f"Likely: Schedule B (Form 1040) — {' and '.join(which)} "
+                   f"{'are each' if len(which) > 1 else 'is'} over ${over:,}.")
+    if any(p.capital_gain_long or p.capital_gain_short for p in people):
+        out.append("Likely: Schedule D (Form 1040) — capital gains or losses were given.")
+        out.append("Likely: Form 8949 — the sales behind them are listed there, unless one of the exceptions in "
+                   "the Form 1040 instructions (Capital Gain or (Loss)) applies.")
+    hsa = sum(_coded_total(p.w2s, "W") for p in people)
+    if hsa:
+        out.append(f"Likely: Form 8889 — W-2 box 12 code W shows ${hsa:,} of HSA contributions (one form per "
+                   f"account holder).")
+    converted = any(item.converted_to_roth for p in people for item in p.retirement_distributions)
+    basis = any(p.ira_pool is not None and (p.ira_pool.nondeductible_contributions_this_year
+                                            or p.ira_pool.basis_carryforward) for p in people)
+    if converted or basis:
+        why = " and ".join(part for part, on in (
+            ("a traditional IRA amount was converted to a Roth IRA", converted),
+            ("nondeductible IRA contributions or basis were given", basis)) if on)
+        out.append(f"Likely: Form 8606 — {why} (one form per person).")
+    if any(slots.get(k) is not None and slots[k].amount for k in (
+            "additional_medicare_tax", "additional_medicare_withholding")):
+        out.append("Likely: Form 8959 — Medicare wages or self-employment income are over the Additional Medicare "
+                   "Tax threshold for this filing status, or Medicare tax was withheld above the regular rate.")
+    foreign_tax = _foreign_tax_paid(income)
+    if foreign_tax:
+        out.append(f"Likely: Schedule 3 (Form 1040), line 1 — ${foreign_tax:,} of foreign tax was given; Form 1116 "
+                   f"unless the exception in the Form 1040 instructions (Schedule 3, line 1) applies. The foreign "
+                   f"tax credit is not in this estimate.")
+    if any(p.self_employment_net for p in people):
+        out.append("Likely: Schedule C (Form 1040) — self-employment income or loss was given"
+                   + ("; and Schedule SE — self-employment tax is in this estimate."
+                      if slots.get("se_tax") is not None and slots["se_tax"].amount else "."))
+    return out
+
+
+def _state_return_entries(profile: Profile, year: int, knowledge_dir) -> list[str]:
+    """One entry per state return the profile's state footprint requires (statescope) — named, never priced."""
+    if profile.state_footprint.get(year) is None:
+        return []
+    from taxfill_core.statescope import state_scope  # noqa: PLC0415
+
+    role_words = {"resident": "resident", "part_year": "part-year resident", "nonresident": "nonresident"}
+    return [
+        f"State return: {f.state} {role_words.get(f.filing_role, f.filing_role)} return — "
+        f"{', '.join(f.forms) or 'see the state revenue department'} (state tax is not estimated here)."
+        for f in state_scope(profile, year, base_dir=knowledge_dir).states if f.must_file
+    ]
+
+
+def _build_roadmap(
+    profile: Profile, year: int, result=None, *, kind: str = "either", income: IncomeSnapshot | None = None,
+    lines: list[CompositionLine] | None = None, itemizing: "ItemizingComparison | None" = None,
+    knowledge_dir=None,
+) -> Roadmap:
     """Returns/forms (from residency when computable, else us_person), missing docs, time.
 
-    ``kind`` is the §6013 choice (residency.section_6013_kind) when the election is applied."""
+    ``kind`` is the §6013 choice (residency.section_6013_kind) when the election is applied. JW2a: with
+    ``income`` (and the primary figure's ``lines``) a Form 1040 filer also gets the schedules and forms the
+    inputs imply, and every filer the state return(s) the state footprint requires."""
     forms: list[str] = []
+    form_1040 = False   # a whole-year Form 1040 (never the dual-status pair): the likely list applies
     if result is not None:
         if result.section_6013_election:
             # P-018: under the election both spouses file as residents; the election is
             # made ON the return, and IRC 6013(g) and 6013(h) take different statements
             # (Pub 519 ch. 1, How To Make the Choice / Choosing Resident Alien Status).
             forms = ["Form 1040", "§6013(g)/(h) election: " + residency.section_6013_texts(kind)[2]]
+            form_1040 = True
             exempt_this_year = year in result.exempt_years.fully_exempt_years or (
                 year in result.exempt_years.partially_exempt_years
             )
@@ -3610,7 +3846,7 @@ def _build_roadmap(profile: Profile, year: int, result=None, *, kind: str = "eit
             ):
                 forms.append(_FORM_8843_UNDER_ELECTION)
         elif result.classification == "resident":
-            forms = ["Form 1040"]
+            forms, form_1040 = ["Form 1040"], True
         elif result.classification == "nonresident":
             forms = ["Form 1040-NR", "Form 8843"]
         else:  # dual_status_candidate — ONE return + ONE statement for the split year (Pub 519 ch. 6)
@@ -3653,9 +3889,12 @@ def _build_roadmap(profile: Profile, year: int, result=None, *, kind: str = "eit
     else:
         ident = profile.identity
         if ident is not None and ident.us_person is not None and ident.us_person.value is True:
-            forms = ["Form 1040"]
+            forms, form_1040 = ["Form 1040"], True
         elif ident is not None and ident.us_person is not None and ident.us_person.value is False:
             forms = ["Form 1040-NR", "Form 8843"]
+    if form_1040 and income is not None:
+        forms = [*forms, *_likely_forms(income, year, lines or [], itemizing)]
+    forms = [*forms, *_state_return_entries(profile, year, knowledge_dir)]
 
     # JW2a (P1-07): only 'missing' is a gap — 'not_applicable' records a NO (intake's 1095-A and
     # foreign-account answers), so it is never reported as missing.
@@ -3668,7 +3907,7 @@ def _build_roadmap(profile: Profile, year: int, result=None, *, kind: str = "eit
     else:
         time = "Hard to estimate until the income documents are inventoried."
 
-    return Roadmap(returns_and_forms=forms, missing_documents=missing, estimated_time=time)
+    return Roadmap(returns_and_forms=forms, note=_ROADMAP_NOTE, missing_documents=missing, estimated_time=time)
 
 
 # ---------------------------------------------------------------------------
@@ -5103,14 +5342,15 @@ def estimate_refund(
             return None
         return _NiitOverride(amount, citations=niit_citations)
 
-    outcomes = {
-        s: _outcome(
-            s,
+    def _point_outcome(s: str, *, record: bool = True) -> BottomLineResult:
+        """Status ``s`` at its point: the §6013 NIIT default where one is priced (JF5b part 3a)."""
+        return _outcome(
+            s, record=record,
             niit_override=_joint_niit(niit_priced.point) if s == _MFJ and niit_priced is not None else None,
             niit_zero=niit_priced.separate_zero if s == _MFS and niit_priced is not None else (),
         )
-        for s in statuses
-    }
+
+    outcomes = {s: _point_outcome(s) for s in statuses}
     primary = statuses[0]
     point, composition, citations = outcomes[primary].bottom, outcomes[primary].lines, outcomes[primary].citations
     # A DEFINITE 6013(h) choice (read from a joint status, never a recorded answer that an
@@ -5232,10 +5472,134 @@ def estimate_refund(
             public_benefit[s] = _public_benefit_lost(s, res, prwora_tp, prwora_sp)
     public_benefit_bracketed = any(lost for lost, _ in public_benefit.values())
     values.extend(priced[s].bottom - lost for s, (lost, _) in public_benefit.items() if lost)
+
+    # JW2a (walkthrough P1-07): the state and local tax the inputs already show (W-2 box 17 plus
+    # other_state_local_taxes), weighed against the standard deduction when no itemized total was given.
+    # The point stays on the standard deduction — the tax alone is not a Schedule A total — and where that
+    # tax, after the year's limit (tax.salt_cap), is more than a candidate's standard deduction the range
+    # also prices that candidate itemizing it alone. A nonresident's or dual-status return has no standard
+    # deduction to weigh (it says so below instead).
+    salt_comparison: ItemizingComparison | None = None
+    salt_alternatives: dict[str, int] = {}   # status -> the bottom line itemizing the tax alone, where it differs
+    salt_paid_all = _state_local_tax_paid(income) + (_state_local_tax_paid(income.spouse) if spouse_split else 0)
+    salt_unused = salt_paid_all > 0 and income.itemized_deductions is None and not (
+        spouse_split and income.spouse.itemized_deductions is not None)
+    if salt_unused and not nonresident and not dual:
+        salt_block = getattr(load_knowledge("federal", year, base_dir=knowledge_dir).tax, "salt_cap", None)
+        salt_block = salt_block if isinstance(salt_block, dict) else None
+
+        def _agi_of(result: BottomLineResult) -> int:
+            return next((ln.amount for ln in result.lines if ln.slot == "agi"), 0)
+
+        def _salt_case(s: str) -> tuple[IncomeSnapshot, int, int, int, bool]:
+            """(the snapshot that itemizes the tax alone, paid, limit, deductible, phase-down applied) for
+            status ``s`` — the figures are the return's own: yours on a two-return pair (the spouse's
+            separate return is limited on its own figures), the couple's on a joint return."""
+            if spouse_split and s in (_MFS, "head_of_household"):
+                own_paid = _state_local_tax_paid(income)
+                own_limit, reduced = _salt_limit(salt_block, _agi_of(outcomes[s]), s)
+                spouse_agi = _agi_of(_bottom_line(
+                    income.spouse, _MFS, year, knowledge_dir, spouses_apart_all_year=apart_all_year))
+                spouse_limit, _ = _salt_limit(salt_block, spouse_agi, _MFS)
+                snapshot = income.model_copy(update={
+                    "itemized_deductions": min(own_paid, own_limit),
+                    "spouse": income.spouse.model_copy(update={
+                        "itemized_deductions": min(_state_local_tax_paid(income.spouse), spouse_limit)}),
+                })
+                return snapshot, own_paid, own_limit, min(own_paid, own_limit), reduced
+            paid = salt_paid_all if spouse_split else _state_local_tax_paid(income)
+            limit, reduced = _salt_limit(salt_block, _agi_of(outcomes[s]), s)
+            return income.model_copy(update={"itemized_deductions": min(paid, limit)}), paid, limit, min(paid, limit), reduced
+
+        def _priced_with(snapshot: IncomeSnapshot, s: str) -> int:
+            """Status ``s`` at its point on ``snapshot`` in place of the income, with no side effects."""
+            nonlocal income
+            kept, income = income, snapshot
+            try:
+                return _point_outcome(s, record=False).bottom
+            finally:
+                income = kept
+
+        pair_primary = spouse_split and primary in (_MFS, "head_of_household")
+        standard = standard_deduction(primary, year, knowledge_dir=knowledge_dir).amount
+        box17 = _whole(w.box17 for w in income.w2s)
+        own_paid = _state_local_tax_paid(income)
+        if spouse_split and not pair_primary:
+            box17 += _whole(w.box17 for w in income.spouse.w2s)
+            own_paid = salt_paid_all
+        source = _salt_source(box17, own_paid - box17)
+        whose = " (your own return's figures; the spouse's separate return is weighed the same way)" if pair_primary else ""
+        if salt_block is None:
+            if Decimal(own_paid) >= _SALT_CLOSE_SHARE * standard:
+                salt_comparison = ItemizingComparison(
+                    verdict="not_estimated", state_local_tax_paid=own_paid, limit=None, deductible=None,
+                    standard_deduction=standard, collect=list(_ITEMS_TO_COLLECT),
+                    message=(
+                        f"Compare itemizing with the standard deduction — NOT ESTIMATED here: state and local tax "
+                        f"of ${own_paid:,} is already known ({source}){whose}, but the {year} knowledge pack "
+                        f"carries no limit for that deduction (tax.salt_cap), so it was not weighed against the "
+                        f"${standard:,} standard deduction this estimate uses. Read the limit on that year's "
+                        f"Schedule A (the state and local taxes line) first; the what_would_change_it list names "
+                        f"what else to collect."
+                    ),
+                )
+        else:
+            cases = {s: _salt_case(s) for s in priced}
+            for s, case in cases.items():
+                alternative = _priced_with(case[0], s)
+                if alternative != outcomes[s].bottom:
+                    salt_alternatives[s] = alternative
+            values.extend(salt_alternatives.values())
+            _, paid, limit, deductible, reduced = cases[primary]
+            limited = (
+                f"${deductible:,} after the {year} limit of ${limit:,} (Schedule A's state and local taxes line"
+                + ("; the limit is reduced because AGI is over the phase-down threshold — AGI stands in for the "
+                   "worksheet's modified AGI" if reduced else "") + ")"
+            )
+            others = {s: v for s, v in salt_alternatives.items() if s != primary}
+            others_text = (
+                f" Under {', '.join(others)} that tax alone is more than the status's standard deduction, and the "
+                f"range holds the figure that itemizes it ({', '.join(_phrase(v) for v in others.values())})."
+                if others else ""
+            )
+            known = f"state and local tax of ${paid:,} is already known ({source}){whose}, {limited}"
+            if deductible > standard or primary in salt_alternatives:
+                verdict, text = "exceeds_standard", (
+                    f"Compare itemizing with the standard deduction — the range includes it: {known}, and that "
+                    f"alone is MORE than the ${standard:,} standard deduction the point uses. "
+                    + (f"Itemizing it alone gives {_phrase(salt_alternatives[primary])} — the point stays on the "
+                       f"standard deduction until you pass itemized_deductions."
+                       if primary in salt_alternatives else "Itemizing it alone does not move this bottom line.")
+                    + others_text
+                    + " Other Schedule A items only add to it: the what_would_change_it list names what to collect."
+                )
+            elif Decimal(deductible) >= _SALT_CLOSE_SHARE * standard:
+                verdict, text = "close", (
+                    f"Compare itemizing with the standard deduction before settling it: {known} — "
+                    f"${standard - deductible:,} short of the ${standard:,} standard deduction the point uses, so "
+                    f"the point is unchanged.{others_text} The what_would_change_it list names what could close "
+                    f"the gap."
+                )
+            else:
+                verdict, text = "below", (
+                    f"Compare itemizing with the standard deduction under the other status: {known}, well under "
+                    f"the ${standard:,} standard deduction the point uses.{others_text} The what_would_change_it "
+                    f"list names what else to collect."
+                )
+            if verdict != "below" or others:
+                salt_comparison = ItemizingComparison(
+                    verdict=verdict, state_local_tax_paid=paid, limit=limit, deductible=deductible,
+                    standard_deduction=standard, itemized_bottom_line=salt_alternatives.get(primary),
+                    other_statuses=others, collect=list(_ITEMS_TO_COLLECT), message=text,
+                )
     low, high = min(values), max(values)
 
     comparison = _build_comparison(priced)
-    roadmap = _build_roadmap(profile, year, residency_result, kind=state.kind)
+    roadmap = _build_roadmap(
+        profile, year, residency_result, kind=state.kind,
+        income=income if spouse_split else income.model_copy(update={"spouse": None}),
+        lines=outcomes[primary].lines, itemizing=salt_comparison, knowledge_dir=knowledge_dir,
+    )
 
     # De-duplicate citations by (source, url).
     seen, unique_citations = set(), []
@@ -5263,6 +5627,7 @@ def estimate_refund(
             ("the residency reading named in these notes", residency_bracketed),
             ("the NIIT default under the §6013 election (its note)", niit_bracketed),
             ("the Schedule 3-A federal public benefit (its note)", public_benefit_bracketed),
+            ("the itemizing comparison (its note)", bool(salt_alternatives)),
         ) if on)
         assumptions.append(
             f"Filing status not confirmed — showing the range across {', '.join(statuses)}. "
@@ -5279,6 +5644,31 @@ def estimate_refund(
     if income.itemized_deductions is None and not nonresident and not dual:
         # A dual-status point takes none (Pub 519 ch. 6 — the dual-status caveat says so).
         assumptions.append("Standard deduction assumed (no itemizing, and no age-65+/blind adjustment).")
+    if salt_comparison is not None:
+        assumptions.append(salt_comparison.message)   # JW2a: never a silent standard deduction beside known state tax
+        if salt_comparison.verdict == "not_estimated":
+            missing_blocks.append(MissingBlock(
+                block="tax.salt_cap", item="the itemizing comparison from the state and local tax already known",
+                direction="understates_refund",
+            ))
+    foreign_tax_note: str | None = None
+    foreign_tax = _foreign_tax_paid(income if spouse_split else income.model_copy(update={"spouse": None}))
+    if foreign_tax:
+        foreign_tax_note = (
+            f"NOT ESTIMATED — the foreign tax credit: ${foreign_tax:,} of foreign tax was given "
+            f"(foreign_tax_paid) and no credit for it is in this estimate, so the refund is understated (or the "
+            f"amount owed overstated) by up to that amount — the credit is figured on Schedule 3, line 1, with "
+            f"Form 1116 unless the exception in the Form 1040 instructions applies."
+        )
+        assumptions.append(foreign_tax_note)
+    salt_not_deducted: str | None = None
+    if salt_unused and (nonresident or dual):
+        salt_not_deducted = (
+            f"State and local tax of ${salt_paid_all:,} is recorded (W-2 box 17 / other_state_local_taxes) but is "
+            f"NOT deducted in this estimate: this return has no standard deduction and takes only "
+            f"itemized_deductions, which was not given. Total the itemized deductions and pass that figure."
+        )
+        assumptions.append(salt_not_deducted)
     method = mfs_method.get("method")
     if nonresident:
         # 1040-NR deduction law: itemized-only, never the standard deduction.
@@ -6461,6 +6851,16 @@ def estimate_refund(
             "and married is never inferred from income data); confirming your marital status enables "
             "the MFJ/MFS spouse-split comparison and would change this estimate materially."
         )
+    if salt_comparison is not None:
+        changes.append(
+            "Before settling the deduction, collect the other Schedule A items — " + "; ".join(_ITEMS_TO_COLLECT)
+            + " — and, if the Schedule A total is more than the standard deduction, rerun with itemized_deductions "
+              "set to that total (the state and local taxes line has its own limit: see the itemizing note)."
+        )
+    if salt_not_deducted is not None:
+        changes.append(salt_not_deducted)
+    if foreign_tax_note is not None:
+        changes.append(foreign_tax_note)
     pending = [d for d in profile.income_documents if d.status == "missing"]   # never 'not_applicable' (JW2a)
     if pending:
         kinds = ", ".join(sorted({d.kind for d in pending}))
@@ -6478,16 +6878,15 @@ def estimate_refund(
             "Confirming your filing status narrows the range (the residency reading keeps a range of its own)."
             if residency_bracketed else
             "Confirming your filing status narrows the range (the Schedule 3-A reading keeps a range of its own)."
-            if public_benefit_bracketed else "Confirming your filing status collapses the range to one number."
+            if public_benefit_bracketed else
+            "Confirming your filing status narrows the range (the itemizing comparison keeps a range of its own)."
+            if salt_alternatives else "Confirming your filing status collapses the range to one number."
         )
     if public_benefit.get(primary, (0, ""))[1] == "unknown" and public_benefit[primary][0]:
         changes.append(
             f"Record identity.qualified_alien_status (and the spouse's): on the date you file, a U.S. citizen, U.S. "
             f"national or qualified alien keeps the ${public_benefit[primary][0]:,} Schedule 3-A would otherwise "
             f"hold back — the low end of this range assumes it is held back.")
-
-    def _phrase(v: int) -> str:
-        return f"a refund of about ${v:,}" if v > 0 else (f"owing about ${-v:,}" if v < 0 else "breaking even")
 
     if low == high:
         headline = f"Estimated bottom line: {_phrase(point)} (estimate — see assumptions)."
@@ -6537,6 +6936,7 @@ def estimate_refund(
         composition=composition,
         comparison=comparison,
         roadmap=roadmap,
+        itemizing_comparison=salt_comparison,
         provisional=provisional,
         missing_blocks=missing_blocks,
         assumptions=assumptions,
