@@ -14,7 +14,15 @@ from pathlib import Path
 import pytest
 import yaml
 from pypdf import PdfReader, PdfWriter
-from pypdf.generic import ArrayObject, DecodedStreamObject, FloatObject, NameObject, TextStringObject
+from pypdf.generic import (
+    ArrayObject,
+    DecodedStreamObject,
+    DictionaryObject,
+    FloatObject,
+    NameObject,
+    NumberObject,
+    TextStringObject,
+)
 
 from pdf_fixtures import make_acroform_pdf
 from repins import REPO, ledger, repin_final as R
@@ -39,24 +47,24 @@ BANNERS = [(72, 760, "TREASURY/IRS AND OMB USE ONLY DRAFT"), (300, 740, "DRAFT â
 
 
 def _fields(page: int, *, x1: float = 400, y1: float = 636, yc: float = 556, swap: bool = False,
-            rename: str | None = None, maxlen: int = 9, tooltip: bool = False):
+            rename: str | None = None, maxlen: int = 9, value: str = "", tooltip: bool = False):
     """Two text boxes (144 x 18 pt, rows 40 pt apart) and a 14 pt checkbox; ``swap``: the two text boxes trade
-    rectangles."""
+    rectangles; ``value``: box 2 ships prefilled."""
     spec = [
         {"name": f"{ROOT}.Page1[0].f1_1[0]", "kind": "text", "page": page, "x": x1, "y": 596 if swap else y1,
          "maxlen": maxlen, "hierarchical": True},
         {"name": f"{ROOT}.Page1[0].{rename or 'f1_2[0]'}", "kind": "text", "page": page, "x": 400,
-         "y": 636 if swap else 596, "hierarchical": True},
+         "y": 636 if swap else 596, "value": value, "hierarchical": True},
         {"name": f"{ROOT}.Page1[0].c1_1[0]", "kind": "checkbox", "page": page, "x": 400, "y": yc, "on_value": "/1",
          "hierarchical": True},
     ]
     return [s | {"tooltip": s["name"]} for s in spec] if tooltip else spec
 
 
-def _draft(path: Path, created: str = "4/24/26") -> bytes:
+def _draft(path: Path, created: str = "4/24/26", **fields) -> bytes:
     texts = [(1, 72, 700 - 20 * i, line) for i, line in enumerate(COVER)]
     texts += [(2, x, y, t) for x, y, t in FACE + BANNERS] + [(2, 400, 100, f"Created {created}")]
-    make_acroform_pdf(path, _fields(2, tooltip=True), texts=texts, draw_labels=False)
+    make_acroform_pdf(path, _fields(2, tooltip=True, **fields), texts=texts, draw_labels=False)
     return path.read_bytes()
 
 
@@ -214,6 +222,81 @@ def test_a_box_moved_inside_its_draft_rectangle_is_geometry_moved_up_to_a_quarte
     assert R._shared((0, 0, 100, 10), (0, 10, 100, 20)) == (1.0, 0.0)                # touching rows share nothing
     assert R._shared((0, 0, 100, 10), (0, -15, 100, 25)) == (1.0, 0.25)              # a box grown over three rows
     assert 0.5 < R.KEEP_SHARE <= 0.9          # above one half (no two boxes can swap), below Schedule 8812's 0.908
+
+
+def _script_hook() -> DictionaryObject:
+    return DictionaryObject({NameObject("/S"): NameObject("/JavaScript"),
+                             NameObject("/JS"): TextStringObject("AFNumber_Format(0,0,0,0,'',true);")})
+
+
+def _put(short: str, key: str, value, *, on_field: bool = False):
+    """An edit for ``_edited``: set ``key`` on the widget named ``short``, or on the field above it."""
+    def edit(_writer, find) -> None:
+        widget = find(short)
+        (widget["/Parent"].get_object() if on_field else widget)[NameObject(key)] = value
+    return edit
+
+
+def _both(*edits):
+    def edit(writer, find) -> None:
+        for one in edits:
+            one(writer, find)
+    return edit
+
+
+# What a final can carry that leaves every name, type, rectangle and word as on the draft: (the edit, what the
+# compare lists under "changed", whether the final is NOT BLANK).
+SILENT_EDITS = {
+    "hidden": (_put("f1_2[0]", "/F", NumberObject(2)), "/F 4 -> 2", False),
+    "no_view": (_put("f1_2[0]", "/F", NumberObject(36)), "/F 4 -> 36", False),
+    "not_printed": (_put("f1_2[0]", "/F", NumberObject(0)), "/F 4 -> 0", False),
+    "prefilled": (_both(_put("f1_2[0]", "/V", TextStringObject("123"), on_field=True),     # /V on the field, read
+                        _put("f1_2[0]", "/DV", TextStringObject("123"))),                  # through its widget
+                  "/V '' -> '123'; /DV '' -> '123'", True),
+    "value_on_the_widget": (_put("f1_2[0]", "/V", TextStringObject("123")), "/V '' -> '123'", True),
+    "default_only": (_put("f1_2[0]", "/DV", TextStringObject("123")), "/DV '' -> '123'", True),
+    "pre_checked": (_both(_put("c1_1[0]", "/AS", NameObject("/1")), _put("c1_1[0]", "/V", NameObject("/1"), on_field=True)),
+                    "/V '/Off' -> '/1'; /AS '/Off' -> '/1'", True),
+    "format_script": (_put("f1_2[0]", "/AA", DictionaryObject({NameObject("/F"): _script_hook()}), on_field=True),
+                      "script hooks [] -> ['/AA /F']", False),
+    "click_script": (_put("c1_1[0]", "/A", _script_hook()), "script hooks [] -> ['/A']", False),
+}
+
+
+@pytest.mark.parametrize("case", SILENT_EDITS)
+def test_a_hidden_prefilled_pre_checked_or_scripted_widget_needs_a_remap_and_is_never_written(
+        repo, tmp_path, capsys, case):
+    """Everything the compare read before 2026-11-13 is equal on these finals; each came out identical and was
+    written with exit 0."""
+    root, cache, _draft_bytes = repo
+    edit, changed, not_blank = SILENT_EDITS[case]
+    final = _edited(_final(tmp_path / "plain.pdf"), edit, tmp_path)
+    c = _compare(repo, final)
+    assert c.verdict == "needs_remap" and not (c.added or c.removed or c.moved or c.words_changed or c.mapped_missing)
+    assert [row.split(": ", 1)[1] for row in c.changed] == [changed]
+    assert [("NOT BLANK on the final" in p) for p in c.problems] == [True] * not_blank
+    before = _snapshot(root)
+    (tmp_path / "final.pdf").write_bytes(final)
+    assert _main(repo, tmp_path / "final.pdf", "--write") == 1
+    assert "--write refused, nothing edited" in capsys.readouterr().err
+    assert _snapshot(root) == before and not (root / R.LEDGER).exists()
+    assert cached_blank_path(FINAL_URL, c.final.sha256, cache_dir=cache) is None
+
+
+def test_a_blank_reads_its_flags_values_and_hooks_and_a_final_that_is_not_blank_is_a_problem_whatever_the_draft(
+        repo, tmp_path):
+    plain = R.read_blank(_final(tmp_path / "plain.pdf"))
+    assert [(w.flags, w.value, w.default, w.state, w.actions, w.options, w.preset) for w in plain.widgets] == [
+        (4, "", "", "", (), (), []), (4, "", "", "", (), (), []), (4, "/Off", "", "/Off", (), (), [])]
+    # The same prefilled box on the draft and on the final: nothing CHANGED, and the final is still not a blank.
+    root, _cache, _draft_bytes = repo
+    pack = load_pack(root / "formpacks" / PID / "pack.yaml")
+    draft = _draft(tmp_path / "prefilled--dft.pdf", value="123")
+    c = R.compare("ftest", PID, pack, draft, _final(tmp_path / "prefilled.pdf", value="123"), draft_url=DRAFT_URL,
+                  final_url=FINAL_URL)
+    assert c.changed == [] and c.verdict == "needs_remap"
+    assert c.problems == [f"p1 {ROOT}.Page1[0].f1_2[0] is NOT BLANK on the final: /V '123', /DV '123'"]
+    assert "PROBLEM: p1" in R.report(c)
 
 
 @pytest.mark.parametrize("change, finding", [
@@ -593,6 +676,26 @@ def test_a_real_final_with_a_box_on_another_line_needs_a_remap(key: str, edit, o
     assert len(c.moved) == out_of_place + row["rects_moved"]              # Schedule 8812's own 35 are still in place
     assert not (c.added or c.removed or c.changed or c.words_changed or c.mapped_missing or c.problems)
     assert f"{row['stem']}: verdict needs_remap, a re-map by hand" in R.write_refusals([c], [row["stem"]])
+
+
+@pytest.mark.parametrize("edit, changed, not_blank", [
+    (_put("Page1[0].f1_12[0]", "/F", NumberObject(2)), "/F 4 -> 2", False),
+    (_put("Page1[0].f1_12[0]", "/F", NumberObject(32)), "/F 4 -> 32", False),
+    (_both(_put("Page1[0].f1_12[0]", "/V", TextStringObject("123")), _put("Page1[0].f1_12[0]", "/DV", TextStringObject("123"))),
+     "/V '' -> '123'; /DV '' -> '123'", True),
+    (_both(_put("Page2[0].c2_1[0]", "/AS", NameObject("/1")), _put("Page2[0].c2_1[0]", "/V", NameObject("/1"))),
+     "/V '' -> '/1'; /AS '/Off' -> '/1'", True),
+    (_put("Page1[0].f1_12[0]", "/AA", DictionaryObject({NameObject("/F"): _script_hook()})),
+     "script hooks [] -> ['/AA /F']", False),
+], ids=["hidden", "no_view", "prefilled", "pre_checked", "format_script"])
+def test_the_real_form_8606_final_with_a_hidden_prefilled_or_scripted_box_needs_a_remap(edit, changed, not_blank, tmp_path):
+    row, draft, final = _cached_pair("f8606")
+    pack = load_pack(REPO / "formpacks" / "federal" / "2026" / "f8606" / "pack.yaml")
+    c = R.compare(row["stem"], row["pack"], pack, draft, _edited(final, edit, tmp_path), draft_url=row["draft_url"],
+                  final_url=row["final_url"])
+    assert c.verdict == "needs_remap" and [r.split(": ", 1)[1] for r in c.changed] == [changed]
+    assert len(c.problems) == not_blank and not (c.added or c.removed or c.moved or c.nudged or c.words_changed)
+    assert R.write_refusals([c], []) == ["f8606: verdict needs_remap, a re-map by hand"]
 
 
 def test_print_shifted_under_unmoved_boxes_is_identical_and_still_refused_by_the_label_adjacency_preview(tmp_path):

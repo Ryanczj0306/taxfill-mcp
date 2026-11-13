@@ -14,17 +14,20 @@ A draft pack (``source_status: draft``, irs.gov/pub/irs-dft/<stem>--dft.pdf) mov
 COMPARE (writes nothing). The final is fetched twice and must hash equal; the pinned draft comes from the blank
 cache, checksum-verified against the pack (or, once re-pinned, against the ledger). Reported: pages and whether the
 draft's cover sheet was dropped (read from the pages); every widget matched by fully qualified name and index with
-/FT, /Ff, /MaxLen, /DA, /Q, the /AP state names and /Rect (page offset applied); the page words, where only the
-DRAFT banners and the footer "Created" date may differ. Verdict:
+/FT, /Ff, /MaxLen, /DA, /Q, the /AP state names, the annotation flags /F (hidden, no-view, print), the values /V,
+/DV and /AS, the script hooks (/A and the /AA triggers), /Opt and /Rect (page offset applied); the page words, where
+only the DRAFT banners and the footer "Created" date may differ. Verdict:
 
-    identical       nothing but the banners (and tooltips, XFA) differs
+    identical       of all that, nothing but the banners differs (tooltips and XFA are not compared)
     geometry_moved  same names, types, flags, states and words; a /Rect edge moved 0.1 pt or more while the box
                     still shares three quarters of its width and of its height with its draft rectangle, or a
                     /DA or /Q changed: READ THE RENDER (a smaller /Rect difference is reported as a nudge)
     needs_remap     a widget added, removed, renamed, retyped or on another page; a box OUT OF PLACE (it shares
                     less than three quarters of its width or height with its draft rectangle: another row,
-                    another column, two boxes swapped); a flag, /MaxLen or /AP state changed; a mapped field
-                    missing; words changed beyond banners and footer; pages unexplained
+                    another column, two boxes swapped); a flag (/Ff or /F), /MaxLen, an /AP state, a value
+                    (/V, /DV, /AS), a script hook or /Opt changed; a final that is NOT BLANK (a set /V or /DV,
+                    an on /AS), whatever its draft carried; a mapped field missing; words changed beyond banners
+                    and footer; pages unexplained
 
 WRITE edits, as text (the hand-written comments stay): the pack (source_url, pdf_sha256, source_status,
 draft_created, signature.page by the cover-sheet offset, one header line); knowledge/anchor/selection.yaml and
@@ -114,6 +117,18 @@ class Widget:
     q: int
     states: tuple[str, ...]   # the /AP /N state names (checkboxes and radio kids)
     rect: tuple[float, float, float, float]
+    flags: int = 0            # the annotation's /F: 4 Print on every IRS widget (68 with its ReadOnly); 2 Hidden, 32 NoView
+    value: str = ""           # /V, "" when absent
+    default: str = ""         # /DV
+    state: str = ""           # the widget's own /AS ("/Off" on a blank checkbox, absent on a text box)
+    actions: tuple[str, ...] = ()   # the script hooks: /A, and each /AA trigger on the widget or up its field chain
+    options: tuple[str, ...] = ()   # /Opt of a choice field
+
+    @property
+    def preset(self) -> list[str]:
+        """What a blank does not carry: a value, a default value, a checked appearance."""
+        return [f"{key} {text!r}" for key, text in (("/V", self.value), ("/DV", self.default), ("/AS", self.state))
+                if text not in ("", "/Off")]
 
     @property
     def key(self) -> tuple[str, int]:
@@ -169,6 +184,37 @@ def _states(annot) -> tuple[str, ...]:
     return tuple(sorted(str(k) for k in normal.keys()))
 
 
+def _as_text(value) -> str:
+    """A /V, /DV, /AS or /Opt entry as comparable text; "" when absent."""
+    from pypdf.generic import StreamObject
+
+    value = value.get_object() if value is not None else None
+    if value is None:
+        return ""
+    if isinstance(value, StreamObject):
+        return "stream " + hashlib.sha256(value.get_data()).hexdigest()[:16]
+    if isinstance(value, (list, tuple)):
+        return "[" + ", ".join(_as_text(item) for item in value) + "]"
+    return str(value)
+
+
+def _actions(annot) -> tuple[str, ...]:
+    """The script hooks on a widget: its own /A and every /AA trigger, on the widget or on a field above it."""
+    found: set[str] = set()
+    node = annot
+    for _ in range(32):
+        if node is None:
+            break
+        if node.get("/A") is not None:
+            found.add("/A")
+        triggers = node.get("/AA")
+        if triggers is not None:
+            found.update(f"/AA {key}" for key in triggers.get_object().keys())
+        parent = node.get("/Parent")
+        node = parent.get_object() if parent is not None else None
+    return tuple(sorted(found))
+
+
 def read_blank(data: bytes) -> Blank:
     """Everything the comparison reads off one blank PDF."""
     import io
@@ -191,12 +237,16 @@ def read_blank(data: bytes) -> Blank:
             seen[name] = index + 1
             x0, y0, x1, y1 = (float(v) for v in annot["/Rect"])
             maxlen = _inherited(annot, "/MaxLen")
+            options = _inherited(annot, "/Opt")
             tooltips += _inherited(annot, "/TU") is not None
             widgets.append(Widget(
                 name=name, index=index, page=pno, ft=str(_inherited(annot, "/FT") or ""),
                 ff=int(_inherited(annot, "/Ff") or 0), maxlen=int(maxlen) if maxlen is not None else None,
                 da=str(_inherited(annot, "/DA") or ""), q=int(_inherited(annot, "/Q") or 0), states=_states(annot),
-                rect=(min(x0, x1), min(y0, y1), max(x0, x1), max(y0, y1))))
+                rect=(min(x0, x1), min(y0, y1), max(x0, x1), max(y0, y1)), flags=int(annot.get("/F") or 0),
+                value=_as_text(_inherited(annot, "/V")), default=_as_text(_inherited(annot, "/DV")),
+                state=_as_text(annot.get("/AS")), actions=_actions(annot),
+                options=tuple(_as_text(item) for item in options) if options is not None else ()))
     root = reader.trailer["/Root"]
     acroform = root.get("/AcroForm")
     xfa = acroform is not None and "/XFA" in acroform.get_object()
@@ -257,7 +307,8 @@ class Comparison:
     cover_sheet_dropped: bool = False
     added: list[str] = field(default_factory=list)
     removed: list[str] = field(default_factory=list)
-    changed: list[str] = field(default_factory=list)        # retyped, flags, /MaxLen, /AP states, page
+    changed: list[str] = field(default_factory=list)        # retyped, /Ff, /MaxLen, /AP states, /F, /V, /DV,
+    #                                                         /AS, script hooks, /Opt, page
     appearance: list[str] = field(default_factory=list)     # /DA, /Q
     moved: list[dict] = field(default_factory=list)         # {"name", "index", "page", "delta": [dx0, dy0, dx1, dy1]}
     nudged: list[dict] = field(default_factory=list)        # the same, for a difference under MOVE_THRESHOLD
@@ -349,13 +400,17 @@ def _diff_widgets(c: Comparison) -> None:
     label = lambda w: f"p{w.page} {w.name}" + (f" #{w.index}" if w.index else "")  # noqa: E731
     c.removed = [label(w) for k, w in draft.items() if k not in final]
     c.added = [label(w) for k, w in final.items() if k not in draft]
+    c.problems += [f"{label(w)} is NOT BLANK on the final: {', '.join(w.preset)}" for w in final.values() if w.preset]
     for key, now in final.items():
         was = draft.get(key)
         if was is None:
             continue
         hard = [f"{what} {a!r} -> {b!r}" for what, a, b in (
             ("/FT", was.ft, now.ft), ("/Ff", was.ff, now.ff), ("/MaxLen", was.maxlen, now.maxlen),
-            ("/AP states", list(was.states), list(now.states)), ("page", was.page - c.offset, now.page)) if a != b]
+            ("/AP states", list(was.states), list(now.states)), ("/F", was.flags, now.flags),
+            ("/V", was.value, now.value), ("/DV", was.default, now.default), ("/AS", was.state, now.state),
+            ("script hooks", list(was.actions), list(now.actions)), ("/Opt", list(was.options), list(now.options)),
+            ("page", was.page - c.offset, now.page)) if a != b]
         if hard:
             c.changed.append(f"{label(now)}: " + "; ".join(hard))
         soft = [f"{what} {a!r} -> {b!r}" for what, a, b in (("/DA", was.da, now.da), ("/Q", was.q, now.q)) if a != b]
@@ -406,7 +461,7 @@ def report(c: Comparison) -> str:
     for p in c.problems:
         lines.append(f"  PROBLEM: {p}")
     lines.append(f"  widgets: {len(c.added)} added, {len(c.removed)} removed, {len(c.changed)} changed "
-                 f"(/FT /Ff /MaxLen /AP page), {len(c.appearance)} with another /DA or /Q, "
+                 f"(/FT /Ff /MaxLen /AP /F /V /DV /AS hooks /Opt page), {len(c.appearance)} with another /DA or /Q, "
                  f"{len(c.mapped_missing)} mapped field(s) missing")
     for what, rows in (("added", c.added), ("removed", c.removed), ("changed", c.changed),
                        ("appearance", c.appearance), ("mapped but missing", c.mapped_missing)):
