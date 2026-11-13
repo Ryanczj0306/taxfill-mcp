@@ -662,6 +662,63 @@ class RetirementContributionsYear(BaseModel):
     )
 
 
+class DeductionsAndPaymentsYear(BaseModel):
+    """One tax year's answers to the deductions-and-payments part of the interview (JW2a, walkthrough P1-06).
+
+    Each field holds the filer's answer IN WORDS, with amounts as printed — "none" and "unknown" are answers
+    (they end the question); a field left None was never asked. The dollar figures go to the tools as their own
+    inputs (estimate_refund's other_state_local_taxes / itemized_deductions / federal_withholding /
+    foreign_tax_paid, the calc ops): this section records that the question was put and what came back, so
+    intake's ready_to_fill can wait for it. Every field is optional, so a profile saved before this section
+    existed still loads.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    # Asked of every filer.
+    itemizable_items: Answer[str] | None = Field(
+        default=None,
+        description="State and local taxes beyond W-2 box 17 (state disability or family leave amounts, local "
+                    "income tax, state estimated payments, the value-based part of a vehicle licence fee), real "
+                    "estate tax, home mortgage interest, gifts to charity, large medical costs — what was paid.")
+    estimated_payments: Answer[str] | None = Field(
+        default=None, description="Estimated tax payments for the year, federal and state: dates and amounts.")
+    extension: Answer[str] | None = Field(
+        default=None,
+        description="Whether an extension was filed (federal Form 4868, a state one) and any payment made with it.")
+    prior_year_overpayment_applied: Answer[str] | None = Field(
+        default=None,
+        description="Any prior-year overpayment applied to this year's estimated tax, federal and state.")
+    # Asked when the document inventory holds the kind named.
+    w2_box14: Answer[str] | None = Field(
+        default=None, description="A W-2: each box 14 label and amount (state disability, family leave, ...).")
+    hsa_coverage: Answer[str] | None = Field(
+        default=None,
+        description="A W-2: whether box 12 shows code W and, if so, the months of high-deductible health plan "
+                    "coverage and the tier (self-only or family).")
+    ira_basis: Answer[str] | None = Field(
+        default=None,
+        description="A 1099-R or Form 5498: IRA basis (nondeductible contributions), every other traditional, "
+                    "SEP or SIMPLE IRA, and their total value on December 31.")
+    employer_stock_sales: Answer[str] | None = Field(
+        default=None,
+        description="A 1099-B: whether any sale is employer stock (RSUs, an ESPP, options) and whether Form 3922 "
+                    "/ Form 3921 and the vesting or purchase records are in hand.")
+    dividend_boxes: Answer[str] | None = Field(
+        default=None,
+        description="A 1099-DIV: box 5 (Section 199A dividends) and box 7 (foreign tax paid).")
+
+    @model_validator(mode="after")
+    def _answers_are_not_blank(self) -> "DeductionsAndPaymentsYear":
+        for name in type(self).model_fields:
+            answer = getattr(self, name)
+            if answer is not None and not str(answer.value).strip():
+                raise ValueError(
+                    f"deductions_and_payments.{name}: a blank answer records nothing — write 'none' or 'unknown', "
+                    f"or leave the field out until it is asked")
+        return self
+
+
 class PayrollDeductions(BaseModel):
     """What one job takes out of each paycheck, by TAX CHARACTER (JP3a) — the facts that turn gross pay into
     W-2 boxes 1, 3 and 5. Pre-tax amounts lower box 1 (and, except the 401(k), boxes 3 and 5 too); post-tax
@@ -728,6 +785,12 @@ class Profile(BaseModel):
     retirement_contributions: dict[int, RetirementContributionsYear] = Field(
         default_factory=dict,
         description="Roth/pre-tax deferral split keyed by tax year (planning-year elections; N-11).",
+    )
+    deductions_and_payments: dict[int, DeductionsAndPaymentsYear] = Field(
+        default_factory=dict,
+        description="The deductions-and-payments answers keyed by tax year (JW2a): itemizable items, estimated "
+                    "and extension payments, a prior-year overpayment applied, and the follow-ups a W-2, "
+                    "1099-R / Form 5498, 1099-B or 1099-DIV in the inventory raises.",
     )
     banking: Banking | None = None
     prior_filings: PriorFilings | None = None

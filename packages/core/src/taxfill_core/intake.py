@@ -42,6 +42,7 @@ SECTIONS = (
     "household",
     "state_footprint",
     "income_documents",
+    "deductions_and_payments",
     "retirement",
     "banking",
     "prior_filings",
@@ -83,7 +84,13 @@ class IntakeChecklist(BaseModel):
     required_documents: list[RequiredDocument] = Field(default_factory=list)
     ready_to_fill: bool = Field(
         default=False,
-        description="True when the minimum facts to begin a draft return are present (more may still sharpen it).",
+        description="True when the minimum facts to begin a draft return are present (more may still sharpen it) "
+                    "and no deductions-and-payments question is open (ready_to_fill_blockers).",
+    )
+    ready_to_fill_blockers: list[str] = Field(
+        default_factory=list,
+        description="JW2a: the ids of the open deductions-and-payments questions (in next_questions) that keep "
+                    "ready_to_fill false. 'none' and 'unknown' are answers and clear a blocker.",
     )
     progress: str = Field(default="", description="Human-readable progress, e.g. '3 of 9 sections started'.")
     notes: list[str] = Field(default_factory=list, description="Gating explanations and assumptions surfaced to the user.")
@@ -1527,6 +1534,153 @@ def _income_document_questions(profile: Profile, out: list[IntakeQuestion], tax_
                                         else "") + ")."))
 
 
+# ── deductions and payments (JW2a, walkthrough P1-06) ─────────────────────────
+# The first end-to-end walkthrough reached ready_to_fill with identity, a filing status and one document: nothing
+# asked what decides itemizing, what Form 8889 / 8606 / 8949 need beyond the document, or what was already paid.
+# This part asks four questions of every filer and one follow-up per document kind in the inventory, records each
+# answer in words under deductions_and_payments.<tax year>, and holds ready_to_fill until none is open.
+#
+# Sources read 2026-11-12/13. Instructions for Schedule A (2025), line 5a: "State and local income taxes
+# withheld from your salary during 2025", "State and local estimated tax payments made during 2025, including
+# any part of a prior year refund that you chose to have credited to your 2025 state or local income taxes",
+# "Mandatory contributions you made to the California, New Jersey, or New York Nonoccupational Disability Benefit
+# Fund; Rhode Island Temporary Disability Benefit Fund; or Washington State Supplemental Workmen's Compensation
+# Fund", "Mandatory contributions to state family leave programs"; Schedule A line 3: "Multiply line 2 by 7.5%
+# (0.075)". Instructions for Form 1040 (2025): line 26, "Enter any estimated federal income tax payments you made
+# for 2025. Include any overpayment that you applied to your 2025 estimated tax from your 2024 return or an
+# amended return"; Schedule 3 line 10, "If you got an automatic extension of time to file Form 1040, 1040-SR, or
+# 1040-NR by filing Form 4868 or by making a payment, enter the amount of the payment or any amount you paid with
+# Form 4868"; What if You Can't File on Time?, "An automatic 6-month extension to file doesn't extend the time to
+# pay your tax". Instructions for Form 8889 (2025), Who Must File: "You, your employer, or someone else made
+# contributions to your HSA"; line 1 (self-only or family HDHP) and the Line 3 Limitation Chart and Worksheet:
+# "Go through this chart for each month of 2025". Instructions for Form 8606 (2025): "The term 'traditional IRA'
+# includes traditional SEP IRAs and traditional SIMPLE IRAs"; line 6, "Enter the total value of all your
+# traditional IRAs as of December 31, 2025, plus any outstanding rollovers". Form 1099-DIV (Rev. January 2024),
+# Instructions for Recipient: "Box 5. Shows the portion of the amount in box 1a that may be eligible for the 20%
+# qualified business income deduction under section 199A", "Box 7. Shows the foreign tax that you may be able to
+# claim as a deduction or a credit on Form 1040 or 1040-SR". Forms 3922 and 3921: the DocSpecs in extract.py.
+_DP = "deductions_and_payments"
+_DP_HOW = (
+    "Record the answer in words as an Answer (value + provenance), amounts as printed. 'none' and 'unknown' are "
+    "answers and end the question; a blank does not."
+)
+
+
+def _kind_token(kind: str) -> str:
+    return re.sub(r"[^0-9A-Z]", "", kind.upper())
+
+
+def _is_1099_composite(token: str) -> bool:
+    """A brokerage's consolidated / composite Form 1099 statement carries the 1099-DIV and the 1099-B."""
+    return "1099" in token and ("CONSOLIDATED" in token or "COMPOSITE" in token)
+
+
+def _mentions_w2(kind: str) -> bool:
+    """A Form W-2 entry ("W-2", "W2 (Example Systems)") — never a Form W-2G (gambling winnings)."""
+    return "W2" in _kind_token(kind).replace("W2G", "")
+
+
+def _mentions_ira_statement(kind: str) -> bool:
+    """A Form 1099-R or a Form 5498 — never a Form 5498-SA (an HSA's) or 5498-ESA (an education account's)."""
+    token = _kind_token(kind)
+    return "1099R" in token or "5498" in token.replace("5498SA", "").replace("5498ESA", "")
+
+
+def _mentions_1099b(kind: str) -> bool:
+    token = _kind_token(kind)
+    return "1099B" in token or _is_1099_composite(token)
+
+
+def _mentions_1099div(kind: str) -> bool:
+    token = _kind_token(kind)
+    return "1099DIV" in token or _is_1099_composite(token)
+
+
+def _dp_year(profile: Profile, tax_year: int | None) -> int | None:
+    """The year whose deductions-and-payments answers the interview reads: the asked tax year, else the latest
+    year on file (None when there is none)."""
+    if tax_year is not None:
+        return tax_year
+    return max(profile.deductions_and_payments, default=None)
+
+
+def _deductions_payments_questions(profile: Profile, out: list[IntakeQuestion], tax_year: int | None) -> list[str]:
+    """Ask what is still open in the deductions-and-payments part; returns the ids asked (the blockers)."""
+    year = _dp_year(profile, tax_year)
+    entry = profile.deductions_and_payments.get(year) if year is not None else None
+    key = str(year) if year is not None else "<tax_year>"
+    yr = str(tax_year) if tax_year is not None else "the tax year"
+    prior = str(tax_year - 1) if tax_year is not None else "the prior year"
+    kinds = [d.kind for d in profile.income_documents if d.status != "not_applicable"]
+    asked: list[str] = []
+
+    def ask(field: str, prompt: str, why: str, extra: str = "") -> None:
+        if entry is not None and _has(getattr(entry, field)):
+            return
+        out.append(_q(f"{_DP}.{field}", _DP, prompt, why, f"{_DP}.{key}.{field}",
+                      disambiguation=(extra + " " if extra else "") + _DP_HOW))
+        asked.append(f"{_DP}.{field}")
+
+    ask("itemizable_items",
+        f"For {yr}, did you pay any of these, and how much: state or local taxes beyond the state income tax "
+        f"withheld on a W-2 (a state disability or family leave amount in W-2 box 14, local income tax, state "
+        f"estimated payments, the value-based part of a yearly vehicle licence fee); real estate tax; home mortgage "
+        f"interest; gifts to charity; large medical or dental costs?",
+        "These are the Schedule A items: together with the state income tax withheld (W-2 box 17) they decide "
+        "whether itemizing beats the standard deduction.",
+        "Pass W-2 box 17 in estimate_refund's w2s and the other state and local taxes in other_state_local_taxes: "
+        "the estimate weighs them against the standard deduction. Medical costs count only over 7.5% of AGI.")
+    ask("estimated_payments",
+        f"Did you make estimated tax payments for {yr} — federal (Form 1040-ES) or state? Give each date and amount.",
+        "Federal estimated payments are payments on the return; state ones belong on the state return and are "
+        "state tax paid when itemizing.",
+        "Federal estimated payments go in estimate_refund's federal_withholding.")
+    ask("extension",
+        f"Did you file an extension for {yr} (federal Form 4868, or a state extension), and did you pay anything "
+        f"with it?",
+        "An amount paid with an extension request is a payment on the return (Schedule 3, line 10 on the 2025 "
+        "form); the extension gives more time to file, not to pay.")
+    ask("prior_year_overpayment_applied",
+        f"Was any of your {prior} refund applied to {yr} estimated tax instead of being paid out (federal or "
+        f"state)?",
+        "An overpayment applied from the prior return counts as an estimated payment for this year.")
+    if any(_mentions_w2(k) for k in kinds):
+        ask("w2_box14",
+            "On each W-2, what does box 14 show? Give each label and amount — for example a state disability "
+            "insurance (SDI) or paid family leave contribution.",
+            "A mandatory state disability or family leave contribution is a state and local tax on Schedule A "
+            "(the line 5a instructions list the funds that count) and can decide itemizing.",
+            "Pass a qualifying amount in estimate_refund's other_state_local_taxes.")
+        ask("hsa_coverage",
+            f"Does any W-2 show box 12 code W (employer contributions to a health savings account)? If so, for "
+            f"which months of {yr} were you covered by a high-deductible health plan, and was the coverage "
+            f"self-only or family?",
+            "Code W means Form 8889, whose contribution limit depends on self-only or family coverage and on "
+            "the months covered.")
+    if any(_mentions_ira_statement(k) for k in kinds):
+        ask("ira_basis",
+            f"For your traditional, SEP and SIMPLE IRAs: do you have basis (nondeductible contributions — the "
+            f"total basis on your last Form 8606), do you own any such IRA besides the one on the form, and what "
+            f"was the total value of all of them on December 31, {yr}?",
+            "Form 8606 figures the taxable part of a distribution or Roth conversion from the basis and the "
+            "December 31 value of ALL traditional, SEP and SIMPLE IRAs, not only the account that paid.",
+            "These are estimate_refund's ira_pool figures.")
+    if any(_mentions_1099b(k) for k in kinds):
+        ask("employer_stock_sales",
+            "Is any sale on a Form 1099-B employer stock — from RSUs, an employee stock purchase plan (ESPP) or "
+            "stock options? If so, which sales, and do you have Form 3922 (ESPP) or Form 3921 (incentive stock "
+            "option) and the vesting or purchase records?",
+            "The basis of employer stock depends on facts the 1099-B may not carry (income already on the W-2, "
+            "the Form 3922 / 3921 dates and prices), so it is checked before the gain is reported on Form 8949.")
+    if any(_mentions_1099div(k) for k in kinds):
+        ask("dividend_boxes",
+            "On each Form 1099-DIV, what do box 5 (Section 199A dividends) and box 7 (foreign tax paid) show?",
+            "Box 5 may be eligible for the qualified business income deduction, and box 7 is foreign tax you "
+            "may be able to claim as a credit or a deduction; estimate_refund prices neither.",
+            "Pass box 7 in estimate_refund's foreign_tax_paid so the roadmap names the credit.")
+    return asked
+
+
 def _banking_questions(profile: Profile, out: list[IntakeQuestion]) -> None:
     if profile.banking is not None:
         return
@@ -1910,6 +2064,7 @@ def intake_checklist(profile: Profile | None = None, *, tax_year: int | None = N
     _household_questions(profile, out, notes, tax_year)
     _state_footprint_questions(profile, out, tax_year)
     _income_document_questions(profile, out, tax_year)
+    blockers = _deductions_payments_questions(profile, out, tax_year)
     _retirement_questions(profile, out, notes, tax_year)
     _prior_filings_questions(profile, out, tax_year)
     _prior_return_form_question(profile, out, tax_year)
@@ -1927,7 +2082,9 @@ def intake_checklist(profile: Profile | None = None, *, tax_year: int | None = N
     return IntakeChecklist(
         next_questions=out,
         required_documents=_required_documents(profile, tax_year),
-        ready_to_fill=_ready_to_fill(profile),
+        # JW2a: a deductions-and-payments question still open holds readiness back, and the result says which.
+        ready_to_fill=_ready_to_fill(profile) and not blockers,
+        ready_to_fill_blockers=blockers,
         progress=f"{started} of {len(SECTIONS)} sections started",
         notes=notes,
         # The start state hands over the whole onboarding worksheet (H3): a
@@ -1951,6 +2108,8 @@ def _sections_started(profile: Profile) -> int:
     if profile.state_footprint:
         started += 1
     if profile.income_documents:
+        started += 1
+    if profile.deductions_and_payments:
         started += 1
     if profile.retirement_contributions:
         started += 1

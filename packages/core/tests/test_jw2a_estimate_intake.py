@@ -11,9 +11,11 @@ import pytest
 
 from taxfill_core.calc import standard_deduction
 from taxfill_core.estimate import IncomeSnapshot, W2Facts, _salt_limit, estimate_refund
+from taxfill_core.intake import intake_checklist
 from taxfill_core.knowledge import load_knowledge
 from taxfill_core.schemas.profile import (
     Answer,
+    DeductionsAndPaymentsYear,
     Household,
     Identity,
     IncomeDocument,
@@ -388,3 +390,102 @@ def test_1d_state_returns_follow_the_footprint_and_a_nonresident_gets_no_form_10
     assert nra.roadmap.returns_and_forms[:2] == ["Form 1040-NR", "Form 8843"]
     assert not any(f.startswith("Likely:") for f in nra.roadmap.returns_and_forms)
     assert any(f.startswith("State return: CA") for f in nra.roadmap.returns_and_forms)
+
+
+# ── 2a: the deductions-and-payments part of the interview ──────────────────────────────────────────
+
+_DP = "deductions_and_payments"
+_EVERY_FILER = ("itemizable_items", "estimated_payments", "extension", "prior_year_overpayment_applied")
+_NO_ANSWERS = (_doc("1095-A", "not_applicable"), _doc("foreign account statement", "not_applicable"))
+
+
+def _dp_ids(checklist) -> list[str]:
+    return [q.id for q in checklist.next_questions if q.section == _DP]
+
+
+def _answered(*fields: str, value: str = "none") -> DeductionsAndPaymentsYear:
+    return DeductionsAndPaymentsYear(**{f: _ans(value) for f in fields})
+
+
+def test_2a_one_document_is_no_longer_ready_and_the_result_says_what_holds_it_back():
+    # On main this profile (identity, a filing status, one W-2 in hand) was ready_to_fill.
+    cl = intake_checklist(_filer(_doc("W-2"), *_NO_ANSWERS), tax_year=YEAR)
+    expected = [f"{_DP}.{f}" for f in (*_EVERY_FILER, "w2_box14", "hsa_coverage")]
+    assert cl.ready_to_fill is False
+    assert cl.ready_to_fill_blockers == expected == _dp_ids(cl)
+    prompts = {q.id: q for q in cl.next_questions}
+    items = prompts[f"{_DP}.itemizable_items"]
+    for word in ("state disability", "vehicle licence fee", "real estate tax", "mortgage interest",
+                 "gifts to charity", "medical"):
+        assert word in items.prompt, word
+    assert "other_state_local_taxes" in items.disambiguation
+    assert "Form 4868" in prompts[f"{_DP}.extension"].prompt
+    assert "box 14" in prompts[f"{_DP}.w2_box14"].prompt
+    assert "code W" in prompts[f"{_DP}.hsa_coverage"].prompt and "self-only or family" in prompts[
+        f"{_DP}.hsa_coverage"].prompt
+    assert all("'none' and 'unknown' are answers" in q.disambiguation for q in cl.next_questions if q.section == _DP)
+
+
+def test_2a_every_filer_is_asked_the_four_questions_even_with_no_documents():
+    cl = intake_checklist(tax_year=YEAR)
+    assert _dp_ids(cl) == [f"{_DP}.{f}" for f in _EVERY_FILER]
+    assert cl.ready_to_fill_blockers == _dp_ids(cl)
+
+
+@pytest.mark.parametrize("kind, field, words", [
+    ("1099-R", "ira_basis", ("SEP and SIMPLE", "December 31, 2025", "Form 8606")),
+    ("Form 5498 (Example Brokerage)", "ira_basis", ("basis",)),
+    ("1099-B", "employer_stock_sales", ("RSUs", "ESPP", "stock options", "Form 3922", "Form 3921")),
+    ("Consolidated 1099 (Example Brokerage)", "employer_stock_sales", ("RSUs",)),
+    ("1099-DIV", "dividend_boxes", ("box 5", "box 7")),
+    ("1099 composite statement", "dividend_boxes", ("box 5",)),
+])
+def test_2a_a_document_kind_in_the_inventory_raises_its_follow_up(kind, field, words):
+    without = intake_checklist(_filer(_doc("W-2")), tax_year=YEAR)
+    assert f"{_DP}.{field}" not in _dp_ids(without)
+    cl = intake_checklist(_filer(_doc("W-2"), _doc(kind, "missing")), tax_year=YEAR)   # 'missing' is still expected
+    question = next(q for q in cl.next_questions if q.id == f"{_DP}.{field}")
+    for word in words:
+        assert word in question.prompt, word
+    assert question.id in cl.ready_to_fill_blockers
+    # A recorded "no such document" raises nothing.
+    none = intake_checklist(_filer(_doc("W-2"), _doc(kind, "not_applicable")), tax_year=YEAR)
+    assert f"{_DP}.{field}" not in _dp_ids(none)
+
+
+def test_2a_look_alike_kinds_raise_no_follow_up():
+    cl = intake_checklist(_filer(_doc("W-2G"), _doc("5498-SA"), _doc("1099-INT")), tax_year=YEAR)
+    assert _dp_ids(cl) == [f"{_DP}.{f}" for f in _EVERY_FILER]
+
+
+def test_2a_none_and_unknown_are_answers_and_the_interview_ends():
+    profile = _filer(_doc("W-2"), _doc("1099-R"), _doc("1099-B"), _doc("1099-DIV"), *_NO_ANSWERS)
+    from taxfill_core.schemas.profile import PriorFilings
+
+    profile.prior_filings = PriorFilings(filed_years=_ans([2024]))
+    every = (*_EVERY_FILER, "w2_box14", "hsa_coverage", "ira_basis", "employer_stock_sales", "dividend_boxes")
+    # All but one answered: that one holds readiness back, alone.
+    profile.deductions_and_payments = {YEAR: _answered(*every[:-1], value="unknown")}
+    cl = intake_checklist(profile, tax_year=YEAR)
+    assert cl.ready_to_fill is False and cl.ready_to_fill_blockers == [f"{_DP}.dividend_boxes"]
+    profile.deductions_and_payments = {YEAR: _answered(*every)}
+    done = intake_checklist(profile, tax_year=YEAR)
+    assert done.ready_to_fill is True and done.ready_to_fill_blockers == [] and done.next_questions == []
+    # Another year's answers never carry over.
+    assert intake_checklist(profile, tax_year=YEAR + 1).ready_to_fill_blockers[0] == f"{_DP}.itemizable_items"
+    # With no year named, the latest year on file is the one read.
+    assert intake_checklist(profile).ready_to_fill is True
+
+
+def test_2a_the_answers_live_in_additive_optional_fields():
+    # A profile saved by an earlier version (no such section) still loads, and round-trips once it has one.
+    saved = _filer(_doc("W-2")).model_dump(mode="json")
+    del saved["deductions_and_payments"]
+    assert Profile.model_validate(saved).deductions_and_payments == {}
+    profile = _filer(_doc("W-2"))
+    profile.deductions_and_payments = {YEAR: _answered("itemizable_items", value="SDI 2,479.50 in box 14")}
+    again = Profile.model_validate(profile.model_dump(mode="json"))
+    assert again.deductions_and_payments[YEAR].itemizable_items.value == "SDI 2,479.50 in box 14"
+    assert again.deductions_and_payments[YEAR].extension is None
+    with pytest.raises(ValueError, match="a blank answer records nothing"):
+        DeductionsAndPaymentsYear(extension=_ans("  "))

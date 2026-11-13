@@ -5,6 +5,7 @@ from datetime import date
 from taxfill_core.intake import IntakeChecklist, intake_checklist
 from taxfill_core.schemas.profile import (
     Answer,
+    DeductionsAndPaymentsYear,
     Dependent,
     Household,
     Identity,
@@ -44,12 +45,22 @@ def _ids(checklist: IntakeChecklist) -> set[str]:
     return {q.id for q in checklist.next_questions}
 
 
+def _deductions_answered(*extra: str) -> DeductionsAndPaymentsYear:
+    """The deductions-and-payments part answered 'none' (JW2a): the four questions every filer gets, plus the
+    named document follow-ups."""
+    fields = ("itemizable_items", "estimated_payments", "extension", "prior_year_overpayment_applied", *extra)
+    return DeductionsAndPaymentsYear(**{f: _ans("none") for f in fields})
+
+
+_W2_FOLLOW_UPS = ("w2_box14", "hsa_coverage")
+
+
 def test_empty_profile_opens_with_identity_questions():
     cl = intake_checklist()
     ids = _ids(cl)
     assert {"identity.name", "identity.tax_id", "identity.us_person", "identity.mailing_address"} <= ids
     assert cl.ready_to_fill is False
-    assert cl.progress == "0 of 9 sections started"
+    assert cl.progress == "0 of 10 sections started"
 
 
 def test_mailing_address_carries_the_p002_disambiguation():
@@ -276,9 +287,10 @@ def test_ready_to_fill_when_core_facts_present():
         ),
         household=Household(marital_status=_ans("unmarried"), filing_status=_ans("single")),
         income_documents=[IncomeDocument(kind="W-2", status="have", provenance=US)],
+        deductions_and_payments={2025: _deductions_answered(*_W2_FOLLOW_UPS)},
     )
-    cl = intake_checklist(profile)
-    assert cl.ready_to_fill is True
+    cl = intake_checklist(profile, tax_year=2025)
+    assert cl.ready_to_fill is True and cl.ready_to_fill_blockers == []
 
 
 def test_not_ready_to_fill_without_a_held_income_document():
@@ -296,7 +308,8 @@ def test_not_ready_to_fill_without_a_held_income_document():
 def test_questions_are_ordered_by_section_flow():
     profile = Profile(identity=Identity(us_person=_ans(False)))
     sections = [q.section for q in intake_checklist(profile).next_questions]
-    order = ["identity", "immigration", "residency", "household", "state_footprint", "income_documents", "banking", "prior_filings"]
+    order = ["identity", "immigration", "residency", "household", "state_footprint", "income_documents",
+             "deductions_and_payments", "banking", "prior_filings"]
     ranks = [order.index(s) for s in sections]
     assert ranks == sorted(ranks)
 
@@ -449,6 +462,7 @@ def test_interview_terminates_for_single_paper_check_filer():
         IncomeDocument(kind="foreign account statement", status="not_applicable", provenance=US),
     ]
     profile.prior_filings = PriorFilings(filed_years=_ans([2022]))
+    profile.deductions_and_payments = {2023: _deductions_answered(*_W2_FOLLOW_UPS)}   # JW2a: each answered 'none'
     cl = intake_checklist(profile, tax_year=2023)
     assert cl.ready_to_fill is True
     assert cl.next_questions == []  # banking stays None (no direct deposit) and nothing repeats
@@ -475,6 +489,7 @@ def test_banking_question_only_accompanies_other_pending_questions():
         IncomeDocument(kind="foreign account statement", status="not_applicable", provenance=US),
     ]
     complete.prior_filings = PriorFilings(filed_years=_ans([2022]))
+    complete.deductions_and_payments = {2023: _deductions_answered(*_W2_FOLLOW_UPS)}
     assert "banking.account" not in _ids(intake_checklist(complete, tax_year=2023))
 
 
@@ -1008,7 +1023,7 @@ def test_answered_deferral_split_stops_the_question_and_counts_as_a_section():
     profile = Profile(retirement_contributions={2026: rc})
     cl = intake_checklist(profile, tax_year=2026)
     assert "retirement.deferral_split" not in _ids(cl)
-    assert cl.progress == "1 of 9 sections started"
+    assert cl.progress == "1 of 10 sections started"
 
 
 def test_recorded_roth_ira_amount_gets_the_excise_pointer_note():
