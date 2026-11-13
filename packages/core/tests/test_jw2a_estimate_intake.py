@@ -391,6 +391,16 @@ def test_1d_state_returns_follow_the_footprint_and_a_nonresident_gets_no_form_10
     est = estimate_refund(moved, YEAR, IncomeSnapshot(wages=90_000, federal_withholding=12_000))
     states = [f for f in est.roadmap.returns_and_forms if f.startswith("State return:")]
     assert len(states) == 1 and states[0].startswith("State return: CA part-year resident return — 540NR")
+    # A pack whose form note runs to a paragraph gives its first sentence; state_scope keeps the rest.
+    commuter = _filer(_doc("W-2"))
+    commuter.state_footprint = {YEAR: StateFootprintYear(
+        lived=[ResidencePeriod(state="WA", start=date(YEAR, 1, 1), end=date(YEAR, 12, 31), provenance=US)],
+        worked=[WorkPeriod(state="OR", start=date(YEAR, 1, 1), end=date(YEAR, 12, 31), provenance=US)],
+    )}
+    oregon = [f for f in estimate_refund(commuter, YEAR, IncomeSnapshot(wages=90_000)).roadmap.returns_and_forms
+              if f.startswith("State return:")]
+    assert len(oregon) == 1 and oregon[0].startswith("State return: OR nonresident return — Form OR-40-P")
+    assert len(oregon[0]) < 260 and oregon[0].endswith("(state_scope has the full note) (state tax is not estimated here).")
     student = Profile(
         identity=Identity(us_person=_ans(False)),
         immigration=Immigration(visa_timeline=[VisaPeriod(status="F-1", start=date(2024, 8, 1), provenance=US)]),

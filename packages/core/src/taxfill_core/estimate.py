@@ -3812,9 +3812,21 @@ def _state_return_entries(profile: Profile, year: int, knowledge_dir) -> list[st
     from taxfill_core.statescope import state_scope  # noqa: PLC0415
 
     role_words = {"resident": "resident", "part_year": "part-year resident", "nonresident": "nonresident"}
+
+    def forms_text(forms: list[str]) -> str:
+        """The forms in one short phrase: a pack's form note can run to a paragraph, so the entry keeps its first
+        sentence (at most 160 characters) and state_scope keeps the rest."""
+        text = ", ".join(forms).strip()
+        if not text:
+            return "see the state revenue department"
+        head = text.split(". ")[0].rstrip(".")
+        if len(head) > 160:
+            head = head[:160].rsplit(" ", 1)[0]
+        return head if head == text.rstrip(".") else head + " … (state_scope has the full note)"
+
     return [
         f"State return: {f.state} {role_words.get(f.filing_role, f.filing_role)} return — "
-        f"{', '.join(f.forms) or 'see the state revenue department'} (state tax is not estimated here)."
+        f"{forms_text(f.forms)} (state tax is not estimated here)."
         for f in state_scope(profile, year, base_dir=knowledge_dir).states if f.must_file
     ]
 
