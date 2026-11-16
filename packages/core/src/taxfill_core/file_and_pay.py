@@ -1540,6 +1540,15 @@ def _state_assembly(
     return lines, [asm.citation, *asm.citations]
 
 
+def _state_form_key(name: str) -> str:
+    """'540', 'Form 540', 'CA 540' and the pack key 'form540' -> '540'; '540NR' / 'form540nr' -> '540nr'.
+
+    _norm_form alone reads the pack key 'form540' as the word "form" and returns '' (JW2b fix round).
+    """
+    key = _norm_form(name) or re.sub(r"[^0-9a-z]", "", name.lower())
+    return re.sub(r"^(?:form|f)(?=\d)", "", key)
+
+
 def _state_return(
     item: FilingManifestItem, knowledge_dir, manifest: list[FilingManifestItem] | None = None
 ) -> ReturnInstructions:
@@ -1619,7 +1628,7 @@ def _state_return(
     assemble = [_GENERIC_STATE_ASSEMBLE]
     # The block is one return's (CA: Form 540): another return of the state (540NR, 540 2EZ) keeps the generic line
     # until its own instructions are read. Form 540NR prints the opposite federal-copy rule (JW2b fix round).
-    if sk.assembly is not None and _norm_form(item.form) == _norm_form(sk.assembly.form):
+    if sk.assembly is not None and _state_form_key(item.form) == _state_form_key(sk.assembly.form):
         assemble, assembly_cites = _state_assembly(sk.assembly, item, manifest or [item], state.upper())
         citations.extend(assembly_cites)
 

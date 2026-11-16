@@ -2361,8 +2361,10 @@ pitfalls:
       California pack's `adjustments` block (column and effect on California
       AGI stored apart). state_scope names them for a California resident,
       calc state_tax's work says the AGI it is given must carry them,
-      get_sources routes HSA and Schedule CA queries for states/ca to the
-      income_adjustments topic, and the federal HSA routes are unchanged.
+      get_sources routes HSA, U.S. Treasury and U.S. obligation queries for
+      states/ca to the income_adjustments topic (a "Schedule CA" query keeps
+      forms_and_instructions, which carries the 540 and 540NR booklets), and
+      the federal HSA routes are unchanged.
       Other years and the 540NR's Schedule CA (540NR) are not covered until
       their own instructions are read. Tests, P-038-tagged, in
       packages/core/tests/test_ca_adjustments_jw2b.py and
