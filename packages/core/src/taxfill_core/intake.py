@@ -1612,10 +1612,11 @@ def _mentions_1099div(kind: str) -> bool:
 
 def _dp_year(profile: Profile, tax_year: int | None) -> int | None:
     """The year whose deductions-and-payments answers the interview reads: the asked tax year, else the latest
-    year on file (None when there is none)."""
+    year the profile's year-keyed answers name — the state footprint's included, so a returning filer's older
+    answers are never read as the year the footprint is about (None when no year is on file)."""
     if tax_year is not None:
         return tax_year
-    return max(profile.deductions_and_payments, default=None)
+    return max((*profile.state_footprint, *profile.deductions_and_payments), default=None)
 
 
 def _deductions_payments_questions(profile: Profile, out: list[IntakeQuestion], tax_year: int | None) -> list[str]:
@@ -1623,11 +1624,11 @@ def _deductions_payments_questions(profile: Profile, out: list[IntakeQuestion], 
     year = _dp_year(profile, tax_year)
     entry = profile.deductions_and_payments.get(year) if year is not None else None
     key = str(year) if year is not None else "<tax_year>"
-    yr = str(tax_year) if tax_year is not None else "the tax year"
-    prior = str(tax_year - 1) if tax_year is not None else "the prior year"
+    yr = str(year) if year is not None else "the tax year"
+    prior = str(year - 1) if year is not None else "the prior year"
     kinds = [d.kind for d in profile.income_documents if d.status != "not_applicable"]
     # The W-2's "Other" box is box 14 through 2025 and box 14a from 2026 (the W-2 DocSpec in extract.py).
-    box14 = "box 14a (box 14 before 2026)" if tax_year is not None and tax_year >= 2026 else "box 14"
+    box14 = "box 14a (box 14 before 2026)" if year is not None and year >= 2026 else "box 14"
     asked: list[str] = []
 
     def ask(field: str, prompt: str, why: str, extra: str = "") -> None:

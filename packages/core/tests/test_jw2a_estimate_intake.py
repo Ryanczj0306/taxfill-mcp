@@ -508,6 +508,22 @@ def test_2a_none_and_unknown_are_answers_and_the_interview_ends():
     assert intake_checklist(profile).ready_to_fill is True
 
 
+def test_2a_with_no_year_named_an_older_years_answers_never_make_the_interview_ready():
+    # Verifier F3: 2024 answers and a 2025 state footprint, intake_checklist called with no tax_year, came back
+    # ready on the 2024 answers. The year read is the latest the profile names, the footprint's included.
+    profile = _filer(_doc("W-2"))
+    profile.deductions_and_payments = {YEAR - 1: _answered(*_EVERY_FILER, "w2_box14", "hsa_coverage")}
+    cl = intake_checklist(profile)
+    assert cl.ready_to_fill is False
+    assert cl.ready_to_fill_blockers == intake_checklist(profile, tax_year=YEAR).ready_to_fill_blockers
+    assert cl.ready_to_fill_blockers[0] == f"{_DP}.itemizable_items"
+    item = next(q for q in cl.next_questions if q.id == f"{_DP}.itemizable_items")
+    assert item.answers_into == f"{_DP}.{YEAR}.itemizable_items" and str(YEAR) in item.prompt
+    # Answered for the footprint's year, the same call is ready.
+    profile.deductions_and_payments[YEAR] = _answered(*_EVERY_FILER, "w2_box14", "hsa_coverage")
+    assert intake_checklist(profile).ready_to_fill is True
+
+
 def test_2a_the_answers_live_in_additive_optional_fields():
     # A profile saved by an earlier version (no such section) still loads, and round-trips once it has one.
     saved = _filer(_doc("W-2")).model_dump(mode="json")
