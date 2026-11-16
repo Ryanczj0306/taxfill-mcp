@@ -155,8 +155,9 @@ Other income (amount if any; "none" if none; "don't know" if unsure):
 - Other state / local taxes (local income tax, state estimated payments, value-based vehicle licence fee): __________
 - Real estate tax: __________　Home mortgage interest (Form 1098): __________
 - Gifts to charity: __________　Large medical / dental costs: __________
-  > Together with the state income tax withheld (W-2 Box 17), these decide whether itemizing
-  > beats the standard deduction.
+  > On a Form 1040, together with the state income tax withheld (W-2 Box 17), these decide
+  > whether itemizing beats the standard deduction. A nonresident's Form 1040-NR has no standard
+  > deduction, and its Schedule A takes only state and local income tax and gifts to U.S. charities.
 
 ## Part 6 · Tax already paid (required to compute owe-vs-refund)
 

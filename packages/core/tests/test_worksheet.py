@@ -77,3 +77,11 @@ def test_p018_the_prior_year_question_maps_onto_the_five_return_forms() -> None:
         assert box in zh
     assert "this year counts from January 1" in intake_worksheet()
     assert "今年从 1 月 1 日起就算居民" in intake_worksheet("zh-CN")
+
+
+@pytest.mark.parametrize("language", sorted(DOCS))
+def test_the_itemizing_note_never_weighs_a_1040nr_against_a_standard_deduction(language: str) -> None:
+    # JW2a verifier F1: Form 1040-NR has no standard deduction, and its Schedule A has no
+    # medical, mortgage or real estate lines (Instructions for Form 1040-NR, 2025).
+    text = intake_worksheet(language)
+    assert "1040-NR 没有标准扣除" in text or "Form 1040-NR has no standard" in text

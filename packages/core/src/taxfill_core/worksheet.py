@@ -174,8 +174,9 @@ Other income (amount if any; "none" if none; "don't know" if unsure):
 - Other state / local taxes (local income tax, state estimated payments, value-based vehicle licence fee): __________
 - Real estate tax: __________　Home mortgage interest (Form 1098): __________
 - Gifts to charity: __________　Large medical / dental costs: __________
-  > Together with the state income tax withheld (W-2 Box 17), these decide whether itemizing
-  > beats the standard deduction.
+  > On a Form 1040, together with the state income tax withheld (W-2 Box 17), these decide
+  > whether itemizing beats the standard deduction. A nonresident's Form 1040-NR has no standard
+  > deduction, and its Schedule A takes only state and local income tax and gifts to U.S. charities.
 
 ## Part 6 · Tax already paid (required to compute owe-vs-refund)
 
@@ -356,7 +357,8 @@ H-1B 生效，都要单独一行。**
 - 其他州 / 地方税（地方所得税、州预缴税、按车辆价值计的年度牌照费）：__________
 - 房产税：__________　房贷利息（Form 1098）：__________
 - 慈善捐赠：__________　大额医疗 / 牙科支出：__________
-  > 这些加上 W-2 Box 17 的州所得税扣缴，决定逐项扣除是否比标准扣除更划算。
+  > 报 Form 1040 时，这些加上 W-2 Box 17 的州所得税扣缴，决定逐项扣除是否比标准扣除更划算。
+  > 非居民报的 Form 1040-NR 没有标准扣除，其 Schedule A 只扣州 / 地方所得税和给美国慈善机构的捐赠。
 
 ## 第 6 部分 · 已经交了多少税（算"还要补/能退"必需）
 
