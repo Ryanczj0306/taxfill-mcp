@@ -69,7 +69,7 @@ def test_the_federal_attachment_list_passes_through_in_its_own_order_with_schedu
 
 
 @pytest.mark.parametrize("attached", [(), ("Schedule A",), ("Schedule A (Form 1040)", "Schedule B, Interest and "
-                                                                                       "Ordinary Dividends")])
+                                                                                   "Ordinary Dividends")])
 def test_only_schedule_a_or_b_means_no_federal_copy(attached):
     line = _federal_copy(_assemble(_federal(*attached), _ca()))
     assert line.startswith("Federal return copy: No.") and IF_NO in line and IF_YES not in line
@@ -149,3 +149,22 @@ def test_a_state_without_the_block_keeps_the_generic_line(jurisdiction, form, ye
     item = FilingManifestItem(form=form, tax_year=year, jurisdiction=jurisdiction, bottom_line=10)
     ret = file_and_pay([_federal("Schedule D", tax_year=year), item]).returns[1]
     assert ret.assemble == [_GENERIC_STATE_ASSEMBLE]
+
+
+@pytest.mark.parametrize("form", ["540NR", "Form 540NR", "540 2EZ", "540-2EZ"])
+def test_a_california_return_other_than_form_540_keeps_the_generic_line(form):
+    # the block is Form 540's: 2025 Form 540NR Side 6 prints "IMPORTANT: Attach a copy of your complete federal
+    # return.", the opposite of Form 540's federal-copy question (JW2b fix round); 540 2EZ's rules were not read
+    item = FilingManifestItem(form=form, tax_year=YEAR, jurisdiction="states/ca", bottom_line=50)
+    ret = next(r for r in file_and_pay([_federal("Schedule A", "Schedule B"), item]).returns
+               if r.jurisdiction == "states/ca")
+    assert ret.assemble == [_GENERIC_STATE_ASSEMBLE]
+    assert not {"https://www.ftb.ca.gov/forms/2025/2025-540-booklet.html",
+                "https://www.ftb.ca.gov/forms/2025/2025-540-ca.pdf"} & {c.url for c in ret.citations}
+
+
+@pytest.mark.parametrize("form", ["540", "Form 540", "CA 540", "Form 540, California Resident Income Tax Return"])
+def test_form_540_in_any_spelling_gets_the_block(form):
+    item = FilingManifestItem(form=form, tax_year=YEAR, jurisdiction="states/ca", bottom_line=50)
+    lines = next(r for r in file_and_pay([_federal("Schedule D"), item]).returns if r.jurisdiction == "states/ca").assemble
+    assert _federal_copy(lines).startswith("Federal return copy: Yes.") and _GENERIC_STATE_ASSEMBLE not in lines

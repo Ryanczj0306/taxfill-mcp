@@ -1540,10 +1540,10 @@ def _state_return(
 
     Logistics figures carry the pack's verification caveat (some state data could
     not be independently re-confirmed); they are surfaced with a 'confirm at the
-    DOR' note rather than presented as fully verified. A pack with an ``assembly``
-    block (JW2b: California) gets its cited assembly steps, with the federal-copy
-    rule answered from the federal item of ``manifest``; any other keeps the
-    generic line.
+    DOR' note rather than presented as fully verified. A return of the form a
+    pack's ``assembly`` block names (JW2b: California Form 540) gets its cited
+    assembly steps, with the federal-copy rule answered from the federal item of
+    ``manifest``; any other return (Form 540NR included) keeps the generic line.
     """
     state = item.jurisdiction.split("/", 1)[1] if "/" in item.jurisdiction else item.jurisdiction
     refund, owes = item.bottom_line > 0, item.bottom_line < 0
@@ -1610,7 +1610,9 @@ def _state_return(
                      f"carry the federal exclusion onto the state return.")
 
     assemble = [_GENERIC_STATE_ASSEMBLE]
-    if sk.assembly is not None:
+    # The block is one return's (CA: Form 540): another return of the state (540NR, 540 2EZ) keeps the generic line
+    # until its own instructions are read. Form 540NR prints the opposite federal-copy rule (JW2b fix round).
+    if sk.assembly is not None and _norm_form(item.form) == _norm_form(sk.assembly.form):
         assemble, assembly_cites = _state_assembly(sk.assembly, item, manifest or [item], state.upper())
         citations.extend(assembly_cites)
 
