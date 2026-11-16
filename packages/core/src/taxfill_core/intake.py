@@ -1660,8 +1660,9 @@ def _deductions_payments_questions(profile: Profile, out: list[IntakeQuestion], 
         ask("itemizable_items",
             f"For {yr}, did you pay any of these, and how much: state or local taxes beyond the state income tax "
             f"withheld on a W-2 (a state disability or family leave amount in W-2 {box14}, local income tax, state "
-            f"estimated payments, the value-based part of a yearly vehicle licence fee); real estate tax; home "
-            f"mortgage interest; gifts to charity; large medical or dental costs?",
+            f"estimated payments made during {yr} — by payment date, including a state refund from {prior} applied to "
+            f"{yr} — the value-based part of a yearly vehicle licence fee); real estate tax; home mortgage interest; "
+            f"gifts to charity; large medical or dental costs?",
             "These are the Schedule A items: together with the state income tax withheld (W-2 box 17) they decide "
             "whether itemizing beats the standard deduction.",
             "Pass W-2 box 17 in estimate_refund's w2s and the other state and local taxes in "
@@ -1691,8 +1692,9 @@ def _deductions_payments_questions(profile: Profile, out: list[IntakeQuestion], 
             priced_as_itemized)
     ask("estimated_payments",
         f"Did you make estimated tax payments for {yr} — federal (Form 1040-ES) or state? Give each date and amount.",
-        "Federal estimated payments are payments on the return; state ones belong on the state return and are "
-        "state tax paid when itemizing.",
+        f"Federal estimated payments are payments on the return. State ones belong on the state return; for an "
+        f"itemized deduction what counts is state estimated payments made during {yr} (by payment date, including "
+        f"a state refund from {prior} applied to {yr}), not the year a payment is for.",
         "Federal estimated payments go in estimate_refund's federal_withholding.")
     ask("extension",
         f"Did you file an extension for {yr} (federal Form 4868, or a state extension), and did you pay anything "

@@ -548,6 +548,21 @@ def test_2a_a_us_person_keeps_the_form_1040_comparison():
     assert "beats the standard deduction" in items and "Form 1040-NR" not in items
 
 
+def test_2a_state_estimated_payments_count_by_the_date_paid_not_the_year_they_are_for():
+    # Verifier F10. Instructions for Schedule A (2025), line 5a: "State and local estimated tax payments made during
+    # 2025, including any part of a prior year refund that you chose to have credited to your 2025 state or local
+    # income taxes." A fourth-quarter 2025 payment made in January 2026 is not 2025 state tax paid.
+    cl = intake_checklist(_filer(_doc("W-2")), tax_year=YEAR)
+    for field in ("itemizable_items", "estimated_payments"):
+        text = _dp_text(cl, field)
+        assert f"made during {YEAR}" in text and "by payment date" in text, field
+        assert f"state refund from {YEAR - 1} applied to {YEAR}" in text, field
+    assert "state tax paid when itemizing" not in _dp_text(cl, "estimated_payments")
+    from taxfill_core.estimate import _ITEMS_TO_COLLECT
+
+    assert "state estimated payments made during the year (by payment date" in _ITEMS_TO_COLLECT[0]
+
+
 def test_2a_look_alike_kinds_raise_no_follow_up():
     cl = intake_checklist(_filer(_doc("W-2G"), _doc("5498-SA"), _doc("1099-INT")), tax_year=YEAR)
     assert _dp_ids(cl) == [f"{_DP}.{f}" for f in _EVERY_FILER]

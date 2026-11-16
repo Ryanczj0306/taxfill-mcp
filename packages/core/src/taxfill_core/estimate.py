@@ -3669,15 +3669,18 @@ _SALT_CLOSE_SHARE = Decimal("0.5")
 # Schedule A (Form 1040) (2025) and its instructions, read 2026-11-12. Line 5a: "State and local income taxes
 # withheld from your salary during 2025. Your Form(s) W-2 will show these amounts", and "Mandatory contributions
 # you made to the California, New Jersey, or New York Nonoccupational Disability Benefit Fund; Rhode Island
-# Temporary Disability Benefit Fund; or Washington State Supplemental Workmen's Compensation Fund", and
+# Temporary Disability Benefit Fund; or Washington State Supplemental Workmen's Compensation Fund", "State and
+# local estimated tax payments made during 2025, including any part of a prior year refund that you chose to have
+# credited to your 2025 state or local income taxes" (read 2026-11-16: the payment date decides the year), and
 # "Mandatory contributions to state family leave programs". Line 5c: personal property taxes "but only if the
 # taxes were based on value alone and were imposed on a yearly basis ... You can deduct only the part of the fee
 # that was based on the car's value." Line 3 of the form: "Multiply line 2 by 7.5% (0.075)". Lines 5b, 8a, 11.
 _ITEMS_TO_COLLECT: tuple[str, ...] = (
     "other state and local taxes: a mandatory state disability or family leave contribution (often W-2 box 14, "
     "box 14a from 2026; the Schedule A instructions for state and local income taxes list the funds that count), "
-    "local income tax (W-2 box 19), state estimated payments, and the value-based part of a yearly vehicle licence "
-    "or registration fee",
+    "local income tax (W-2 box 19), state estimated payments made during the year (by payment date, including a "
+    "prior-year state refund applied to the year), and the value-based part of a yearly vehicle licence or "
+    "registration fee",
     "real estate tax on a home you own",
     "home mortgage interest (Form 1098)",
     "gifts to charity",
