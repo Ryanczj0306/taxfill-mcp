@@ -132,8 +132,23 @@ def test_p038_state_tax_work_says_what_california_agi_must_carry():
 
 # ── routing both ways (the knowledge-gap pattern's neighbour theft) ──────────────────────────────────────────────
 
-FORWARD = ("HSA deduction", "HSA", "health savings account", "Schedule CA", "California adjustments",
-           "Treasury interest", "U.S. obligations interest", "W-2 box 12 code W")
+FORWARD = ("HSA deduction", "HSA", "HSA contributions", "California adjustments", "subtractions and additions",
+           "Treasury interest", "U.S. obligations interest", "U.S. savings bonds")
+# The TY2025 California routes before JW2b (main 464642f) of queries a first cut of the new topic took (JW2b fix
+# round): its descriptions carried the bare words "schedule", "interest", "W-2", "savings", "federal AGI" and three
+# "540"s, and the assembly rows "Schedule CA (540)" twice and "540" four times. [] is a clean miss, which must not
+# turn into a false match. "health savings account" stays a clean miss here: its words would bring "savings" along.
+BACKWARD = {
+    "interest and penalties": [], "W-2 withholding": [], "W-2 wages": [], "savings": [], "college savings": [],
+    "health savings account": [], "health insurance": ["forms_and_instructions", "law_changes", "tax_rates_and_brackets"],
+    "tax schedule": ["forms_and_instructions"], "schedule": ["forms_and_instructions"],
+    "federal AGI": ["forms_and_instructions"], "Schedule CA": ["forms_and_instructions"],
+    "Schedule CA (540)": ["forms_and_instructions"], "Schedule CA instructions": ["forms_and_instructions"],
+    "Schedule D": ["forms_and_instructions"], "Schedule D (540)": ["forms_and_instructions"],
+    "Form 540": ["tax_rates_and_brackets"], "W-2": ["tax_rates_and_brackets"],
+    "interest": ["filing_logistics"], "California adjusted gross income": ["filing_logistics"],
+    "payment voucher": ["forms_and_instructions", "law_changes"], "line 13": ["forms_and_instructions"],
+}
 FEDERAL = {   # the federal routes before JW2b, unchanged
     "HSA deduction": ["contribution_limits"],
     "HSA contribution limit": ["contribution_limits"],
@@ -150,6 +165,16 @@ def test_p038_california_hsa_and_schedule_ca_queries_reach_the_adjustments_topic
     result = get_sources(query, 2025, "states/ca")
     assert {s.topic for s in result.sources} == {"income_adjustments"}, query
     assert "income_adjustments" in result.available_topics
+
+
+@pytest.mark.parametrize("query, topics", BACKWARD.items())
+def test_the_adjustments_topic_takes_no_neighbour_query(query, topics):
+    assert sorted({s.topic for s in get_sources(query, 2025, "states/ca").sources}) == topics, query
+
+
+def test_a_540nr_filer_asking_for_schedule_ca_still_reaches_the_540nr_booklet():
+    urls = {s.url for s in get_sources("Schedule CA (540)", 2025, "states/ca").sources}
+    assert "https://www.ftb.ca.gov/forms/2025/2025-540nr-booklet.pdf" in urls
 
 
 @pytest.mark.parametrize("query, topics", FEDERAL.items())
