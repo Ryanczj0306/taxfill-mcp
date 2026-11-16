@@ -3341,6 +3341,156 @@ class ConvenienceRule(BaseModel):
     citation: Citation
 
 
+# ── State adjustments and assembly (Phase K-W JW2b, 2026-11-16) ───────────────────────────────────────────────────
+#
+# The first end-to-end walkthrough (finding P1-08) prepared a California return whose numbers came out right only
+# because the agent read the FTB booklet itself: the California pack carried no word of the Schedule CA (540) entries
+# a health savings account needs, and calc.state_tax took California AGI from the caller without saying what it must
+# include. Finding P1-03: file_and_pay gave every state the same one-line assembly step, so the California checklist
+# never said when to attach the federal return. Both are cited, optional blocks: a pack without them loads and
+# behaves exactly as before. Every line number and column lives in the pack (P-015: no form line typed into engine
+# text), and each entry carries the source's words.
+
+StateAdjustmentEffect = Literal["raises_state_agi", "lowers_state_agi", "figured_on_schedule", "itemized_deduction"]
+_ADJUSTMENT_ROLE = Literal["resident", "part_year", "nonresident"]
+
+
+class StateAdjustmentItem(BaseModel):
+    """One entry of a state's federal-to-state adjustment schedule, as the state's instructions direct it."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    id: str = Field(pattern=r"^[a-z][a-z0-9_]*$", description="Stable name, unique in the block.")
+    subject: str = Field(description="What the entry is for, e.g. 'Employer HSA contribution (W-2 box 12, code W)'.")
+    part: str = Field(description="Where on the schedule, e.g. 'Part I, Section A'.")
+    line: str = Field(description="The schedule line the instructions name, e.g. '1h'.")
+    column: str | None = Field(
+        default=None, description="The column the instructions name ('B', 'C'); None when they name none."
+    )
+    effect: StateAdjustmentEffect = Field(
+        description="What the entry does to the state AGI line, read off the schedule's arithmetic (the column alone "
+        "is not the direction: a subtraction-column entry on an adjustments-to-income line raises the AGI)."
+    )
+    quote: str = Field(description="The instructions' own words for the entry.")
+    pinpoint: str = Field(description="Page and line heading the quote was read under.")
+    tags: list[str] = Field(default_factory=list, description="Subjects a consumer selects entries by, e.g. 'hsa'.")
+
+    @model_validator(mode="after")
+    def _column_matches_effect(self) -> StateAdjustmentItem:
+        if self.effect == "figured_on_schedule":
+            if self.column is not None:
+                raise ValueError(f"adjustments item {self.id}: figured_on_schedule names no column; drop `column`")
+        elif self.column is None:
+            raise ValueError(f"adjustments item {self.id}: effect {self.effect} needs the `column` the source names")
+        return self
+
+
+class StateAdjustments(BaseModel):
+    """A state's adjustment-schedule entries the walkthrough found missing (JW2b): line, column, effect and quote each.
+
+    Not exhaustive: ``scope`` says which entries the block carries and where the rest are. ``roles`` limits it to the
+    filers whose schedule was read (California: the resident Schedule CA (540), not the 540NR's).
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    form: str = Field(description="The state return the schedule attaches to, e.g. '540'.")
+    schedule: str = Field(description="The adjustment schedule, e.g. 'Schedule CA (540)'.")
+    roles: list[_ADJUSTMENT_ROLE] = Field(min_length=1, description="The filing roles whose schedule was read.")
+    agi_line: str = Field(description="The state AGI line on the return, e.g. '17'.")
+    scope: str = Field(description="Which entries the block carries, and where the others are.")
+    mechanics: list[str] = Field(
+        default_factory=list, description="The schedule's own words for how its columns reach the return."
+    )
+    items: list[StateAdjustmentItem] = Field(min_length=1)
+    citation: Citation
+    citations: list[Citation] = Field(default_factory=list)
+
+    @model_validator(mode="after")
+    def _ids_unique(self) -> StateAdjustments:
+        ids = [item.id for item in self.items]
+        dupes = sorted({i for i in ids if ids.count(i) > 1})
+        if dupes:
+            raise ValueError(f"adjustments: item id(s) {dupes} used twice")
+        return self
+
+    def _effect_text(self, item: StateAdjustmentItem, st: str) -> str:
+        return {
+            "raises_state_agi": f"raises {st} AGI",
+            "lowers_state_agi": f"lowers {st} AGI",
+            "figured_on_schedule": "the amount is figured as the quote directs",
+            "itemized_deduction": f"an itemized-deduction entry, not part of {st} AGI",
+        }[item.effect]
+
+    def entry_text(self, item: StateAdjustmentItem, st: str, *, quoted: bool) -> str:
+        """One entry: subject, where it goes, what it does, and (``quoted``) the source's words with the pinpoint."""
+        where = f"{self.schedule}, {item.part}, line {item.line}" + (f", column {item.column}" if item.column else "")
+        text = f"{item.subject}: {where} ({self._effect_text(item, st)})"
+        return f"{text}. {item.quote} ({item.pinpoint})" if quoted else text
+
+    def tagged(self, tag: str) -> list[StateAdjustmentItem]:
+        return [item for item in self.items if tag in item.tags]
+
+    def scope_warning(self, st: str, year: int) -> str:
+        """state_scope's line: every entry with its quote, the schedule's mechanics, and the block's scope."""
+        entries = " ".join(f"({n}) {self.entry_text(item, st, quoted=True)}" for n, item in enumerate(self.items, 1))
+        return (
+            f"{st} adjustments ({self.schedule}, verified on the {year} {self.schedule} instructions): {st} AGI, Form "
+            f"{self.form} line {self.agi_line}, is federal AGI with these entries applied wherever they apply to "
+            f"the filer. {entries} How the columns reach Form {self.form}: {' '.join(self.mechanics)} {self.scope}"
+        )
+
+    def base_text(self, st: str, year: int) -> str:
+        """calc.state_tax's line: what the AGI it is given must already carry (no quotes; state_scope has them).
+
+        An itemized-deduction entry is left out: it is not part of the AGI the op starts from.
+        """
+        entries = "; ".join(
+            self.entry_text(item, st, quoted=False) for item in self.items if item.effect != "itemized_deduction"
+        )
+        return (
+            f"{st} AGI (Form {self.form} line {self.agi_line}) must already carry the {self.schedule} entries that "
+            f"apply, including (verified on the {year} {self.schedule} instructions): {entries}. {self.scope} "
+            f"[{self.citation.source.strip()} — {self.citation.url}]"
+        )
+
+
+class StateFederalCopyRule(BaseModel):
+    """When the state return must carry a copy of the federal return: the state's question, word for word.
+
+    file_and_pay answers it from the federal item in the same manifest: the federal return's attached forms, less
+    the ones the question names as not counting (``not_counted``), decide it.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    question: str = Field(description="The state's question, verbatim.")
+    if_no: str = Field(description="The state's direction for a No, verbatim.")
+    if_yes: str = Field(description="The state's direction for a Yes, verbatim.")
+    exception: str | None = Field(default=None, description="An exception the manifest cannot decide, verbatim.")
+    federal_forms: list[str] = Field(min_length=1, description="The federal returns the question names, e.g. '1040'.")
+    not_counted: list[str] = Field(
+        default_factory=list, description="Attachments the question excepts, e.g. 'Schedule A', as the source names them."
+    )
+    pinpoint: str
+
+
+class StateAssembly(BaseModel):
+    """How a state return is put together (JW2b, finding P1-03): file_and_pay's assembly lines for this state.
+
+    ``lines`` each quote the source; ``federal_copy`` is the federal-return rule file_and_pay decides per filing. A
+    state pack without the block keeps the generic assembly line.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    form: str = Field(description="The return the lines are for, e.g. '540'.")
+    lines: list[str] = Field(min_length=1, description="The assembly steps, in order, each quoting its source.")
+    federal_copy: StateFederalCopyRule | None = None
+    citation: Citation
+    citations: list[Citation] = Field(default_factory=list)
+
+
 class StateSourceEntry(BaseModel):
     """One row of a state pack's ``sources`` table (Phase K JK20, 2026-10-24).
 
@@ -3438,6 +3588,16 @@ class StateKnowledge(BaseModel):
         default=None,
         description="The state's convenience-of-the-employer wage-sourcing rule, cited; None = no rule "
         "researched for this state/year (state_scope falls back to the generic verify-at-DOR warning).",
+    )
+    adjustments: StateAdjustments | None = Field(
+        default=None,
+        description="JW2b: cited federal-to-state adjustment entries (line, column, effect, quote) that state_scope "
+        "names and calc.state_tax's work says the base must carry; None = none researched for this state/year.",
+    )
+    assembly: StateAssembly | None = Field(
+        default=None,
+        description="JW2b: the state's cited assembly steps and federal-copy rule for file_and_pay; None = the "
+        "generic assembly line.",
     )
     sources: list[StateSourceEntry] = Field(
         default_factory=list,

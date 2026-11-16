@@ -290,6 +290,14 @@ def state_scope(profile: Profile, year: int, *, base_dir: str | Path | None = No
             role_cites = forms_block.get("citations") or {}
             for c in role_cites.get(role) or []:
                 cites.append(Citation.model_validate(c))
+            # Phase K-W JW2b (walkthrough finding P1-08): the pack's cited adjustment entries (California: the HSA
+            # and U.S. obligation lines of Schedule CA (540)), for the roles whose schedule was read. The walkthrough
+            # agent found line 1h only by reading the booklet; a part-year or nonresident filer files another
+            # schedule, which the block does not describe.
+            adjustments = sk.adjustments
+            if adjustments is not None and role in adjustments.roles:
+                warnings.append(adjustments.scope_warning(st, year))
+                cites.extend([adjustments.citation, *adjustments.citations])
         else:
             notes.append(f"No {st} knowledge pack for {year} yet — confirm the filing requirement, forms, and "
                          f"credits at the state DOR before filing.")

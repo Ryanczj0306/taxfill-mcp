@@ -2333,3 +2333,37 @@ pitfalls:
       description say the same. Tests, P-037-tagged, in
       packages/core/tests/test_contribution_limits.py and
       packages/mcp-server/tests/test_server_e2e.py.
+  - id: P-038
+    incident: >-
+      A state return's adjusted gross income was left to the caller with no
+      word of what it must carry. In the first end-to-end walkthrough
+      (2026-11-12) a single California filer had W-2 box 12 code W HSA
+      contributions and U.S. Treasury interest. The California knowledge pack
+      carried no HSA or U.S.-obligation content, get_sources offered no
+      Schedule CA topic, and calc state_tax took California AGI as given. The
+      agent planned the employer HSA contribution on Schedule CA (540) line 1a
+      and found line 1h only by reading the FTB booklet itself; missing the
+      $4,300 addition would have understated that filer's California tax by
+      about $400 (its 9.3% bracket). The figures
+      shipped; the state's characterization of the HSA did not (finding
+      P1-08).
+    countermeasure: >-
+      Verified on the 2025 Schedule CA (540) instructions (2025 Form 540
+      booklet pp. 59-66, and FTB's web edition): the employer HSA contribution
+      (W-2 box 12, code W) goes on line 1h, column C; HSA interest and
+      earnings on line 2, column C; U.S. obligation interest on line 2,
+      column B; the HSA deduction on line 13, column B, which, being in
+      Section C, raises California AGI (line 27 subtracts line 26 from line
+      10 in each column); an unqualified HSA distribution on line 8f, column
+      B; an Archer MSA rollover to an HSA on line 8e, column C; sales inside
+      an HSA through Schedule D (540) to line 7a; and, for itemizers, Part II
+      line 4, column C. Each is a cited entry, with its quote, in the TY2025
+      California pack's `adjustments` block (column and effect on California
+      AGI stored apart). state_scope names them for a California resident,
+      calc state_tax's work says the AGI it is given must carry them,
+      get_sources routes HSA and Schedule CA queries for states/ca to the
+      income_adjustments topic, and the federal HSA routes are unchanged.
+      Other years and the 540NR's Schedule CA (540NR) are not covered until
+      their own instructions are read. Tests, P-038-tagged, in
+      packages/core/tests/test_ca_adjustments_jw2b.py and
+      packages/mcp-server/tests/test_jw2b_ca_walkthrough.py.

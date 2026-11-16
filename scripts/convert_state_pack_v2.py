@@ -52,6 +52,7 @@ _TOP_KEYS = {
     "jurisdiction", "tax_year", "income_tax", "conforms_to_federal_treaties", "treaty_note", "citation", "tax",
     "credits", "credits_verification", "effective_law_changes", "law_changes_checked", "convenience_rule", "forms",
     "mailing_addresses", "payment", "deadlines", "amended_return", "all_citations", "unverified", "sources",
+    "adjustments", "assembly",
 }
 _NOT_PROJECTED = ("all_citations", "unverified")  # carried as sources rows and gaps; no consumer reads them
 _CREDIT_KEYS = {"name", "type", "eligibility", "claimed_on", "citation", "unverified"}
@@ -196,6 +197,19 @@ def convert(v1: dict, st: str) -> dict:
         rule["ref"] = ref("convenience_rule", rule.pop("citation"))
         v2["convenience_rule"] = rule
 
+    # Phase K-W JW2b (2026-11-16): the two cited blocks keep their v1 shape (their quotes and pinpoints are typed
+    # fields already); only the citations become references.
+    cited: dict[str, dict] = {}
+    for key in ("adjustments", "assembly"):
+        if v1.get(key) is not None:
+            block = dict(v1[key])
+            block["citation"] = ref(key, block["citation"])
+            block["citations"] = [ref(key, c) for c in block.get("citations") or []]
+            cited[key] = block
+            plain.append(f"the {key} block's lines and quotes (JW2b)")
+    if "adjustments" in cited:
+        v2["adjustments"] = cited["adjustments"]
+
     if v1.get("forms") is not None:
         f = v1["forms"]
         _only(f, _FORMS_KEYS, "forms")
@@ -230,6 +244,8 @@ def convert(v1: dict, st: str) -> dict:
         out["refs"] = [ref("amended_return", c) for c in cites]
         logistics["amended_return"] = out
         plain.append("the amended-return checklist lines (each quoting its source inline, JK27)")
+    if "assembly" in cited:
+        logistics["assembly"] = cited["assembly"]
     v2["logistics"] = logistics
     gaps.append({"about": "migration", "detail": (
         f"Kept as plain strings, neither a quote nor a pointer: {', '.join(plain)}. JK26 types them.")})

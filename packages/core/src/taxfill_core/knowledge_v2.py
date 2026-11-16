@@ -35,8 +35,9 @@ THE SHAPE (``extra="forbid"`` throughout; key: what the v1 projection makes of i
     convenience_rule: {summary, trigger, exceptions, ref}  # -> convenience_rule
     forms: {resident, part_year_or_nonresident, schedule, refs: {resident|part_year|nonresident: [SourceRef]}}
                                        # -> forms (refs -> forms.citations)
-    logistics: {mailing, deadlines, payment, amended_return}  # -> mailing_addresses, deadlines, payment,
-                                       #    amended_return: the fields file_and_pay and filing_summary read
+    adjustments: StateAdjustments with citation(s): SourceRef     # -> adjustments (JW2b; state_scope, calc)
+    logistics: {mailing, deadlines, payment, amended_return, assembly}  # -> mailing_addresses, deadlines, payment,
+                                       #    amended_return, assembly: the fields file_and_pay and filing_summary read
     gaps: [{about, detail}]            # what the pack knowingly does not cover or carry (no v1 field)
     sources: [StateSourceEntry]        # -> sources (unchanged; the registry is built from it)
 
@@ -87,6 +88,8 @@ from taxfill_core.knowledge import (
     QUOTE_MAX_CHARS,
     STATE_V2_FIRST_TAX_YEAR,
     Citation,
+    StateAdjustments,
+    StateAssembly,
     StateExemptionCredits,
     StateKnowledge,
     StateSourceEntry,
@@ -526,6 +529,20 @@ class AmendedReturnV2(BaseModel):
     refs: list[SourceRef] = Field(min_length=1, description="The first is the amended form itself.")
 
 
+class StateAdjustmentsV2(StateAdjustments):
+    """The v1 ``adjustments`` block (Phase K-W JW2b), cited by reference."""
+
+    citation: SourceRef  # type: ignore[assignment]
+    citations: list[SourceRef] = Field(default_factory=list)  # type: ignore[assignment]
+
+
+class StateAssemblyV2(StateAssembly):
+    """The v1 ``assembly`` block (Phase K-W JW2b) file_and_pay reads, cited by reference."""
+
+    citation: SourceRef  # type: ignore[assignment]
+    citations: list[SourceRef] = Field(default_factory=list)  # type: ignore[assignment]
+
+
 class LogisticsV2(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -533,6 +550,7 @@ class LogisticsV2(BaseModel):
     deadlines: DeadlinesV2 | None = None
     payment: PaymentV2 | None = None
     amended_return: AmendedReturnV2 | None = None
+    assembly: StateAssemblyV2 | None = None
 
 
 # ── the pack ────────────────────────────────────────────────────────────────────
@@ -584,6 +602,7 @@ class StateKnowledgeV2(BaseModel):
     law_changes: LawChangesV2 = Field(default_factory=LawChangesV2)
     convenience_rule: ConvenienceRuleV2 | None = None
     forms: FormsV2 | None = None
+    adjustments: StateAdjustmentsV2 | None = None
     logistics: LogisticsV2 = Field(default_factory=LogisticsV2)
     gaps: list[Gap] = Field(default_factory=list)
     sources: list[StateSourceEntry] = Field(min_length=1)
@@ -707,6 +726,10 @@ class StateKnowledgeV2(BaseModel):
                 "summary": rule.summary, "trigger": rule.trigger, "exceptions": rule.exceptions,
                 "citation": self._cite(rule.ref),
             }
+        if self.adjustments is not None:
+            data["adjustments"] = self._cited_v1(self.adjustments)
+        if self.logistics.assembly is not None:
+            data["assembly"] = self._cited_v1(self.logistics.assembly)
         data["sources"] = [row.model_dump() for row in self.sources]
         data.update(self._extras_v1())
         pack = StateKnowledge.model_validate(data)
@@ -758,6 +781,13 @@ class StateKnowledgeV2(BaseModel):
                 block["citations"] = [self._cite(r) for r in am.refs[1:]]
             extras["amended_return"] = block
         return extras
+
+    def _cited_v1(self, block: StateAdjustmentsV2 | StateAssemblyV2) -> dict[str, Any]:
+        """A block typed as its v1 model with ``citation`` / ``citations`` references resolved to inline citations."""
+        out = block.model_dump(exclude={"citation", "citations"})
+        out["citation"] = self._cite(block.citation)
+        out["citations"] = [self._cite(r) for r in block.citations]
+        return out
 
     def _plain(self, block: BaseModel, cite_key: str) -> dict[str, Any]:
         out = {k: v for k, v in block.model_dump(exclude={"ref"}).items() if v is not None}

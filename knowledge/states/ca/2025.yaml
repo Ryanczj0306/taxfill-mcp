@@ -57,6 +57,137 @@ forms:
         (Side 1 heading: 'California Nonresident or Part-Year Resident Income Tax Return', 'TAXABLE YEAR 2025')
       url: https://www.ftb.ca.gov/forms/2025/2025-540nr.pdf
 
+# Phase K-W JW2b (2026-11-16, walkthrough finding P1-08): the Schedule CA (540) entries for a health savings account
+# and for U.S. obligation interest, which California AGI (Form 540 line 17) must carry. state_scope names them for a
+# resident and calc.state_tax's work says the base must include them. Every quote was read in the 2025 Form 540
+# booklet's "2025 Instructions for Schedule CA (540)" (booklet PDF fetched 2026-11-16, sha256 b48ee24bd2f9b9e7...,
+# identical to the copy the walkthrough used) and again in FTB's web edition of the same instructions; the column
+# headings and line 27 in the 2025 Schedule CA (540) form (sha256 0927485bff61e49f...), Form 540 lines 13-17 in the
+# 2025 Form 540 (sha256 3be81dcc5d2be3d3...). Resident Schedule CA (540) only: the 540NR's Schedule CA (540NR) was
+# not read, so state_scope gives these lines to a resident alone.
+adjustments:
+  form: '540'
+  schedule: 'Schedule CA (540)'
+  roles: [resident]
+  agi_line: '17'
+  scope: >-
+    The health savings account (HSA) and U.S. obligation interest entries only. Schedule CA (540) has many other
+    adjustments (the booklet's "2025 Instructions for Schedule CA (540)", from p. 55); read them for every other
+    difference between the federal and California amounts.
+  mechanics:
+  - 'Schedule CA (540) 2025, column headings: "B Subtractions See instructions" and "C Additions See instructions".'
+  - 'Schedule CA (540) 2025, Side 4, line 27: "Total. Subtract line 26 from line 10 in columns A, B, and C." So an
+    entry in column B of a Section C line (an adjustment to income, line 11 through line 25) lowers the line 27
+    column B subtractions and raises California AGI.'
+  - 'Booklet p. 66, Line 27: "Also, transfer the amount from: Line 27, column B to Form 540, line 14. If column B is a
+    negative number, transfer the amount as a positive number to Form 540, line 16. Line 27, column C to Form 540,
+    line 16."'
+  - 'Form 540 (2025) line 14 "California adjustments – subtractions. Enter the amount from Schedule CA (540), Part I,
+    line 27, column B"; line 16 "California adjustments – additions. Enter the amount from Schedule CA (540), Part I,
+    line 27, column C"; line 17 "California adjusted gross income. Combine line 15 and line 16".'
+  items:
+  - id: hsa_employer_contribution
+    subject: 'Employer HSA contribution (federal Form W-2, box 12, code W)'
+    part: 'Part I, Section A'
+    line: '1h'
+    column: C
+    effect: raises_state_agi
+    quote: '"Employer health savings account (HSA) contribution – Enter the amount of any employer HSA contribution
+      from federal Form W-2, Wage and Tax Statement, box 12, code W on line 1h, column C."'
+    pinpoint: 'booklet p. 59, Line 1h'
+    tags: [hsa, w2_box12_code_w]
+  - id: hsa_earnings
+    subject: 'Interest or other earnings inside an HSA'
+    part: 'Part I, Section A'
+    line: '2'
+    column: C
+    effect: raises_state_agi
+    quote: '"Enter in column C the interest you identified as tax-exempt interest on your federal Form 1040 or 1040-SR,
+      line 2a, and which you received from: ... • Interest or other earnings earned from an HSA are not treated as tax
+      deferred. Interest or earnings in an HSA are taxable in the year earned."'
+    pinpoint: 'booklet p. 59, Line 2'
+    tags: [hsa]
+  - id: us_obligations_interest
+    subject: 'Interest on U.S. savings bonds, U.S. Treasury bills, notes and bonds, and other U.S. obligations'
+    part: 'Part I, Section A'
+    line: '2'
+    column: B
+    effect: lowers_state_agi
+    quote: '"Enter in column B the interest you received from: • U.S. savings bonds (except for interest from series
+      EE U.S. savings bonds issued after 1989 that qualified for the Education Savings Bond Program exclusion). • U.S.
+      Treasury bills, notes, and bonds. • Any other bonds or obligations of the United States and its territories."'
+    pinpoint: 'booklet p. 59, Line 2'
+    tags: [us_obligations]
+  - id: hsa_investment_sales
+    subject: 'Gain or loss from the sale of investments inside an HSA'
+    part: 'Part I, Section A'
+    line: '7a'
+    effect: figured_on_schedule
+    quote: '"If there are differences, use Schedule D (540), California Capital Gain or Loss Adjustment, to calculate
+      the amount to enter on line 7a. • Gain or loss from the sale of investments inside an HSA."'
+    pinpoint: 'booklet p. 60, Line 7a'
+    tags: [hsa]
+  - id: archer_msa_rollover_to_hsa
+    subject: 'Rollover from an Archer MSA to an HSA'
+    part: 'Part I, Section B'
+    line: '8e'
+    column: C
+    effect: raises_state_agi
+    quote: '"Rollover from an Archer MSA to an HSA – Since California does not recognize HSAs, a rollover from an
+      Archer MSA to an HSA is treated as distribution not used for qualified medical expenses. ... Enter the amount
+      rolled over from an Archer MSA to an HSA on line 8e, column C."'
+    pinpoint: 'booklet p. 62, Line 8e'
+    tags: [hsa]
+  - id: hsa_nonqualified_distribution
+    subject: 'HSA distribution not used for qualified medical expenses (federal Form 8889)'
+    part: 'Part I, Section B'
+    line: '8f'
+    column: B
+    effect: lowers_state_agi
+    quote: '"HSA distributions for unqualified medical expense – Distributions from an HSA not used for qualified
+      medical expenses, and included in federal income, are not taxable for California purposes. Enter the
+      distribution not used for qualified medical expenses on line 8f, column B."'
+    pinpoint: 'booklet p. 62, Line 8f'
+    tags: [hsa]
+  - id: hsa_deduction
+    subject: 'HSA deduction (federal Schedule 1 (Form 1040), from Form 8889)'
+    part: 'Part I, Section C'
+    line: '13'
+    column: B
+    effect: raises_state_agi
+    quote: '"Line 13 Health Savings Account Deduction – Federal law allows a deduction for contributions to an HSA
+      account. California law does not conform. Enter the amount from line 13, column A, on line 13, column B."'
+    pinpoint: 'booklet p. 65, Line 13'
+    tags: [hsa]
+  - id: hsa_qualified_distribution_itemized
+    subject: 'Tax-free HSA distribution for qualified medical expenses (itemizers)'
+    part: 'Part II'
+    line: '4'
+    column: C
+    effect: itemized_deduction
+    quote: '"HSA distributions – If you received a tax-free HSA distribution for qualified medical expenses, enter the
+      qualified expenses paid that exceed 7.5% of federal AGI on line 4, column C."'
+    pinpoint: 'booklet p. 66, Part II, Line 1 through Line 4'
+    tags: [hsa]
+  citation:
+    source: >-
+      2025 Personal Income Tax Booklet (Form 540), 2025 Schedule CA (540) line directions (pp. 55-67): HSA (health
+      savings account) deduction, W-2 box 12 code W HSA contributions, HSA interest and earnings, HSA distributions,
+      U.S. Treasury and other U.S. obligation interest; column B subtractions, column C additions
+    url: https://www.ftb.ca.gov/forms/2025/2025-540-booklet.pdf
+  citations:
+  - source: >-
+      2025 Schedule CA (540) line directions, FTB web edition (the same HSA and U.S. obligation entries, second pass)
+    url: https://www.ftb.ca.gov/forms/2025/2025-540-ca-instructions.html
+  - source: >-
+      2025 Schedule CA (540), California Adjustments: column B Subtractions, column C Additions; line 27 carries to
+      Form 540 lines 14 and 16
+    url: https://www.ftb.ca.gov/forms/2025/2025-540-ca.pdf
+  - source: >-
+      2025 Form 540, lines 13-17: federal AGI, California subtractions and additions from Schedule CA (540),
+      California adjusted gross income
+    url: https://www.ftb.ca.gov/forms/2025/2025-540.pdf
+
 # Common California credits. Eligibility/structure are stable; the dollar limits
 # are the 2025 booklet figures, re-confirmed against the HTML booklet edition.
 credits_verification: 'Dollar limits below are transcribed from the cited 2025 FTB booklet and re-confirmed against
@@ -560,3 +691,27 @@ sources:
     line 32 exemption-credit AGI limits + AGI Limitation Worksheet p. 14, line 62 Behavioral Health Services Tax
     worksheet, renter's credit record pp. 25-26, mailing addresses, payment options, tax table pp. 69-74, 2025 California
     Tax Rate Schedules pp. 74-75
+- id: adjust-1
+  topic: income_adjustments
+  url: https://www.ftb.ca.gov/forms/2025/2025-540-booklet.pdf
+  descriptions:
+  - '2025 Personal Income Tax Booklet (Form 540), 2025 Schedule CA (540) line directions (pp. 55-67): HSA (health
+    savings account) deduction, W-2 box 12 code W HSA contributions, HSA interest and earnings, HSA distributions,
+    U.S. Treasury and other U.S. obligation interest; column B subtractions, column C additions'
+- id: adjust-2
+  topic: income_adjustments
+  url: https://www.ftb.ca.gov/forms/2025/2025-540-ca-instructions.html
+  descriptions:
+  - 2025 Schedule CA (540) line directions, FTB web edition (the same HSA and U.S. obligation entries, second pass)
+- id: adjust-3
+  topic: income_adjustments
+  url: https://www.ftb.ca.gov/forms/2025/2025-540-ca.pdf
+  descriptions:
+  - '2025 Schedule CA (540), California Adjustments: column B Subtractions, column C Additions; line 27 carries to
+    Form 540 lines 14 and 16'
+- id: adjust-4
+  topic: income_adjustments
+  url: https://www.ftb.ca.gov/forms/2025/2025-540.pdf
+  descriptions:
+  - '2025 Form 540, lines 13-17: federal AGI, California subtractions and additions from Schedule CA (540), California
+    adjusted gross income'

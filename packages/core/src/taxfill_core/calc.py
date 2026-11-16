@@ -11644,6 +11644,10 @@ def state_tax(
         f"Tax line: {params.tax_line}{unapplied_text}{credits_text} This op "
         f"{scope_text}{notes_text}"
     )
+    if pack.adjustments is not None:
+        # Phase K-W JW2b (P1-08): what the state AGI the caller supplies must carry, from the pack's cited
+        # adjustments block (its lines and columns are data, never typed here: P-015).
+        work += f" {pack.adjustments.base_text(code.upper(), year)}"
     return StateTaxResult(
         tax=tax,
         rate=params.flat_rate,

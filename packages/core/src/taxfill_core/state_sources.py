@@ -55,6 +55,9 @@ BLOCK_TO_TOPIC = {
     "convenience_rule": "remote_work_sourcing",
     "effective_law_changes": "law_changes",
     "law_changes_checked": "law_changes",
+    # Phase K-W JW2b (2026-11-16): the federal-to-state adjustment entries (CA Schedule CA (540)) and the assembly steps
+    "adjustments": "income_adjustments",
+    "assembly": "filing_logistics",
 }
 FALLBACK_TOPIC = "forms_and_instructions"
 # The id prefix of a ``sources`` table entry per registry topic (scripts/hoist_state_sources.py numbers them per topic).
@@ -65,6 +68,7 @@ TOPIC_ID_PREFIX = {
     "filing_logistics": "logistics",
     "remote_work_sourcing": "remote",
     "law_changes": "law",
+    "income_adjustments": "adjust",
 }
 # Joins the descriptions of one (topic, url) into the registry entry's ``answers``. It carries no word, so it adds no
 # routing token, and no description contains it (some contain ' | ': JK28's forms.citations entries end with an
