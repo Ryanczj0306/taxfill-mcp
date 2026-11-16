@@ -1638,15 +1638,57 @@ def _deductions_payments_questions(profile: Profile, out: list[IntakeQuestion], 
                       disambiguation=(extra + " " if extra else "") + _DP_HOW))
         asked.append(f"{_DP}.{field}")
 
-    ask("itemizable_items",
-        f"For {yr}, did you pay any of these, and how much: state or local taxes beyond the state income tax "
-        f"withheld on a W-2 (a state disability or family leave amount in W-2 {box14}, local income tax, state "
-        f"estimated payments, the value-based part of a yearly vehicle licence fee); real estate tax; home mortgage "
-        f"interest; gifts to charity; large medical or dental costs?",
-        "These are the Schedule A items: together with the state income tax withheld (W-2 box 17) they decide "
-        "whether itemizing beats the standard deduction.",
-        "Pass W-2 box 17 in estimate_refund's w2s and the other state and local taxes in other_state_local_taxes: "
-        "the estimate weighs them against the standard deduction. Medical costs count only over 7.5% of AGI.")
+    # Verifier F1: which Schedule A the return uses follows the residency result. Instructions for Form 1040-NR
+    # (2025): "Your Schedule A (which is called Schedule A (Form 1040-NR)) doesn't have a line for medical expense
+    # deductions"; its line 1a, "state and local income taxes you paid or that were withheld from your salary during
+    # 2025 on income connected with a U.S. trade or business"; Gifts to U.S. Charities, "contributions or gifts you
+    # gave to U.S. organizations". A dual-status year: "You can't take the standard deduction even for the part of
+    # the year you were a resident alien", and "For the period of residence, allowable deductions include all
+    # deductions on Schedule A (Form 1040), including medical expenses, real property taxes, and certain interest."
+    classification = _residency_classification(profile, year) if _visa_filer(profile) else None
+    if not _visa_filer(profile) or classification == "resident":
+        schedule = "1040"
+    elif classification == "dual_status_candidate":
+        schedule = "dual"
+    else:   # nonresident, or a visa filer whose residency is not settled yet
+        schedule = "1040nr"
+    nr_items = (f"state or local income tax beyond the state income tax withheld on a W-2 (local income tax, state "
+                f"estimated payments made during {yr}); gifts to U.S. charities")
+    priced_as_itemized = ("estimate_refund deducts nothing on this return unless itemized_deductions (the itemized "
+                          "total) is given; W-2 box 17 and other_state_local_taxes are recorded, not deducted.")
+    if schedule == "1040":
+        ask("itemizable_items",
+            f"For {yr}, did you pay any of these, and how much: state or local taxes beyond the state income tax "
+            f"withheld on a W-2 (a state disability or family leave amount in W-2 {box14}, local income tax, state "
+            f"estimated payments, the value-based part of a yearly vehicle licence fee); real estate tax; home "
+            f"mortgage interest; gifts to charity; large medical or dental costs?",
+            "These are the Schedule A items: together with the state income tax withheld (W-2 box 17) they decide "
+            "whether itemizing beats the standard deduction.",
+            "Pass W-2 box 17 in estimate_refund's w2s and the other state and local taxes in "
+            "other_state_local_taxes: the estimate weighs them against the standard deduction. Medical costs count "
+            "only over 7.5% of AGI.")
+    elif schedule == "1040nr":
+        ask("itemizable_items",
+            f"For {yr}, did you pay any of these, and how much: {nr_items}?",
+            "These are the items of Schedule A (Form 1040-NR), which is not the Schedule A of Form 1040: state and "
+            "local income taxes paid or withheld during the year on income connected with a U.S. trade or "
+            "business, and gifts to U.S. charities.",
+            priced_as_itemized + (
+                " Your residency is not settled yet: if it comes out resident for the whole year, or for part of it "
+                "(a dual-status year, for the period of residence), the Schedule A (Form 1040) items count too — "
+                "add real estate tax, home mortgage interest and large medical or dental costs to this answer."
+                if classification is None else ""))
+    else:
+        ask("itemizable_items",
+            f"For {yr}, did you pay any of these, and how much: {nr_items}; and, for the part of {yr} you were a "
+            f"resident, other state and local taxes (a state disability or family leave amount in W-2 {box14}, the "
+            f"value-based part of a yearly vehicle licence fee), real estate tax, home mortgage interest and large "
+            f"medical or dental costs?",
+            "A dual-status year takes no standard deduction (Pub 519 ch. 6), so each allowable itemized deduction "
+            "counts: for the period of residence the Schedule A (Form 1040) items, \"including medical expenses, "
+            "real property taxes, and certain interest\" (Instructions for Form 1040-NR), and for the period of "
+            "nonresidence the Schedule A (Form 1040-NR) items.",
+            priced_as_itemized)
     ask("estimated_payments",
         f"Did you make estimated tax payments for {yr} — federal (Form 1040-ES) or state? Give each date and amount.",
         "Federal estimated payments are payments on the return; state ones belong on the state return and are "
@@ -1667,8 +1709,10 @@ def _deductions_payments_questions(profile: Profile, out: list[IntakeQuestion], 
             f"insurance (SDI) or paid family leave contribution.",
             "A mandatory state disability or family leave contribution is a state and local tax on Schedule A "
             "(its instructions for state and local income taxes list the funds that count) and can decide "
-            "itemizing.",
-            "Pass a qualifying amount in estimate_refund's other_state_local_taxes.")
+            "itemizing." if schedule == "1040" else
+            "Box 14 can show a state disability or family leave contribution and other amounts the state return "
+            "asks about; whether this return deducts one follows the Schedule A items asked above.",
+            "Pass a qualifying amount in estimate_refund's other_state_local_taxes." if schedule == "1040" else "")
         ask("hsa_coverage",
             f"Does any W-2 show box 12 code W (employer contributions to a health savings account)? If so, for "
             f"which months of {yr} were you covered by a high-deductible health plan, and was the coverage "

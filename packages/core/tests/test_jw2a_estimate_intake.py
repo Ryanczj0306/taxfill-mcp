@@ -25,11 +25,14 @@ from taxfill_core.schemas.profile import (
     DeductionsAndPaymentsYear,
     Household,
     Identity,
+    Immigration,
     IncomeDocument,
     Profile,
     Provenance,
     ResidencePeriod,
+    ResidencyFacts,
     StateFootprintYear,
+    VisaPeriod,
     WorkPeriod,
 )
 
@@ -482,6 +485,67 @@ def test_2a_a_document_kind_in_the_inventory_raises_its_follow_up(kind, field, w
     # A recorded "no such document" raises nothing.
     none = intake_checklist(_filer(_doc("W-2"), _doc(kind, "not_applicable")), tax_year=YEAR)
     assert f"{_DP}.{field}" not in _dp_ids(none)
+
+
+def _visa_filer(status: str, start: date, days: dict[int, int] | None) -> Profile:
+    """Ravi Example, a visa holder with one W-2 (fictitious)."""
+    return Profile(
+        identity=Identity(name=_ans("Ravi Example"), tax_id=_ans("999-88-0002"), dob=_ans(date(1998, 4, 2)),
+                          us_person=_ans(False), mailing_address=_ans("100 Example Street")),
+        immigration=Immigration(visa_timeline=[VisaPeriod(status=status, start=start, provenance=US)]),
+        residency_facts=ResidencyFacts(days_in_us={y: _ans(d) for y, d in days.items()}) if days else None,
+        household=Household(marital_status=_ans("unmarried"), filing_status=_ans("single")),
+        income_documents=[_doc("W-2")],
+    )
+
+
+def _dp_text(checklist, field: str) -> str:
+    q = next(q for q in checklist.next_questions if q.id == f"{_DP}.{field}")
+    return " ".join((q.prompt, q.why, q.disambiguation or ""))
+
+
+_RESIDENT_ONLY = ("standard deduction", "mortgage", "real estate", "medical", "7.5%", "decide itemizing")
+
+
+def test_2a_a_nonresident_is_asked_the_schedule_a_form_1040_nr_items_only():
+    # Verifier F1: an F-1 student (nonresident for 2025 on these facts) was told the Form 1040 Schedule A story:
+    # real estate tax, mortgage interest, medical costs, "itemizing beats the standard deduction". Instructions
+    # for Form 1040-NR (2025): its Schedule A "doesn't have a line for medical expense deductions"; line 1a is
+    # state and local income tax, then "Gifts to U.S. Charities".
+    cl = intake_checklist(_visa_filer("F-1", date(2024, 8, 1), {2024: 150, 2025: 340}), tax_year=YEAR)
+    items = _dp_text(cl, "itemizable_items")
+    assert "Schedule A (Form 1040-NR)" in items and "gifts to U.S. charities" in items
+    assert "state or local income tax" in items
+    for word in _RESIDENT_ONLY:
+        assert word not in items.lower(), word
+    box14 = _dp_text(cl, "w2_box14")
+    assert "decide itemizing" not in box14 and "other_state_local_taxes" not in box14
+    assert "itemized_deductions" in items          # the only way the estimate deducts on this return
+
+
+def test_2a_a_dual_status_year_takes_the_resident_items_for_the_period_of_residence():
+    # Arrived 2025-06-01 with no earlier U.S. days: a dual-status year. Instructions for Form 1040-NR (2025): "You
+    # can't take the standard deduction even for the part of the year you were a resident alien"; "For the period
+    # of residence, allowable deductions include all deductions on Schedule A (Form 1040), including medical
+    # expenses, real property taxes, and certain interest."
+    cl = intake_checklist(_visa_filer("H-1B", date(2025, 6, 1), {2023: 0, 2024: 0, 2025: 214}), tax_year=YEAR)
+    items = _dp_text(cl, "itemizable_items")
+    assert "no standard deduction" in items and "weighs them against" not in items
+    assert "for the part of 2025 you were a resident" in items and "medical" in items
+    assert "Schedule A (Form 1040-NR)" in items
+    assert "decide itemizing" not in _dp_text(cl, "w2_box14")
+
+
+def test_2a_a_visa_filer_with_residency_unsettled_is_told_what_a_resident_result_adds():
+    cl = intake_checklist(_visa_filer("F-1", date(2024, 8, 1), None), tax_year=YEAR)
+    items = _dp_text(cl, "itemizable_items")
+    assert "Schedule A (Form 1040-NR)" in items and "not settled yet" in items
+    assert "standard deduction" not in items
+
+
+def test_2a_a_us_person_keeps_the_form_1040_comparison():
+    items = _dp_text(intake_checklist(_filer(_doc("W-2")), tax_year=YEAR), "itemizable_items")
+    assert "beats the standard deduction" in items and "Form 1040-NR" not in items
 
 
 def test_2a_look_alike_kinds_raise_no_follow_up():
