@@ -46,8 +46,8 @@ def test_every_tool_description_and_the_instructions_fit_the_client_cut():
 
 def test_calc_upfront_keeps_every_op_and_the_provisional_rule():
     desc = _descriptions()["calc"]
-    missing = sorted(op for op in _dispatch_ops() if not re.search(rf"\b{op}\b", desc))
-    assert not missing, f"calc's description no longer names these ops: {missing}"
+    listed = {op.strip() for op in re.search(r"op in \{([^}]*)\}", desc).group(1).split(",")}
+    assert listed == _dispatch_ops(), f"calc's op list: missing {_dispatch_ops() - listed}, not an op {listed - _dispatch_ops()}"
     provisional = OLD_CALC[OLD_CALC.index("A result computed off a PROVISIONAL"):OLD_CALC.index("\n\n- tax:")]
     assert _flat(provisional) in _flat(desc)
     assert 'calc(op="describe", args={"op": "<name>"})' in desc

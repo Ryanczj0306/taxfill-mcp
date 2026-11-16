@@ -1625,8 +1625,8 @@ def calc(op: str, args: dict[str, Any]) -> dict:
     hsa_deduction, espp_disposition, capital_loss_limitation, foreign_tax_credit_election, foreign_asset_reporting,
     state_tax}.
 
-    ARGUMENTS: calc(op="describe", args={"op": "<name>"}) returns an op's arguments and full notes; read it
-    before an op's first use ("estimate_refund" there returns that tool's full input guide).
+    ARGUMENTS: calc(op="describe", args={"op": "<name>"}) returns an op's arguments and full notes — read it
+    before first use ("estimate_refund": that tool's full input guide).
 
     A result computed off a PROVISIONAL (planning-only) knowledge pack — a current year
     authored before its forms published, e.g. federal 2026 — carries an extra `provisional`
@@ -1642,24 +1642,26 @@ def calc(op: str, args: dict[str, Any]) -> dict:
       parentheses on Schedule 1's other-income line.
     - schedule_1a_deductions: tips, overtime and senior are FORFEITED on MFS (car-loan interest is not); the tips
       cap is per RETURN; qualified_overtime is the FLSA premium half only.
-    - employee_fica: the F/J/M/Q exemption is a NONRESIDENT one (Pub 519 ch. 8: a resident alien's wages bear
-      FICA) — pass residency_classification (under a §6013(g)/(h) election, classification_without_election).
+    - employee_fica: the F/J/M/Q exemption is a NONRESIDENT one (Pub 519 ch. 8: a resident alien loses it) —
+      pass residency_classification (under a §6013(g)/(h) election, classification_without_election).
     - estimated_tax_safe_harbor: expected_withholding WITHOUT the box-6 excess; a bonus gets the flat 22% only
-      when Treas. Reg. 31.3402(g)-1(a)(7)(i) holds, else the aggregate procedure. withholding_projection counts
-      checks by PAY DATE; paystub_to_w2 adds only checks PAID by December 31. annualize_ytd ASSUMES LEVEL PAY:
-      never annualize a bonus or RSU vest.
+      when Treas. Reg. 31.3402(g)-1(a)(7)(i) holds, else the aggregate procedure. withholding_projection and
+      paystub_to_w2 count checks by PAY DATE (by December 31). annualize_ytd ASSUMES LEVEL PAY: never annualize
+      a bonus or RSU vest.
     - IRAs: run ira_contribution_eligibility BEFORE recording a contribution; ira_pro_rata pools ALL
       traditional/SEP/SIMPLE IRAs per PERSON, its denominator adding the conversion back; roth_conversion
       prices ONE path — plan_to_roth_ira never uses pro-rata.
-    - elective_deferral_room: 402(g) is per person ACROSS EVERY EMPLOYER.
-    - hsa_deduction: the limit is MONTHLY; W-2 code W is employer money (employer_contributions), never deducted
-      again; a general-purpose health FSA, the spouse's too, disqualifies. Above the SS wage base a payroll
-      dollar saves 1.45% FICA (2.35% over $200k), never 7.65%.
-    - espp_disposition: ONE lot; the 1099-B basis leaves out the ordinary income — use the returned basis.
-    - capital_loss_limitation: $3,000 ($1,500 MFS); carryovers keep their character.
+    - elective_deferral_room: 402(g) spans EVERY EMPLOYER.
+    - hsa_deduction: the limit is MONTHLY; W-2 code W goes in employer_contributions, never deducted again; a
+      general-purpose health FSA, the spouse's too, disqualifies. Above the SS wage base a payroll dollar saves
+      1.45% FICA (2.35% over $200k), never 7.65%.
+    - espp_disposition: ONE lot; the 1099-B basis omits the ordinary income — use the returned basis.
+    - capital_loss_limitation: $3,000 ($1,500 MFS); carryovers keep their character; pass
+      taxable_income_before_capital_loss WITHOUT the deduction. child_tax_credit: income_tax_before_credits =
+      the tax less earlier Schedule 3 credits.
     - foreign_tax_credit_election: no Form 1116 up to $300, $600 only on a joint return (never QSS).
     - foreign_asset_reporting: Form 8938 and FBAR together; read must_ask.
-    - state_tax: taxable_base is the STATE's own base; the pack decides flat or graduated — never assume.
+    - state_tax: taxable_base is the STATE's own base, after its additions and subtractions.
     """
     if op == _DESCRIBE_OP:
         return _calc_describe(args)
@@ -1962,19 +1964,20 @@ def estimate_refund(profile: dict, year: int, income: dict) -> dict:
     dual-status year, or a married couple with a nonresident spouse.
 
     `income` (whole dollars, W-2 boxes as printed; every field optional, defaults 0; unknown fields rejected):
-    wages, federal_withholding (withheld + estimated payments), interest, bank_deposit_interest,
-    bank_deposit_interest_nonresident_period, dividends, qualified_dividends, capital_gain_long and
-    capital_gain_short (signed), self_employment_net, retirement_income_taxable (the TAXABLE amount, not simply
-    1099-R box 2a) OR retirement_distributions (each 1099-R as read, priced per box 7 code; never both; a
-    traditional-IRA 1099-R with box 2b checked needs that person's ira_pool, Form 8606 Part I),
-    social_security_benefits, other_income; student_loan_interest_paid, pre_agi_adjustments, treaty_exempt_income (Schedule OI for a
-    nonresident, in parentheses on Schedule 1's other-income line for a resident alien), itemized_deductions
-    (only if itemizing; NRAs itemize only), other_state_local_taxes (state and local taxes beyond W-2 box 17),
-    foreign_tax_paid (the credit is NOT estimated); qualified_tips, qualified_overtime_premium (the FLSA premium
-    half only), car_loan_interest (Schedule 1-A: BELOW AGI, never in pre_agi_adjustments or
-    itemized_deductions; MFS forfeits all but car-loan interest); w2s [{employer?, box1..box7, box10, box12:
+    wages (W-2 box 1), federal_withholding (withheld + estimated payments), interest, bank_deposit_interest (the
+    deposit SUBSET of interest) and its bank_deposit_interest_nonresident_period part, dividends (1099-DIV 1a),
+    qualified_dividends (the 1b SUBSET), capital_gain_long and capital_gain_short (signed), self_employment_net,
+    retirement_income_taxable (the TAXABLE amount, not simply 1099-R box 2a) OR retirement_distributions (each
+    1099-R as read, priced per box 7 code; never both; a traditional-IRA 1099-R with box 2b checked needs that
+    person's ira_pool, Form 8606 Part I), social_security_benefits, other_income; student_loan_interest_paid,
+    pre_agi_adjustments, treaty_exempt_income (Schedule OI for a nonresident, in parentheses on Schedule 1's
+    other-income line for a resident alien), itemized_deductions (only if itemizing; NRAs itemize only),
+    other_state_local_taxes (state and local taxes beyond W-2 box 17), foreign_tax_paid (the credit is NOT
+    estimated); qualified_tips, qualified_overtime_premium (the FLSA premium half only), car_loan_interest
+    (Schedule 1-A: BELOW AGI, never in pre_agi_adjustments or itemized_deductions; MFS forfeits all but
+    car-loan interest); w2s [{employer?, box1..box7, box10, box12:
     [{code, amount}], box14b?, box17?}] (the aggregates derive from them; one also given must agree);
-    medicare_wages, ss_wages, medicare_tax_withheld (never also in federal_withholding),
+    medicare_wages (box 5), ss_wages (boxes 3 + 7), medicare_tax_withheld (never also in federal_withholding),
     ss_withheld_by_employer, aotc_qualified_expenses, aotc_students_ssn_ok, dependent_care_expenses,
     dependent_care_persons, aca_premiums, aca_slcsp, aca_aptc; spouse (the spouse's OWN amounts, same fields —
     a true two-return MFS comparison; otherwise amounts are couple-combined).
