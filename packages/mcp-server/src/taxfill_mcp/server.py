@@ -1842,13 +1842,28 @@ def intake_checklist(profile: dict | None = None, tax_year: int | None = None) -
 
 
 @mcp.tool()
-def list_document_kinds() -> list[dict]:
-    """Supported tax-document types and their official box layouts (W-2, 1099-*, 1098-*, 1042-S).
+def list_document_kinds(kind: str | list[str] | None = None) -> list[dict]:
+    """Supported tax-document types (W-2, 1099-*, 1098-*, 1042-S, ...) and their official box layouts.
 
-    Read this first, then read the actual document with your own vision and pass the boxes you
-    see to extract_document. Each kind cites the form's irs.gov layout page.
+    Read this first. With no argument it returns the index: each kind's title, irs.gov layout page and box
+    counts. Then call it with `kind` (the kind you hold, e.g. "W-2", or a list of kinds) for the full layout:
+    every box key, label, type and whether it is required. Read the actual document with your own vision and
+    pass the boxes you see, under those keys, to extract_document.
     """
-    return _list_document_kinds()
+    full = _list_document_kinds()
+    if kind is None:
+        return [
+            {"kind": k["kind"], "title": k["title"], "source_url": k["source_url"], "box_count": len(k["boxes"]),
+             "required_box_count": sum(1 for b in k["boxes"] if b["required"]),
+             "box_layout": f'list_document_kinds(kind="{k["kind"]}")'}
+            for k in full
+        ]
+    wanted = [kind] if isinstance(kind, str) else list(kind)
+    by_kind = {k["kind"]: k for k in full}
+    unknown = [w for w in wanted if w not in by_kind]
+    if unknown:
+        raise ValueError(f"unknown document kind(s) {unknown}; supported: {sorted(by_kind)}")
+    return [by_kind[w] for w in dict.fromkeys(wanted)]
 
 
 @mcp.tool()
@@ -1858,7 +1873,7 @@ def extract_document(
     """Structure + validate YOUR reading of one tax document into provenance-tagged fields.
 
     This does NOT do OCR — you read the document (image/PDF) with your own vision and pass the
-    box->value map in `fields` (keys from list_document_kinds). The tool type-checks each value,
+    box->value map in `fields` (keys from list_document_kinds(kind=...)). The tool type-checks each value,
     tags it with document provenance (file + page), flags required boxes you didn't read as `gaps`,
     surfaces unreadable values as `invalid`, and returns a confirm-table. Never invent a box: any
     box you omit stays null. `kind` is e.g. "W-2", "1099-INT", "1042-S". Pass `tax_year` (the year the form

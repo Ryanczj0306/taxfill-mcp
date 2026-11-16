@@ -13,7 +13,7 @@ files in [`skills/`](../skills/) teach this flow, with copy-paste recipes per sc
 | Tool | Purpose |
 |---|---|
 | `intake_checklist` | Next interview questions + required documents. The empty-profile result carries the onboarding `worksheet` and `example_profile` (the profile's exact shape); each question's `answers_into` is the exact field path; `ready_to_fill` waits for the deductions-and-payments answers (`ready_to_fill_blockers`) |
-| `list_document_kinds` | The supported tax-document types and their official box layouts — read this before `extract_document` |
+| `list_document_kinds` | The supported tax-document types (no argument: an index with box counts) and, with `kind` (one kind or a list), their official box layouts — read the kind you hold before `extract_document` |
 | `extract_document` | Structure + validate your reading of a W-2/1099/1098/1042-S/etc. into provenance-tagged fields |
 | `residency` | Federal NRA/RA/dual-status via the Substantial Presence Test, work shown |
 | `state_scope` | Which states to file, in what role, with which forms and candidate benefits |

@@ -24,7 +24,7 @@ to an ABSOLUTE `out_path` under the year's workspace `drafts/` folder
 (`~/taxfill-workspace/<year>/drafts/`, or `$TAXFILL_WORKSPACE/<year>/drafts/`) so
 `taxfill purge <year>` removes it with the rest of the year's data.
 
-**Flow:** intake_checklist → extract_document & confirm → estimate_refund →
+**Flow:** intake_checklist → extract_document & confirm (box keys: list_document_kinds(kind="W-2")) → estimate_refund →
 residency & state_scope → positions (workspace_record_position) → fill_form →
 verify_form/verify_filing (↺) → render_form → filing_summary (approve) →
 file_and_pay.

@@ -49,7 +49,8 @@ on stderr).
 
 ## Flow
 
-intake_checklist → extract_document & confirm → estimate_refund → residency &
+intake_checklist → extract_document & confirm (box keys: list_document_kinds(kind="W-2"))
+→ estimate_refund → residency &
 state_scope → positions (workspace_record_position) → fill_form →
 verify_form/verify_filing (↺) → render_form → filing_summary (approve) →
 file_and_pay.

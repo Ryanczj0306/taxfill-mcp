@@ -1970,7 +1970,7 @@ def extract_document(
     if spec is None:
         raise ValueError(
             f"unsupported document kind {kind!r}; supported: {sorted(DOC_SPECS)}. "
-            "Use list_document_kinds() for each form's box layout."
+            "list_document_kinds(kind=...) gives a form's box layout."
         )
     if page is not None and page < 1:
         raise ValueError("page must be a 1-based page number (>= 1), or None when unknown")
