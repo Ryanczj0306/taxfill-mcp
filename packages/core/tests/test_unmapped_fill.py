@@ -374,7 +374,10 @@ def test_the_record_holds_no_values_and_every_page_fails_the_check_once_stripped
     record = json.loads(raw)
     assert record["grade"] == "unmapped_draft" and record["written_fields"] == ["credit", "hdr_name"]
     assert record["sources"] == {"hdr_name": "from the user"} and record["blank_sha256"] == env.blank.sha256
-    assert "300" not in raw and "Demo Filer" not in raw
+    # The blank's sha256 is random per run (the demo PDF carries its creation time) and can contain "300":
+    # look for the values only in what is not a hash or a URL.
+    valued = json.dumps({k: v for k, v in record.items() if k not in ("blank_sha256", "source_url")})
+    assert "300" not in valued and "Demo Filer" not in raw
     assert result["output_sha256"] == __import__("hashlib").sha256(env.out.read_bytes()).hexdigest()
     writer = PdfWriter(clone_from=str(env.out))
     page = writer.pages[0]
