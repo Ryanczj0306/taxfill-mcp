@@ -1428,22 +1428,30 @@ def _schedule_letter(name: str) -> str | None:
     return re.sub(r"[\s_-]", "", m[1]).upper() if m else None
 
 
-def _federal_pack_key(name: str) -> str | None:
-    """The federal form-pack key an attached form's name would have ('8995' -> 'f8995', 'Schedule D' -> 'sched_d'),
-    or None when the name has neither shape (then nothing is said about a pack for it)."""
+def _federal_pack_keys(name: str) -> list[str]:
+    """The federal form-pack keys an attached form's name could have ('8995' -> ['f8995', 'sched_8995'],
+    'Schedule D' -> ['sched_d']), or [] when the name has neither shape (then nothing is said about a pack for it).
+
+    A bare number is tried both ways because some schedules carry only a number ('8812' is Schedule 8812,
+    pack ``sched_8812``): a form is called pack-less only when no candidate ships.
+    """
     from taxfill_core.datadir import formpacks_dir
 
     raw = name.strip()
-    if re.fullmatch(r"[a-z][a-z0-9_]*", raw) and (formpacks_dir() / "federal").is_dir() and any(
-        (year_dir / raw).is_dir() for year_dir in (formpacks_dir() / "federal").iterdir()
+    federal = formpacks_dir() / "federal"
+    if re.fullmatch(r"[a-z][a-z0-9_]*", raw) and federal.is_dir() and any(
+        (year_dir / raw).is_dir() for year_dir in federal.iterdir()
     ):
-        return raw  # already a pack key ('sched_a_nr', 'fw7')
+        return [raw]  # already a pack key ('sched_a_nr', 'fw7')
     letter = _schedule_letter(name)
     if letter is not None:
-        return f"sched_{letter.lower()}" if re.fullmatch(r"[0-9A-Z]{1,4}", letter) else None
+        return [f"sched_{letter.lower()}"] if re.fullmatch(r"[0-9A-Z]{1,4}", letter) else []
     head = _form_number(name).replace(" ", "")
     m = re.fullmatch(r"[fF]?(\d{3,4}(?:-?[A-Za-z]{1,2})?)", head)
-    return f"f{m[1].replace('-', '').lower()}" if m else None
+    if not m:
+        return []
+    number = m[1].replace("-", "").lower()
+    return [f"f{number}", f"sched_{number}"]
 
 
 def _unmapped_attachments(forms: list[str], year: int) -> list[str]:
@@ -1456,8 +1464,8 @@ def _unmapped_attachments(forms: list[str], year: int) -> list[str]:
         return []
     out = []
     for name in forms:
-        key = _federal_pack_key(name)
-        if key is not None and not (base / key / "pack.yaml").is_file():
+        keys = _federal_pack_keys(name)
+        if keys and not any((base / key / "pack.yaml").is_file() for key in keys):
             out.append(name)
     return out
 

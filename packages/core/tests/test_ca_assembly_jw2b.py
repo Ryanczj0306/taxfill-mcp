@@ -16,7 +16,7 @@ import pytest
 from taxfill_core.file_and_pay import (
     _GENERIC_STATE_ASSEMBLE,
     FilingManifestItem,
-    _federal_pack_key,
+    _federal_pack_keys,
     _schedule_letter,
     file_and_pay,
 )
@@ -99,16 +99,40 @@ def test_the_exception_the_manifest_cannot_decide_is_printed_not_dropped():
                for line in lines)
 
 
-def test_an_attached_form_with_no_pack_must_be_copied_onto_the_official_blank():
-    assert _federal_pack_key("8995") == "f8995" and _federal_pack_key("Schedule D") == "sched_d"
+@pytest.fixture
+def packs(tmp_path, monkeypatch):
+    """A formpacks tree holding only the named 2025 federal packs, so the test does not depend on what ships."""
+    import taxfill_core.datadir as datadir
+
+    def make(*keys: str):
+        for key in keys:
+            (tmp_path / "federal" / str(YEAR) / key).mkdir(parents=True)
+            (tmp_path / "federal" / str(YEAR) / key / "pack.yaml").write_text("form: x\n", encoding="utf-8")
+        monkeypatch.setattr(datadir, "formpacks_dir", lambda: tmp_path)
+
+    return make
+
+
+def test_an_attached_form_with_no_pack_must_be_copied_onto_the_official_blank(packs):
+    packs("sched_d", "f8949", "f8889", "sched_8812")
+    assert _federal_pack_keys("8995") == ["f8995", "sched_8995"] and _federal_pack_keys("Schedule D") == ["sched_d"]
     lines = _assemble(_federal("Schedule D", "8949", "8995"), _ca())
     drafts = [line for line in lines if "UNMAPPED DRAFT" in line]
     assert len(drafts) == 1 and drafts[0].startswith("Form 8995: no TaxFill form pack ships for it in 2025")
     assert "copy its values onto the official blank before attaching it" in drafts[0]
-    # every form here has a 2025 pack: nothing is said
-    assert not any("UNMAPPED DRAFT" in line for line in _assemble(_federal("Schedule D", "8949", "8889"), _ca()))
+    # every form here has a pack, a bare "8812" included (Schedule 8812, pack sched_8812): nothing is said
+    assert not any("UNMAPPED DRAFT" in line
+                   for line in _assemble(_federal("Schedule D", "8949", "8889", "8812"), _ca()))
     # a name of no known shape is never called pack-less
-    assert _federal_pack_key("FinCEN 114") is None
+    assert _federal_pack_keys("FinCEN 114") == []
+    assert not any("UNMAPPED DRAFT" in line for line in _assemble(_federal("FinCEN 114"), _ca()))
+
+
+def test_the_unmapped_line_comes_only_with_a_federal_copy(packs):
+    packs("sched_a")
+    lines = _assemble(_federal("Schedule A"), _ca())
+    assert _federal_copy(lines).startswith("Federal return copy: No.")
+    assert not any("UNMAPPED DRAFT" in line for line in lines)
 
 
 def test_the_california_citations_name_the_assembly_sources():
