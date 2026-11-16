@@ -1931,7 +1931,7 @@ def dec31_total_value_from_statements(documents: list[ExtractedDocument], tax_ye
             excluded.append({**where, "reason": f"no value as of December 31, {tax_year}"})
             continue
         total += fmv
-        accounts.append({**where, "account_type": acct, "custodian": f["custodian"].value, "fmv": fmv,
+        accounts.append({**where, "account_type": acct, "custodian": f["custodian"].value if "custodian" in f else None, "fmv": fmv,
                          "provenance": f["fmv"].provenance.model_dump()})
     note = (f"Form 8606 line 6 for {tax_year}: the December 31 value of every traditional, SEP and SIMPLE IRA "
             f"({len(accounts)} counted). Add any outstanding rollover, and adjust for a recharacterization made after "
@@ -1946,6 +1946,7 @@ def extract_document(
     fields: dict[str, Any],
     page: int | None = None,
     tax_year: int | None = None,
+    echo_all: bool = True,
 ) -> ExtractedDocument:
     """Structure + validate an agent's reading of one tax document.
 
@@ -1962,6 +1963,10 @@ def extract_document(
 
     ``tax_year`` (JR1) is the year the form reports: Form 1099-R box 7 codes are read against that
     year's revision of the distribution-code table, and the semantic checks become ``findings``.
+
+    ``echo_all=False`` (Phase K JK32, the MCP tool's default) keeps in ``fields`` only the boxes the caller
+    passed (under the box's key or an alias, blank included) and the required boxes in ``gaps``; the
+    validators still see every box first, and ``gaps``/``unexpected``/``findings`` do not change.
 
     Raises:
         ValueError: if ``kind`` is not a supported document type.
@@ -2018,6 +2023,9 @@ def extract_document(
         if findings:
             errors = sum(1 for x in findings if x.severity == "error")
             caveat = f"{caveat} {len(findings)} findings ({errors} errors): see findings."
+    if not echo_all:
+        passed = {b.key for b in spec.boxes if any(k in fields for k in (b.key, *b.aliases))}
+        out_fields = [f for f in out_fields if f.key in passed or f.key in gaps]
     return ExtractedDocument(
         kind=spec.kind,
         file=path,
