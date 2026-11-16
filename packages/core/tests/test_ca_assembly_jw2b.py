@@ -68,7 +68,7 @@ def test_the_federal_attachment_list_passes_through_in_its_own_order_with_schedu
     assert "Put behind your CA schedules: Form 1040, Schedule B, Form 8889, Schedule A." in line
 
 
-@pytest.mark.parametrize("attached", [(), ("Schedule A",), ("Schedule A (Form 1040)", "Schedule B, Interest and "
+@pytest.mark.parametrize("attached", [("Schedule A",), ("Schedule A (Form 1040)", "Schedule B, Interest and "
                                                                                    "Ordinary Dividends")])
 def test_only_schedule_a_or_b_means_no_federal_copy(attached):
     line = _federal_copy(_assemble(_federal(*attached), _ca()))
@@ -91,6 +91,15 @@ def test_without_a_matching_federal_return_the_question_is_left_to_the_filer(oth
     line = _federal_copy(lines)
     assert "cannot answer it" in line and QUESTION in line and IF_YES in line and IF_NO in line
     assert not line.startswith(("Federal return copy: Yes", "Federal return copy: No"))
+
+
+def test_a_federal_return_listing_no_attached_forms_leaves_the_question_to_the_filer():
+    # attached_forms is optional and defaults to []: an empty list does not say the return carries no attachments
+    # (the federal recipe builds the 1040 item without it), so it is no ground for "do not attach" (JW2b fix round)
+    line = _federal_copy(_assemble(_federal(), _ca()))
+    assert not line.startswith(("Federal return copy: Yes", "Federal return copy: No"))
+    assert "lists no attached forms" in line and "cannot answer it" in line
+    assert QUESTION in line and IF_YES in line and IF_NO in line
 
 
 def test_the_exception_the_manifest_cannot_decide_is_printed_not_dropped():

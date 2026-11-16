@@ -1475,8 +1475,8 @@ def _federal_copy_lines(rule, item: FilingManifestItem, manifest: list[FilingMan
 
     The federal item is matched on tax year and taxpayer, original returns only, of a form the rule names (CA: Form
     1040 or 1040-SR). Its attached forms, less those the question excepts, decide the answer; when it says Yes, the
-    federal item's own attachment list is what goes behind the state return. No such item: the question is printed for
-    the filer to answer.
+    federal item's own attachment list is what goes behind the state return. No such item, or one listing no attached
+    forms (the field is optional, so an empty list proves nothing): the question is printed for the filer to answer.
     """
     wanted = {f.upper().replace(" ", "") for f in rule.federal_forms}
     feds = [
@@ -1497,11 +1497,18 @@ def _federal_copy_lines(rule, item: FilingManifestItem, manifest: list[FilingMan
     attached = list(dict.fromkeys(f for fed in feds for f in fed.attached_forms))
     counted = [f for f in attached if _schedule_letter(f) not in excepted]
     federal = " and ".join(dict.fromkeys(_form_name(fed.form) for fed in feds))
-    if not counted:
-        listed = f"lists only {', '.join(map(_form_name, attached))}" if attached else "lists no attached forms"
+    if not attached:
+        # attached_forms is optional and defaults to []: an empty list is not a statement that nothing is attached
+        # (JW2b fix round), so the question stays with the filer.
         return [
-            f"Federal return copy: No. {asks} Your federal {federal} in this manifest {listed}, so: "
-            f'"{rule.if_no}" ({rule.pinpoint})'
+            f"Federal return copy: {asks} Your federal {federal} in this manifest lists no attached forms, so this "
+            f"checklist cannot answer it; list them in its attached_forms, or answer it from your federal return. "
+            f'"{rule.if_no}" "{rule.if_yes}" ({rule.pinpoint})'
+        ]
+    if not counted:
+        return [
+            f"Federal return copy: No. {asks} Your federal {federal} in this manifest lists only "
+            f'{", ".join(map(_form_name, attached))}, so: "{rule.if_no}" ({rule.pinpoint})'
         ]
     lines = [
         f"Federal return copy: Yes. {asks} Your federal {federal} in this manifest lists "
