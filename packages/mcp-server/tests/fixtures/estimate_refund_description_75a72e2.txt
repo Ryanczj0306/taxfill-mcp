@@ -1,0 +1,155 @@
+Early bottom-line range from a partial profile + confirmed income amounts — labeled ESTIMATE for a closed
+year and PROJECTION for a planning year (a provisional knowledge pack, today TY2026).
+
+`income` fields (whole dollars, W-2 boxes as printed; every field optional, defaults 0; unknown fields
+rejected):
+- income: wages (W-2 box 1), federal_withholding (withheld + estimated payments), interest,
+  bank_deposit_interest (the DEPOSIT subset of interest — US bank / savings institution /
+  insurance-company deposit, not effectively connected; excluded for a nonresident under
+  IRC 871(i)(2)(A), taxed under a §6013(g)/(h) election, joint or separate),
+  bank_deposit_interest_nonresident_period (the part of bank_deposit_interest RECEIVED before the
+  residency starting date of a dual-status year, from the account statements - never prorated;
+  only that part is excluded on a dual-status payee's return, Treas. Reg. 1.871-13(a)(1), and the
+  rest is taxed), dividends (1099-DIV 1a), qualified_dividends (1b subset), capital_gain_long (signed),
+  capital_gain_short (signed), self_employment_net (signed), retirement_income_taxable (the
+  TAXABLE amount, not simply 1099-R box 2a: a traditional-IRA distribution or Roth conversion shows
+  the GROSS amount in 2a with 2b checked, so a filer with basis runs calc op ira_pro_rata and
+  enters its taxable figure; box 7 codes N/R and H are $0, code G is $0 except a Roth-bound
+  direct rollover from a pre-tax plan (to a Roth IRA, or an in-plan Roth rollover) and designated
+  Roth employer contributions, where box 2a is the taxable amount) — OR, instead of that figure,
+  retirement_distributions (JR3a): each 1099-R as read {gross, taxable_amount (2a), taxable_not_determined,
+  total_distribution, codes (box 7 / 7a), ira_sep_simple, rolled_over?, taxable_override?,
+  early_exception_amount?, federal_withholding? (informational), label?}, priced per code (Q/N/R $0, G/H
+  box 2a, P excluded as a prior-year item); never both. A traditional-IRA 1099-R with box 2b checked
+  (JR3b) is priced through Form 8606 Part I with THAT PERSON's ira_pool {basis_carryforward (line 2; 0 =
+  the explicit no-basis answer), nondeductible_contributions_this_year?, contributions_made_after_year_end?,
+  dec31_total_value (line 6, needed with basis)} — required then, and a spouse's pool never merges;
+  mark each conversion converted_to_roth. JR3c prices the 72(t) additional tax per 1099-R (codes 1/J 10%,
+  S 25%, early_exception_amount off the base, code 8 corrective earnings exempt) and the 4973 excise from
+  traditional_ira_excess / roth_ira_excess (Form 5329 lines 16/24) capped at traditional_ira_dec31_value /
+  roth_ira_dec31_value,
+  social_security_benefits (SSA-1099 box 5), other_income
+- adjustments: student_loan_interest_paid (1098-E), pre_agi_adjustments (confirmed-eligible
+  above-the-line), treaty_exempt_income (1042-S box 2 — agent-confirmed treaty amount; the
+  assumption names where it is reported for the profile's residency: Schedule OI for a
+  nonresident, in parentheses on Schedule 1's other-income line for a resident alien),
+  itemized_deductions? (only if itemizing; else standard deduction — NRAs itemize only),
+  other_state_local_taxes? (JW2a: state and local taxes paid beyond W-2 box 17 — box 14 disability or
+  family leave, box 19, state estimated payments, real estate tax, a value-based vehicle fee; never priced
+  alone), foreign_tax_paid? (1099-DIV box 7; named in the roadmap, the credit is NOT estimated)
+- Schedule 1-A (JF7, P.L. 119-21, TY2025-2028 — BELOW AGI, after the deduction; never pre_agi_adjustments
+  or itemized_deductions): qualified_tips, qualified_overtime_premium (the FLSA premium half only),
+  car_loan_interest; the senior deduction is derived from the profile's date of birth and SSN
+  (senior_taxpayer / senior_spouse override it). MFS forfeits tips, overtime and the senior deduction,
+  not car-loan interest; a year whose pack lacks the block reports it in missing_blocks
+- w2s (JT4a): each Form W-2 as printed, cents allowed {employer?, box1..box7, box10, box12: [{code,
+  amount}], box14b?, box17? (state income tax)} — the
+  aggregates (wages, ss_wages, medicare_wages, the box 4 / box 6 lists, dependent_care_benefits from box 10,
+  qualified_overtime_premium from code TT) derive from them, and an aggregate also given must agree; the
+  assumptions flag a 402(g) excess across employers and a code W figure deducted again
+- W-2 boxes beyond box 1 (JF3): medicare_wages (box 5 total — what Form 8959 prices; box 1 stands in
+  when omitted), ss_wages (boxes 3 + 7 total — what Schedule SE subtracts from the wage base),
+  medicare_tax_withheld [box 6 per employer — the excess over 1.45% of box 5 is credited; needs
+  medicare_wages; never also in federal_withholding]
+- credit inputs: ss_withheld_by_employer [W-2 box 4 per employer], aotc_qualified_expenses
+  [per eligible student] with aotc_students_ssn_ok [per student, 2026 onward (P-024): True for you, your
+  spouse or a dependent issued a valid SSN before the due date; False for an ITIN/ATIN-only dependent; a
+  missing answer leaves that student's credit NOT ESTIMATED — the filer's own SSN comes from the profile's
+  tax_id, one spouse's enough on a joint return], dependent_care_expenses + dependent_care_persons (Form 2441 —
+  qualified care expenses paid so you/both spouses could work, and how many qualifying persons)
+- ACA (Form 1095-A line 33): aca_premiums, aca_slcsp, aca_aptc
+- spouse: nested income object with the spouse's OWN amounts (same fields; enables a true
+  two-return MFS comparison — otherwise amounts are couple-combined)
+
+Itemizing (JW2a): with no itemized_deductions, result.itemizing_comparison weighs the state and local tax
+given (box 17 + other_state_local_taxes, after the year's limit) against the standard deduction — over it,
+the range includes the itemized outcome; at least half of it, the result lists what else to collect.
+result.roadmap.returns_and_forms lists the LIKELY schedules and forms the inputs imply (not exhaustive) and
+the state return(s) the state footprint requires; every dollar figure is the federal return only.
+
+Schedule 3-A (JT1c, 2026 onward, P-023): the refunded portion of the EIC, the ACTC and the refundable
+AOTC — the part over the subtitle A tax — is a PRWORA "Federal public benefit" under the PROPOSED rule
+REG-119882-25. When no one on the return is recorded as a U.S. citizen, U.S. national or qualified
+alien (8 U.S.C. 1641 — not tax residency: an H-1B or F-1 resident alien is not one), the LOW end of
+the range holds it back and the point keeps it while the rule is proposed. Record
+profile identity.qualified_alien_status (and household.spouse's): a joint return needs one spouse
+who qualifies, and the answer is the one on the date the return is filed.
+
+Residency (P-018): record the §6013(g)/(h) election as profile residency_facts.section_6013_election
+(true = elected or still in effect) — it makes both spouses residents for the whole year, so the
+standard deduction, preferential rates and NIIT apply and the deposit exclusion is off, while
+FICA keeps following the day counts. It applies on a figure with a spouse (married for the
+year, or a confirmed MFJ/MFS status), never onto single/HOH, and never when the recorded facts
+show neither spouse a U.S. citizen or resident (IRC 6013(g)(3) - then separate Form 1040-NRs, one
+for each spouse who meets the nonresident filing requirements). A confirmed
+married_filing_jointly status for a filer whose own residency is nonresident is read as the election (a joint return with a nonresident exists only under it) unless the election
+is recorded as DECLINED (false): a decline drops MFJ for a couple with a nonresident in it, and
+a confirmed MFJ those facts rule out is priced MFS with the contradiction as the FIRST
+assumption. result.residency_caveat carries the election's text — IRC 6013(g) or 6013(h),
+whichever the facts point to (a recorded election in a dual-status year gives both: it may be
+an earlier 6013(g) election still in effect - unless the taxpayer's prior-year return is recorded
+as '1040_with_6013_election', which makes it IRC 6013(g): IRC 6013(g)(3), the election applies "to
+all subsequent taxable years until terminated", and 6013(h)(2) bars a second 6013(h); with that
+prior-year return and NO answer recorded for the year the election is NOT applied from that return
+alone (a confirmed joint status of a nonresident or dual-status taxpayer is still read as the
+election, JF5a) - an assumption
+and intake's household.section_6013_election ask whether it is still in effect). With no answer
+recorded and no status confirmed, a married taxpayer whose own residency is nonresident or a
+dual-status year keeps married_filing_jointly as a CANDIDATE (JF5b part 3b), as the reverse couple
+does: the figure IF the couple makes the election, priced on resident rules for both spouses
+(IRC 6013(h) for an arrival year with a U.S. spouse), behind the no-election MFS primary - with
+the worldwide-income, statement, FICA and NIIT notes worded as a candidate, and, when the
+spouse's residency is not on file, the precondition named as not judged (record
+household.spouse.us_person or the spouse's visa timeline and days). Never after a recorded
+decline, a confirmed status, or on facts ruling the election out (IRC 6013(g)(3)). A dual-status
+year's route (ii) names that joint candidate. Each spouse's separate MFS return
+follows that spouse's OWN classification (a US-citizen spouse's Form 1040 keeps the standard
+deduction unless the couple itemizes: IRC 63(c)(6)(A) — both methods are priced and the better
+total is kept); a spouse whose residency is unknown is priced both ways in the range.
+NIIT under the election (JF5b part 3a): the chapter-1 election does not reach NIIT (chapter 2A),
+so with a spouse snapshot every election figure prices the Treas. Reg. 1.1411-2(a)(2)(iii)(A) /
+(iv)(A) DEFAULT - each spouse's own snapshot under the MFS rules against $125,000, and under
+IRC 6013(g) $0 for the spouse who is a nonresident without the election - against the second
+(chapter 2A) election's combined-income figure ($250,000): under 6013(g) the joint point is the
+default and the range adds the combined figure only when the U.S. spouse owes NIIT on their own
+figures (otherwise the second election is not available that year, (iii)(B)(2)); under 6013(h)
+the point is the lower of the two (no first-year condition; the arriving spouse's resident-period
+income is not recorded, so the default is bounded); a kind the facts leave open keeps the
+combined figure with both readings in the range; a separate return prices the nonresident spouse
+at $0 with the resident-rules figure in the range for a definite IRC 6013(g) (an open kind keeps
+resident rules at the point, $0 in the range); a couple with no nonresident or arriving spouse on
+their own facts has no default at all. One combined snapshot cannot be split: the
+combined figure stays and the NIIT note names income.spouse.
+The taxpayer's return for the prior year (profile prior_filings.return_forms[year - 1]: '1040',
+'1040-NR', 'dual_status', '1040_with_6013_election', 'not_filed') is the prior-year residency
+fact (JF5b): a prior-year resident who meets the SPT is priced as a resident from January 1
+(standard deduction, no arrival split; only the start of the year is settled - a departure caveat
+names the IRC 7701(b)(2)(B) ending-date rule when the last status period ends before Dec 31), with
+a FIRST CHECK THE PRIOR-YEAR RETURN judgment when the recorded timeline makes that prior year a
+fully exempt year; one who fails the SPT gets the classifier's CONTRADICTION reason as the FIRST
+assumption. A nonresident answer that may flip (a lookback year missing from the day
+counts - classify's "may be WRONG") or that contradicts the prior year is priced on Form 1040-NR
+rules with the RESIDENT reading bracketed in the range and the reason first; a spouse's own
+answer that may flip brackets the spouse-resident reading of the two-return MFS pair.
+A DUAL-STATUS year with no election (JF5b part 2) prices Pub 519 ch. 6's restrictions for the
+point - no standard deduction (itemized or $0), no EITC, no education credits, no joint return
+or HOH, MFS rates if married and single rates otherwise (an inference - ch. 6 names the rate column only for a married filer) - as one whole-year snapshot (NIIT on
+the whole year's investment income may be overstated: Treas. Reg. 1.1411-2(a)(2)(ii) counts
+resident-period income only); the range's other end is the same-status full-year-resident
+figure when a prior-year residency is not ruled out (route (i)), while for a married filer the
+election's route (ii) is its own married-filing-jointly CANDIDATE, priced under the election
+(or the same-status resident figure when no joint candidate is priced); it collapses to the
+point for an unmarried filer whose prior year is a recorded 1040-NR. Only bank_deposit_interest_nonresident_period is excluded on a dual-status
+payee's return (the spouse's separate return by the spouse's own year), with a disclosure
+naming the amount - or, without the split, the amount taxed in full and what to record. A
+dual-status SPOUSE's own separate return (no election) is priced the same way at the point (Pub
+519 ch. 6: no standard deduction, no EITC or education credit, MFS rates), and the range prices
+that return for the whole year under resident rules and under Form 1040-NR rules.
+
+The result's `composition` is a reconciling LEDGER: each line carries a stable `slot`, a
+`role`, and an `effect` (its signed contribution to the bottom line; the effects sum EXACTLY
+to `point`). When >=2 statuses were computed, `comparison.delta_lines` itemizes WHERE the
+best-vs-worst difference comes from, largest first, summing exactly to `comparison.delta` —
+show that table when the user asks which status wins and why. `missing_blocks` lists any
+input that engaged a block the year's pack does not carry (planning years): each names the
+unpriced item and the direction of the error — surface those before comparing years.

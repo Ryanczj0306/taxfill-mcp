@@ -1,0 +1,490 @@
+Deterministic tax math. op in {tax, tax_with_preferential_rates, standard_deduction, se_tax,
+additional_medicare_tax, niit, taxable_social_security, excess_ss, student_loan_interest_deduction,
+education_credits, ptc_annual, ptc_monthly, child_tax_credit, eitc, dependent_care_credit,
+treaty_benefit, schedule_1a_deductions, charitable_deduction, employee_fica, estimated_tax_safe_harbor,
+underpayment_penalty, paystub_to_w2, claim_of_right_repayment, annualize_ytd,
+contribution_limits, elective_deferral_room, ira_net_income_attributable, ira_recharacterization,
+ira_contribution_eligibility, marginal_dollar_savings, magi_ladder,
+ira_pro_rata, roth_conversion, hsa_deduction, espp_disposition, capital_loss_limitation,
+foreign_tax_credit_election, foreign_asset_reporting, state_tax}; every result shows its
+work and cites the data pack.
+
+A result computed off a PROVISIONAL (planning-only) knowledge pack — a current year
+authored before its forms published, e.g. federal 2026 — carries an extra `provisional`
+key. When you see it, call the number a PROJECTION to the user and never place it on a
+return: fill_form and verify_form refuse that year outright.
+
+- tax: args {taxable_income, filing_status, year} (ORDINARY line 16 only — with qualified
+  dividends or capital gains use tax_with_preferential_rates instead, even below $100,000)
+- tax_with_preferential_rates: args {taxable_income, qualified_dividends, net_long_term_gain?,
+  net_short_term_gain?, filing_status, year} (Qualified Dividends and Capital Gain Tax Worksheet)
+- standard_deduction: args {filing_status, year, age_65_plus?, blind?}
+- se_tax: args {net_profit, year, w2_ss_wages?} (w2_ss_wages = W-2 box 3+7, Schedule SE lines 8a-9)
+- additional_medicare_tax: args {medicare_wages, filing_status, year, se_net_profit?} (Form 8959)
+- niit: args {net_investment_income, magi, filing_status, year} (Form 8960; NRAs exempt)
+- taxable_social_security: args {benefits, other_income, tax_exempt_interest?, filing_status,
+  year, mfs_lived_with_spouse?} (SS Benefits Worksheet -> the Form 1040 taxable-benefits line, named in the work)
+- excess_ss: args {withheld_by_employer: [per-employer W-2 box 4, ONE person], year}
+  (Schedule 3 excess-SS credit; multiple employers only)
+- student_loan_interest_deduction: args {interest_paid, magi, filing_status, year} (MFS gets $0)
+- education_credits: args {aotc_expenses_per_student: [...], llc_expenses?, magi, filing_status,
+  year} (Form 8863 AOTC + LLC; MFS gets $0)
+- ptc_annual: args {household_income, household_size, annual_premiums, annual_slcsp, annual_aptc?,
+  filing_status, year, state?, mfs_relief_exception?} (Form 8962 annual method; state in
+  other|alaska|hawaii; 2023-2026 — 2026 brings the 400% CLIFF back (over 400% FPL: no PTC) and NO repayment
+  limitation at any income (JT1a). MFS gets PTC $0 by rule — IRC 36B(c)(1)(C) — unless
+  mfs_relief_exception claims the domestic-abuse/abandonment relief; below-100%-FPL with no APTC
+  also gets $0)
+- ptc_monthly: args {household_income, household_size, monthly: [12 x {premium, slcsp, aptc}],
+  filing_status, year, state?, annual_aptc?, mfs_relief_exception?} (Form 8962 MONTHLY method —
+  the lines 12-23 grid for part-year/month-varying coverage; monthly rows are the 1095-A lines
+  21-32 columns A/B/C, EXACTLY 12 entries with uncovered months as zeros; annual_aptc (line 33C)
+  is an optional cross-check. Same eligibility gates and years as ptc_annual)
+- child_tax_credit: args {qualifying_children_ssn, other_dependents, magi, income_tax_before_credits,
+  earned_income, filing_status, year, children_under_6?} (Schedule 8812: nonrefundable CTC/ODC for
+  1040 line 19 + refundable ACTC for line 28; income_tax_before_credits = the Credit Limit Worksheet
+  amount, i.e. line 18 tax minus earlier Schedule 3 credits; 2021 uses the ARPA expanded
+  fully-refundable rules with children_under_6 driving the $3,600 tier)
+- eitc: args {earned_income, agi, qualifying_children, filing_status, year, investment_income?}
+  (the EIC Table's figure: every cell of the printed 2019-2026 tables reproduces)
+  (earned income credit for 1040 line 27 by the Rev. Proc. formula; investment-income and MFS
+  gates; phases out on the GREATER of AGI or earned income; the printed EIC table's $50 bands can
+  differ by ~$27)
+- dependent_care_credit: args {expenses, qualifying_persons, earned_income, spouse_earned_income?,
+  agi, filing_status, year, employer_benefits?} (Form 2441 -> Schedule 3's dependent-care line: caps
+  $3,000/$6,000 by persons count (2021: $8,000/$16,000), minus employer benefits (W-2 box 10),
+  limited by the LOWER earned income — spouse_earned_income REQUIRED for MFJ; the AGI slide
+  35%->20% (2021: 50%->20%->0%, zero over $438,000; 2026: 50%->35%->20%, the second leg over $150,000
+  in $4,000 steps joint / over $75,000 in $2,000 steps otherwise); MFS gets $0 by rule; refundable for 2021
+  only if the US-abode test is met — that test and the deemed $250/$500 student/disabled-spouse
+  income are YOUR judgment, per the work string)
+- treaty_benefit: args {country, income_class, amount, visa_periods?, year?, years_in_status?,
+  resident_alien?} (validate a tax-treaty exemption from the per-country
+  treaty packs — china, india, korea, canada, mexico; income_class in student_wages | scholarship |
+  payments_from_abroad | teacher_wages | other_income. Student wage limits are treaty-fixed (China
+  $5,000/yr, Korea $2,000/yr; India gets Art. 21(2) standard-deduction parity instead — no exclusion;
+  Canada/Mexico have no student wage benefit, only the researched employment de-minimis / 183-day
+  shapes). teacher_wages requires years_in_status (India's 2-year window is a RETROACTIVE clawback
+  — exceed it and the whole visit's exemption is lost). other_income answers the bank-bonus /
+  1099-MISC box 3 corner from the verbatim Other Income article: in ALL five treaties US-arising
+  other income stays US-taxable — Schedule NEC at the statutory 30%, no treaty reduction (Korea
+  verifiably has NO other-income article; Art. 4's source rule applies). Returns the exempt/taxable
+  split + article + citation; final eligibility (visa period, purpose, saving clause) stays YOUR
+  judgment — record the position with the returned citation. WHERE the exempt amount is reported
+  turns on residency (P-016), so pass resident_alien: false -> Schedule OI item L and the Form
+  1040-NR treaty-exempt line; true -> a resident alien's saving-clause claim, entered in
+  parentheses on Schedule 1's other-income line with 'Exempt income', the country and the article
+  (Pub 519 ch. 9), paired with the income on its usual line when an information return reported it
+  as taxable; omitted -> both, conditionally. When the applied article has NO saving-clause
+  exception in the pack (Canada Art. XV's de-minimis), the work says a resident generally cannot
+  claim it. The work names the year's line numbers; year only picks them — a year with no form_lines
+  keeps the split and names the line in words)
+- schedule_1a_deductions: args {magi, filing_status?, year?, qualified_tips?, qualified_overtime?,
+  car_loan_interest?, seniors_qualifying?} (the four OBBBA Schedule 1-A deductions, TY2025-2028 —
+  the Schedule 1-A total -> the Form 1040 / 1040-NR Schedule 1-A line (each read off the year's face and
+  named in the work), reduces taxable income whether itemizing or not.
+  ONE MAGI (AGI + PR-excluded income + Form 2555 lines 45/50 + Form 4563 line 15) feeds all four
+  parts. TRAPS the op enforces: tips/overtime/senior are FORFEITED on married-filing-separately
+  (car-loan interest is NOT); the tips $25,000 cap is PER RETURN (a joint return does not double
+  it); the phase-out rounding is ASYMMETRIC (tips/overtime $100 per $1,000 of excess rounded DOWN,
+  car loan $200 per $1,000 rounded UP, senior 6% of excess per person); qualifying surviving spouse
+  takes the OTHER thresholds (each statute keys on 'a joint return'). qualified_overtime is the FLSA
+  premium HALF only, never the whole overtime wage. Eligibility stays YOUR judgment, quoted in the
+  work: tipped-occupation list, new-vehicle/US-assembly/VIN rules, valid SSNs, seniors 65 by year end
+  (the year's senior_deduction.born_before: born before January 2 of year - 64). 2025 and 2026 ship)
+- charitable_deduction: args {year, filing_status, gifts: [{amount, cash?, donee?, teos_code?,
+  donee_170b1a?, donor_advised_fund?, benefit? (none|membership|token_items|recognition_only|goods_or_services),
+  benefit_value?, written_acknowledgment?}...], agi, other_itemized?, standard_deduction_amount?} (JF9, 2026
+  onward: IRC 170(p) for a non-itemizer — cash to a 170(b)(1)(A) organization (TEOS PC/POF/FED), never a
+  509(a)(3) supporting organization (SO/SONFI/SOUNK) or a donor advised fund, capped $1,000 / $2,000 joint, no
+  floor — and the 170(b)(1)(I) 0.5%-of-AGI floor for an itemizer; returns each gift's deductible amount, the
+  substantiation duties (the 170(f)(8) acknowledgment at $250, the 170(f)(17) record) and the better path.
+  P-022 characterization: recognition only is no benefit; a membership for $75 or less is disregarded; token
+  items and benefits within 2% or $139 are insubstantial; otherwise the benefit's value comes off, and a
+  payment over $75 whose benefit value you do not state is REFUSED — ask for the organization's IRC 6115
+  statement)
+- withholding_projection: args {employers: [{label, pay_frequency, wages_per_period, pay_dates? |
+  first_pay_date?, employment_end?, first_period_wages?, fica_wages_per_period?, w4?: {form (2020_or_later |
+  pre_2020), filing_status, step2_checkbox, step3_credits, step4a_other_income, step4b_deductions,
+  step4c_extra_per_period, allowances, marital_pre_2020, additional_pre_2020, exempt}, nonresident_alien?,
+  withheld_prior_year?, supplemental?: [{date, amount, concurrent_with_regular?, separately_stated?}],
+  fica_exempt?, method? (percentage | cumulative | part_year), written_request?, ...}], year} (JP1c, 2026:
+  Pub 15-T Worksheet 1A check by check, counted by PAY DATE; a bonus under Treas. Reg. 31.3402(g)-1 — the flat
+  22% only when not concurrent-or-separately-stated AND tax was withheld on regular wages this year or last,
+  else the aggregate procedure; both as a range when a fact is unknown or the reading is interpretive; 37%
+  over $1,000,000; box 4 / box 6 per employer. Returns w2s ready for estimate_refund's IncomeSnapshot.w2s)
+- employee_fica: args {wage_segments: [{wages, fica_exempt, label?, employer?, visa_status?,
+  exempt_basis?}...], year?, residency_classification?, filing_status?} (JP1a: two layers —
+  WITHHOLDING per employer (each applies its own wage base and IRC 3102(f)(1)'s 0.9% on "wages from
+  the employer in excess of $200,000"; segments without an employer are one employer's) and, with
+  filing_status, the person's LIABILITY (one base; the 0.9% over the Form 8959 status threshold);
+  excess_ss_credit and additional_medicare_reconciliation are the differences. Employee-side payroll
+  FICA across STATUS periods — the
+  projection op for a year where FICA switches on mid-year, e.g. F-1 OPT (a NONRESIDENT exempt
+  individual, NO FICA) -> H-1B (FICA from the I-797 start date). fica_exempt is YOUR status judgment
+  per segment; the traps the work quotes: the F/J exemption is STATUS-based, not marital — a
+  §6013(g) election does NOT start FICA on an exempt F/J spouse's wages — and it is a NONRESIDENT
+  exemption: Pub 519 ch. 8, FICA is withheld "if you are considered a resident alien ... even though
+  your nonimmigrant classification ("F," "J," "M," or "Q") remains the same". Pass
+  residency_classification (resident | nonresident | dual_status_candidate, from the residency
+  tool — under a §6013(g)/(h) election pass its classification_without_election, since the
+  election reaches chapter 1 and chapter 24 only, IRC 6013(g)(1)): for 'resident', a fica_exempt F/J/M/Q segment (visa_status, or a label naming it as F-1/J-1/OPT)
+  is REFUSED unless exempt_basis names a different exemption (student_employed_by_school —
+  Pub 519's tip for a student enrolled and regularly attending classes at the school it works for —
+  or totalization_agreement). Enforces the SS wage base across one employer's segments in order,
+  Medicare with no base, and the 0.9% Additional Medicare withholding over $200,000 per employer)
+- estimated_tax_safe_harbor: args {projected_tax, expected_withholding, filing_status?, year?,
+  prior_year_agi?, prior_year_total_tax?, excess_ss_credit?, additional_medicare_withheld?,
+  refundable_credits?, prior_year_refundable_credits?, remaining_pay_dates? (JP1a: returns
+  step_4c_per_check, the Form W-4 Step 4(c) amount per remaining paycheck that reaches the required
+  payment)} (JF4: the excess-SS credit counts as
+  withholding, IRC 31(b)(1); refundable credits (the prior year's too, off prior_year_total_tax, per
+  the Form 2210 instructions) and the Additional Medicare Tax withheld come off the tax, IRC
+  6654(f)(4) and (m) — so
+  pass expected_withholding WITHOUT that box-6 excess; the work quotes 6654(g)(1)'s ratable
+  deeming of withholding. IRC 6654(d): required annual payment = min(90% of the
+  current year's tax, 100% of the prior year's — 110% when PRIOR-year AGI > $150,000/$75,000-MFS,
+  the status test keyed on the CURRENT year). Supply prior_year_agi AND prior_year_total_tax
+  together (the prior return's AGI and total-tax lines, named in the work — intake stores them on
+  prior_filings) or omit both; the
+  prior prong needs a 12-month prior return (your judgment). Reports the $1,000 de-minimis, the
+  shortfall and the quarterly installment; the work quotes the supplemental-wage (bonus) trap WITH
+  its precondition (P-017): the flat 22% is the employer's OPTION only when Treas. Reg.
+  31.3402(g)-1(a)(7)(i) holds — the bonus is not paid concurrently with regular wages or is separately
+  stated on the payroll records, AND income tax was withheld from regular wages this calendar year
+  or last; otherwise the aggregate procedure is required (Pub 15: "use method 1b" — bonus + regular
+  wages withheld as one payment under the W-4); 37% is mandatory only on supplemental wages over
+  $1,000,000. Hire status is not the test; project the bonus withholding by the method the employer
+  actually uses — at the flat rate a higher-bracket filer under-withholds on every bonus)
+- underpayment_penalty: args {required_installments? (the four Form 2210 line-10 amounts) |
+  required_annual_payment? (25% each, IRC 6654(d)(1)(A) — take it from estimated_tax_safe_harbor),
+  payments?: [{date, amount}] (estimated payments, a prior-year overpayment dated the first due date,
+  the balance paid with the return), withholding? (deemed paid in equal parts on the four due dates,
+  IRC 6654(g)(1)) | withholding_dates?: [{date, amount}] (the actual-dates election, all amounts),
+  tax_after_withholding? (under $1,000 = the 6654(e)(1) exception), return_filed?,
+  paid_in_full_with_return? (by January 31 = no 4th-installment penalty, 6654(h)), annualized? (JP5b,
+  Schedule AI: {filing_status, agi: [4 cumulative periods], standard_deduction, itemized?, qbi?,
+  additional_deductions? (Schedule 1-A), se_net_earnings? (line 28), ss_wages?, other_taxes?, credits?,
+  period_tax?} — with required_annual_payment; prices both methods and reports regular_method_penalty),
+  year} (JP5a: Form
+  2210 Part III regular method — payments credited to the earliest unpaid installment (6654(b)(3)),
+  each late portion priced per day to the payment date or April 15 at the rate period's IRC 6621
+  underpayment rate over 365 (the year's knowledge calendar; April 1-15 keeps the Q1 rate, 6621(b)(2)(B));
+  a period whose rate is not announced yet FAILS CLOSED. Returns the Section A columns, the priced
+  pieces and line 19)
+- paystub_to_w2: args {stub: the extract_document('paystub') reading, employment: the Profile.employment
+  record (employer, end?, pay_frequency, first_pay_date, gross_per_period, deductions_per_period), year,
+  remaining_pay_dates?} (JP3b: the stub's YTD actuals plus the checks still to be PAID on or before
+  December 31 — "The entries on Form W-2 must be based on wages paid during the calendar year", so a check
+  paid January 1 is next year's; an ended job adds nothing, nothing is annualized. Box 1 = gross - pre-tax
+  401(k) - the cafeteria-plan reductions (IRC 125 premiums, HSA code W, health and dependent care FSA,
+  132(f)); boxes 3/5 exclude only the cafeteria-plan reductions, box 3 capped at the wage base; boxes 4/6
+  at this employer's own rates; box 10; box 12 D/AA/W. Returns w2 ready for estimate_refund's
+  IncomeSnapshot.w2s)
+- claim_of_right_repayment: args {repaid, year, prior_year, taxable_income (this year, WITHOUT the
+  deduction), prior_taxable_income (as filed, WITH the item), filing_status?, prior_filing_status?,
+  income_type? (wages | unemployment | other_nonbusiness | business | capital_gain),
+  included_under_claim_of_right?, taxable_income_with_deduction?, and the four tax overrides
+  tax_without_deduction? / tax_with_deduction? / prior_tax_as_filed? / prior_tax_refigured?} (JP4, pitfall
+  P-025: IRC 1341 / Pub 525 Methods 1 and 2 — the lesser tax; nothing at $3,000 or less; a business or
+  capital repayment goes on its own schedule. Returns the destination line (Schedule A / Schedule 3, read
+  per year) and the payroll-tax notes: FICA back from the employer or Form 843, Additional Medicare Tax
+  only on a prior-year Form 1040-X)
+- annualize_ytd: args {ytd_amount, through, year} (project a YTD paystub figure to full-year by
+  calendar-day proration — the deterministic home for the one arithmetic step every projection
+  needs. ASSUMES LEVEL PAY: annualize each status segment separately, never annualize one-time
+  amounts like bonuses/RSU vests)
+- ira_net_income_attributable: args {amount, purpose (recharacterization | returned_contribution),
+  opening_fmv, contributions_during (every contribution INTO the IRA in the period, the one being moved
+  included), closing_fmv, distributions_during?, whole_account?} (JR2a: Treas. Reg. 1.408A-5 A-2(c) /
+  1.408-11 — net income = amount x (adjusted closing - adjusted opening) / adjusted opening, divided
+  EXACTLY and also with Pub 590-A's three-place ratio; negative after a loss; the whole-account rule)
+- ira_recharacterization: args {direction (roth_to_traditional | traditional_to_roth), amount,
+  contribution_year, contribution_date, contributed_total?, transfer_date?, source_kind?, deducted?, the NIA
+  inputs (opening_fmv, contributions_during, closing_fmv, distributions_during?, whole_account?),
+  extension_filed?, return_filed_date?, magi?, filing_status?, covered_by_employer_plan?,
+  elect_nondeductible?, readings?, then_convert?} (JR2b, P-021: the fix for an ineligible contribution.
+  REFUSES a conversion (408A(d)(6)(B)(iii)), a rollover (A-4), SEP/SIMPLE employer money (A-5) and a
+  deducted amount; returns the net income, the deadline status (timely / late under 301.9100-2 with an
+  amended return / too late), 1099-R code N (moved in the contribution year: the Form 1040 IRA-distribution line) or R (later:
+  the statement only), the second IRA's limit check, the Form 8606 line 1/4/6 inputs (net income is never
+  basis), the i8606 statement, the expected 1099-R/5498 boxes with a +/- $1 reconciliation, the A-6(a)
+  trustee notice, the 408(d)(4) alternative (no 10% additional tax on its earnings: 72(t)(2)(A)(ix)) and
+  then_convert priced by roth_conversion with the new basis)
+- elective_deferral_room: args {deferrals: [{employer, elective_deferrals, employer_contributions?,
+  after_tax_contributions?}...], year?, age? (at year end), remaining_pay_dates?, per_check_compensation?,
+  plan_increment_percent?, prior_year_fica_wages?, current_employer?} (JP2: the IRC 402(g) room left
+  ACROSS EVERY EMPLOYER — a job-changer's new plan cannot see the old plan's deferrals — with the
+  414(v) catch-up by age (50+; the higher 60-63 amount), the per-check dollars and percent rounded DOWN
+  so the last check never overshoots, any excess with its April 15 correction deadline ("not postponed
+  by extending the filing") and the double tax if it stays, the SECURE 2.0 Roth catch-up wage test
+  (414(v)(7)(A)), and each plan's 415(c) annual-additions room)
+- contribution_limits: args {year?} (every tax-advantaged bucket WITH ITS SCOPING — the real
+  answer to "is the 401(k) limit one per person?": 402(g) per PERSON across all employers with
+  traditional+Roth sharing it; 415(c) per EMPLOYER PLAN (the mega-backdoor door); IRA per person
+  across both kinds; HSA per COVERAGE TIER (two self-only holders can beat one family plan);
+  125(i) FSA per employee per employer; 132(f) commuter monthly. Quote the scoping strings)
+- ira_contribution_eligibility: args {magi, filing_status?, year?, ira_type?: roth|
+  traditional_deduction, contributed?, age_50_plus?, covered_by_employer_plan?,
+  spouse_covered_by_employer_plan?, mfs_lived_apart_all_year?, roth_ira_dec31_value?} (the Pub
+  590-A reduced-limit worksheet: round UP to $10, $200 floor while partially phased. Run it
+  BEFORE any IRA contribution is recorded — it catches the 6%/yr-excise error (IRC 4973) and
+  shows the year-end-status rule: the same MAGI can be excess under one status and compliant
+  under another (e.g. MFS vs MFJ), because eligibility follows the Dec 31 filing status. The
+  deduction path needs the employer-plan coverage facts; no coverage anywhere = no phase-out.
+  On that path `allowed` is the most that can be deducted and the result splits the contribution
+  into `deductible` and `nondeductible` (Form 8606 line 1 basis): a traditional contribution
+  within the limit is never an excess — IRC 4973(b) ignores the 219(g) phase-out — so `excess` is
+  only the amount over the contribution limit, which recharacterizing cannot cure. A separate
+  filer passes spouse_covered_by_employer_plan too, or mfs_lived_apart_all_year (IRC 219(g)(4):
+  the single rules).
+  roth_ira_dec31_value (Roth only: all Roth IRAs' Dec 31 value, that year's contributions made
+  the next year included) applies IRC 4973(a)'s cap — the excise "shall not exceed 6 percent of
+  the value of the account" — so excise = 6% x min(excess, value). The work names the fix's
+  deadline: withdraw the excess plus its net income by the return's due date INCLUDING
+  extensions (IRC 408(d)(4)) — the year's April due date, or October 15 with a Form 4868
+  extension — and, for a return filed on time without it, the Form 5329 instructions' 6 months
+  after the due date excluding extensions, on an amended return "Filed pursuant to section
+  301.9100-2")
+- marginal_dollar_savings: args {taxable_income, ss_wages + medicare_wages (W-2 boxes 3 + 7 and
+  box 5; the older one-figure `wages` stands in for both, disclosed), filing_status?, year?} ("where does one
+  more pre-tax dollar save the most": payroll HSA/FSA/commuter dollars avoid income tax AND FICA;
+  401(k)/deductible-IRA dollars avoid income tax only; ABOVE the SS wage base the FICA saving is
+  1.45%+0.9% over $200k, never 7.65%. Federal only — state rates stack; Roth saves $0 today by
+  design)
+- magi_ladder: args {agi, filing_status?, year?, medicare_wages? (W-2 box 5, the 8959 row; the older
+  wages? stands in, disclosed), foreign_earned_income_exclusion?,
+  excluded_puerto_rico_income?} (every MAGI test the year's packs carry, one table — because MAGI
+  is not one number: NIIT adds back the FEIE, Additional Medicare is a WAGE test that AGI cannot
+  move, Schedule 1-A / Roth-IRA / deductible-IRA each define their own. Show it when the user asks
+  why their MAGI differs from their salary; every planning lever moves a number on this ladder.
+  A qualifying surviving spouse buckets differently on the two surtaxes: Form 8959's $200,000
+  ("Single, Head of household, or Qualifying surviving spouse"), NIIT's joint $250,000 (IRC
+  1411(b)(1): "a surviving spouse (as defined in section 2(a))"))
+- ira_pro_rata: args {dec31_total_value, amount_converted?, other_distributions?,
+  nondeductible_basis_carryforward?, nondeductible_contributions_this_year?,
+  contributions_made_after_year_end?, year?} (Form 8606 Part I / IRC 408(d)(2): ALL traditional +
+  SEP + SIMPLE IRAs are ONE contract and a year's distributions ONE distribution, so a
+  conversion's taxable share is set by the POOL's pretax/basis mix, never by which dollars moved.
+  THE TRAP: the DENOMINATOR is line 9 = line 6 (Dec-31 value of every such IRA, measured AFTER the
+  conversion left) + line 7 (distributions not converted) + line 8 (the amount converted) — it
+  ADDS THE CONVERSION BACK, so converting more never shrinks it. dec31_total_value is the whole
+  answer to "where can my old 401(k) go?": rolled into a traditional IRA it lands on line 6
+  whenever in the year it arrives and makes every future backdoor Roth mostly taxable. Basis is
+  per PERSON (the form is filed separately per spouse), and line 4 — a contribution made Jan
+  1-Apr 15 of the NEXT year — is basis that carries forward but cannot be used in this year's
+  ratio. Returns the taxable/nontaxable split, the basis applied and carried, the ratio, and every
+  8606 line)
+- roth_conversion: args {source: plan_to_roth_ira|traditional_ira_to_roth, amount,
+  taxable_income_before, magi_before, filing_status?, year?, net_investment_income?,
+  plan_after_tax_basis?, dec31_total_value?, nondeductible_basis_carryforward?,
+  nondeductible_contributions_this_year?, other_distributions?,
+  contributions_made_after_year_end?} (price a conversion on the ONE path the money takes — the
+  two paths are taxed differently and get conflated. plan_to_roth_ira = a DIRECT rollover from a
+  401(k)/403(b)/governmental 457(b) to a Roth IRA (Notice 2008-30): taxable is the pretax portion,
+  pro-rata NEVER applies because no traditional IRA is involved, it is reported on 1040 line 5a/5b
+  not Form 8606 — this is the path that clears an old plan WITHOUT poisoning future backdoor
+  Roths; pass plan_after_tax_basis from 1099-R box 5 (the plan's own allocation under Notice
+  2014-54, never your estimate). traditional_ira_to_roth = pro-rata applies and the split is
+  delegated to ira_pro_rata, which needs dec31_total_value. Supplying IRA args on the plan path is
+  REFUSED — that conflation is the whole reason the op makes you choose. Beyond the taxable
+  amount it returns BRACKET HEADROOM (room below the current bracket's top, and exactly which
+  dollars spill into higher rates, from the year's rate_schedules) and the NIIT CROSSING (IRC
+  1411(c)(5): the conversion is NEVER net investment income, but it raises MAGI and can drag
+  OTHER investment income over the 1411 threshold — computed by reusing the niit op). The work
+  carries the WITHHOLDING warning: tax withheld is not converted, it is lost Roth space and the
+  10% additional tax can reach it under 59 1/2 — pay from OUTSIDE funds; plus the
+  no-recharacterization-after-2017 irreversibility and the per-conversion 5-year clock)
+- hsa_deduction: args {coverage: self_only|family (or monthly_coverage: 12 entries, January
+  first, each self_only|family|none), year?, months_eligible?, age_55_plus?, married?,
+  spouse_has_separate_hsa?, your_share_of_family_limit?, personal_contributions?,
+  employer_contributions?, qualified_hsa_funding_distribution?, archer_msa_contributions?,
+  medicare_start_month?, health_fsa?, claimed_as_dependent_by_another?, testing_period_failed?,
+  funding_distribution_testing_period_failed?, distributions_total?, distributions_rolled_over?,
+  qualified_medical_expenses?, distributions_excepted_from_20_percent?, ss_wages?, medicare_wages?,
+  filing_status? (the payroll half: W-2 boxes 3 + 7 and 5, the 0.9% tier on the filing status's Form
+  8959 threshold; the older wages? stands in for both boxes), wages?} (Form 8889 /
+  IRC 223 — the op that makes an HSA contribution FILEABLE, not just plannable. FOUR TRAPS it
+  enforces. (1) The limit is MONTHLY: 223(b)(1)-(2) tests eligibility on the FIRST DAY of each
+  month and allows 1/12 of the tier amount per eligible month, so a mid-year HDHP start gets the
+  Line 3 Limitation Chart, never the annual figure — pass monthly_coverage whenever the tier
+  changed or the eligible months are not the closing ones. (2) THE LAST-MONTH RULE (223(b)(8)) is
+  automatic, not an election: eligible on December 1 makes line 3 the GREATER of the chart and
+  December's full annual tier amount, and it starts a 13-MONTH TESTING PERIOD (Dec 1 through Dec
+  31 of the FOLLOWING year). Losing eligibility inside it — new job, spouse's non-HDHP plan,
+  Medicare; only death or disability is excused — pulls the extra contributions into income PLUS
+  a 10% additional tax. The result always reports at_risk_if_testing_period_fails, so quote it
+  before anyone contributes the bigger number. (3) EMPLOYER MONEY IS NOT A SECOND DEDUCTION: W-2
+  box 12 code W is the employer's contributions AND the employee's own cafeteria-plan payroll
+  deferrals, all already excluded from box 1 — it goes in employer_contributions (line 9), where
+  it SUBTRACTS room; only DIRECT contributions (line 2 = 5498-SA box 2 minus code W minus any
+  funding distribution) reach Schedule 1's HSA-deduction line. Deducting code W as well is the most
+  common HSA filing error. (4) A GENERAL-PURPOSE HEALTH FSA — INCLUDING ONE FROM THE SPOUSE'S
+  EMPLOYER (Rev. Rul. 2004-45) — is disqualifying coverage; health_fsa='general_purpose' is
+  REFUSED with the fix, while 'limited_purpose' (dental/vision) and 'post_deductible' are fine.
+  Also: 223(b)(7) zeroes every month from the first month of Medicare entitlement onward
+  (retroactive enrollment included); the $1,000 age-55 catch-up is statutory, PER PERSON and not
+  allocable, so a couple needs TWO HSAs for two catch-ups and it rides line 7 (not line 3) once a
+  married filer has ANY family coverage in the year; excess contributions carry the IRC 4973 6%
+  excise EVERY year until withdrawn (plus earnings) by the due date INCLUDING extensions. Part II
+  distributions (1099-SA box 1) and their 20% additional tax and Part III recapture are modelled;
+  pass wages to get the payroll-vs-direct FICA half, where above the SS wage base the saving is
+  1.45%, or 2.35% over $200k — never 7.65%)
+- espp_disposition: args {shares, grant_date, purchase_date, sale_date, grant_date_fmv_per_share,
+  purchase_date_fmv_per_share, purchase_price_per_share, sale_price_per_share,
+  grant_date_exercise_price_per_share?, broker_reported_basis?, broker_reported_basis_to_irs?,
+  selling_expenses?, employed_through_exercise?} (ONE lot of section 423 ESPP stock, sold —
+  Form 3922 boxes 1-8 in, the Form 8949 row out. THE TWO DISPOSITIONS ARE TAXED COMPLETELY
+  DIFFERENTLY and conflating them is the point of the op. QUALIFYING (sold MORE than 2 years
+  after grant AND more than 1 year after purchase, IRC 423(a)(1)): ordinary income is the LESSER
+  of the discount measured on the GRANT-date price (423(c)(2)) and the actual gain (423(c)(1)) —
+  so a sale at a LOSS recognises ZERO ordinary income. DISQUALIFYING (anything else, same-day
+  sale included): ordinary income is the FULL spread at purchase, exercise-date FMV minus the
+  price paid, REGARDLESS of the sale price — Pub 525, 'This ordinary income isn't limited to your
+  gain from the sale of the stock' — so a filer who sold below the purchase-date FMV still
+  recognises it and takes a capital LOSS on top. THE BASIS CORRECTION IS THE HIGHEST-DOLLAR PART:
+  the 1099-B reports box 1e as the DISCOUNTED PURCHASE PRICE ONLY (Instructions for Form 8949,
+  'For compensatory options granted after 2013, the basis information reported to you ... won't
+  reflect any amount you included in income'), so a filer who trusts it pays tax on the discount
+  TWICE. The op returns the corrected basis (price paid + ordinary income), the adjustment, and
+  the exact Form 8949 row: CODE B in column (f), with the wrong basis left in column (e) and the
+  correction in column (g) as a negative when the basis WAS reported to the IRS (box A/D), or the
+  correct basis straight into column (e) with -0- in (g) when it was not (box B/E). THE LOOKBACK:
+  under a lookback the price paid is the discount off the LOWER of the two FMVs, but 423(c)(2) is
+  computed on the GRANT-date price — Form 3922 BOX 8, a different number whenever the stock fell.
+  Pass grant_date_exercise_price_per_share whenever box 8 is filled in; a price below 85% of the
+  grant-date FMV with no box 8 is REFUSED, because only a lookback can produce it. Nothing is
+  withheld on any of this income (IRC 423(c) and 421(b) both say so, and IRC 3121(a)(22) keeps it
+  out of FICA) — plan the cash. NOT modelled and named in `not_modeled`: ISO/AMT (Form 3921,
+  Form 6251 line 2i, and 422(c)(2)'s realised-gain cap that section 423 has no counterpart for),
+  section 83(b), RSU vesting, wash sales, state tax, multiple lots)
+- capital_loss_limitation: args {short_term, long_term, taxable_income_before_capital_loss,
+  filing_status?, year?, short_term_carryover_in?, long_term_carryover_in?, following_years?}
+  (IRC 1211(b)/1212(b) and the Schedule D Capital Loss Carryover Worksheet. Short and long are
+  netted SEPARATELY first (lines 7 and 15, IRC 1222) and only then against each other (line 16);
+  a net loss is deductible against ordinary income only up to $3,000 ($1,500 MFS), statutory and
+  NOT indexed; everything left carries forward INDEFINITELY and KEEPS ITS CHARACTER — a
+  short-term carryover stays short-term (1212(b)(1)(A)) and lands on next year's Schedule D line
+  6, a long-term one on line 14. THE SUBTLETY THAT IS NOT THE ONE CALLERS EXPECT: taxable income
+  does NOT shrink the $3,000 deduction, it shrinks how much of the LOSS POOL the year consumes.
+  Worksheet line 4 = min(the deduction, taxable income + the deduction) is IRC 1212(b)(2)(A)'s
+  lesser-of, so a filer with $1,000 of taxable income deducts $3,000 and still burns only $1,000
+  — the carryover is $2,000 LARGER than 'loss minus $3,000'. Read `loss_absorbed` and
+  `deduction_not_absorbed`, not just `deduction`. Pass taxable_income_before_capital_loss WITHOUT
+  the line 21 deduction subtracted (negative is fine and the worksheet wants it that way); the op
+  derives worksheet line 1 and prints it so you can tie it to the filed Form 1040 taxable income. Prior
+  carryovers go in short_term_carryover_in / long_term_carryover_in as POSITIVE amounts, the way
+  Schedule D lines 6 and 14 are printed. `following_years` rolls the chain forward one mapping
+  per later year ({short_term, long_term, taxable_income_before_capital_loss, filing_status?,
+  year?}) and THREADS THE CARRYOVERS ITSELF — re-entering them by hand is how the character split
+  gets lost, so unknown keys are refused. NOT modelled: wash sales, section 1256 and its 1212(c)
+  carryback, section 1244 ordinary loss, collectibles/unrecaptured 1250, and state rules)
+- foreign_tax_credit_election: args {creditable_foreign_taxes, all_foreign_income_passive,
+  all_reported_on_payee_statement, year?, filing_status?, elect?, entity?, regular_tax?,
+  reduction_in_foreign_taxes?, excess_credit_if_form_1116?} (IRC 904(j) — THE BRANCH THAT DECIDES
+  WHETHER FORM 1116 IS NEEDED AT ALL, and for a holder of a total-international index fund the
+  answer is usually no. Foreign tax withheld on fund dividends arrives in FORM 1099-DIV BOX 7
+  (interest: 1099-INT box 6), and while creditable foreign taxes stay at or under $300 ($600 in
+  the case of a JOINT RETURN — 904(j)(2)(B), statutory and never indexed) 904(j) lets the whole
+  credit be claimed as ONE NUMBER on Schedule 3's foreign-tax-credit line, with no Form 1116,
+  no three-country column grid and no 904(a) limitation fraction. Run this BEFORE authoring
+  formpacks/federal/<year>/f1116. THREE THINGS IT REFUSES TO GUESS, because each one silently
+  decides the election: all_foreign_income_passive (904(j)(2)(A) needs the ENTIRE foreign-source
+  gross income to be qualified passive income — one dollar of foreign wages, foreign
+  self-employment income, foreign rent or a 951A inclusion ends it for the WHOLE YEAR no matter
+  how small the tax); all_reported_on_payee_statement (904(j)(3)(A)/(B) need the income AND the
+  tax shown on a payee statement — 1099-DIV, 1099-INT, Schedule K-1 (1041), Schedule K-3 (1065),
+  Schedule K-3 (1120-S) or a substitute; foreign tax on a foreign bank account with no US
+  information return fails it); and `elect` (904(j)(2)(C) is the taxpayer's own act, so
+  election_available and election_made are reported SEPARATELY — a filer who qualifies may still
+  prefer Form 1116). ESTATES AND TRUSTS ARE EXCLUDED OUTRIGHT (904(j)(3)(D)). QUOTE THE COST, it
+  is never free: 904(j)(1)(B)/(C) forfeit the 904(c) 1-year-back / 10-year-forward carryover in
+  BOTH directions for the election year, so pass regular_tax (Form 1116 line 20 = the Form 1040 tax
+  plus the Schedule 2 amount the year's 1116 instructions name, less any Form 4972 tax; the work names
+  both lines, read off the year's faces) to get both the amount claimed — "the smaller
+  of (a) your total foreign tax, or (b) your regular tax" — and credit_lost_to_regular_tax_cap,
+  foreign tax that exceeds regular tax and is therefore lost PERMANENTLY. The election does NOT
+  waive creditability (IRC 901/903, including 901(k)'s minimum holding period on dividend
+  withholding) nor the Form 1116 line 12 reduction, which reduction_in_foreign_taxes subtracts
+  BEFORE the $300/$600 test. ONE TRAP THE FILING-STATUS COLUMN HIDES: only married filing jointly
+  is "a joint return", so a QUALIFYING SURVIVING SPOUSE gets $300, not $600 — it borrows the
+  joint RATE schedule under IRC 1(a)(2)/2(a) but does not file a joint return; MFS is $300 too)
+- foreign_asset_reporting: args {year?, filing_status?, us_person?, lives_abroad?,
+  specified_asset_value_year_end?, specified_asset_value_max?,
+  foreign_account_value_max_aggregate?, has_foreign_account_signature_authority?, filer_type?}
+  (DOES THIS FILER HAVE TO REPORT A FOREIGN ACCOUNT? — IRC 6038D's Form 8938 and 31 U.S.C.
+  5314's FBAR, answered TOGETHER because answering one and stopping is the standard error: "The
+  Form 8938 filing requirement does not replace or otherwise affect a taxpayer's obligation to
+  file FinCEN Form 114" (IRS, Comparison of Form 8938 and FBAR requirements). NOT a tax
+  calculation — both duties exist even when the account produced no income and no tax is owed
+  (Treas. Reg. 1.6038D-2(a)(8)), which is exactly why a refund-shaped interview never surfaces
+  them: ASK, do not wait to be told. THE TWO THRESHOLDS ARE NOTHING ALIKE. **Form 8938** (Treas.
+  Reg. 1.6038D-2(a)(1)-(4), measured over the TAXABLE year): more than $50,000 on the LAST DAY or
+  more than $75,000 AT ANY TIME for a filer in the US who is not filing jointly, $100,000 /
+  $150,000 married filing JOINTLY, and 4x those figures ($200,000/$300,000 and $400,000/$600,000)
+  only for an IRC 911(d)(1) QUALIFIED INDIVIDUAL — a bona fide foreign resident for a full tax
+  year, or 330 full days abroad in 12 consecutive months, with a foreign tax home; living
+  overseas without meeting that test keeps the in-US figures. EITHER test alone triggers the
+  filing, so emptying the account before December 31 does not help. **A QUALIFYING SURVIVING
+  SPOUSE TAKES $50,000/$75,000, NOT the joint figures** — (a)(2)/(a)(4) are keyed to filers who
+  "file a joint annual return" and a QSS does not, even though it borrows the joint rate
+  schedule. **FBAR** (31 CFR 1010.306(c), measured over the CALENDAR year): a flat $10,000 that
+  FILING STATUS DOES NOT MOVE, and it is an AGGREGATE across every foreign financial account and
+  a MAXIMUM-VALUE test — two accounts whose combined balance touched $10,001 for one day are BOTH
+  reportable even if each stayed under $10,000 and both were empty at year end. THE OP REFUSES TO
+  GUESS: any fact it needs and does not have comes back as required=None plus a `must_ask`
+  question naming the authority, because a silent "no" here is the most expensive wrong answer in
+  the repo. Read `must_ask` and `any_duty_undecided` before quoting a verdict. WHERE THEY GO:
+  Form 8938 attaches to the return (formpacks/federal/<year>/f8938); the FBAR is filed with
+  FinCEN, e-file ONLY through the BSA E-Filing System, and irs.gov states "IRS will not accept
+  paper filings on TD F 90-22.1 (obsolete) or a printed FinCEN Form 114 (for e-filing only)" —
+  so there is no fillable pack, only hand_fill_worksheet('fincen114', <year>, 'federal'), and it
+  is due April 15 with an AUTOMATIC extension to October 15 that needs no request (P.L. 114-41
+  sec. 2006(b)(11); 31 CFR 1010.306(c)'s printed "June 30" was never conformed to the statute and
+  is WRONG). SCOPES DIFFER IN BOTH DIRECTIONS: signature authority over someone else's account
+  and an account at a foreign BRANCH of a US bank are FBAR-only; foreign stock held outside an
+  account, a foreign partnership interest and a foreign hedge fund are Form 8938-only. PENALTY
+  EXPOSURE, quoted in the result: IRC 6038D(d) $10,000 plus $10,000 per 30 days after IRS notice
+  to a $60,000 year maximum, and IRC 6662(j)(3) raises the accuracy-related rate to 40% on an
+  underpayment tied to an undisclosed foreign asset; 31 U.S.C. 5321(a)(5) non-willful up to
+  $10,000 — inflation-adjusted to $16,536 for penalties assessed on or after 2025-01-17 (31 CFR
+  1010.821) and accruing PER REPORT, not per account (Bittner v. United States, 598 U.S. 85
+  (2023)) — with willful exposure the greater of $100,000 (adjusted $165,353) or 50% of the
+  account balance, which IS per account. NOT modelled and named in the work: the Part IV
+  excepted-asset rules, joint-ownership valuation, the FBAR's account exceptions, and PART-YEAR
+  specified-individual status (Treas. Reg. 1.6038D-2(a)(9)) — segment an F-1-to-H-1B year's
+  values yourself before passing them)
+- state_tax: args {state, taxable_base, year?, exemptions_count?, dependents_count?, filing_status?,
+  exemption_credit_counts?, federal_agi?}
+  (the STATE income-tax line for ALL 42 income-tax jurisdictions (41 states + DC) for tax years
+  2023, 2024 and 2025 (42/42 each). The PACK decides the shape: flat-rate states
+  multiply, graduated states apply the per-filing-status marginal schedule bracket by bracket and
+  the work string shows each bracket's contribution. Do NOT assume which shape a state is and do
+  NOT carry a roster forward — the split moves by year (GA converted to flat for 2024; IA and LA
+  for 2025). taxable_base is the STATE's OWN base, already adjusted for the state's
+  additions/subtractions: IL = IL-1040 Line 9 base income (fed AGI ± IL mods); CO = fed TAXABLE
+  income ± CO mods (DR 0104 Line 10); PA = the eight-class PA-source income (PA-40 Line 11 — no
+  exemptions, no deduction, a loss in one class never offsets another); the fed-AGI states = their
+  form's state-AGI line, named in each pack's tax_line/notes. The op subtracts only the pack's
+  verified personal/dependent exemptions x your counts and the state's standard deduction where the
+  state ships one — age-65/blind and other exemption kinds are disclosed, not applied, and the
+  credit-exemption states (ca, ar, de, ia, ne, or) REFUSE exemptions_count/dependents_count because
+  their per-person amounts are credits, not exemptions. EXEMPTION CREDITS: where the pack ships them
+  (ca 2023-2025: Form 540 lines 7-11 and 32-33; for 2025 also ar AR1000F 7A-7C/34, de PIT-RES
+  27a-27b, ia IA 1040 Step 3/line 8, ne 1040N line 4/18, or OR-40 6a-6e/25), pass
+  exemption_credit_counts keyed by the pack's kinds (ca {personal, blind, senior, dependent}, the
+  line 7-10 box numbers; the not-applied work string and the refusals list every pack's kinds) and,
+  for ca and or, federal_agi (ca: Form 540 line 13, which the line 32 AGI limitation reads; or:
+  OR-40 line 7, above whose per-status ceiling a kind is denied — agi_ceilings); the result's
+  `exemption_credits` then carries each line's credit, exemption_amount, limitation_reduction,
+  total (the credits taken; de's line 32 is limited to the tax, tax_limit_reduction) and
+  tax_after_credits, with `lines` naming the form lines. `tax` stays
+  the tax line either way; without counts exemption_credits.applied is false; a count above the
+  form's own maximum is refused. A state without the block refuses nonzero exemption_credit_counts.
+  Form 540NR prorates the credits on its own lines 38-40, so a 540NR return takes only
+  exemption_amount from here.
+  County/city add-on taxes (IN counties, MI cities, MD counties, OH school districts) and other
+  state credits are NOT modeled. Out-of-schedule surcharges and recaptures are
+  disclosed in the work string, not computed — CA's 1% Mental Health Services Tax over $1M and NY's
+  recapture worksheets above $107,650 NY AGI are cases where plain bracket math is WRONG. Unknown
+  state or a state without the block errors, listing the supported states)
