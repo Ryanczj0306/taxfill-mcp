@@ -31,7 +31,7 @@ plan for what is **not yet done**, as of **2026-10-09** (re-planned 2026-10-09 �
 
 ## Where we are (verified)
 
-Done and on `main` (**15,838 tests** — offline 12,209 + live-.gov 3629; derived
+Done and on `main` (**15,890 tests** — offline 12,261 + live-.gov 3629; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
@@ -391,6 +391,7 @@ Since 2026-10-15 (Phase K JK1) Phases C and D hold no open box: C2 and D2 are cl
 - [ ] **JK32 — Review the MCP surface against Anthropic's official MCP design guidance** (S; before JK12; the user's pointer, 2026-11-05)
   - The user pointed at an official Claude skill for designing MCP servers and asked whether to adopt it. Not yet read: the tranche starts by identifying the exact skill and version, then reads the 23 tools (names, descriptions, argument shapes, error texts, result sizes) against it.
   - **Acceptance:** a short findings list; changes that alter a tool's signature or result shape wait for the user's call (the pack-path golden pins them), wording fixes land.
+  - **Size cut done on branch jk32-compact-output, 2026-11-16** (the user approved the shape changes 2026-11-13; the skill review above is still open). Tool descriptions: `calc` 46,848 → 3,952 and `estimate_refund` 14,672 → 3,737 characters; the moved text is served by `calc(op="describe", args={"op": ...})`, and a test holds every description and the instructions to 4,096. `list_document_kinds()` 104,002 → 7,124 (an index; `kind=` returns the full layouts). A one-box 1095-C `extract_document` 67,837 → 4,836 (`fields` echoes the boxes passed plus missing required ones; `echo_all=True` keeps the full echo). Left out of scope: `calc` results of 19-24k characters, `get_form_map` up to 40k, SKILL.md at 83k, the extract caveat (3,776 for a 1095-C), and the single kinds over 10k (1095-C 34,954, 1095-B 13,599).
 - [ ] **JK12 — v0.2 for the TY2026 season** (S; deps JT6, the first JS7a batch, and JK13-JK18 if ready; latest start 2027-02-01; external: the user pushes the tag)
   - The fallback's PDF fill ships in v0.2 only if JK15 passed and the JK19 pilot report exists; otherwise v0.2 ships inspect + worksheet only, or no fallback.
   - **Acceptance:** tag, PyPI and `.mcpb` are published. The CHANGELOG lists which forms are filing-grade and the fallback's LIMITS. The release notes say which tax year is filing-grade.
