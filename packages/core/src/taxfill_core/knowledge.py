@@ -3464,6 +3464,7 @@ class StateFederalCopyRule(BaseModel):
 
     model_config = ConfigDict(extra="forbid")
 
+    notice: str | None = Field(default=None, description="What the return itself prints about it, verbatim.")
     question: str = Field(description="The state's question, verbatim.")
     if_no: str = Field(description="The state's direction for a No, verbatim.")
     if_yes: str = Field(description="The state's direction for a Yes, verbatim.")

@@ -1413,12 +1413,129 @@ def _end(sentence: str) -> str:
     return sentence if sentence.endswith((".", ".)", ".'", '."', ".\u201d", ".\u2019", ".')")) else sentence + "."
 
 
-def _state_return(item: FilingManifestItem, knowledge_dir) -> ReturnInstructions:
+# The assembly line a state return gets when its pack carries no ``assembly`` block.
+_GENERIC_STATE_ASSEMBLE = "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099."
+
+
+def _schedule_letter(name: str) -> str | None:
+    """'Schedule A (Form 1040)', 'Sch. B', 'sched_b' -> 'A' / 'B'; 'Schedule 1-A' -> '1A'; not a schedule -> None.
+
+    The whole designator is kept, so 'Schedule 1-A' and 'sched_a_nr' never read as Schedule A.
+    """
+    bare = re.sub(r"\(\s*form\s+1040[^)]*\)", "", name.translate(_DASHES), flags=re.IGNORECASE)
+    head = re.sub(r"\s+form\s+1040(?:-[a-z]{2})?$", "", _form_number(bare), flags=re.IGNORECASE).strip()
+    m = re.fullmatch(r"(?:schedule|sched|sch)\.?[\s_-]*([0-9a-z][0-9a-z_ -]*)", head, flags=re.IGNORECASE)
+    return re.sub(r"[\s_-]", "", m[1]).upper() if m else None
+
+
+def _federal_pack_key(name: str) -> str | None:
+    """The federal form-pack key an attached form's name would have ('8995' -> 'f8995', 'Schedule D' -> 'sched_d'),
+    or None when the name has neither shape (then nothing is said about a pack for it)."""
+    from taxfill_core.datadir import formpacks_dir
+
+    raw = name.strip()
+    if re.fullmatch(r"[a-z][a-z0-9_]*", raw) and (formpacks_dir() / "federal").is_dir() and any(
+        (year_dir / raw).is_dir() for year_dir in (formpacks_dir() / "federal").iterdir()
+    ):
+        return raw  # already a pack key ('sched_a_nr', 'fw7')
+    letter = _schedule_letter(name)
+    if letter is not None:
+        return f"sched_{letter.lower()}" if re.fullmatch(r"[0-9A-Z]{1,4}", letter) else None
+    head = _form_number(name).replace(" ", "")
+    m = re.fullmatch(r"[fF]?(\d{3,4}(?:-?[A-Za-z]{1,2})?)", head)
+    return f"f{m[1].replace('-', '').lower()}" if m else None
+
+
+def _unmapped_attachments(forms: list[str], year: int) -> list[str]:
+    """The attached federal forms no federal form pack ships for in ``year``: fill_form can only have drafted them
+    with form='unmapped', whose output is stamped and is not a filing copy."""
+    from taxfill_core.datadir import formpacks_dir
+
+    base = formpacks_dir() / "federal" / str(year)
+    if not base.is_dir():
+        return []
+    out = []
+    for name in forms:
+        key = _federal_pack_key(name)
+        if key is not None and not (base / key / "pack.yaml").is_file():
+            out.append(name)
+    return out
+
+
+def _federal_copy_lines(rule, item: FilingManifestItem, manifest: list[FilingManifestItem], code: str) -> list[str]:
+    """The state's federal-copy question, answered from the federal return(s) of the same manifest (JW2b, P1-03).
+
+    The federal item is matched on tax year and taxpayer, original returns only, of a form the rule names (CA: Form
+    1040 or 1040-SR). Its attached forms, less those the question excepts, decide the answer; when it says Yes, the
+    federal item's own attachment list is what goes behind the state return. No such item: the question is printed for
+    the filer to answer.
+    """
+    wanted = {f.upper().replace(" ", "") for f in rule.federal_forms}
+    feds = [
+        m for m in manifest
+        if m.jurisdiction == "federal" and m.tax_year == item.tax_year and m.taxpayer == item.taxpayer
+        and not _is_amended(m) and _form_number(m.form).upper().replace(" ", "").removeprefix("F") in wanted
+    ]
+    returns = " or ".join(f"Form {f}" for f in rule.federal_forms)
+    notice = f'Form {item.form} itself says: "{rule.notice}" ' if rule.notice else ""
+    asks = f'{notice}The {code} booklet asks: "{rule.question}"'
+    if not feds:
+        return [
+            f"Federal return copy: {asks} No federal {returns} for {item.tax_year} is in this manifest, so this "
+            f'checklist cannot answer it; answer it from your federal return. "{rule.if_no}" "{rule.if_yes}" '
+            f"({rule.pinpoint})"
+        ]
+    excepted = {_schedule_letter(n) for n in rule.not_counted} - {None}
+    attached = list(dict.fromkeys(f for fed in feds for f in fed.attached_forms))
+    counted = [f for f in attached if _schedule_letter(f) not in excepted]
+    federal = " and ".join(dict.fromkeys(_form_name(fed.form) for fed in feds))
+    if not counted:
+        listed = f"lists only {', '.join(map(_form_name, attached))}" if attached else "lists no attached forms"
+        return [
+            f"Federal return copy: No. {asks} Your federal {federal} in this manifest {listed}, so: "
+            f'"{rule.if_no}" ({rule.pinpoint})'
+        ]
+    lines = [
+        f"Federal return copy: Yes. {asks} Your federal {federal} in this manifest lists "
+        f'{", ".join(map(_form_name, counted))}, so: "{rule.if_yes}" Put behind your {code} schedules: {federal}, '
+        f'{", ".join(map(_form_name, attached))}. ({rule.pinpoint})'
+    ]
+    drafts = _unmapped_attachments(attached, item.tax_year)
+    if drafts:
+        from taxfill_core.filler import UNMAPPED_STAMP
+
+        lines.append(
+            f"{', '.join(map(_form_name, drafts))}: no TaxFill form pack ships for {'it' if len(drafts) == 1 else 'them'} in "
+            f'{item.tax_year}, so a copy drafted with form="unmapped" is stamped "{UNMAPPED_STAMP}" and is not '
+            f"a filing copy: copy its values onto the official blank before attaching it, here and to the federal "
+            f"return."
+        )
+    return lines
+
+
+def _state_assembly(
+    asm, item: FilingManifestItem, manifest: list[FilingManifestItem], code: str
+) -> tuple[list[str], list[Citation]]:
+    """The assemble list from a pack's cited ``assembly`` block (JW2b, P1-03), with the block's citations."""
+    lines = ["Print only the form pages (not instructions), single-sided.", *asm.lines]
+    if asm.federal_copy is not None:
+        lines.extend(_federal_copy_lines(asm.federal_copy, item, manifest, code))
+        if asm.federal_copy.exception:
+            lines.append(f"Whether this applies is not in the manifest: {asm.federal_copy.exception}")
+    return lines, [asm.citation, *asm.citations]
+
+
+def _state_return(
+    item: FilingManifestItem, knowledge_dir, manifest: list[FilingManifestItem] | None = None
+) -> ReturnInstructions:
     """Last-mile checklist for a state return, from the state knowledge pack.
 
     Logistics figures carry the pack's verification caveat (some state data could
     not be independently re-confirmed); they are surfaced with a 'confirm at the
-    DOR' note rather than presented as fully verified.
+    DOR' note rather than presented as fully verified. A pack with an ``assembly``
+    block (JW2b: California) gets its cited assembly steps, with the federal-copy
+    rule answered from the federal item of ``manifest``; any other keeps the
+    generic line.
     """
     state = item.jurisdiction.split("/", 1)[1] if "/" in item.jurisdiction else item.jurisdiction
     refund, owes = item.bottom_line > 0, item.bottom_line < 0
@@ -1484,13 +1601,18 @@ def _state_return(item: FilingManifestItem, knowledge_dir) -> ReturnInstructions
                      f"conform to federal tax treaties, so that income is still taxable to {state.upper()} — do not "
                      f"carry the federal exclusion onto the state return.")
 
+    assemble = [_GENERIC_STATE_ASSEMBLE]
+    if sk.assembly is not None:
+        assemble, assembly_cites = _state_assembly(sk.assembly, item, manifest or [item], state.upper())
+        citations.extend(assembly_cites)
+
     sign = ["Print the form pages, sign and date the return in ink."]
     if item.filing_jointly:
         sign.append("Joint return — BOTH spouses must sign.")
     return ReturnInstructions(
         form=item.form, jurisdiction=item.jurisdiction, tax_year=item.tax_year, bottom_line=bottom,
         payment=payment, mailing_address=mailing_address, sign=sign,
-        assemble=["Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099."],
+        assemble=assemble,
         mail=["Use a separate envelope from the federal return.",
               "Certified Mail with Return Receipt gives you proof of timely filing."],
         records=["Photograph the signed pages; keep a copy and the mailing receipt."],
@@ -1662,7 +1784,7 @@ def file_and_pay(
         if item.jurisdiction == "federal":
             returns.append(_federal_return(item, knowledge_dir, today))
         else:
-            returns.append(_state_return(item, knowledge_dir))
+            returns.append(_state_return(item, knowledge_dir, manifest))
 
     overall: list[str] = [DRAFT_NOTICE]
     if len(manifest) > 1:

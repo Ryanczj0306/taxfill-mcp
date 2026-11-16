@@ -1,7 +1,7 @@
 {
  "_strings": {
   "@@0ad15e7469e1": "2025 Personal Income Tax Booklet (Form 540), Important Dates, p. 3 — \"April 15, 2026: Last day to file and pay the 2025 amount you owe to avoid penalties and interest\"; \"October 15, 2026: Last day to file or e-file your 2025 tax return to avoid a late filing penalty and interest computed from the original due date of April 15, 2026\"",
-  "@@1b090f3f0709": "Print only the form pages (not instructions), single-sided; attach state copies of W-2/1099.",
+  "@@1670a638d264": "Forms W-2: \"Attach all the Forms W-2 and W-2G you received to the lower front of your tax return. Also, attach any Forms 1099, 592-B, and 593 showing California income tax withheld.\" (booklet p. 23)",
   "@@269526fa0b01": "2025 Form 540, lines 13-17: federal AGI, California subtractions and additions from Schedule CA (540), California adjusted gross income",
   "@@2ec96343e2e3": "For tax year 2025: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2025 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
   "@@3145cdc6995b": "Law change NOT modeled by the engine (status final_form_published): The Mental Health Services Act was RENAMED the Behavioral Health Services Act, verbatim from the 2025 booklet's tax-law-changes/What's New section: \"Behavioral Health Services Act – For taxable years beginning on or after January 1, 2025, the Mental Health Services Act has been renamed to the Behavioral Health Services Act. Therefore, references to the Mental Health Services Tax have been renamed to Behavioral Health Services Tax.\" Form 540 line 62 is now the Behavioral Health Services Tax — same 1% rate, same $1,000,000 taxable-income threshold, same line as the 2024 Mental Health Services Tax. Resolve via: 2025 Personal Income Tax Booklet (Form 540), Line 62 Behavioral Health Services Tax worksheet (the citation URL): taxable income (line 19) less $1,000,000, times 1%, whole dollars only. This block reproduces line 31 only and never adds the surcharge.",
@@ -12,11 +12,18 @@
   "@@5c54c6c74f12": "If any income was exempt from federal tax under a treaty: CA does not conform to federal tax treaties — that income is still taxable to CA.",
   "@@6376293e0da7": "2025 Form 540NR, California Nonresident or Part-Year Resident Income Tax Return — the 6-page return itself (Side 1 heading: 'California Nonresident or Part-Year Resident Income Tax Return', 'TAXABLE YEAR 2025')",
   "@@747e52046e32": "FTB Publication 1031 (2025), Guidelines for Determining Resident Status — Tax Treaty section (p. 10)",
+  "@@7c3e79e66813": "2025 Personal Income Tax Booklet (Form 540), \"Attachments to your tax return\" and \"Assembling Your Tax Return\", p. 23; the six-sides caution, p. 11",
+  "@@7cb1aeb8453f": "2025 Personal Income Tax Booklet (Form 540), web edition: the text of the assembly order diagram (payment, W-2s on the lower front, six sides, supporting California schedules, then the copy of the federal return)",
+  "@@8dfac6f6b799": "Form 540 has six sides: \"Caution: Form 540 has six sides. When filing Form 540, you must send all six sides to the Franchise Tax Board (FTB) and Side 6 must be signed.\" (2025 Form 540 booklet, p. 11)",
+  "@@93da6cde286d": "Nothing else: \"Do not attach any documents to your tax return unless specifically instructed.\" (booklet p. 23)",
+  "@@943009281296": "Order: \"Assemble your tax return in the following order: If required, enclose payment, but do not staple. Attach all forms W-2, W-2G, 1099, 592-B, and 593 to the lower front page of your form 540. Form 540 has six sides. Put the pages in numerical order and send all six sides to the FTB. After side six of form 540, put any supporting California forms or schedules you completed (for example Schedule CA, Schedule D, form 3514). Behind the supporting forms or schedules, put a copy of your federal tax return and other state tax return if required.\" (booklet \"Assembling Your Tax Return\", p. 23: the web edition's text of the order diagram)",
   "@@94cf5df52d86": "https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites",
   "@@956d61148f1d": "Exemption credits NOT applied: no exemption_credit_counts were passed, so tax is CA's tax line BEFORE them. Pass exemption_credit_counts (kinds: personal, blind, senior, dependent) and federal_agi to get Form 540 line 32 and line 33.",
   "@@99df689c470b": "California grants an automatic paper-filing extension to October 15, 2026 with no form required; tax owed must still be paid by April 15, 2026 (form FTB 3519) to avoid penalties and interest. Taxpayers living or traveling outside the United States on April 15, 2026 get the federal-style extended dates.",
+  "@@9ec143f2b4e4": "Whether this applies is not in the manifest: Exception: If you did not itemize deductions on your federal tax return but will itemize deductions on your California tax return, complete and attach a copy of the federal Schedule A (Form 1040) to Form 540.",
   "@@a855ee5e7016": "Young Child Tax Credit (YCTC) — Available if you qualified for the California EITC (or would have been allowed it but for earned income of zero dollars or less) and have at least one qualifying child younger than six years old as of the last day of the taxable year. Computed on form FTB 3514.",
   "@@ab2274bb38ab": "Nonrefundable Renter's Credit — Full-year California resident who paid rent for at least half of 2025 on a non-property-tax-exempt principal residence in California; California AGI within the limit; did not claim (and spouse/RDP did not claim, subject to lived-apart exceptions) the homeowner's property tax exemption; not living for more than half the year in the home of a person who can claim them as a dependent.",
+  "@@abfe709ccd47": "Schedule CA (540): \"Important: Attach this schedule behind Form 540, Side 6 as a supporting California schedule.\" (2025 Schedule CA (540), Side 1)",
   "@@b31d1ebab6ce": "2025 Personal Income Tax Booklet (Form 540), 2025 Schedule CA (540) line directions (pp. 55-67): HSA (health savings account) deduction, W-2 box 12 code W HSA contributions, HSA interest and earnings, HSA distributions, U.S. Treasury and other U.S. obligation interest; column B subtractions, column C additions",
   "@@c1369033fed5": "Credit amounts/limits are not independently verified: Dollar limits below are transcribed from the cited 2025 FTB booklet and re-confirmed against the FTB HTML edition of the same booklet (two-pass: the $53,994/$107,988 renter's-credit AGI ceilings and the $32,901 CalEITC earned-income ceiling were re-grepped out of the independently published HTML). Confirm your eligibility at the cited URL before relying on a figure.",
   "@@c4a5951c662f": "annual (per tax year; the newest shipped CA pack covers 2025 — for any newer year re-resolve at this URL family and cite)",
@@ -24,11 +31,13 @@
   "@@d0e634ab6456": "2025 California 540NR Nonresident or Part-Year Resident Booklet (FTB), 'Which Form To Use' (p. 5): 'Use Form 540NR if either you or your spouse/RDP were a nonresident or part-year resident in taxable year 2025.'",
   "@@d469e1e9aaeb": "2025 Personal Income Tax Booklet, California Forms & Instructions 540 (Franchise Tax Board) — the Form 540 printed in it (Side 1 lines 6-9 \"X $153\"; Side 2 line 10 \"X $475\", lines 11 and 31-33), p. 12 \"Line 6 – Can be Claimed as Dependent\" through \"Line 11 – Exemption Amount\", and p. 14 \"Line 32 – Exemption Credits\" with the AGI Limitation Worksheet. Second pass: the standalone 2025 Form 540 (ftb.ca.gov/forms/2025/2025-540.pdf) prints the same amounts and line text; the 2025 Form 540NR (ftb.ca.gov/forms/2025/2025-540nr.pdf) lines 38-40 for the proration note. Each fetched twice on 2026-10-16 with identical sha256.",
   "@@d4bf29810f68": "If any of your income was exempt from federal tax under a treaty: CA does not conform to federal tax treaties, so that income is still taxable to CA — do not carry the federal exclusion onto the state return.",
+  "@@df2d26fbb17b": "2025 Form 540, Side 6: the notice on attaching a copy of the complete federal return",
   "@@e0667f2d1b03": "Exemption credits applied: Form 540 line 32 = $934; tax after them (line 33) = $30. tax itself stays the line before the credits. Line 33 here is counted from the rate-schedule tax: when the filed tax line comes from the state's tax table instead (the notes say when), line 33 = max(0, that table amount - $934).",
   "@@e49c4f8ec7dc": "2025 Schedule CA (540), California Adjustments: column B Subtractions, column C Additions; line 27 carries to Form 540 lines 14 and 16",
   "@@e7c0b0724bfc": "California Earned Income Tax Credit (CalEITC) — Requires California wage income and/or net earnings from self-employment of less than $32,901 (2025). You do not need a child to qualify. Computed on form FTB 3514.",
   "@@eb71823a243b": "Multi-state income allocation (which dollars belong to which state) is your and the user's judgment; this tool scopes the returns and supplies the rules/warnings, not the allocation.",
   "@@eb79be1a5d3c": "2025 Personal Income Tax Booklet (Form 540), \"Mailing Your Tax Return\" (amount due -> PO Box 942867; refund or no amount due -> PO Box 942840)",
+  "@@f3bb15b70474": "Federal return copy: Form 540 itself says: \"IMPORTANT: See the instructions to find out if you should attach a copy of your complete federal tax return.\" The CA booklet asks: \"Other than Schedule A (Form 1040) or Schedule B (Form 1040), Interest and Ordinary Dividends, did you attach any federal forms or schedules to your federal Form 1040 or 1040-SR?\" No federal Form 1040 or Form 1040-SR for 2025 is in this manifest, so this checklist cannot answer it; answer it from your federal return. \"If No, do not attach a copy of your federal Form 1040 or 1040-SR return to Form 540.\" \"If Yes, attach a copy of your federal Form 1040 or 1040-SR return and all supporting federal forms and schedules to Form 540.\" (booklet p. 23, \"Attachments to your tax return\" (\"Do I need to attach a copy of federal Form 1040 or 1040-SR?\"); Form 540 Side 6 prints the notice)",
   "@@f8d58d3084e1": "IRS — State government websites: every state's tax agency, the way to its amended-return instructions"
  },
  "file_and_pay": {
@@ -39,7 +48,14 @@
   "returns": [
    {
     "assemble": [
-     "@@1b090f3f0709"
+     "Print only the form pages (not instructions), single-sided.",
+     "@@8dfac6f6b799",
+     "@@1670a638d264",
+     "@@abfe709ccd47",
+     "@@943009281296",
+     "@@93da6cde286d",
+     "@@f3bb15b70474",
+     "@@9ec143f2b4e4"
     ],
     "bottom_line": "Refund of $512",
     "citations": [
@@ -50,6 +66,22 @@
      {
       "source": "@@0ad15e7469e1",
       "url": "https://www.ftb.ca.gov/forms/2025/2025-540-booklet.pdf"
+     },
+     {
+      "source": "@@7c3e79e66813",
+      "url": "https://www.ftb.ca.gov/forms/2025/2025-540-booklet.pdf"
+     },
+     {
+      "source": "@@7cb1aeb8453f",
+      "url": "https://www.ftb.ca.gov/forms/2025/2025-540-booklet.html"
+     },
+     {
+      "source": "@@df2d26fbb17b",
+      "url": "https://www.ftb.ca.gov/forms/2025/2025-540.pdf"
+     },
+     {
+      "source": "2025 Schedule CA (540), Side 1: attach this schedule behind Form 540, Side 6",
+      "url": "https://www.ftb.ca.gov/forms/2025/2025-540-ca.pdf"
      }
     ],
     "deadlines": [
@@ -78,7 +110,14 @@
    },
    {
     "assemble": [
-     "@@1b090f3f0709"
+     "Print only the form pages (not instructions), single-sided.",
+     "@@8dfac6f6b799",
+     "@@1670a638d264",
+     "@@abfe709ccd47",
+     "@@943009281296",
+     "@@93da6cde286d",
+     "@@f3bb15b70474",
+     "@@9ec143f2b4e4"
     ],
     "bottom_line": "You owe $347.",
     "citations": [
@@ -89,6 +128,22 @@
      {
       "source": "@@0ad15e7469e1",
       "url": "https://www.ftb.ca.gov/forms/2025/2025-540-booklet.pdf"
+     },
+     {
+      "source": "@@7c3e79e66813",
+      "url": "https://www.ftb.ca.gov/forms/2025/2025-540-booklet.pdf"
+     },
+     {
+      "source": "@@7cb1aeb8453f",
+      "url": "https://www.ftb.ca.gov/forms/2025/2025-540-booklet.html"
+     },
+     {
+      "source": "@@df2d26fbb17b",
+      "url": "https://www.ftb.ca.gov/forms/2025/2025-540.pdf"
+     },
+     {
+      "source": "2025 Schedule CA (540), Side 1: attach this schedule behind Form 540, Side 6",
+      "url": "https://www.ftb.ca.gov/forms/2025/2025-540-ca.pdf"
      }
     ],
     "deadlines": [
@@ -119,7 +174,14 @@
    },
    {
     "assemble": [
-     "@@1b090f3f0709"
+     "Print only the form pages (not instructions), single-sided.",
+     "@@8dfac6f6b799",
+     "@@1670a638d264",
+     "@@abfe709ccd47",
+     "@@943009281296",
+     "@@93da6cde286d",
+     "@@f3bb15b70474",
+     "@@9ec143f2b4e4"
     ],
     "bottom_line": "You owe $1,205. Already paid.",
     "citations": [
@@ -130,6 +192,22 @@
      {
       "source": "@@0ad15e7469e1",
       "url": "https://www.ftb.ca.gov/forms/2025/2025-540-booklet.pdf"
+     },
+     {
+      "source": "@@7c3e79e66813",
+      "url": "https://www.ftb.ca.gov/forms/2025/2025-540-booklet.pdf"
+     },
+     {
+      "source": "@@7cb1aeb8453f",
+      "url": "https://www.ftb.ca.gov/forms/2025/2025-540-booklet.html"
+     },
+     {
+      "source": "@@df2d26fbb17b",
+      "url": "https://www.ftb.ca.gov/forms/2025/2025-540.pdf"
+     },
+     {
+      "source": "2025 Schedule CA (540), Side 1: attach this schedule behind Form 540, Side 6",
+      "url": "https://www.ftb.ca.gov/forms/2025/2025-540-ca.pdf"
      }
     ],
     "deadlines": [
@@ -349,10 +427,28 @@
    "retrieval_hint": "@@2ec96343e2e3",
    "sources": [
     {
-     "answers": "2025 Personal Income Tax Booklet (Form 540), \"Do I Have to File?\" Steps 1-4 and the gross income / adjusted gross income chart, p. 4 || 2025 Personal Income Tax Booklet (Form 540), \"Mailing Your Tax Return\" (amount due -> PO Box 942867; refund or no amount due -> PO Box 942840) || 2025 Personal Income Tax Booklet (Form 540), \"Payment Options\" — Web Pay / credit card (ACI Payments, jurisdiction code 1555) / check or money order || 2025 Personal Income Tax Booklet (Form 540), Important Dates, p. 3 — \"April 15, 2026: Last day to file and pay the 2025 amount you owe to avoid penalties and interest\"; \"October 15, 2026: Last day to file or e-file your 2025 tax return to avoid a late filing penalty and interest computed from the original due date of April 15, 2026\"",
+     "answers": "2025 Personal Income Tax Booklet (Form 540), \"Do I Have to File?\" Steps 1-4 and the gross income / adjusted gross income chart, p. 4 || 2025 Personal Income Tax Booklet (Form 540), \"Mailing Your Tax Return\" (amount due -> PO Box 942867; refund or no amount due -> PO Box 942840) || 2025 Personal Income Tax Booklet (Form 540), \"Payment Options\" — Web Pay / credit card (ACI Payments, jurisdiction code 1555) / check or money order || 2025 Personal Income Tax Booklet (Form 540), Important Dates, p. 3 — \"April 15, 2026: Last day to file and pay the 2025 amount you owe to avoid penalties and interest\"; \"October 15, 2026: Last day to file or e-file your 2025 tax return to avoid a late filing penalty and interest computed from the original due date of April 15, 2026\" || 2025 Personal Income Tax Booklet (Form 540), \"Attachments to your tax return\" and \"Assembling Your Tax Return\", p. 23; the six-sides caution, p. 11",
      "cadence": "@@c4a5951c662f",
      "topic": "filing_logistics",
      "url": "https://www.ftb.ca.gov/forms/2025/2025-540-booklet.pdf"
+    },
+    {
+     "answers": "@@7cb1aeb8453f",
+     "cadence": "@@c4a5951c662f",
+     "topic": "filing_logistics",
+     "url": "https://www.ftb.ca.gov/forms/2025/2025-540-booklet.html"
+    },
+    {
+     "answers": "@@df2d26fbb17b",
+     "cadence": "@@c4a5951c662f",
+     "topic": "filing_logistics",
+     "url": "https://www.ftb.ca.gov/forms/2025/2025-540.pdf"
+    },
+    {
+     "answers": "2025 Schedule CA (540), Side 1: attach this schedule behind Form 540, Side 6",
+     "cadence": "@@c4a5951c662f",
+     "topic": "filing_logistics",
+     "url": "https://www.ftb.ca.gov/forms/2025/2025-540-ca.pdf"
     }
    ],
    "topic": "filing_logistics",

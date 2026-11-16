@@ -546,6 +546,46 @@ logistics:
     ref:
       id: logistics-1
       description: 2
+  assembly:
+    form: '540'
+    lines:
+    - 'Form 540 has six sides: "Caution: Form 540 has six sides. When filing Form 540, you must send all six sides to the
+      Franchise Tax Board (FTB) and Side 6 must be signed." (2025 Form 540 booklet, p. 11)'
+    - 'Forms W-2: "Attach all the Forms W-2 and W-2G you received to the lower front of your tax return. Also, attach any
+      Forms 1099, 592-B, and 593 showing California income tax withheld." (booklet p. 23)'
+    - 'Schedule CA (540): "Important: Attach this schedule behind Form 540, Side 6 as a supporting California schedule."
+      (2025 Schedule CA (540), Side 1)'
+    - 'Order: "Assemble your tax return in the following order: If required, enclose payment, but do not staple. Attach
+      all forms W-2, W-2G, 1099, 592-B, and 593 to the lower front page of your form 540. Form 540 has six sides. Put the
+      pages in numerical order and send all six sides to the FTB. After side six of form 540, put any supporting California
+      forms or schedules you completed (for example Schedule CA, Schedule D, form 3514). Behind the supporting forms or
+      schedules, put a copy of your federal tax return and other state tax return if required." (booklet "Assembling Your
+      Tax Return", p. 23: the web edition''s text of the order diagram)'
+    - 'Nothing else: "Do not attach any documents to your tax return unless specifically instructed." (booklet p. 23)'
+    federal_copy:
+      notice: 'IMPORTANT: See the instructions to find out if you should attach a copy of your complete federal tax return.'
+      question: Other than Schedule A (Form 1040) or Schedule B (Form 1040), Interest and Ordinary Dividends, did you attach
+        any federal forms or schedules to your federal Form 1040 or 1040-SR?
+      if_no: If No, do not attach a copy of your federal Form 1040 or 1040-SR return to Form 540.
+      if_yes: If Yes, attach a copy of your federal Form 1040 or 1040-SR return and all supporting federal forms and schedules
+        to Form 540.
+      exception: 'Exception: If you did not itemize deductions on your federal tax return but will itemize deductions on
+        your California tax return, complete and attach a copy of the federal Schedule A (Form 1040) to Form 540.'
+      federal_forms:
+      - '1040'
+      - 1040-SR
+      not_counted:
+      - Schedule A
+      - Schedule B
+      pinpoint: booklet p. 23, "Attachments to your tax return" ("Do I need to attach a copy of federal Form 1040 or 1040-SR?");
+        Form 540 Side 6 prints the notice
+    citation:
+      id: logistics-1
+      description: 4
+    citations:
+    - id: logistics-2
+    - id: logistics-3
+    - id: logistics-4
 gaps:
 - about: base_line
   detail: 'No quoted base line: the v1 pack quotes none (JK22 dropped `starts_from`); tax.base says only which kind of figure
@@ -560,7 +600,7 @@ gaps:
     JK26 splits them out for the JK23 checker.
 - about: migration
   detail: 'Kept as plain strings, neither a quote nor a pointer: tax.tax_line, the exemption notes, the exemption-credit
-    notes, the adjustments block''s lines and quotes (JW2b). JK26 types them.'
+    notes, the adjustments block''s lines and quotes (JW2b), the assembly block''s lines and quotes (JW2b). JK26 types them.'
 - about: migration
   detail: 'all_citations (6 entries) is not carried: each is a `sources` row (forms-4, forms-5, forms-6, forms-7, forms-1,
     forms-8) whose descriptions hold its text.'
@@ -623,6 +663,8 @@ sources:
   - '2025 Personal Income Tax Booklet (Form 540), Important Dates, p. 3 — "April 15, 2026: Last day to file and pay the
     2025 amount you owe to avoid penalties and interest"; "October 15, 2026: Last day to file or e-file your 2025 tax return
     to avoid a late filing penalty and interest computed from the original due date of April 15, 2026"'
+  - 2025 Personal Income Tax Booklet (Form 540), "Attachments to your tax return" and "Assembling Your Tax Return", p. 23;
+    the six-sides caution, p. 11
 - id: forms-4
   topic: forms_and_instructions
   url: https://www.ftb.ca.gov/forms/2025/2025-540-booklet.pdf
@@ -705,3 +747,19 @@ sources:
   descriptions:
   - '2025 Form 540, lines 13-17: federal AGI, California subtractions and additions from Schedule CA (540), California adjusted
     gross income'
+- id: logistics-2
+  topic: filing_logistics
+  url: https://www.ftb.ca.gov/forms/2025/2025-540-booklet.html
+  descriptions:
+  - '2025 Personal Income Tax Booklet (Form 540), web edition: the text of the assembly order diagram (payment, W-2s on
+    the lower front, six sides, supporting California schedules, then the copy of the federal return)'
+- id: logistics-3
+  topic: filing_logistics
+  url: https://www.ftb.ca.gov/forms/2025/2025-540.pdf
+  descriptions:
+  - '2025 Form 540, Side 6: the notice on attaching a copy of the complete federal return'
+- id: logistics-4
+  topic: filing_logistics
+  url: https://www.ftb.ca.gov/forms/2025/2025-540-ca.pdf
+  descriptions:
+  - '2025 Schedule CA (540), Side 1: attach this schedule behind Form 540, Side 6'
