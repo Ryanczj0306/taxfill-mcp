@@ -988,10 +988,11 @@ relations:
   - "II7_A == II5e_A + II6_A"
   - "II7_B == II5e_B + II6_B"
   - "II7_C == II5e_C + II6_C"
-  # 8e "Add line 8a through line 8c" (8d "Reserved for future use" is outside the range). Column B prints an 8e box
-  # but no 8a-8c box, so no column B sum is declared.
+  # 8e "Add line 8a through line 8c" (8d "Reserved for future use" is outside the range), column A only. Columns B
+  # and C are left out: column B prints an 8e box but no 8a-8c box, and the booklet sends each column C adjustment to
+  # "line 8, column C" without naming 8a, 8b or 8c ("If your deduction was limited under federal law, enter an
+  # adjustment on line 8, column C for the amount over the federal limit"), so 8e may carry it directly.
   - "II8e_A == II8a_A + II8b_A + II8c_A"
-  - "II8e_C == II8a_C + II8b_C + II8c_C"
   # 10 "Add line 8e and line 9".
   - "II10_A == II8e_A + II9_A"
   - "II10_B == II8e_B + II9_B"

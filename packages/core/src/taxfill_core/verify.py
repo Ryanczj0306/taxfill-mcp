@@ -2497,12 +2497,16 @@ def _middle_initial_line(pack: FormPack, name: str) -> str | None:
     return None
 
 
-def _composed_name_key(value: str) -> str:
-    """A first name (and initial) with periods dropped and spaces collapsed, case-folded: 'Avery J.' == 'avery j'.
+def _first_and_initial(value: str) -> tuple[str, str]:
+    """Split 'first name and middle initial' into (first name, initial), periods dropped, spaces collapsed, case-folded.
 
-    Spaces are collapsed, not removed, so 'Jo' + 'E' does not pass for a combined 'Joe'.
+    A trailing one-letter word is the initial: 'Avery J.' -> ('avery', 'j'); 'Mary Ann' -> ('mary ann', '');
+    'Joe' -> ('joe', ''), so 'Jo' + 'E' never passes for 'Joe'.
     """
-    return " ".join(value.replace(".", " ").split()).casefold()
+    words = value.replace(".", " ").casefold().split()
+    if len(words) > 1 and len(words[-1]) == 1:
+        return " ".join(words[:-1]), words[-1]
+    return " ".join(words), ""
 
 
 def _identity_checks(
@@ -2588,9 +2592,11 @@ def _identity_checks(
             )
             continue
         # JW2c (P1-04): when one form prints "first name" and "initial" in separate boxes and another prints one
-        # "first name and middle initial" box (Form 1040), the combined box is compared with first name + initial,
-        # periods dropped, spaces collapsed, case-folded: 'Avery J.' matches 'Avery' + 'J'; 'Avery J.' against 'Avery' + 'K'
-        # and 'Avery' against 'Avory' still differ. Forms that all print the same shape compare as before.
+        # "first name and middle initial" box (Form 1040), each form's value is read as first name + initial (periods
+        # dropped, spaces collapsed, case-folded). The first names must match, and so must the initials where both
+        # forms carry one: 'Avery J.' matches 'Avery' + 'J', and an initial left off one form is no difference (the box
+        # on Iowa's IA 1040 is "First Name" alone); 'Avery J.' against 'Avery' + 'K' and 'Avery' against 'Avory' still
+        # differ. Forms that all print the same shape compare as before.
         initials = {key: initials_by_form[key] for key in values_by_form if key in initials_by_form}
         composed = 0 < len(initials) < len(values_by_form)
         composed_note = ""
@@ -2602,12 +2608,17 @@ def _identity_checks(
             combined = [key for key in values_by_form if key not in initials]
             composed_note = (
                 f" (compared as first name + middle initial: {', '.join(sorted(initials))} print(s) a separate "
-                f"initial box, {', '.join(combined)} one 'first name and middle initial' box; periods, extra spaces "
-                f"and case ignored)"
+                f"initial box, {', '.join(combined)} one box; an initial on one form only is no difference; "
+                f"periods, extra spaces and case ignored)"
             )
         listing = ", ".join(f"{key}={value!r}" for key, value in values_by_form.items())
         if composed:
-            distinct = {_composed_name_key(value) for value in values_by_form.values()}
+            parsed = [_first_and_initial(value) for value in values_by_form.values()]
+            firsts = {first for first, _ in parsed}
+            if len(firsts) == 1 and len({initial for _, initial in parsed if initial}) <= 1:
+                distinct = firsts
+            else:
+                distinct = {f"{first} {initial}".strip() for first, initial in parsed}
         else:
             distinct = {value.casefold() for value in values_by_form.values()}
         if distinct == {""}:

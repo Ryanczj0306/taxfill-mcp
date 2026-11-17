@@ -99,7 +99,7 @@ def test_schedule_ca_declares_a_relation_for_each_printed_total():
     assert lhs == {
         "1z_A", "1z_B", "1z_C", "B9a_A", "B9a_B", "B9a_C", "B10_A", "B10_B", "B10_C",
         "C25_A", "C25_B", "C25_C", "C26_A", "C26_B", "C26_C", "C27_A", "C27_B", "C27_C",
-        "II4_A", "II5d_A", "II5e_B", "II5e_C", "II7_A", "II7_B", "II7_C", "II8e_A", "II8e_C",
+        "II4_A", "II5d_A", "II5e_B", "II5e_C", "II7_A", "II7_B", "II7_C", "II8e_A",
         "II10_A", "II10_B", "II10_C", "II14_A", "II14_B", "II14_C", "II17_A", "II17_B", "II17_C",
         "II18", "II22", "II25", "II26", "II28",
     }
@@ -172,3 +172,19 @@ def test_verify_filing_reads_a_parenthesised_carryover_from_disk():
     assert failing == []
     names = {c.relation for c in report.relations}
     assert f"sched_d: {SCHED_D_NEW[0]}" in names and "sched_ca_540: II18 == II17_A - II17_B + II17_C" in names
+
+
+@pytest.mark.parametrize("written", ["-500", "(500)"])
+def test_a_negative_line_27_is_read_signed_from_disk(written):
+    # Column B subtractions 300 against Section C column B adjustments 800: line 27 column B is -500, which the booklet
+    # sends to Form 540 line 16 as a positive number ("If column B is a negative number, transfer the amount as a
+    # positive number to Form 540, line 16"). Line 27 itself stays negative.
+    values = {"2b_A": 2450, "2b_B": 300, "B10_A": 2450, "B10_B": 300,
+              "C11_A": 800, "C11_B": 800, "C26_A": 800, "C26_B": 800, "C27_A": 1650}
+    fields = {**_dump(SCHED_CA, values), **_dump(SCHED_CA, {"C27_B": 0}, lambda _amount: written)}
+    report = verify_filing([FilingItem(form_key="sched_ca_540", pack=SCHED_CA, fields=fields)])
+    assert [c.detail for c in report.relations if c.status == "FAIL"] == []
+    lost_sign = {**fields, **_dump(SCHED_CA, {"C27_B": 500})}
+    report = verify_filing([FilingItem(form_key="sched_ca_540", pack=SCHED_CA, fields=lost_sign)])
+    failed = [c.relation for c in report.relations if c.status == "FAIL"]
+    assert failed == ["sched_ca_540: C27_B == B10_B - C26_B"]

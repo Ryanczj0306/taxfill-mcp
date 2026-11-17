@@ -3,7 +3,8 @@
 Form 1040 prints "Your first name and middle initial" as one box; Form 540 prints "Your first name" and "Initial".
 Both packs key the first-name box ``name.first``, so the identity check compared 'Avery J.' (1040) with 'Avery'
 (540) and failed a correct filing. The check now compares the combined box with first name + initial (periods dropped,
-spaces collapsed, case-folded) whenever the filing mixes the two shapes. Fictitious names only.
+spaces collapsed, case-folded) whenever the filing mixes the two shapes; an initial on one form only is no difference.
+Fictitious names only.
 """
 
 from __future__ import annotations
@@ -56,6 +57,8 @@ def _first_name_check(items: list[FilingItem]):
     ("AVERY j.", "avery", "J"),
     ("Avery", "Avery", ""),             # no initial on either form
     ("Mary Ann K.", "Mary Ann", "K"),   # a two-word first name
+    ("Avery J.", "Avery", ""),          # an initial on one form only is no difference
+    ("Avery", "Avery", "J"),
 ])
 def test_combined_box_matches_first_name_plus_initial(combined, first, initial, combined_first):
     items = [_item("f1040", COMBINED, {"name.first": combined, "name.last": "Example"}),
@@ -70,8 +73,7 @@ def test_combined_box_matches_first_name_plus_initial(combined, first, initial, 
     ("Avery J.", "Avery", "K"),     # a different initial
     ("Avery", "Avory", ""),         # a different first name
     ("Avery J.", "Avory", "J"),     # a different first name, same initial
-    ("Avery J.", "Avery", ""),      # the initial on one form only
-    ("Avery", "Avery", "J"),        # the initial on the other form only
+    ("Avery J.", "Avory", ""),      # a different first name, one initial
     ("Joe", "Jo", "E"),             # spaces are collapsed, not removed
 ])
 def test_a_real_difference_still_fails(combined, first, initial, combined_first):
@@ -128,3 +130,12 @@ def test_shipped_2025_form_1040_and_form_540_packs(initial, status):
                              "identifying_number": "999-88-1234"})
     check = _first_name_check([f1040, form540])
     assert check.status == status, check.detail
+
+
+def test_two_different_initials_across_three_forms_fail():
+    check = _first_name_check([
+        _item("f1040", COMBINED, {"name.first": "Avery", "name.last": "Example"}),
+        _item("form540", SEPARATE, {"name.first": "Avery", "name.middle_initial": "J", "name.last": "Example"}),
+        _item("d40", SEPARATE, {"name.first": "Avery", "name.middle_initial": "K", "name.last": "Example"}),
+    ])
+    assert check.status == "FAIL", check.detail
