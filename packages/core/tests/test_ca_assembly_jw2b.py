@@ -191,3 +191,11 @@ def test_a_federal_return_query_always_reaches_form_540nr_and_its_own_notice(que
     # "IMPORTANT: Attach a copy of your complete federal return." A 540NR filer's query must reach the latter.
     urls = {s.url for s in get_sources(query, 2025, "states/ca").sources}
     assert "https://www.ftb.ca.gov/forms/2025/2025-540nr.pdf" in urls, query
+
+
+def test_the_540nr_federal_copy_source_names_form_1040nr():
+    # 2025 540NR booklet p.11 names "Form 1040 ...; Form 1040-SR ...; or Form 1040-NR" as the federal income tax
+    # return; a federal nonresident alien must not be told to attach a Form 1040 they never filed.
+    rows = [s for s in get_sources("540NR federal return", 2025, "states/ca").sources
+            if s.url.endswith("/2025-540nr.pdf")]
+    assert rows and any("1040-NR" in s.answers for s in rows)

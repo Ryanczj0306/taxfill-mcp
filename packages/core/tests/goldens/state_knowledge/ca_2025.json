@@ -2,10 +2,10 @@
  "_strings": {
   "@@0ad15e7469e1": "2025 Personal Income Tax Booklet (Form 540), Important Dates, p. 3 — \"April 15, 2026: Last day to file and pay the 2025 amount you owe to avoid penalties and interest\"; \"October 15, 2026: Last day to file or e-file your 2025 tax return to avoid a late filing penalty and interest computed from the original due date of April 15, 2026\"",
   "@@1670a638d264": "Forms W-2: \"Attach all the Forms W-2 and W-2G you received to the lower front of your tax return. Also, attach any Forms 1099, 592-B, and 593 showing California income tax withheld.\" (booklet p. 23)",
+  "@@18013efbda54": "2025 Form 540NR (nonresident or part-year resident), Side 6 and booklet: always attach a copy of the complete federal Form 1040, 1040-SR or 1040-NR, with all its supporting forms and schedules",
   "@@259d0e6f2d00": "2025 California Adjustments line directions, FTB web edition (the same HSA and U.S. obligation entries, second pass)",
   "@@2ec96343e2e3": "For tax year 2025: shipped knowledge packs cover the math; for anything they do not cover, open these URLs (state .gov/.us only), find the 2025 revision of the same document family (state DORs have no uniform prior-year archive — many URLs carry the year, otherwise start from the DOR's forms index), confirm the figure, and record the citation in RECONCILIATION.md. Refuse to fill any line you cannot cite.",
   "@@3145cdc6995b": "Law change NOT modeled by the engine (status final_form_published): The Mental Health Services Act was RENAMED the Behavioral Health Services Act, verbatim from the 2025 booklet's tax-law-changes/What's New section: \"Behavioral Health Services Act – For taxable years beginning on or after January 1, 2025, the Mental Health Services Act has been renamed to the Behavioral Health Services Act. Therefore, references to the Mental Health Services Tax have been renamed to Behavioral Health Services Tax.\" Form 540 line 62 is now the Behavioral Health Services Tax — same 1% rate, same $1,000,000 taxable-income threshold, same line as the 2024 Mental Health Services Tax. Resolve via: 2025 Personal Income Tax Booklet (Form 540), Line 62 Behavioral Health Services Tax worksheet (the citation URL): taxable income (line 19) less $1,000,000, times 1%, whole dollars only. This block reproduces line 31 only and never adds the surcharge.",
-  "@@350b9a999033": "2025 Form 540NR (nonresident or part-year resident), Side 6: always attach a copy of the complete federal Form 1040 or 1040-SR",
   "@@4e5544041dbf": "IRS directory of every state government / tax agency website — the fallback channel when a state DOR reorganizes and a cited URL moves.",
   "@@552241acf88e": "Treaty conformity — CA does NOT conform to federal tax treaties: income exempt from federal tax under a treaty is STILL taxable by CA. Do not carry a federal treaty exclusion onto the state return. (This is about TREATY conformity only — a state's Internal Revenue Code conformity date and its deduction/credit conformity are separate questions; see any law-change lines below.) State note: California does not conform to federal income tax treaties. FTB Pub. 1031 (2025), Section on Tax Treaty, p. 10, verbatim: \"A tax treaty between the U.S. Government and a foreign country may exempt some types of income from federal taxation. Generally, unless the treaty specifically excludes the income from taxation by California, the income is taxable.\" Worked Example 1 (unchanged from the 2024 edition): a resident of China doing research at a California university received $15,000 of teaching/research wages excludable for federal purposes under the U.S.-China treaty — determination: \"Although the wages may be exempt from income for federal income tax purposes, the wages will be taxable by California... Tax treaties between the United States and other countries which expressly limit their application to federal income taxes do not apply to California.\" The $15,000 is included on Schedule CA (540NR), Part II, Section A, line 1a, column C. California also disallows the foreign tax credit and the foreign earned income exclusion (same publication, \"Foreign Tax Credit or Foreign Earned Income Exclusion\").",
   "@@57577a225136": "The newest shipped CA pack's primary authority (TY2025). A revision newer than 2025 published by the state supersedes the shipped pack — treat its appearance as the staleness signal.",
@@ -85,7 +85,7 @@
       "url": "https://www.ftb.ca.gov/forms/2025/2025-540-ca.pdf"
      },
      {
-      "source": "@@350b9a999033",
+      "source": "@@18013efbda54",
       "url": "https://www.ftb.ca.gov/forms/2025/2025-540nr.pdf"
      }
     ],
@@ -151,7 +151,7 @@
       "url": "https://www.ftb.ca.gov/forms/2025/2025-540-ca.pdf"
      },
      {
-      "source": "@@350b9a999033",
+      "source": "@@18013efbda54",
       "url": "https://www.ftb.ca.gov/forms/2025/2025-540nr.pdf"
      }
     ],
@@ -219,7 +219,7 @@
       "url": "https://www.ftb.ca.gov/forms/2025/2025-540-ca.pdf"
      },
      {
-      "source": "@@350b9a999033",
+      "source": "@@18013efbda54",
       "url": "https://www.ftb.ca.gov/forms/2025/2025-540nr.pdf"
      }
     ],
@@ -464,7 +464,7 @@
      "url": "https://www.ftb.ca.gov/forms/2025/2025-540-ca.pdf"
     },
     {
-     "answers": "@@350b9a999033",
+     "answers": "@@18013efbda54",
      "cadence": "@@c4a5951c662f",
      "topic": "filing_logistics",
      "url": "https://www.ftb.ca.gov/forms/2025/2025-540nr.pdf"
