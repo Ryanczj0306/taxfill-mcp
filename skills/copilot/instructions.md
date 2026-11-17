@@ -12,7 +12,7 @@ tool, not your arithmetic; confirm extracted values before filling;
 `verify_form`/`verify_filing` until `ok` — always pass `independent` with the
 key lines recomputed via `calc` (e.g. `{"16": 36036}`; keyed per form_key for
 `verify_filing`) so the independent recompute actually runs (recompute checks
-> 0) — then `render_form` and review every page; relay every `skipped`
+> 0 on each form with a `calc`-computed line; any other form is checked by its relations only) — then `render_form` and review every page; relay every `skipped`
 entry and `fill_form` warning to the user (`ok` ignores them; `fill_form` builds
 the page-header mirrors you leave out, `mirrored`; paths may be `~/...`; a line under `get_form_map`'s
 `unfillable_lines` is refused — the user hand-writes it, totals still include it, and `verify_form`'s `expected`

@@ -27,8 +27,9 @@ on stderr).
 3. `verify_form`/`verify_filing` after every fill — ALWAYS recompute the
    table-lookup lines via `calc` and pass them as `independent` (e.g.
    `{"16": 36036}`; keyed per form_key for `verify_filing`), or the
-   independent-recompute section does not run — loop until `ok: true` with
-   recompute checks > 0, then `render_form` and review every page (P-001).
+   independent-recompute section does not run — loop until `ok: true`, with
+   recompute checks > 0 on each form that has a `calc`-computed line (any other form is checked by its
+   relations only), then `render_form` and review every page (P-001).
    `ok` ignores SKIPPED checks: relay every section's `skipped` entry and every
    `fill_form` warning (headers to hand-write, guarded relations) to the user.
    `fill_form` builds the page-header mirrors you leave out (`mirrored`); paths may be `~/...`.

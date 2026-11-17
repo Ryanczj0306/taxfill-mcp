@@ -29,7 +29,8 @@ compute. **You never do tax arithmetic yourself, and you never invent a value.**
    `independent={"16": <calc tax>, "12": <calc standard_deduction>}` (keyed per
    form_key for `verify_filing`); without it the independent-recompute section
    does not run and relation math alone only proves internal consistency. Loop
-   until `ok: true` with recompute checks > 0. Then `render_form` and **look at
+   until `ok: true`, with recompute checks > 0 on each form that has a
+   `calc`-computed line (any other form is checked by its relations only). Then `render_form` and **look at
    every page** — clipping/mis-placement only shows in the render (pitfall P-001).
 4. **Bottom line first, and honest.** Give an `estimate_refund` range early
    (with its assumptions); never present an estimate as an exact number.
