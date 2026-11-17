@@ -1802,13 +1802,24 @@ def test_jt3d_the_2026_f1040es_rebinds_every_voucher_by_position():
         "Page15[0].f15_1[0]", "Page15[0].f15_15[0]", "Page15[0].f15_29[0]", "Page14[0].f14_1[0]"]
 
 
+# JW2c (2026-11-16) added Schedule D lines 7 and 15 to the 2025 pack only; their 2026 port belongs to JT6, each re-read
+# on the final. Until then the 2026 draft keeps the 2025 map without them.
+_JW2C_2025_ONLY_RELATIONS = {
+    "sched_d": ["7 == 1a.h + 1b.h + 2.h + 3.h + 4 + 5 - max(6, -6)",
+                "15 == 8a.h + 8b.h + 9.h + 10.h + 11 + 12 + 13 - max(14, -14)"],
+}
+
+
 @pytest.mark.parametrize("form_key", ["sched_b", "sched_d", "f8949"])
 def test_jt3d_the_identical_topology_drafts_keep_the_2025_map(form_key: str):
     old, new = _fed_pack(2025, form_key), _fed_pack(2026, form_key)
     assert draft_created(new)                               # authored on a draft, whichever blank it pins today
     assert [(f.line, f.field, f.type, f.on_state, f.group, f.maxlen) for f in old.fields] == [
         (f.line, f.field, f.type, f.on_state, f.group, f.maxlen) for f in new.fields]
-    assert (old.relations, old.cross_form) == (new.relations, new.cross_form)
+    jw2c = _JW2C_2025_ONLY_RELATIONS.get(form_key, [])
+    assert all(relation in old.relations and relation not in new.relations for relation in jw2c)
+    old_relations = [relation for relation in old.relations if relation not in jw2c]
+    assert (old_relations, old.cross_form) == (new.relations, new.cross_form)
 
 
 # ── Phase J JT5a: Wave B's first 2026 packs ──

@@ -177,6 +177,12 @@ relations:
 - 14 == 11 + 12 + 13
 - 17 == 4 + 7 + 10 + 14 + 15 + 16
 cross_form: []
+# JW2c (2026-11-16): no "17 == f1040.12e", though line 17 prints "Also, enter this amount on Form 1040 or 1040-SR, line
+# 12e". The 2025 Form 540 booklet has a filer who took the federal standard deduction attach a federal Schedule A to
+# the California return ("If you did not itemize deductions on your federal income tax return but will itemize
+# deductions for your Form 540, first complete federal Schedule A (Form 1040) ... Attach both the federal Schedule A
+# (Form 1040) and California Schedule CA (540) to the back of your tax return"), so a filing that holds both returns
+# carries a Schedule A whose line 17 is not line 12e. A cross_form rule takes no guard.
 identity_fields:
 - name
 - identifying_number

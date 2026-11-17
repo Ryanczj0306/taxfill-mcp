@@ -97,9 +97,9 @@
 # identity printed in the column (h) head — "Subtract column (e) from column
 # (d) and combine the result with column (g)" — declared for all eight rows
 # since Phase J JEc (2026-09-28; verify's grammar admits dotted ids since
-# JP5c). Rows 1a and 8a have no (g): their shaded cells are unmapped. The
-# conditional/worksheet-driven subtotals (lines 7, 15, 18–21) are left to
-# recompute + review.
+# JP5c). Rows 1a and 8a have no (g): their shaded cells are unmapped. Lines
+# 7 and 15 are declared since JW2c (2026-11-16; see the relations block); the
+# conditional/worksheet-driven lines 18–21 are left to recompute + review.
 #
 # Checkbox groups (P-008, fixed 2026-08-24): the four Yes/No questions — the
 # page-1 header QOF question and Part III lines 17, 20 and 22 — are each TWO
@@ -346,6 +346,24 @@ relations:
   - "8b.h == 8b.d - 8b.e + 8b.g"
   - "9.h == 9.d - 9.e + 9.g"
   - "10.h == 10.d - 10.e + 10.g"
+  # JW2c (2026-11-16), walkthrough finding P1-05. Lines 7 and 15 as printed on the 2025 face:
+  #   7 "Net short-term capital gain or (loss). Combine lines 1a through 6 in column (h)."
+  #   15 "Net long-term capital gain or (loss). Combine lines 8a through 14 in column (h)."
+  # Lines 6 and 14 are the loss carryovers, printed inside "( )": "6 Short-term capital loss carryover. Enter the
+  # amount, if any, from line 8 of your Capital Loss Carryover Worksheet" (14: "from line 13"). The worksheet
+  # (Instructions for Schedule D (2025), "Capital Loss Carryover Worksheet—Lines 6 and 14") figures each as a positive
+  # number ("8. Short-term capital loss carryover for 2025. Subtract line 7 from line 5. If zero or less, enter -0-.
+  # If more than zero, also enter this amount on Schedule D, line 6"), but this pack states no sign convention for a
+  # box inside printed parentheses and the shipped packs split on it (f2441 line 14 positive and subtracted, sched_e
+  # lines 25/31/36 stored negative). A carryover only ever reduces the total, so each is subtracted as its absolute
+  # value (max(6, -6)): the relation holds whether the filer wrote 1500 or -1500, and fails a wrong total either way.
+  # Lines 4, 5, 11 and 12 print "gain or (loss)" with no parentheses around the box, so they are signed.
+  - "7 == 1a.h + 1b.h + 2.h + 3.h + 4 + 5 - max(6, -6)"
+  - "15 == 8a.h + 8b.h + 9.h + 10.h + 11 + 12 + 13 - max(14, -14)"
+  # NOT declared (JW2c): lines 1b, 2, 3, 8b, 9 and 10 against Form 8949. Each row is the total of EVERY Form 8949
+  # page with that box checked ("1b Totals for all transactions reported on Form(s) 8949 with Box A or Box G
+  # checked"), and verify_filing gives each 8949 page its own form_key, so a rule naming one page fails a filer with
+  # two pages under the same box, or a page under another box.
 cross_form:
   - "16 == f1040.7a"                 # Net capital gain/(loss) → 2025 Form 1040, line 7a (2025 f1040 pack key "7a")
 identity_fields:

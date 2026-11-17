@@ -292,6 +292,13 @@ fields:
 # express — see header comment.
 relations:
   - "4 == 2 - 3"
+  # JW2c (2026-11-16): lines 2 and 6 as sums of the printed rows stay undeclared for a second reason. The
+  # Instructions for Schedule B (2025) let the rows run onto a statement ("If you still need more space, attach
+  # separate statements using the same format as lines 1 and 5, but show your totals on Schedule B") and put a
+  # subtotal row among them for a nominee ("Under your last entry on line 1, put a subtotal of all interest listed
+  # on line 1. Below this subtotal, enter "Nominee Distribution" and show the total interest you received as a
+  # nominee. Subtract this amount from the subtotal and enter the result on line 2"), so a sum of the rows fails
+  # either correct return.
 
 # Printed on the form face: line 4 -> Form 1040/1040-SR line 2b,
 # line 6 -> Form 1040/1040-SR line 3b.

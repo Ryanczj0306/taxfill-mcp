@@ -130,14 +130,11 @@
 # specify / enter type" description lines); 1 checkbox (Part II "did NOT
 # itemize for federal but will for CA").
 #
-# Relations: Schedule CA's column math is conditional/cross-column (e.g. col A
-# less col B plus col C, with multiple greyed operands) and several addends are
-# unmapped greyed cells, so per the conservative house style NO relations are
-# declared. cross_form is likewise omitted: the printed totals feed Form 540
-# lines 14/16/18 but those are Form 540's input lines, not equalities asserted
-# on this schedule (Part II lines 2 and 23 cite "federal Form 1040 or 1040-SR,
-# line 11b" — the 2025 Form 1040's restatement of AGI, 11a being the defining
-# line; neither is declared, as in 2023).
+# Relations (JW2c, 2026-11-16, walkthrough finding P1-05; before it none were declared): the printed column
+# totals of Part I (1z, 9a, 10, 25, 26, 27, per column) and the add/subtract lines of Part II, each over the cells
+# the face prints for that column. A greyed cell has no widget and no key here, so it is simply absent from the
+# sum. The rules and the ones left out are listed, with their source text, in the relations block below.
+# cross_form stays empty; why is in the same block.
 form: "Schedule CA (540)"
 jurisdiction: states/ca
 tax_year: 2025
@@ -932,8 +929,113 @@ fields:
   - line: II30           # Larger of line 29 or standard deduction ($5,706 single/MFS; $11,412 MFJ/HOH/QSS) → transfer to Form 540, line 18
     field: '540ca_form - 6036'
     type: money
-relations: []
+relations:
+  # Sources: the 2025 Schedule CA (540) face (the pinned blank) and "Schedule CA (540) Instructions 2025" in the 2025
+  # Form 540 Personal Income Tax Booklet (ftb.ca.gov/forms/2025/2025-540-booklet.pdf). Column B/C instructions: "Enter
+  # all amounts as positive numbers unless instructed otherwise"; a sum below is a plain sum, so a column B or C amount
+  # the instructions say to enter as a negative number still adds as printed.
+  # ---- Part I, Section A ----
+  # 1z "Add line 1a through line 1i" (1i prints a column C box only).
+  - "1z_A == 1a_A + 1b_A + 1c_A + 1d_A + 1e_A + 1f_A + 1g_A + 1h_A"
+  - "1z_B == 1a_B + 1b_B + 1c_B + 1d_B + 1e_B + 1f_B + 1g_B + 1h_B"
+  - "1z_C == 1a_C + 1b_C + 1c_C + 1d_C + 1e_C + 1f_C + 1g_C + 1h_C + 1i_C"
+  # ---- Part I, Section B ----
+  # 9a "Total other income. Add line 8a through line 8z". Column A prints three boxes inside "( )": 8a "Federal net
+  # operating loss", 8d "Foreign earned income exclusion from federal Form 2555" and 8s "Nontaxable amount of Medicaid
+  # waiver payments included on federal Form 1040, line 1a or line 1d" (the same three federal Schedule 1 prints in
+  # parentheses). Column A copies the federal amounts ("Enter in ... Section B, line 1 through line 9a the same amounts
+  # entered on your ... federal Schedule 1 (Form 1040) ... line 1 through line 9"), and the shipped packs split on the
+  # sign of a box inside printed parentheses, so each of the three is subtracted as its absolute value: every one is a
+  # reduction, written 2500 or -2500.
+  - "B9a_A == B8b_A + B8c_A + B8e_A + B8f_A + B8g_A + B8h_A + B8i_A + B8j_A + B8k_A + B8l_A + B8m_A + B8n_A + B8o_A + B8p_A + B8q_A + B8r_A + B8t_A + B8u_A + B8v_A + B8z_A - max(B8a_A, -B8a_A) - max(B8d_A, -B8d_A) - max(B8s_A, -B8s_A)"
+  - "B9a_B == B8b_B + B8c_B + B8f_B + B8n_B + B8o_B + B8p_B + B8v_B + B8z_B"
+  - "B9a_C == B8a_C + B8c_C + B8d_C + B8e_C + B8k_C + B8p_C + B8v_C + B8z_C"
+  # 10 "Total. Add Section A, line 1z through line 7a, and Section B, line 1 through line 7, and line 9a in column A and
+  # column C. Add Section A, line 1z through line 7a, and Section B, line 1 through line 7, line 9a, and line 9b1
+  # through line 9b3 in column B". Section A's "a" boxes (2a tax-exempt interest, 3a qualified dividends, 4a, 5a, 6a)
+  # stand outside the three columns and are not added, as on federal Form 1040 line 9.
+  - "B10_A == 1z_A + 2b_A + 3b_A + 4b_A + 5b_A + 6b_A + 7a_A + B1_A + B2a_A + B3_A + B4_A + B5_A + B6_A + B7_A + B9a_A"
+  - "B10_B == 1z_B + 2b_B + 3b_B + 4b_B + 5b_B + 6b_B + 7a_B + B1_B + B3_B + B4_B + B5_B + B6_B + B7_B + B9a_B + B9b1_B + B9b2_B + B9b3_B"
+  - "B10_C == 1z_C + 2b_C + 3b_C + 4b_C + 5b_C + 7a_C + B2a_C + B3_C + B4_C + B5_C + B6_C + B9a_C"
+  # ---- Part I, Section C ----
+  # 25 "Total other adjustments. Add line 24a through line 24z".
+  - "C25_A == C24a_A + C24b_A + C24c_A + C24d_A + C24e_A + C24f_A + C24g_A + C24h_A + C24i_A + C24j_A + C24k_A + C24z_A"
+  - "C25_B == C24b_B + C24c_B + C24d_B + C24f_B + C24g_B + C24i_B + C24j_B + C24z_B"
+  - "C25_C == C24b_C + C24f_C + C24g_C + C24z_C"
+  # 26 "Add line 11 through line 23 and line 25 in columns A, B, and C" (line 22 "Reserved for future use" is unmapped
+  # and reads as 0).
+  - "C26_A == C11_A + C12_A + C13_A + C14_A + C15_A + C16_A + C17_A + C18_A + C19a_A + C20_A + C21_A + C23_A + C25_A"
+  - "C26_B == C11_B + C12_B + C13_B + C15_B + C17_B + C20_B + C25_B"
+  - "C26_C == C12_C + C14_C + C19a_C + C20_C + C21_C + C25_C"
+  # 27 "Total. Subtract line 26 from line 10 in columns A, B, and C". Signed: the booklet moves a NEGATIVE line 27 to
+  # the other Form 540 line ("If column B is a negative number, transfer the amount as a positive number to Form 540,
+  # line 16"), so line 27 itself may be negative.
+  - "C27_A == B10_A - C26_A"
+  - "C27_B == B10_B - C26_B"
+  - "C27_C == B10_C - C26_C"
+  # ---- Part II ----
+  # 4 "Subtract line 3 from line 1. If line 3 is more than line 1, enter 0" (column A; lines 1-3 are single boxes).
+  - "II4_A == max(0, II1 - II3)"
+  # 5d "Add line 5a through line 5c" (column A only).
+  - "II5d_A == II5a_A + II5b_A + II5c_A"
+  # 5e column B and column C as printed: "Enter the amount from line 5a, column B in line 5e, column B. Enter the
+  # difference from line 5d and line 5e, column A in line 5e, column C". Column A ("Enter the smaller of line 5d or
+  # $40,000 ($20,000 if married filing separately)") needs the filing status and the federal phase-down, so it is
+  # left out (walkthrough finding P1-09).
+  - "II5e_B == II5a_B"
+  - "II5e_C == II5d_A - II5e_A"
+  # 7 "Add line 5e and line 6".
+  - "II7_A == II5e_A + II6_A"
+  - "II7_B == II5e_B + II6_B"
+  - "II7_C == II5e_C + II6_C"
+  # 8e "Add line 8a through line 8c" (8d "Reserved for future use" is outside the range). Column B prints an 8e box
+  # but no 8a-8c box, so no column B sum is declared.
+  - "II8e_A == II8a_A + II8b_A + II8c_A"
+  - "II8e_C == II8a_C + II8b_C + II8c_C"
+  # 10 "Add line 8e and line 9".
+  - "II10_A == II8e_A + II9_A"
+  - "II10_B == II8e_B + II9_B"
+  - "II10_C == II8e_C + II9_C"
+  # 14 "Add line 11 through line 13".
+  - "II14_A == II11_A + II12_A + II13_A"
+  - "II14_B == II11_B + II12_B + II13_B"
+  - "II14_C == II11_C + II12_C + II13_C"
+  # 17 "Add lines 4, 7, 10, 14, 15, and 16 in columns A, B, and C" (line 4 prints no column B box).
+  - "II17_A == II4_A + II7_A + II10_A + II14_A + II15_A + II16_A"
+  - "II17_B == II7_B + II10_B + II14_B + II15_B + II16_B"
+  - "II17_C == II4_C + II7_C + II10_C + II14_C + II15_C + II16_C"
+  # 18 "Total. Combine line 17 column A less column B plus column C".
+  - "II18 == II17_A - II17_B + II17_C"
+  # 22 "Add line 19 through line 21".
+  - "II22 == II19 + II20 + II21"
+  # 25 "Subtract line 24 from line 22. If line 24 is more than line 22, enter 0".
+  - "II25 == max(0, II22 - II24)"
+  # 26 "Total Itemized Deductions. Add line 18 and line 25".
+  - "II26 == II18 + II25"
+  # 28 "Combine line 26 and line 27" (27 may be negative: "enter the amount as a negative number on line 27").
+  - "II28 == II26 + II27"
+  # NOT declared (JW2c):
+  #   * Part II 3 ("Multiply line 2 by 7.5% (0.075)") and 24 ("Multiply line 23 by 2% (0.02)"): a filer with nothing
+  #     on line 1 (or line 22) may enter line 2 (or 23) and leave the product blank, and a filer who rounds the
+  #     product down differs by a dollar (the federal sched_a pack does not declare its line 3 either).
+  #   * Part II 29 and 30: line 29 is "Transfer the amount on line 28" or the Itemized Deductions Worksheet by a
+  #     federal AGI threshold for the filing status; line 30 is "the larger of the amount on line 29 or your standard
+  #     deduction", except that "If your filing status is married/RDP filing separately and your spouse itemizes, enter
+  #     the amount from line 29 (even if the standard deduction is larger)", and spouses filing separately "must either
+  #     both itemize ... or both take the standard deduction". Each needs a figure or a fact the face does not carry.
 cross_form: []
+  # NOT declared (JW2c), each checked against the 2025 booklet:
+  #   * Form 540 line 14 == line 27 column B and line 16 == line 27 column C: "If column B is a negative number,
+  #     transfer the amount as a positive number to Form 540, line 16" (and column C to line 14), so neither equality
+  #     holds on that return. What does hold, 540 line 16 - line 14 == 27C - 27B, is arithmetic a cross_form rule
+  #     cannot state (a rule is one line == one line).
+  #   * Form 540 line 18 == Part II line 30: a filer who takes the standard deduction completes Part I only ("Standard
+  #     deduction – Find your standard deduction on the California Standard Deduction Chart"), so line 30 is blank.
+  #   * line 27 column A == Form 540 line 13 (or federal Form 1040 line 11a), though the booklet says line 27 "should
+  #     match the amount entered on federal Form 1040 or 1040-SR, line 11b": for registered domestic partners "For
+  #     column A, Part I and Part II, combine each line item of your federal amounts from each partner's individual
+  #     federal tax return ... The combined federal AGI used to compute limitations is different from the recalculated
+  #     federal AGI used on Form 540, line 13."
 identity_fields:
   - name
   - identifying_number

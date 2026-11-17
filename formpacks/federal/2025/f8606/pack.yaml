@@ -706,6 +706,10 @@ relations:
 # 1040, 1040-SR, or 1040-NR, line 4b", which is additive and conditional, not
 # an equality (see the header).
 cross_form: []
+# JW2c (2026-11-16): no rule against Form 1040 line 4b. Lines 15c, 18 and 25c print "If more than zero, also include this
+# amount on 2025 Form 1040, 1040-SR, or 1040-NR, line 4b": 4b also carries other taxable IRA distributions and the
+# spouse's Form 8606 ("If married, file a separate form for each spouse"), and a rule on this pack would run once per
+# Form 8606 in the filing.
 
 identity_fields: [name, identifying_number]
 # identifying_number is PER PERSON on this form, not per filing: Form 8606's header is "If married, file a separate form for each spouse required to file",

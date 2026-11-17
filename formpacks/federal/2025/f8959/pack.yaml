@@ -105,6 +105,9 @@ relations:
 # (e.g. Form 1040-SS filers — see instructions).
 cross_form:
   - "18 == sched_2.11"
+  # JW2c (2026-11-16): no "24 == f1040.25c". Line 24 prints "Also include this amount with federal income tax
+  # withholding on Form 1040, 1040-SR, or 1040-NR, line 25c", and the Instructions for Form 1040 (2025), "Line
+  # 25c—Other Forms", add Form W-2G, Schedule K-1, Form 1042-S, Form 8805 and Form 8288-A withholding to it.
 
 identity_fields: [name, identifying_number]
 

@@ -341,6 +341,7 @@ relations:
   - "110 == 400 + 401 + 403 + 405 + 406 + 407 + 408 + 413 + 422 + 423 + 424 + 431 + 438 + 439 + 445 + 447 + 448 + 449"  # 110 "Add amounts in code 400 through code 449" — the 18 printed codes
   - "115 == 99 - 110 - 112 - 113"  # 115 "REFUND OR NO AMOUNT DUE. Subtract the sum of line 110, line 112, and line 113 from line 99." (111 stays out: it applies only when line 99 is empty)
 cross_form:
+  # JW2c (2026-11-16): lines 14, 16 and 18 are not tied to Schedule CA (540); why is beside sched_ca_540's cross_form.
   - "13 == f1040.11a"  # 13 "federal adjusted gross income (AGI) from federal Form 1040 or 1040-SR, line 11b" — 2025 f1040 defines AGI on 11a (11b restates it)
 identity_fields:
   - name.first

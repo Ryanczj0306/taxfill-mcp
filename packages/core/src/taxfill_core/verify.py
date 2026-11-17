@@ -36,6 +36,7 @@ Relation grammar (``pack.relations``)::
               | ('max' | 'min') '(' expr (',' expr)* ')'
               | 'sum' '(' LINE '..' LINE ')'
     LINE     := [0-9]+[a-z]?          e.g. '9', '24', '1a'
+              | [0-9]+[a-z]? ('_' [A-Za-z0-9]+)+   e.g. '1z_A' (a column suffix; JW2c)
               | word id               e.g. 'L1e' (letter-led identifier)
               | either, then ('.' segment)*   e.g. '10.a', 'ai.27.d' (dotted keys)
     GUARD    := the line key of one CHECKBOX line of the same pack   e.g. 'alt_tax_method'
@@ -1123,11 +1124,12 @@ def assertion_diff(
 
 # A LINE may carry dot-separated segments ('10.a', 'ai.27.d' — a column of a table, formpacks/CONVENTIONS.md's
 # dotted keys; Phase J JP5c). Floats match first ('0.10' stays a number), and a segment needs a character after
-# its dot, so the range operator in 'sum(1a..1h)' still splits.
+# its dot, so the range operator in 'sum(1a..1h)' still splits. A digit-led line may carry an underscore suffix
+# ('1z_A', Schedule CA (540)'s column keys; JW2c): before, '1z_A' split into '1z' and '_A' and no relation could name it.
 _TOKEN_RE = re.compile(
     r"(?P<ws>\s+)"
     r"|(?P<float>\d+\.\d+)"
-    r"|(?P<lineid>\d+[a-z]?(?:\.[a-z0-9_]+)*)"
+    r"|(?P<lineid>\d+[a-z]?(?:_[A-Za-z0-9]+)*(?:\.[a-z0-9_]+)*)"
     r"|(?P<name>[A-Za-z_][A-Za-z0-9_]*(?:\.[a-z0-9_]+)*)"
     r"|(?P<op>==|\.\.|[+\-*/(),])"
 )
