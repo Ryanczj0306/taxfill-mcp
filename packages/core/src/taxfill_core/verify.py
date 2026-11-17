@@ -2478,6 +2478,29 @@ def _filed_with_a_return(items: Sequence[FilingItem]) -> frozenset[str]:
     return frozenset(item.form_key for item in items if returns - {item.form_key})
 
 
+# JW2c (P1-04): a first-name identity line and the separate middle-initial line beside it, as packs name them
+# ("name.first" -> "name.middle_initial", "name.spouse_first" -> "name.spouse_middle_initial", "tp_first_name" ->
+# "tp_middle_initial", "FIRSTNAME" -> "MIDDLEINITIAL"). A pack that maps the identity line without such a sibling
+# carries a combined box: Form 1040's "Your first name and middle initial".
+_MIDDLE_INITIAL_SIBLINGS = (("first_name", "middle_initial"), ("FIRSTNAME", "MIDDLEINITIAL"), ("first", "middle_initial"))
+_NAME_NOISE_RE = re.compile(r"[\s.]+")
+
+
+def _middle_initial_line(pack: FormPack, name: str) -> str | None:
+    """The separate middle-initial line this pack maps beside identity line ``name``, or None (a combined box)."""
+    lines = {f.line for f in pack.fields}
+    for old, new in _MIDDLE_INITIAL_SIBLINGS:
+        head, found, tail = name.rpartition(old)
+        if found and f"{head}{new}{tail}" in lines:
+            return f"{head}{new}{tail}"
+    return None
+
+
+def _composed_name_key(value: str) -> str:
+    """A first name (and initial) compared with periods and spaces removed, case-folded: 'Avery J.' == 'avery j'."""
+    return _NAME_NOISE_RE.sub("", value).casefold()
+
+
 def _identity_checks(
     items: Sequence[FilingItem],
     fields_by_key: Mapping[str, Mapping[str, str]],
@@ -2492,6 +2515,7 @@ def _identity_checks(
     checks: list[IdentityCheck] = []
     for name in identity_names:
         values_by_form: dict[str, str] = {}
+        initials_by_form: dict[str, str] = {}  # JW2c: the separate middle initial, for packs that map one
         blank_by_rule: list[str] = []
         for item in items:
             pack_field = next((f for f in item.pack.fields if f.line == name), None)
@@ -2499,6 +2523,11 @@ def _identity_checks(
                 continue  # schedules legitimately omit some identity lines
             raw = _lookup_raw(item.pack, pack_field, fields_by_key[item.form_key]) or ""
             value = normalize_on_disk(pack_field, raw)
+            initial_line = _middle_initial_line(item.pack, name)
+            if initial_line is not None:
+                initial_field = next(f for f in item.pack.fields if f.line == initial_line)
+                initial_raw = _lookup_raw(item.pack, initial_field, fields_by_key[item.form_key]) or ""
+                initials_by_form[item.form_key] = normalize_on_disk(initial_field, initial_raw)
             if not value and name not in item.pack.identity_fields:
                 # A pack that MAPS a line without DECLARING it in its own
                 # identity_fields is not promising to carry it, so a BLANK there is
@@ -2554,8 +2583,29 @@ def _identity_checks(
                 )
             )
             continue
+        # JW2c (P1-04): when one form prints "first name" and "initial" in separate boxes and another prints one
+        # "first name and middle initial" box (Form 1040), the combined box is compared with first name + initial,
+        # periods and spaces removed, case-folded: 'Avery J.' matches 'Avery' + 'J'; 'Avery J.' against 'Avery' + 'K'
+        # and 'Avery' against 'Avory' still differ. Forms that all print the same shape compare as before.
+        initials = {key: initials_by_form[key] for key in values_by_form if key in initials_by_form}
+        composed = 0 < len(initials) < len(values_by_form)
+        composed_note = ""
+        if composed:
+            values_by_form = {
+                key: f"{value} {initials[key]}".strip() if key in initials else value
+                for key, value in values_by_form.items()
+            }
+            combined = [key for key in values_by_form if key not in initials]
+            composed_note = (
+                f" (compared as first name + middle initial: {', '.join(sorted(initials))} print(s) a separate "
+                f"initial box, {', '.join(combined)} one 'first name and middle initial' box; periods, spaces and "
+                f"case ignored)"
+            )
         listing = ", ".join(f"{key}={value!r}" for key, value in values_by_form.items())
-        distinct = {value.casefold() for value in values_by_form.values()}
+        if composed:
+            distinct = {_composed_name_key(value) for value in values_by_form.values()}
+        else:
+            distinct = {value.casefold() for value in values_by_form.values()}
         if distinct == {""}:
             checks.append(
                 IdentityCheck(
@@ -2608,7 +2658,7 @@ def _identity_checks(
                     status=FAIL,
                     values=values_by_form,
                     detail=(
-                        f"identity field '{name}' differs across the filing: {listing} — "
+                        f"identity field '{name}' differs across the filing: {listing}{composed_note} — "
                         f"every form must carry the same value; refill the mismatched "
                         f"form(s). For addresses, use the user's CURRENT mailing address "
                         f"(where they receive mail TODAY — pitfall P-002)"
@@ -2627,7 +2677,7 @@ def _identity_checks(
                     field=name,
                     status=PASS,
                     values=values_by_form,
-                    detail=f"identity field '{name}' {scope}: {sample!r}",
+                    detail=f"identity field '{name}' {scope}: {sample!r}{composed_note}",
                 )
             )
     return checks
