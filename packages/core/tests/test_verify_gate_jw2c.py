@@ -7,6 +7,7 @@ under either sign convention. All amounts are fictitious.
 
 from __future__ import annotations
 
+import re
 from pathlib import Path
 
 import pytest
@@ -188,3 +189,103 @@ def test_a_negative_line_27_is_read_signed_from_disk(written):
     report = verify_filing([FilingItem(form_key="sched_ca_540", pack=SCHED_CA, fields=lost_sign)])
     failed = [c.relation for c in report.relations if c.status == "FAIL"]
     assert failed == ["sched_ca_540: C27_B == B10_B - C26_B"]
+
+
+# Verifier round 1: every Schedule CA (540) relation against operands worked out HERE, from the printed instructions,
+# not read back from the pack's relation text. Each mapped amount gets a distinct nonzero value, so a dropped, extra or
+# sign-flipped operand changes the right side and the relation fails; each listed operand moved by a dollar must fail it.
+_CA_MONEY = sorted(f.line for f in SCHED_CA.fields if f.type == "money")
+_CA_DISTINCT = {line: 1000 + 37 * i for i, line in enumerate(_CA_MONEY)}
+# Part II lines 4 and 25 floor at zero ("If line 3 is more than line 1, enter 0"; "If line 24 is more than line 22,
+# enter 0"): the distinct values keep both above the floor, so every operand moves the result.
+_CA_DISTINCT.update({"II1": 50000, "II3": 1000, "II22": 9000, "II24": 200})
+# Part I, Section B, column A prints three boxes inside "( )" (8a net operating loss, 8d foreign earned income
+# exclusion, 8s section 1202 exclusion); either sign convention on disk is a subtraction.
+_CA_REDUCTIONS = {"B8a_A", "B8d_A", "B8s_A"}
+
+
+def _mapped(pattern: str) -> list[str]:
+    return [line for line in _CA_MONEY if re.fullmatch(pattern, line)]
+
+
+def _ca_spec() -> dict[str, tuple[list[tuple[int, str]], str]]:
+    """LHS -> ([(sign, operand)], kind); kind 'sum', 'floor' (max(0, sum)) or 'reduce' (the "( )" boxes as -|x|)."""
+    spec: dict[str, tuple[list[tuple[int, str]], str]] = {}
+
+    def add(lhs, operands, kind="sum"):
+        spec[lhs] = ([(1, op) if isinstance(op, str) else op for op in operands], kind)
+
+    for c in "ABC":
+        add(f"1z_{c}", _mapped(rf"1[a-i]_{c}"))                                   # "Add line 1a through line 1i"
+        add(f"B9a_{c}", _mapped(rf"B8[a-z]_{c}"), "reduce" if c == "A" else "sum")  # "Add line 8a through line 8z"
+        # "Add Section A, line 1z through line 7a, and Section B, line 1 through line 7, and line 9a in column A and
+        # column C ... line 9a, and line 9b1 through line 9b3 in column B"
+        b10 = _mapped(rf"(1z|[2-7][a-z])_{c}") + _mapped(rf"B[1-7][a-z]?_{c}") + [f"B9a_{c}"]
+        add(f"B10_{c}", b10 + (_mapped(r"B9b[1-3]_B") if c == "B" else []))
+        add(f"C25_{c}", _mapped(rf"C24[a-z]_{c}"))                                # "Add line 24a through line 24z"
+        add(f"C26_{c}", _mapped(rf"C(1[1-9]|2[0-3])[a-z]?_{c}") + [f"C25_{c}"])   # "line 11 through line 23 and line 25"
+        add(f"C27_{c}", [f"B10_{c}", (-1, f"C26_{c}")])                          # "Subtract line 26 from line 10"
+        add(f"II7_{c}", [f"II5e_{c}", f"II6_{c}"])                                # "Add line 5e and line 6"
+        add(f"II10_{c}", [f"II8e_{c}", f"II9_{c}"])                               # "Add line 8e and line 9"
+        add(f"II14_{c}", [f"II11_{c}", f"II12_{c}", f"II13_{c}"])                 # "Add line 11 through line 13"
+        add(f"II17_{c}", _mapped(rf"II(4|7|10|14|15|16)_{c}"))                    # "Add lines 4, 7, 10, 14, 15, and 16"
+    add("II4_A", ["II1", (-1, "II3")], "floor")                                     # "Subtract line 3 from line 1 ... 0"
+    add("II5d_A", ["II5a_A", "II5b_A", "II5c_A"])                                   # "Add line 5a through line 5c"
+    add("II5e_B", ["II5a_B"])                                                       # "amount from line 5a, column B"
+    add("II5e_C", ["II5d_A", (-1, "II5e_A")])                                       # "difference from line 5d and 5e"
+    add("II8e_A", ["II8a_A", "II8b_A", "II8c_A"])                                   # "Add line 8a through line 8c"
+    add("II18", ["II17_A", (-1, "II17_B"), "II17_C"])                               # "column A less column B plus C"
+    add("II22", ["II19", "II20", "II21"])                                           # "Add line 19 through line 21"
+    add("II25", ["II22", (-1, "II24")], "floor")                                    # "Subtract line 24 from line 22 ... 0"
+    add("II26", ["II18", "II25"])                                                   # "Add line 18 and line 25"
+    add("II28", ["II26", "II27"])                                                   # "Combine line 26 and line 27"
+    return spec
+
+
+CA_SPEC = _ca_spec()
+
+
+def _ca_expected(lhs: str, values: dict[str, int]) -> int:
+    operands, kind = CA_SPEC[lhs]
+    total = 0
+    for sign, line in operands:
+        amount = values.get(line, 0)
+        if kind == "reduce" and line in _CA_REDUCTIONS:
+            total -= abs(amount)
+        else:
+            total += sign * amount
+    return max(0, total) if kind == "floor" else total
+
+
+def _ca_check(lhs: str, values: dict[str, int]):
+    return next(c for c in relations(SCHED_CA, values) if _lhs(c.relation) == lhs)
+
+
+def test_the_independent_schedule_ca_spec_covers_every_relation():
+    assert set(CA_SPEC) == {_lhs(relation) for relation in SCHED_CA.relations}
+
+
+@pytest.mark.parametrize("lhs", sorted(CA_SPEC))
+def test_schedule_ca_rule_reads_exactly_its_printed_operands(lhs):
+    values = {**_CA_DISTINCT, lhs: _ca_expected(lhs, _CA_DISTINCT)}
+    check = _ca_check(lhs, values)
+    assert check.status == "PASS", check.detail
+    for _sign, operand in CA_SPEC[lhs][0]:
+        moved = {**values, operand: values[operand] + 1}
+        check = _ca_check(lhs, moved)
+        assert check.status == "FAIL", f"{lhs} does not read {operand}: {check.detail}"
+
+
+@pytest.mark.parametrize("lhs, low, high", [("II4_A", "II1", "II3"), ("II25", "II22", "II24")])
+def test_a_schedule_ca_floor_holds_at_zero(lhs, low, high):
+    values = {**_CA_DISTINCT, low: 300, high: 900}
+    assert _ca_check(lhs, {**values, lhs: 0}).status == "PASS"
+    assert _ca_check(lhs, {**values, lhs: -600}).status == "FAIL"
+
+
+@pytest.mark.parametrize("sign", [1, -1], ids=["written-positive", "written-negative"])
+def test_the_parenthesised_column_a_boxes_subtract_under_either_sign(sign):
+    values = {**_CA_DISTINCT, **{line: sign * _CA_DISTINCT[line] for line in _CA_REDUCTIONS}}
+    assert _ca_check("B9a_A", {**values, "B9a_A": _ca_expected("B9a_A", values)}).status == "PASS"
+    added = _ca_expected("B9a_A", values) + 2 * sum(abs(values[line]) for line in _CA_REDUCTIONS)
+    assert _ca_check("B9a_A", {**values, "B9a_A": added}).status == "FAIL"
