@@ -289,3 +289,27 @@ def test_the_form_8889_name_still_compares_with_the_return():
         _shipped_item("f8889", _per_form("f8889"), {"name": "Avery J. Example", "identifying_number": "999881234"}),
     ]
     assert _name_check(items).status == "FAIL"
+
+
+# Verifier round 2: KY 740 prints "Name -- Last, First, Middle Initial", and the OR-40 and AR 1000F packs key `name` to
+# the "Last name" and "Primary's legal first name" boxes, while the federal schedules' `name` is the full name. A correct
+# filing with any schedule beside one of these state forms failed identity `name`.
+@pytest.mark.parametrize("state_pack, state_values", [
+    *[(f"formpacks/states/ky/{y}/form740/pack.yaml", {"name": "Example, Avery J"}) for y in (2023, 2024, 2025)],
+    *[(f"formpacks/states/or/{y}/or40/pack.yaml", {"name": "Example", "name.first": "Avery", "name.initial": "J"})
+      for y in (2023, 2024, 2025)],
+    *[(f"formpacks/states/ar/{y}/ar1000f/pack.yaml", {"name": "Avery"}) for y in (2023, 2024, 2025)],
+    ("formpacks/states/ar/2023/ar1000nr/pack.yaml", {"name": "Avery"}),
+])
+def test_a_state_name_box_that_holds_part_of_the_name_is_no_difference(state_pack, state_values):
+    f1040 = _shipped_item("f1040", F1040, F1040_VALUES)
+    sched_1 = _shipped_item("sched_1", _per_form("sched_1"), {"name": "Avery J. Example"})
+    state = _shipped_item("state", state_pack, state_values)
+    name_checks = [c for c in verify_filing([f1040, sched_1, state]).identity if c.field.startswith("name")]
+    assert name_checks and all(c.status != "FAIL" for c in name_checks), name_checks
+
+
+def test_or_40_still_compares_the_first_name():
+    f1040 = _shipped_item("f1040", F1040, F1040_VALUES)
+    or40 = _shipped_item("or40", "formpacks/states/or/2025/or40/pack.yaml", {"name.first": "Avory", "name.initial": "J"})
+    assert _first_name_check([f1040, or40]).status == "FAIL"

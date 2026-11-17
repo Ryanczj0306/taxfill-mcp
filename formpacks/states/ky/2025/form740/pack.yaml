@@ -563,8 +563,11 @@ cross_form:
   # Line 5 "Enter amount from federal Form 1040 or 1040-SR, line 11a" (federal
   # AGI). Declared on the Yourself/Joint column (holds for filing status 1/3/4).
   - "5_b == f1040.11a"
-identity_fields:
+identity_excluded_lines:
   - name
+identity_fields:
+  # JW2c: `name` here is "Name -- Last, First, Middle Initial", ordered unlike the federal schedules' full name, so
+  # it is excluded (identity_excluded_lines) from the comparison.
   - identifying_number
   - mailing_address.street
   - mailing_address.city

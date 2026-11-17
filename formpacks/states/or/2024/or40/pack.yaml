@@ -495,8 +495,12 @@ relations:
   - "53 == 47 - 52"                    # Line 53 "Net refund. Line 47 minus line 52."
 cross_form:
   - "7 == f1040.11"                    # Line 7 "Federal adjusted gross income from federal Form 1040, 1040-SR, or 1040-NR, line 11; or 1040-X, line 1C." The wrapped list's single "line 11" citation governs all three form names; TY2024 federal AGI is f1040 line 11 (the 11a/11b split is TY2025-only).
-identity_fields:
+identity_excluded_lines:
   - name
+identity_fields:
+  # JW2c: `name` here is the "Last name" box (or-40-p1-14), not the full name the federal schedules print, so it is
+  # excluded above; the first name is compared, against Form 1040 and 1040-NR (OR-40 prints "Initial" apart).
+  - name.first
   - identifying_number
   - mailing_address.street
 signature:

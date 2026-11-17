@@ -5,7 +5,7 @@
   "draft_created": null,
   "form": "OR-40",
   "form_key": "or40",
-  "identity_fields": ["name", "identifying_number", "mailing_address.street"],
+  "identity_fields": ["name.first", "identifying_number", "mailing_address.street"],
   "jurisdiction": "states/or",
   "lines": [
    {"field": "or-40-p1-1", "group": null, "line": "fiscal_year_ending_date", "required": false, "type": "text"},
@@ -173,7 +173,7 @@
   "draft_created": null,
   "form": "OR-40",
   "form_key": "or40",
-  "identity_fields": ["name", "identifying_number", "mailing_address.street"],
+  "identity_fields": ["name.first", "identifying_number", "mailing_address.street"],
   "jurisdiction": "states/or",
   "lines": [
    {"field": "or-40-p1-1", "group": null, "line": "fiscal_year_ending_date", "required": false, "type": "text"},
@@ -338,7 +338,7 @@
   "draft_created": null,
   "form": "OR-40",
   "form_key": "or40",
-  "identity_fields": ["name", "identifying_number", "mailing_address.street"],
+  "identity_fields": ["name.first", "identifying_number", "mailing_address.street"],
   "jurisdiction": "states/or",
   "lines": [
    {"field": "or-40-p1-1", "group": null, "line": "fiscal_year_ending_date", "required": false, "type": "text"},

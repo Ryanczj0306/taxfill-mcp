@@ -708,6 +708,17 @@ class FormPack(BaseModel):
             "values printed, instead of the FAIL that rejected every correct spouse-owned filing."
         ),
     )
+    identity_excluded_lines: list[str] = Field(
+        default_factory=list,
+        description=(
+            "Lines this pack maps under a key another pack declares in identity_fields, but whose box holds "
+            "something else, so verify never compares them. KY 740 prints 'Name -- Last, First, Middle "
+            "Initial', and the OR-40 and AR 1000F packs key `name` to the 'Last name' and \"Primary's legal "
+            "first name\" boxes, while the federal schedules' `name` is the full name: comparing them failed "
+            "every correct filing with a schedule beside one of these state forms (JW2c). Must not also be "
+            "in identity_fields."
+        ),
+    )
     standalone_only_lines: list[str] = Field(
         default_factory=list,
         description=(
@@ -888,6 +899,15 @@ class FormPack(BaseModel):
                 f"do not. The flag RELAXES the cross-form comparison for a field, so a field that is "
                 f"not compared in the first place has nothing to relax"
             )
+        unknown_excluded = [k for k in self.identity_excluded_lines if k not in lines]
+        if unknown_excluded:
+            raise ValueError(
+                f"identity_excluded_lines entries must be logical line keys (the 'line:' values) — "
+                f"{unknown_excluded} match no line in this pack"
+            )
+        both = [k for k in self.identity_excluded_lines if k in set(self.identity_fields)]
+        if both:
+            raise ValueError(f"identity_excluded_lines entries {both} cannot also be in identity_fields")
         unknown_standalone = [k for k in self.standalone_only_lines if k not in lines]
         if unknown_standalone:
             raise ValueError(

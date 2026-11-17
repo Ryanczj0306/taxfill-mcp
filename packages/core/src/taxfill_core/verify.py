@@ -2567,6 +2567,8 @@ def _identity_checks(
             pack_field = next((f for f in item.pack.fields if f.line == name), None)
             if pack_field is None:
                 continue  # schedules legitimately omit some identity lines
+            if name in item.pack.identity_excluded_lines:
+                continue  # JW2c: same key, a different box (KY 740 "Last, First, MI"; OR-40 last name; AR first name)
             raw = _lookup_raw(item.pack, pack_field, fields_by_key[item.form_key]) or ""
             value = normalize_on_disk(pack_field, raw)
             initial_line = _middle_initial_line(item.pack, name)

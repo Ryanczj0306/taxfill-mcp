@@ -610,6 +610,18 @@ identity mismatch or a missing current address (P-002). Declare such lines in
 - test_standalone_only_lines.py pins the shipped declarations; a new form with
   such a caption adds its packs there.
 
+### Same key, a different box (`identity_excluded_lines`)
+
+verify_filing compares an identity line on every form that maps its key with a
+value, declared or not. When a pack keys a line `name` (or another identity
+key) but its box holds something else, list it in `identity_excluded_lines` so
+it is never compared (JW2c). KY 740 prints "Name -- Last, First, Middle
+Initial"; the OR-40 pack keys `name` to "Last name" and AR 1000F/1000NR to the
+first name, while the federal schedules' `name` is the full name. Quote the
+box in a comment; the schema refuses a key that names no line or that is also
+in `identity_fields`. Prefer declaring the parts that do compare (OR-40
+declares `name.first`).
+
 ### Lines the blank cannot take (`unfillable_lines`, P-036)
 
 A re-issued blank can bind two printed rows to ONE AcroForm field. Arizona's

@@ -534,8 +534,12 @@ cross_form:
   # 11a — NOT "11" (renumbered away for 2025) and not the 11b page-2 restatement.
   # See the Cross_form banner note above before "correcting" this back.
   - "7 == f1040.11a"
-identity_fields:
+identity_excluded_lines:
   - name
+identity_fields:
+  # JW2c: `name` here is the "Last name" box (or-40-p1-14), not the full name the federal schedules print, so it is
+  # excluded above; the first name is compared, against Form 1040 and 1040-NR (OR-40 prints "Initial" apart).
+  - name.first
   - identifying_number
   - mailing_address.street
 signature:

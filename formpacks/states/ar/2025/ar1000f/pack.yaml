@@ -1198,8 +1198,11 @@ relations:
   - "46 == 44 - 45"                      # 46 "Adjusted total payments (Subtract line 45 from line 44)"
   - "52c == 51 + 52b"                    # 52C "Add lines 51 and 52B"
 cross_form: []
-identity_fields:
+identity_excluded_lines:
   - name
+identity_fields:
+  # JW2c: `name` here is the "Primary's legal first name" box, not the full name the federal schedules print, so it
+  # is excluded (identity_excluded_lines) from the comparison.
   - identifying_number
   - mailing_address.street
   - mailing_address.city
