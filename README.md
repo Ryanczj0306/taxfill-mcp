@@ -102,7 +102,7 @@ Full form-by-year matrix: [docs/COVERAGE.md](docs/COVERAGE.md).
 |---|---|
 | Gather your documents first | [Intake worksheet](docs/INTAKE_WORKSHEET.md) · [中文版](docs/INTAKE_WORKSHEET.zh-CN.md) |
 | See the nine steps, a sample return, troubleshooting, privacy, FAQ | [User guide](docs/USER_GUIDE.md) |
-| Look up the 23 MCP tools, the 40 calc ops, or the `taxfill` CLI for non-MCP agents | [Tools reference](docs/TOOLS.md) |
+| Look up the 23 MCP tools, the 41 calc ops, or the `taxfill` CLI for non-MCP agents | [Tools reference](docs/TOOLS.md) |
 | Browse all docs, including maintainer docs | [Docs index](docs/README.md) · [`docs/dev/`](docs/dev/) |
 | Contribute a form pack or state knowledge | [CONTRIBUTING](.github/CONTRIBUTING.md) · [Pack-authoring guide](docs/dev/CONTRIBUTING-PACKS.md) |
 | Report a security or privacy issue privately | [SECURITY](.github/SECURITY.md) |

@@ -24,6 +24,8 @@ OLD_CALC = (FIXTURES / "calc_description_75a72e2.txt").read_text(encoding="utf-8
 OLD_ESTIMATE = (FIXTURES / "estimate_refund_description_75a72e2.txt").read_text(encoding="utf-8").rstrip("\n")
 OLD_BULLETS = dict(re.findall(r"^- ([a-z0-9_]+): (.*?)(?=\n- [a-z0-9_]+: |\Z)", OLD_CALC, flags=re.S | re.M))
 LIMIT = 4096
+# Ops added after 75a72e2, which have no frozen bullet: each is held to the same describe contract below.
+ADDED_SINCE = {"qbi_deduction"}  # Phase K JW2d: Form 8995, the simplified QBI deduction
 
 
 def _flat(text: str) -> str:
@@ -54,7 +56,8 @@ def test_calc_upfront_keeps_every_op_and_the_provisional_rule():
 
 
 def test_the_registry_is_the_dispatch_and_the_old_bullets_verbatim():
-    assert set(server._CALC_OP_DOCS) == _dispatch_ops() == set(OLD_BULLETS)
+    assert not ADDED_SINCE & set(OLD_BULLETS)
+    assert set(server._CALC_OP_DOCS) == _dispatch_ops() == set(OLD_BULLETS) | ADDED_SINCE
     for op, bullet in OLD_BULLETS.items():
         assert server._CALC_OP_DOCS[op] == bullet, op           # byte-exact against the 75a72e2 docstring
 
@@ -64,6 +67,13 @@ def test_describe_returns_the_whole_former_bullet(op):
     out = calc("describe", {"op": op})
     assert out["op"] == op and _flat(OLD_BULLETS[op]) in _flat(out["text"])   # whitespace-normalized
     assert out["args"] and out["args"].startswith("{") and out["args"] in _flat(OLD_BULLETS[op])
+
+
+@pytest.mark.parametrize("op", sorted(ADDED_SINCE))
+def test_describe_returns_an_added_ops_notes(op):
+    out = calc("describe", {"op": op})
+    assert out["op"] == op and _flat(server._CALC_OP_DOCS[op]) == _flat(out["text"])
+    assert out["args"] and out["args"].startswith("{") and out["args"] in _flat(out["text"])
 
 
 def test_describe_without_an_op_lists_them_and_estimate_refund_returns_its_former_docstring():

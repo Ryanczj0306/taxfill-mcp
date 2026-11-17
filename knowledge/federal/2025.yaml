@@ -178,6 +178,29 @@ tax:
       head_of_household: 200000
       qualifying_surviving_spouse: 250000
 
+  # Phase K JW2d (2026-11-16, walkthrough finding P1-01): Form 8995, the simplified qualified business income
+  # deduction (calc op qbi_deduction). Read off the 2025 face and the 2025 instructions (irs-prior, downloaded
+  # 2026-11-16):
+  #   Form 8995 (2025): "Use this form if your taxable income, before your qualified business income deduction, is
+  #     at or below $197,300 ($394,600 if married filing jointly), and you aren't a patron of an agricultural or
+  #     horticultural cooperative." Lines 5, 9 and 14: "Multiply line 4 by 20% (0.20)", "Multiply line 8 by 20%
+  #     (0.20)", "Multiply line 13 by 20% (0.20)".
+  #   Instructions for Form 8995 (2025), Who Can Take the Deduction: "Your 2025 taxable income before your QBI
+  #     deduction is less than or equal to $394,600 if married filing jointly, and $197,300 for all other returns"
+  #     ... "Otherwise, use Form 8995-A".
+  # So a qualifying surviving spouse, head of household and married filing separately all take $197,300.
+  qbi_deduction:
+    citation:
+      source: "Form 8995 (2025), the note above line 1 ('at or below $197,300 ($394,600 if married filing jointly)') and lines 5, 9 and 14 ('Multiply ... by 20% (0.20)'); Instructions for Form 8995 (2025), Who Can Take the Deduction ('less than or equal to $394,600 if married filing jointly, and $197,300 for all other returns')"
+      url: "https://www.irs.gov/pub/irs-prior/i8995--2025.pdf"
+    rate: 0.20
+    thresholds:
+      married_filing_jointly: 394600
+      married_filing_separately: 197300
+      single: 197300
+      head_of_household: 197300
+      qualifying_surviving_spouse: 197300
+
   # Maximum capital gains rate breakpoints under IRC section 1(h), indexed
   # separately under section 1(j)(5): TAXABLE-INCOME ceilings for the 0% and
   # 15% rates on adjusted net capital gain / qualified dividends (20% above
@@ -1907,3 +1930,134 @@ form_lines:
     read: '2026-09-27'
     absent: "no line takes a charitable gift with the standard deduction on this face; a gift counts only on Schedule A, via the deduction line"
     printed: "Standard deduction or itemized deductions (from Schedule A)"
+  # Phase K JW2d (read 2026-11-16): Form 8995 (2025), the simplified QBI deduction (calc op qbi_deduction, the
+  # f8995 pack), and the Form 1040 / 1040-NR / Schedule D lines its instructions name.
+  f8995.qbi_total:
+    line: '2'
+    line_source: final
+    url: https://www.irs.gov/pub/irs-prior/f8995--2025.pdf
+    read: '2026-11-16'
+    printed: '2 Total qualified business income or (loss). Combine lines 1i through 1v, column (c)'
+  f8995.qbi_loss_carryforward:
+    line: '3'
+    line_source: final
+    url: https://www.irs.gov/pub/irs-prior/f8995--2025.pdf
+    read: '2026-11-16'
+    printed: '3 Qualified business net (loss) carryforward from the prior year'
+    note: 'The box is printed inside "( )": a loss.'
+  f8995.qbi_net:
+    line: '4'
+    line_source: final
+    url: https://www.irs.gov/pub/irs-prior/f8995--2025.pdf
+    read: '2026-11-16'
+    printed: '4 Total qualified business income. Combine lines 2 and 3. If zero or less, enter -0-'
+  f8995.qbi_component:
+    line: '5'
+    line_source: final
+    url: https://www.irs.gov/pub/irs-prior/f8995--2025.pdf
+    read: '2026-11-16'
+    printed: '5 Qualified business income component. Multiply line 4 by 20% (0.20)'
+  f8995.reit_ptp:
+    line: '6'
+    line_source: final
+    url: https://www.irs.gov/pub/irs-prior/f8995--2025.pdf
+    read: '2026-11-16'
+    printed: '6 Qualified REIT dividends and publicly traded partnership (PTP) income or (loss) (see instructions)'
+    note: 'Form 1099-DIV box 5 (section 199A dividends) is the qualified REIT dividends part (Instructions for Form 8995 (2025): "This amount is reported to you on Form 1099-DIV, line 5").'
+  f8995.reit_ptp_loss_carryforward:
+    line: '7'
+    line_source: final
+    url: https://www.irs.gov/pub/irs-prior/f8995--2025.pdf
+    read: '2026-11-16'
+    printed: '7 Qualified REIT dividends and qualified PTP (loss) carryforward from the prior year'
+    note: 'The box is printed inside "( )": a loss.'
+  f8995.reit_ptp_net:
+    line: '8'
+    line_source: final
+    url: https://www.irs.gov/pub/irs-prior/f8995--2025.pdf
+    read: '2026-11-16'
+    printed: '8 Total qualified REIT dividends and PTP income. Combine lines 6 and 7. If zero or less, enter -0-'
+  f8995.reit_ptp_component:
+    line: '9'
+    line_source: final
+    url: https://www.irs.gov/pub/irs-prior/f8995--2025.pdf
+    read: '2026-11-16'
+    printed: '9 REIT and PTP component. Multiply line 8 by 20% (0.20)'
+  f8995.before_limit:
+    line: '10'
+    line_source: final
+    url: https://www.irs.gov/pub/irs-prior/f8995--2025.pdf
+    read: '2026-11-16'
+    printed: '10 Qualified business income deduction before the income limitation. Add lines 5 and 9'
+  f8995.taxable_income:
+    line: '11'
+    line_source: final
+    url: https://www.irs.gov/pub/irs-prior/f8995--2025.pdf
+    read: '2026-11-16'
+    printed: '11 Taxable income before qualified business income deduction (see instructions)'
+  f8995.net_capital_gain:
+    line: '12'
+    line_source: final
+    url: https://www.irs.gov/pub/irs-prior/f8995--2025.pdf
+    read: '2026-11-16'
+    printed: '12 Enter your net capital gain, if any, increased by any qualified dividends (see instructions)'
+  f8995.limit_base:
+    line: '13'
+    line_source: final
+    url: https://www.irs.gov/pub/irs-prior/f8995--2025.pdf
+    read: '2026-11-16'
+    printed: '13 Subtract line 12 from line 11. If zero or less, enter -0-'
+  f8995.income_limitation:
+    line: '14'
+    line_source: final
+    url: https://www.irs.gov/pub/irs-prior/f8995--2025.pdf
+    read: '2026-11-16'
+    printed: '14 Income limitation. Multiply line 13 by 20% (0.20)'
+  f8995.deduction:
+    line: '15'
+    line_source: final
+    url: https://www.irs.gov/pub/irs-prior/f8995--2025.pdf
+    read: '2026-11-16'
+    printed: '15 Qualified business income deduction. Enter the smaller of line 10 or line 14. Also enter this amount on the applicable line of your return (see instructions)'
+  f8995.qbi_carryforward:
+    line: '16'
+    line_source: final
+    url: https://www.irs.gov/pub/irs-prior/f8995--2025.pdf
+    read: '2026-11-16'
+    printed: '16 Total qualified business (loss) carryforward. Combine lines 2 and 3. If greater than zero, enter -0-'
+    note: 'The box is printed inside "( )": a loss, carried to next year''s line 3.'
+  f8995.reit_ptp_carryforward:
+    line: '17'
+    line_source: final
+    url: https://www.irs.gov/pub/irs-prior/f8995--2025.pdf
+    read: '2026-11-16'
+    printed: '17 Total qualified REIT dividends and PTP (loss) carryforward. Combine lines 6 and 7. If greater than zero, enter -0-'
+    note: 'The box is printed inside "( )": a loss, carried to next year''s line 7.'
+  f1040.qbi_deduction:
+    line: '13a'
+    line_source: final
+    url: https://www.irs.gov/pub/irs-prior/f1040--2025.pdf
+    read: '2026-11-16'
+    printed: '13a Qualified business income deduction from Form 8995 or Form 8995-A'
+    note: 'Form 8995 line 15 goes here (Instructions for Form 8995 (2025), Line 15).'
+  f1040nr.qbi_deduction:
+    line: '13a'
+    line_source: final
+    url: https://www.irs.gov/pub/irs-prior/f1040nr--2025.pdf
+    read: '2026-11-16'
+    printed: '13a Qualified business income deduction from Form 8995 or Form 8995-A'
+    note: 'Form 8995 line 15 goes here (Instructions for Form 8995 (2025), Line 15).'
+  sched_d.long_term:
+    line: '15'
+    line_source: final
+    url: https://www.irs.gov/pub/irs-prior/f1040sd--2025.pdf
+    read: '2026-11-16'
+    printed: '15 Net long-term capital gain or (loss). Combine lines 8a through 14 in column (h). Then, go to Part III on the back'
+    note: 'Form 8995 line 12: "If you file Schedule D (Form 1040), your net capital gain is the smaller of Schedule D (Form 1040), line 15 or 16, unless line 15 or 16 is zero or less".'
+  sched_d.net:
+    line: '16'
+    line_source: final
+    url: https://www.irs.gov/pub/irs-prior/f1040sd--2025.pdf
+    read: '2026-11-16'
+    printed: '16 Combine lines 7 and 15 and enter the result'
+    note: 'See sched_d.long_term.'

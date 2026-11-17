@@ -977,6 +977,16 @@ _CALC_OP_DOCS: dict[str, str] = {
         "  payment over $75 whose benefit value you do not state is REFUSED — ask for the organization's IRC 6115\n"
         "  statement)"
     ),
+    "qbi_deduction": (
+        "args {taxable_income_before_qbi, filing_status, year, businesses?: [{name, tin?, qbi}],\n"
+        "  qbi_loss_carryforward?, qualified_reit_dividends? (Form 1099-DIV box 5 total), ptp_income?,\n"
+        "  reit_ptp_loss_carryforward?, qualified_dividends?, net_capital_gain? (no Schedule D) OR\n"
+        "  schedule_d_long_term + schedule_d_net, sstb?, cooperative_patron?} (Form 8995, the simplified QBI\n"
+        "  deduction, TY2025. REFUSES, with no number, above the year's taxable-income threshold or for a\n"
+        "  cooperative patron: Form 8995-A, which calc does not compute and no pack maps. Returns every line\n"
+        "  keyed by the f8995 pack's keys (`lines`, for fill_form; the carryforward boxes are positive amounts)\n"
+        "  and `independent` for verify_form's recompute; `confirm` carries the box 5 holding-period check)"
+    ),
     "withholding_projection": (
         "args {employers: [{label, pay_frequency, wages_per_period, pay_dates? |\n"
         "  first_pay_date?, employment_end?, first_period_wages?, fica_wages_per_period?, w4?: {form (2020_or_later |\n"
@@ -1618,9 +1628,10 @@ def calc(op: str, args: dict[str, Any]) -> dict:
     """Deterministic tax math; every result shows its work and cites the data pack. op in {tax,
     tax_with_preferential_rates, standard_deduction, se_tax, additional_medicare_tax, niit, taxable_social_security,
     excess_ss, student_loan_interest_deduction, education_credits, ptc_annual, ptc_monthly, child_tax_credit, eitc,
-    dependent_care_credit, treaty_benefit, schedule_1a_deductions, charitable_deduction, withholding_projection,
-    employee_fica, estimated_tax_safe_harbor, underpayment_penalty, paystub_to_w2, claim_of_right_repayment,
-    annualize_ytd, ira_net_income_attributable, ira_recharacterization, elective_deferral_room, contribution_limits,
+    dependent_care_credit, treaty_benefit, schedule_1a_deductions, charitable_deduction, qbi_deduction,
+    withholding_projection, employee_fica, estimated_tax_safe_harbor, underpayment_penalty, paystub_to_w2,
+    claim_of_right_repayment, annualize_ytd, ira_net_income_attributable, ira_recharacterization, elective_deferral_room,
+    contribution_limits,
     ira_contribution_eligibility, marginal_dollar_savings, magi_ladder, ira_pro_rata, roth_conversion,
     hsa_deduction, espp_disposition, capital_loss_limitation, foreign_tax_credit_election, foreign_asset_reporting,
     state_tax}.
@@ -1711,6 +1722,10 @@ def _calc_dispatch(op: str, args: dict[str, Any]) -> dict:
         return _stamp_provisional(_dump(_schedule_1a_deductions(**args)), args)
     if op == "charitable_deduction":
         return _stamp_provisional(_dump(_charitable_deduction(**args)), args)
+    if op == "qbi_deduction":
+        from taxfill_core.qbi import qbi_deduction as _qbi_deduction  # noqa: PLC0415
+
+        return _stamp_provisional(_dump(_qbi_deduction(**args)), args)
     if op == "employee_fica":
         return _stamp_provisional(_dump(_employee_fica(**args)), args)
     if op == "withholding_projection":

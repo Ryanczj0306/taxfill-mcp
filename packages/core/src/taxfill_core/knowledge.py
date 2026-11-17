@@ -380,6 +380,15 @@ class NiitParams(_SurtaxParams):
     investment income or MAGI above the filing-status threshold (statutory, not indexed)."""
 
 
+class QbiDeductionParams(_SurtaxParams):
+    """Form 8995 parameters (Phase K JW2d): ``rate`` is the 20% (0.20) the face multiplies lines 4, 8 and 13 by
+    (lines 5, 9 and 14), and ``thresholds`` the taxable income before the QBI deduction AT OR BELOW which Form 8995
+    may be used, per filing status ("Use this form if your taxable income, before your qualified business income
+    deduction, is at or below ..."). Above it the filer uses Form 8995-A, which calc does not compute. The
+    thresholds are indexed every year; all five statuses are explicit (only married filing jointly takes the
+    higher figure: "$394,600 if married filing jointly, and $197,300 for all other returns", 2025)."""
+
+
 # ── Phase F tax blocks: preferential rates, SS benefits, adjustments, education
 #    credits, PTC. Each block is DATA with a citation; the worksheet mechanics the
 #    calc ops must reproduce are recorded in the model docstrings. ──────────────
@@ -2224,6 +2233,8 @@ class TaxKnowledge(BaseModel):
     # blocks still load; calc raises a prescriptive error when a year lacks them.
     additional_medicare_tax: AdditionalMedicareTaxParams | None = None
     niit: NiitParams | None = None
+    # Phase K JW2d: Form 8995, the simplified QBI deduction (calc op qbi_deduction). TY2025 only so far.
+    qbi_deduction: QbiDeductionParams | None = None
     # Phase F blocks — also optional so older packs still load; calc raises a
     # prescriptive error when a year lacks a block an operation needs.
     capital_gains_brackets: CapitalGainsBrackets | None = None
