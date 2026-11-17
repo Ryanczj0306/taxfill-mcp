@@ -111,7 +111,7 @@ def test_jr4a_the_recompute_catches_a_line_4_that_ignores_the_exception(tmp_path
 
 def test_jr4a_the_pack_is_per_person_and_signs_only_standalone():
     pack = load_pack(PACK)
-    assert pack.identity_per_person == ["identifying_number"]
+    assert pack.identity_per_person == ["name", "identifying_number"]  # JW2c: "Name of individual subject to additional tax"
     assert pack.signature is not None and (pack.signature.page, pack.signature.standalone_only) == (3, True)
     assert pack.cross_form == []                            # Schedule 2 line 8 is the COMBINED tax of both spouses
     assert not [r for r in pack.relations if r.startswith(("4 ", "54a", "54b", "17 ", "25 "))]

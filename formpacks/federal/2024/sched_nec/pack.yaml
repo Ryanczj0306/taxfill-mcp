@@ -78,8 +78,8 @@
 #
 # Carry-over: line 15 is printed "Enter the total here and on Form 1040-NR,
 # line 23a" — an exact carry to the ONLY parent this schedule ever attaches
-# to, so it is encoded in cross_form (same pattern as sched_d's
-# "16 == f1040.7").
+# to, so it is encoded in cross_form (a child naming the parent line its
+# total goes to; JW2c removed sched_d's "16 == f1040.7", whose loss line 21 caps).
 form: "Schedule NEC (Form 1040-NR)"
 jurisdiction: federal
 tax_year: 2024
@@ -314,7 +314,7 @@ relations:
 
 # Printed on line 15: "Enter the total here and on Form 1040-NR, line 23a".
 # Schedule NEC attaches ONLY to Form 1040-NR, so the child names its parent
-# (same pattern as sched_d's "16 == f1040.7"). Skipped (visibly) if a filing
+# (an exact carry, unlike sched_d line 16, whose loss line 21 caps). Skipped (visibly) if a filing
 # somehow lacks the f1040nr item.
 cross_form:
   - "15 == f1040nr.23a"

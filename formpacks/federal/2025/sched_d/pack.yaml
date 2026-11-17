@@ -25,7 +25,7 @@
 # the numbered-line token sequence (1a,1b,2..7,8a,8b,9..22) is identical across both
 # 2-page blanks. Printed references re-verified from the 2025 blank's own text:
 # line 16 -> "Form 1040, 1040-SR, or 1040-NR, line 7a" (the 2025 Form 1040 renumbered
-# line 7 to 7a — cross_form updated to f1040.7a to match the 2025 f1040 pack's key;
+# line 7 to 7a — cross_form updated to f1040.7a to match the 2025 f1040 pack's key, and removed in JW2c (see cross_form);
 # CAUGHT BY THE VISION AUDIT: a substring check for "line 7" had silently matched
 # "line 7a"); line 21 likewise routes to "line 7a"; loss cap "($3,000), or if married
 # filing separately, ($1,500)"; lines 6/14 cite Capital Loss Carryover Worksheet
