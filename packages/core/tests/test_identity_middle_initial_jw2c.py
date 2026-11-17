@@ -2,8 +2,8 @@
 
 Form 1040 prints "Your first name and middle initial" as one box; Form 540 prints "Your first name" and "Initial".
 Both packs key the first-name box ``name.first``, so the identity check compared 'Avery J.' (1040) with 'Avery'
-(540) and failed a correct filing. The check now compares the combined box with first name + initial (periods and
-spaces removed, case-folded) whenever the filing mixes the two shapes. Fictitious names only.
+(540) and failed a correct filing. The check now compares the combined box with first name + initial (periods dropped,
+spaces collapsed, case-folded) whenever the filing mixes the two shapes. Fictitious names only.
 """
 
 from __future__ import annotations
@@ -52,6 +52,7 @@ def _first_name_check(items: list[FilingItem]):
 @pytest.mark.parametrize("combined, first, initial", [
     ("Avery J.", "Avery", "J"),
     ("Avery J", "Avery", "J."),
+    ("Avery  J", "Avery ", "J"),        # extra spaces
     ("AVERY j.", "avery", "J"),
     ("Avery", "Avery", ""),             # no initial on either form
     ("Mary Ann K.", "Mary Ann", "K"),   # a two-word first name
@@ -71,6 +72,7 @@ def test_combined_box_matches_first_name_plus_initial(combined, first, initial, 
     ("Avery J.", "Avory", "J"),     # a different first name, same initial
     ("Avery J.", "Avery", ""),      # the initial on one form only
     ("Avery", "Avery", "J"),        # the initial on the other form only
+    ("Joe", "Jo", "E"),             # spaces are collapsed, not removed
 ])
 def test_a_real_difference_still_fails(combined, first, initial, combined_first):
     items = [_item("f1040", COMBINED, {"name.first": combined, "name.last": "Example"}),

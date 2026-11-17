@@ -2483,7 +2483,6 @@ def _filed_with_a_return(items: Sequence[FilingItem]) -> frozenset[str]:
 # "tp_middle_initial", "FIRSTNAME" -> "MIDDLEINITIAL"). A pack that maps the identity line without such a sibling
 # carries a combined box: Form 1040's "Your first name and middle initial".
 _MIDDLE_INITIAL_SIBLINGS = (("first_name", "middle_initial"), ("FIRSTNAME", "MIDDLEINITIAL"), ("first", "middle_initial"))
-_NAME_NOISE_RE = re.compile(r"[\s.]+")
 
 
 def _middle_initial_line(pack: FormPack, name: str) -> str | None:
@@ -2497,8 +2496,11 @@ def _middle_initial_line(pack: FormPack, name: str) -> str | None:
 
 
 def _composed_name_key(value: str) -> str:
-    """A first name (and initial) compared with periods and spaces removed, case-folded: 'Avery J.' == 'avery j'."""
-    return _NAME_NOISE_RE.sub("", value).casefold()
+    """A first name (and initial) with periods dropped and spaces collapsed, case-folded: 'Avery J.' == 'avery j'.
+
+    Spaces are collapsed, not removed, so 'Jo' + 'E' does not pass for a combined 'Joe'.
+    """
+    return " ".join(value.replace(".", " ").split()).casefold()
 
 
 def _identity_checks(
@@ -2585,7 +2587,7 @@ def _identity_checks(
             continue
         # JW2c (P1-04): when one form prints "first name" and "initial" in separate boxes and another prints one
         # "first name and middle initial" box (Form 1040), the combined box is compared with first name + initial,
-        # periods and spaces removed, case-folded: 'Avery J.' matches 'Avery' + 'J'; 'Avery J.' against 'Avery' + 'K'
+        # periods dropped, spaces collapsed, case-folded: 'Avery J.' matches 'Avery' + 'J'; 'Avery J.' against 'Avery' + 'K'
         # and 'Avery' against 'Avory' still differ. Forms that all print the same shape compare as before.
         initials = {key: initials_by_form[key] for key in values_by_form if key in initials_by_form}
         composed = 0 < len(initials) < len(values_by_form)
@@ -2598,8 +2600,8 @@ def _identity_checks(
             combined = [key for key in values_by_form if key not in initials]
             composed_note = (
                 f" (compared as first name + middle initial: {', '.join(sorted(initials))} print(s) a separate "
-                f"initial box, {', '.join(combined)} one 'first name and middle initial' box; periods, spaces and "
-                f"case ignored)"
+                f"initial box, {', '.join(combined)} one 'first name and middle initial' box; periods, extra spaces "
+                f"and case ignored)"
             )
         listing = ", ".join(f"{key}={value!r}" for key, value in values_by_form.items())
         if composed:
