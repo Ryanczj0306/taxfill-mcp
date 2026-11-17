@@ -84,7 +84,7 @@ recorded with its authority in `RECONCILIATION.md`, your audit trail. Progress i
 
 | | Coverage |
 |---|---|
-| **Federal forms** | Form 1040 with its schedules and attachments for TY2023–2025, Form 1040-NR from TY2022, Form 8843 from TY2019 — 151 packs, including TY2026 planning drafts |
+| **Federal forms** | Form 1040 with its schedules and attachments for TY2023–2025, Form 1040-NR from TY2022, Form 8843 from TY2019 — 152 packs, including TY2026 planning drafts |
 | **Federal tax law** | 2019–2026 (2026 is planning-only) |
 | **State forms** | Resident returns for 42 of the 42 income-tax jurisdictions in TY2025, 41 in TY2024, all 42 in TY2023; separate nonresident returns for CA and NY — [check your state](docs/COVERAGE.md#state-forms) |
 | **Print-and-hand-fill** | 13 state-return worksheets for years whose form is not a fillable PDF (CT, HI, NM, SC; WV for 2025) — the values are stamped onto the official blank |

@@ -1,0 +1,122 @@
+# Form 8995 (2025) — Qualified Business Income Deduction Simplified Computation.
+# One page; "Attach to your tax return." Phase K JW2d (2026-11-16), walkthrough finding P1-01: before this pack
+# Form 8995 was an unmapped, stamped draft with blank name and TIN boxes that the filer copied by hand.
+#
+# Blank: https://www.irs.gov/pub/irs-prior/f8995--2025.pdf, downloaded twice (irs-prior and the then-current
+# irs-pdf/f8995.pdf), both hashing to the pdf_sha256 below. Printed title "Qualified Business Income Deduction
+# Simplified Computation", year box "2025" and footer "Form 8995 (2025) Created 9/12/25" read off the PDF itself.
+#
+# Field map: `taxfill introspect --render` (sentinel sweep) and READ on the render. The blank carries exactly 33
+# text widgets, all mapped, none ReadOnly, none calculated, no checkbox: the name and TIN header, the line 1 table
+# (rows i-v, columns (a) name, (b) TIN, (c) QBI or (loss)), and lines 2-17, one widget each, in printed order.
+# The four boxes printed inside "( )" (lines 3, 7, 16 and 17) are 66 pt wide against 72 pt for the others.
+# maxlen: the header TIN and the five column (b) TIN widgets carry /MaxLen 11 and the pack says 11; no other
+# widget has a /MaxLen, so verify's clipping scan guards the names.
+# Audit: the sentinel fill (scripts/audit_pack.py, 33/33 written, 0 verify FAILs) was READ on its render: every
+# sentinel sits on its own printed line and column, the parenthesised boxes print inside their "( )", and the
+# name and 9-digit TINs are whole. The vision audit caught nothing; the map ships as introspected.
+#
+# Relations: the face's own arithmetic, each quoted. Signs: lines 3, 7, 16 and 17 print their box inside "( )"
+# ("3 Qualified business net (loss) carryforward from the prior year ... 3 (   )"), so the amount is a loss
+# whichever way the filer writes it. As in the 2025 Schedule D pack (lines 6 and 14), each is read as its absolute
+# value, max(x, -x): a relation holds whether the box says 1500 or -1500, and fails a wrong total either way.
+# calc op qbi_deduction writes these four as positive amounts (the parentheses are printed). Line 6 is signed:
+# "Line 6 Enter income as a positive number and losses as a negative number." (Instructions for Form 8995 (2025)).
+# Rounding: verify compares both sides in whole dollars after IRS rounding (exact decimal arithmetic, 50 cents
+# away from zero), so "5 == 4 * 0.20" passes 201 for a line 4 of 1,003 (200.60) and fails 200.
+#
+# NOT declared:
+# - "2 == 1.i.c + 1.ii.c + 1.iii.c + 1.iv.c + 1.v.c". The face prints "2 Total qualified business income or
+#   (loss). Combine lines 1i through 1v, column (c)", but the instructions add rows that are not on the face:
+#   "Line 2 If you have more than five trades or businesses, attach a statement with the name and taxpayer
+#   identification number of the trade(s) or business(es) and include the income and loss from those trade(s) or
+#   business(es) in the total for line 2." A sixth business makes that relation fail a correct return. The calc op
+#   computes line 2 from every business, so verify_form's recompute (`independent`) checks it instead.
+# - line 11 against Form 1040: "Form 1040 or 1040-SR filers: Form 1040 or 1040-SR, line 11a, minus lines 12e and
+#   13b" (Instructions for Form 8995 (2025), Line 11) is a three-operand difference; a cross_form rule is one
+#   line equal to one line.
+# - line 12 against Form 1040 line 3a: line 12 adds the net capital gain, which is Schedule D's smaller of lines
+#   15 or 16 or Form 1040 line 7a (Instructions, Line 12), so 12 equals 3a only when there is none.
+#
+# Cross-form: line 15 "Qualified business income deduction. Enter the smaller of line 10 or line 14. Also enter
+# this amount on the applicable line of your return (see instructions)"; the instructions: "Line 15 Enter this
+# amount on your Form 1040, 1040-SR, or Form 1040-NR, line 13a". The 2025 Form 1040 prints "13a Qualified
+# business income deduction from Form 8995 or Form 8995-A" and the 2025 Form 1040-NR "13a Qualified business
+# income deduction from Form 8995 or Form 8995-A". Line 13a takes nothing else, and a return that files Form 8995
+# does not also file Form 8995-A (the Form 1040 instructions, Line 13a: "Attach whichever form you use (Form 8995
+# or 8995-A) to your return"), so 15 == 13a holds on every correct return. Each leg is SKIPPED when the filing has
+# no such return, as in f2441 / sched_8812 / sched_3.
+form: "8995"
+jurisdiction: federal
+tax_year: 2025
+source_url: https://www.irs.gov/pub/irs-prior/f8995--2025.pdf
+pdf_sha256: "55380ad230303e1586ce97f0f224265b8337ad18c9204f0fb7325e95a76b5cde"
+acroform_root: "topmostSubform[0]"
+
+fields:
+  # ---- header ---------------------------------------------------------------
+  - { line: "name", field: "Page1[0].f1_01[0]", type: text }   # "Name(s) shown on return"
+  - { line: "identifying_number", field: "Page1[0].f1_02[0]", type: text, maxlen: 11, format: ssn_digits_only }   # "Your taxpayer identification number"
+
+  # ---- line 1 table: "(a) Trade, business, or aggregation name", "(b) Taxpayer identification number",
+  #      "(c) Qualified business income or (loss)", rows i-v ------------------------------------------
+  - { line: "1.i.a", field: "Page1[0].Table[0].Row1i[0].f1_03[0]", type: text }
+  - { line: "1.i.b", field: "Page1[0].Table[0].Row1i[0].f1_04[0]", type: text, maxlen: 11, format: ssn_digits_only }
+  - { line: "1.i.c", field: "Page1[0].Table[0].Row1i[0].f1_05[0]", type: money }
+  - { line: "1.ii.a", field: "Page1[0].Table[0].Row1ii[0].f1_06[0]", type: text }
+  - { line: "1.ii.b", field: "Page1[0].Table[0].Row1ii[0].f1_07[0]", type: text, maxlen: 11, format: ssn_digits_only }
+  - { line: "1.ii.c", field: "Page1[0].Table[0].Row1ii[0].f1_08[0]", type: money }
+  - { line: "1.iii.a", field: "Page1[0].Table[0].Row1iii[0].f1_09[0]", type: text }
+  - { line: "1.iii.b", field: "Page1[0].Table[0].Row1iii[0].f1_10[0]", type: text, maxlen: 11, format: ssn_digits_only }
+  - { line: "1.iii.c", field: "Page1[0].Table[0].Row1iii[0].f1_11[0]", type: money }
+  - { line: "1.iv.a", field: "Page1[0].Table[0].Row1iv[0].f1_12[0]", type: text }
+  - { line: "1.iv.b", field: "Page1[0].Table[0].Row1iv[0].f1_13[0]", type: text, maxlen: 11, format: ssn_digits_only }
+  - { line: "1.iv.c", field: "Page1[0].Table[0].Row1iv[0].f1_14[0]", type: money }
+  - { line: "1.v.a", field: "Page1[0].Table[0].Row1v[0].f1_15[0]", type: text }
+  - { line: "1.v.b", field: "Page1[0].Table[0].Row1v[0].f1_16[0]", type: text, maxlen: 11, format: ssn_digits_only }
+  - { line: "1.v.c", field: "Page1[0].Table[0].Row1v[0].f1_17[0]", type: money }
+
+  # ---- lines 2-17 -------------------------------------------------------------
+  - { line: "2", field: "Page1[0].Line2_ReadOrder[0].f1_18[0]", type: money }   # Total qualified business income or (loss). Combine lines 1i through 1v, column (c)
+  - { line: "3", field: "Page1[0].f1_19[0]", type: money }    # Qualified business net (loss) carryforward from the prior year — box inside "( )"
+  - { line: "4", field: "Page1[0].f1_20[0]", type: money }    # Total qualified business income. Combine lines 2 and 3. If zero or less, enter -0-
+  - { line: "5", field: "Page1[0].f1_21[0]", type: money }    # Qualified business income component. Multiply line 4 by 20% (0.20)
+  - { line: "6", field: "Page1[0].Line6_ReadOrder[0].f1_22[0]", type: money }   # Qualified REIT dividends and publicly traded partnership (PTP) income or (loss)
+  - { line: "7", field: "Page1[0].f1_23[0]", type: money }    # Qualified REIT dividends and qualified PTP (loss) carryforward from the prior year — box inside "( )"
+  - { line: "8", field: "Page1[0].f1_24[0]", type: money }    # Total qualified REIT dividends and PTP income. Combine lines 6 and 7. If zero or less, enter -0-
+  - { line: "9", field: "Page1[0].f1_25[0]", type: money }    # REIT and PTP component. Multiply line 8 by 20% (0.20)
+  - { line: "10", field: "Page1[0].f1_26[0]", type: money }   # Qualified business income deduction before the income limitation. Add lines 5 and 9
+  - { line: "11", field: "Page1[0].f1_27[0]", type: money }   # Taxable income before qualified business income deduction
+  - { line: "12", field: "Page1[0].f1_28[0]", type: money }   # Enter your net capital gain, if any, increased by any qualified dividends
+  - { line: "13", field: "Page1[0].f1_29[0]", type: money }   # Subtract line 12 from line 11. If zero or less, enter -0-
+  - { line: "14", field: "Page1[0].f1_30[0]", type: money }   # Income limitation. Multiply line 13 by 20% (0.20)
+  - { line: "15", field: "Page1[0].f1_31[0]", type: money }   # Qualified business income deduction. Enter the smaller of line 10 or line 14
+  - { line: "16", field: "Page1[0].f1_32[0]", type: money }   # Total qualified business (loss) carryforward — box inside "( )"
+  - { line: "17", field: "Page1[0].f1_33[0]", type: money }   # Total qualified REIT dividends and PTP (loss) carryforward — box inside "( )"
+
+relations:
+  - "4 == max(0, 2 - max(3, -3))"     # "4 Total qualified business income. Combine lines 2 and 3. If zero or less, enter -0-"
+  - "5 == 4 * 0.20"                   # "5 Qualified business income component. Multiply line 4 by 20% (0.20)"
+  - "8 == max(0, 6 - max(7, -7))"     # "8 Total qualified REIT dividends and PTP income. Combine lines 6 and 7. If zero or less, enter -0-"
+  - "9 == 8 * 0.20"                   # "9 REIT and PTP component. Multiply line 8 by 20% (0.20)"
+  - "10 == 5 + 9"                     # "10 Qualified business income deduction before the income limitation. Add lines 5 and 9"
+  - "13 == max(0, 11 - 12)"           # "13 Subtract line 12 from line 11. If zero or less, enter -0-"
+  - "14 == 13 * 0.20"                 # "14 Income limitation. Multiply line 13 by 20% (0.20)"
+  - "15 == min(10, 14)"               # "15 Qualified business income deduction. Enter the smaller of line 10 or line 14"
+  # "16 Total qualified business (loss) carryforward. Combine lines 2 and 3. If greater than zero, enter -0-": the
+  # box is printed inside "( )", so its absolute value is the loss left after line 2 absorbs the line 3 carryforward.
+  - "max(16, -16) == max(0, max(3, -3) - 2)"
+  # "17 Total qualified REIT dividends and PTP (loss) carryforward. Combine lines 6 and 7. If greater than zero,
+  # enter -0-"
+  - "max(17, -17) == max(0, max(7, -7) - 6)"
+
+cross_form:
+  - "15 == f1040.13a"                 # Instructions, Line 15: "Enter this amount on your Form 1040, 1040-SR, or Form 1040-NR, line 13a"
+  - "15 == f1040nr.13a"
+
+identity_fields: [name, identifying_number]
+
+# Attachment-only form: no signature block of its own; mailed inside the parent return's envelope
+# (formpacks/CONVENTIONS.md, "Signature and mailing").
+signature: null
+mailing: null

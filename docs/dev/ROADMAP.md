@@ -115,7 +115,7 @@ AR (AR1000F), ID (40), NE (1040N), OK (511), ME (1040ME), MS (80-105),
 RI (RI-1040), MT (Form 2), ND (ND-1), DE (PIT-RES), VT (IN-111), DC (D-40),
 WV (IT-140), IA (IA 1040), MA (Form 1), UT (TC-40) — plus **4 via print/hand-fill
 manifests**: CT (CT-1040), HI (N-11), NM (PIT-1), SC (SC1040).
-**298 form packs total** — 281 `pack.yaml` (151 federal + 130 state) + 17
+**299 form packs total** — 282 `pack.yaml` (152 federal + 130 state) + 17
 `handfill.yaml`. The state 130 breaks down **TY2023 48 / TY2024 41 / TY2025 41**.
 > ⚠️ State form-pack year coverage is now **partial, no longer TY2023-only**:
 > **42 of the 42 jurisdictions fill a post-2023 year** —

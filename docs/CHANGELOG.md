@@ -29,7 +29,7 @@ person checks, signs and files.
 <!-- BEGIN GENERATED release counts: scripts/sync_doc_counts.py --write rewrites this block until the section heading is dated -->
 - **23 MCP tools** over stdio, among them `calc` with **40 deterministic ops** over cited per-year tax data; `taxfill call` runs the same tools from a shell for agents without MCP.
 - **29 tax-document kinds** that `extract_document` structures and validates (W-2, the 1099s, the 1098s, 1042-S, the K-1s, …).
-- **151 federal form packs**: TY2019 1 · TY2020 1 · TY2021 1 · TY2022 5 · TY2023 35 · TY2024 35 · TY2025 37; planning year TY2026 36.
+- **152 federal form packs**: TY2019 1 · TY2020 1 · TY2021 1 · TY2022 5 · TY2023 35 · TY2024 35 · TY2025 38; planning year TY2026 36.
 - **130 fillable state packs** (TY2023 48 · TY2024 41 · TY2025 41) plus **13 print-and-hand-fill state worksheets** (CT, HI, NM and SC for 2023–2025; WV for 2025). Of the 42 income-tax jurisdictions, a state return fills for all 42 in TY2023, 41 in TY2024 and all 42 in TY2025.
 - **A FinCEN Form 114 (FBAR) worksheet** for 2023–2026, for keying into FinCEN's BSA E-Filing System.
 - **Tax knowledge**: federal 2019–2026 (2026 is planning-only); state, all 42 income-tax jurisdictions for 2023, 2024 and 2025.

@@ -69,6 +69,7 @@ The 2022 schedule packs serve Form 1040-NR, which attaches them; there is no For
 | Form 8959 | ✓ | ✓ | ✓ | draft |
 | Form 8960 | ✓ | ✓ | ✓ | draft |
 | Form 8962 | ✓ | ✓ | ✓ | draft |
+| Form 8995 | — | — | ✓ | — |
 | Form W-7 | ✓ | ✓ | ✓ | rehearsal |
 
 ### Reporting worksheets (filed outside the return)
@@ -77,7 +78,7 @@ The 2022 schedule packs serve Form 1040-NR, which attaches them; there is no For
 |---|---|---|---|---|
 | FinCEN Form 114 | worksheet | worksheet | worksheet | worksheet |
 
-**151 federal form packs** plus 4 reporting worksheets.
+**152 federal form packs** plus 4 reporting worksheets.
 
 ✓ = fills the final IRS form · draft = mapped from the IRS early-release draft; fills in rehearsal mode only, until the final form posts · rehearsal = a final revision used in a planning year; rehearsal mode only · worksheet = values to key into another filing system · † = planning year (2026): for projections and dress rehearsals — its return is filed after the year ends.
 
