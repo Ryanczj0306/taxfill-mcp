@@ -139,3 +139,46 @@ def test_two_different_initials_across_three_forms_fail():
         _item("d40", SEPARATE, {"name.first": "Avery", "name.middle_initial": "K", "name.last": "Example"}),
     ])
     assert check.status == "FAIL", check.detail
+
+
+# Verifier round 1: the separate initial box is found under every key a shipped pack gives it. IA 1040 2025 prints
+# "First Name MI" (key name.mi), OR-40 2025 "First name" and "Initial" (key name.initial), and Form W-7 "1a First name
+# Middle name Last name" (key name.middle, a full middle name whose first letter is the initial).
+F1040 = "formpacks/federal/2025/f1040/pack.yaml"
+F1040_VALUES = {"name.first": "Avery J.", "name.last": "Example", "identifying_number": "999881234"}
+
+
+@pytest.mark.parametrize("combined_first", [True, False], ids=["f1040-listed-first", "state-listed-first"])
+@pytest.mark.parametrize("rel_pack, initial_key, initial, status", [
+    ("formpacks/states/ia/2025/ia1040/pack.yaml", "name.mi", "J", "PASS"),
+    ("formpacks/states/ia/2025/ia1040/pack.yaml", "name.mi", "K", "FAIL"),
+    ("formpacks/federal/2025/fw7/pack.yaml", "name.middle", "Jordan", "PASS"),
+    ("formpacks/federal/2025/fw7/pack.yaml", "name.middle", "Kendall", "FAIL"),
+])
+def test_shipped_2025_form_1040_against_other_initial_keys(rel_pack, initial_key, initial, status, combined_first):
+    f1040 = _shipped_item("f1040", F1040, F1040_VALUES)
+    other = _shipped_item("other", rel_pack, {"name.first": "Avery", initial_key: initial, "name.last": "Example"})
+    check = _first_name_check([f1040, other] if combined_first else [other, f1040])
+    assert check.status == status, check.detail
+    assert "first name + middle initial" in check.detail
+
+
+@pytest.mark.parametrize("initial, status", [("J", "PASS"), ("K", "FAIL")])
+def test_shipped_2025_form_1040_nr_against_or_40(initial, status):
+    # Form 1040-NR declares name.first; OR-40 prints "Initial" apart from "First name".
+    f1040nr = _shipped_item("f1040nr", "formpacks/federal/2025/f1040nr/pack.yaml", F1040_VALUES)
+    or40 = _shipped_item("or40", "formpacks/states/or/2025/or40/pack.yaml",
+                         {"name.first": "Avery", "name.initial": initial})
+    check = _first_name_check([f1040nr, or40])
+    assert check.status == status, check.detail
+
+
+@pytest.mark.parametrize("ia_initial, status", [("J", "PASS"), ("K", "FAIL")])
+def test_the_result_does_not_depend_on_which_other_forms_are_present(ia_initial, status):
+    f1040 = _shipped_item("f1040", F1040, F1040_VALUES)
+    ia1040 = _shipped_item("ia1040", "formpacks/states/ia/2025/ia1040/pack.yaml",
+                           {"name.first": "Avery", "name.mi": ia_initial, "name.last": "Example"})
+    form540 = _shipped_item("form540", "formpacks/states/ca/2025/form540/pack.yaml",
+                            {"name.first": "Avery", "name.middle_initial": "J", "name.last": "Example"})
+    assert _first_name_check([f1040, ia1040]).status == status
+    assert _first_name_check([f1040, ia1040, form540]).status == status

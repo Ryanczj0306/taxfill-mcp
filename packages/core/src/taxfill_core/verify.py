@@ -2482,18 +2482,26 @@ def _filed_with_a_return(items: Sequence[FilingItem]) -> frozenset[str]:
 
 # JW2c (P1-04): a first-name identity line and the separate middle-initial line beside it, as packs name them
 # ("name.first" -> "name.middle_initial", "name.spouse_first" -> "name.spouse_middle_initial", "tp_first_name" ->
-# "tp_middle_initial", "FIRSTNAME" -> "MIDDLEINITIAL"). A pack that maps the identity line without such a sibling
-# carries a combined box: Form 1040's "Your first name and middle initial".
-_MIDDLE_INITIAL_SIBLINGS = (("first_name", "middle_initial"), ("FIRSTNAME", "MIDDLEINITIAL"), ("first", "middle_initial"))
+# "tp_middle_initial", "FIRSTNAME" -> "MIDDLEINITIAL"; IA 1040 prints "First Name MI" and maps "name.mi"; OR-40
+# prints "First name" and "Initial" and maps "name.initial"). Form W-7 prints "1a First name Middle name Last name"
+# and maps "name.middle", a full middle name whose first letter is the initial. A pack that maps the identity line
+# without such a sibling carries a combined box: Form 1040's "Your first name and middle initial".
+_MIDDLE_INITIAL_SIBLINGS = (
+    ("first_name", "middle_initial"), ("FIRSTNAME", "MIDDLEINITIAL"), ("first", "middle_initial"),
+    ("first", "mi"), ("first", "initial"),
+)
+_MIDDLE_NAME_SIBLINGS = (("first", "middle"),)
 
 
-def _middle_initial_line(pack: FormPack, name: str) -> str | None:
-    """The separate middle-initial line this pack maps beside identity line ``name``, or None (a combined box)."""
+def _middle_initial_line(pack: FormPack, name: str) -> tuple[str, bool] | None:
+    """The separate middle-initial (or middle-name) line this pack maps beside identity line ``name``, or None (a
+    combined box). The flag is True for a full middle name, whose first letter is the initial."""
     lines = {f.line for f in pack.fields}
-    for old, new in _MIDDLE_INITIAL_SIBLINGS:
-        head, found, tail = name.rpartition(old)
-        if found and f"{head}{new}{tail}" in lines:
-            return f"{head}{new}{tail}"
+    for siblings, full in ((_MIDDLE_INITIAL_SIBLINGS, False), (_MIDDLE_NAME_SIBLINGS, True)):
+        for old, new in siblings:
+            head, found, tail = name.rpartition(old)
+            if found and f"{head}{new}{tail}" in lines:
+                return f"{head}{new}{tail}", full
     return None
 
 
@@ -2533,9 +2541,11 @@ def _identity_checks(
             value = normalize_on_disk(pack_field, raw)
             initial_line = _middle_initial_line(item.pack, name)
             if initial_line is not None:
-                initial_field = next(f for f in item.pack.fields if f.line == initial_line)
+                initial_key, full_middle_name = initial_line
+                initial_field = next(f for f in item.pack.fields if f.line == initial_key)
                 initial_raw = _lookup_raw(item.pack, initial_field, fields_by_key[item.form_key]) or ""
-                initials_by_form[item.form_key] = normalize_on_disk(initial_field, initial_raw)
+                initial = normalize_on_disk(initial_field, initial_raw).strip()
+                initials_by_form[item.form_key] = initial[:1] if full_middle_name else initial
             if not value and name not in item.pack.identity_fields:
                 # A pack that MAPS a line without DECLARING it in its own
                 # identity_fields is not promising to carry it, so a BLANK there is
@@ -2594,9 +2604,10 @@ def _identity_checks(
         # JW2c (P1-04): when one form prints "first name" and "initial" in separate boxes and another prints one
         # "first name and middle initial" box (Form 1040), each form's value is read as first name + initial (periods
         # dropped, spaces collapsed, case-folded). The first names must match, and so must the initials where both
-        # forms carry one: 'Avery J.' matches 'Avery' + 'J', and an initial left off one form is no difference (the box
-        # on Iowa's IA 1040 is "First Name" alone); 'Avery J.' against 'Avery' + 'K' and 'Avery' against 'Avory' still
-        # differ. Forms that all print the same shape compare as before.
+        # forms carry one: 'Avery J.' matches 'Avery' + 'J' (and W-7's 'Avery' + middle name 'Jordan'), and an initial
+        # left off one form is no difference (a blank initial box, or a combined box holding the first name alone,
+        # passed before JW2c too); 'Avery J.' against 'Avery' + 'K' and 'Avery' against 'Avory' still differ. Forms
+        # that all print the same shape compare as before.
         initials = {key: initials_by_form[key] for key in values_by_form if key in initials_by_form}
         composed = 0 < len(initials) < len(values_by_form)
         composed_note = ""
