@@ -2530,6 +2530,10 @@ def _street_words(value: str) -> tuple[str, ...]:
     return tuple(word for word in _ADDR_TOKEN_RE.findall(value.casefold()) if word not in _UNIT_DESIGNATORS)
 
 
+# Per-person identity fields whose other (per-filing) forms are still compared among themselves.
+_PER_PERSON_REST_COMPARED = frozenset({"name"})
+
+
 def _first_and_initial(value: str) -> tuple[str, str]:
     """Split 'first name and middle initial' into (first name, initial), periods dropped, spaces collapsed, case-folded.
 
@@ -2699,6 +2703,16 @@ def _identity_checks(
             name in item.pack.identity_per_person
             for item in items
             if item.form_key in values_by_form
+        ) and not (
+            # JW2c verifier round 1: Forms 8606 and 5329 declare "name" per person, and the schedules beside them carry
+            # "Name(s) shown on Form 1040"; a name typo between two schedules still fails, as it did before the
+            # declaration. identifying_number keeps its whole-field SKIP: Schedules C and SE carry the SSN of the
+            # person they are about without declaring it, so comparing the rest could fail a correct joint return.
+            name in _PER_PERSON_REST_COMPARED
+            and len({
+                value.casefold() for key, value in values_by_form.items()
+                if not any(item.form_key == key and name in item.pack.identity_per_person for item in items)
+            }) > 1
         ):
             # PER-PERSON identity field: the difference is legitimate, so FAIL would
             # reject a correct return (Form 8889's box is printed "Social security

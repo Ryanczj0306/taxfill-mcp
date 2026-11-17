@@ -237,3 +237,55 @@ def test_other_separate_unit_keys_compose_against_a_one_box_street(rel_pack, uni
     other = _shipped_item("other", rel_pack, {"mailing_address.street": "100 Main St", **unit_values})
     check = next(c for c in verify_filing([me, other]).identity if c.field == "mailing_address.street")
     assert check.status == "PASS", check.detail
+
+
+# Verifier round 1: Form 8606 prints "Name. If married, file a separate form for each spouse required to file 2025 Form
+# 8606", and Form 5329 "Name of individual subject to additional tax. If married filing jointly, see instructions", so on
+# a joint return each carries one spouse's name while the schedules carry "Name(s) shown on Form 1040". Form 8889's
+# name stays per filing: it prints "Name(s) shown on Form 1040, 1040-SR, or 1040-NR".
+JOINT = "Avery J. & Blake Example"
+
+
+def _per_form(form: str, year: int = 2025) -> str:
+    return f"formpacks/federal/{year}/{form}/pack.yaml"
+
+
+def _name_check(items: list[FilingItem]):
+    return next(check for check in verify_filing(items).identity if check.field == "name")
+
+
+@pytest.mark.parametrize("year", [2023, 2024, 2025, 2026])
+@pytest.mark.parametrize("form", ["f8606", "f5329"])
+def test_every_year_declares_the_name_per_person(form, year):
+    # TY2026 is planning-only (verify_filing refuses it), so its declaration is checked on the pack.
+    assert load_pack(REPO_ROOT / _per_form(form, year)).identity_per_person == ["name", "identifying_number"]
+
+
+@pytest.mark.parametrize("year", [2023, 2024, 2025])
+@pytest.mark.parametrize("form", ["f8606", "f5329"])
+def test_a_joint_return_with_each_spouses_form_is_no_name_difference(form, year):
+    items = [
+        _shipped_item("sched_b", _per_form("sched_b", 2025), {"name": JOINT, "identifying_number": "999881234"}),
+        _shipped_item(f"{form}_you", _per_form(form, year), {"name": "Avery J. Example", "identifying_number": "999881234"}),
+        _shipped_item(f"{form}_spouse", _per_form(form, year), {"name": "Blake Example", "identifying_number": "999885678"}),
+    ]
+    check = _name_check(items)
+    assert check.status == "SKIPPED", check.detail
+
+
+def test_a_schedule_name_typo_still_fails_beside_a_form_8606():
+    items = [
+        _shipped_item("sched_a", _per_form("sched_a"), {"name": "Avery J. Example", "identifying_number": "999881234"}),
+        _shipped_item("sched_b", _per_form("sched_b"), {"name": "Avery J. Exmple", "identifying_number": "999881234"}),
+        _shipped_item("f8606", _per_form("f8606"), {"name": "Avery J. Example", "identifying_number": "999881234"}),
+    ]
+    check = _name_check(items)
+    assert check.status == "FAIL", check.detail
+
+
+def test_the_form_8889_name_still_compares_with_the_return():
+    items = [
+        _shipped_item("sched_b", _per_form("sched_b"), {"name": JOINT, "identifying_number": "999881234"}),
+        _shipped_item("f8889", _per_form("f8889"), {"name": "Avery J. Example", "identifying_number": "999881234"}),
+    ]
+    assert _name_check(items).status == "FAIL"

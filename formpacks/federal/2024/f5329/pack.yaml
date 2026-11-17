@@ -397,7 +397,10 @@ relations:
   - "55 == 54a + 54b"               # "55 Add lines 54a and 54b"
 cross_form: []
 identity_fields: [name, identifying_number]
-identity_per_person: [identifying_number]
+# JW2c (verifier round 1): name is per person too. The face prints "Name of individual subject to additional tax. If
+# married filing jointly, see instructions", so each spouse's form carries that spouse's name while the schedules carry
+# "Name(s) shown on Form 1040". The other forms' names are still compared among themselves.
+identity_per_person: [name, identifying_number]
 # The face prints "Fill in Your Address Only if You Are Filing This Form by Itself and Not With Your Tax Return": attached to the return,
 # these boxes are correctly BLANK. verify_filing honours that only in a filing that holds a Form 1040,
 # 1040-SR, 1040-NR or 1040-X; verified alone, the form counts as filed by itself (Phase K JK27, 2026-10-16).

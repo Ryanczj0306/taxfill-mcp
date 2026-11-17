@@ -289,7 +289,10 @@ identity_fields: [name, identifying_number]
 # carries the primary filer's. Declared 2026-08-26 after verify_filing was
 # reproduced FAILing that correct arrangement; verify now reports a difference
 # as SKIPPED with both values printed instead of rejecting the return.
-identity_per_person: [identifying_number]
+# JW2c (verifier round 1): name is per person too. The face prints "Name. If married, file a separate form for each
+# spouse required to file 2026 Form 8606", so a joint return's spouse form carries the spouse's name while the schedules
+# carry "Name(s) shown on Form 1040". The other forms' names are still compared among themselves.
+identity_per_person: [name, identifying_number]
 
 # "Sign Here Only if You Are Filing This Form by Itself and Not With Your Tax
 # Return" (printed, page 2) — the f8843 standalone_only shape.
