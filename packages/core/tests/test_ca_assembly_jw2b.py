@@ -13,6 +13,8 @@ from __future__ import annotations
 
 import pytest
 
+from taxfill_core.sources import get_sources
+
 from taxfill_core.file_and_pay import (
     _GENERIC_STATE_ASSEMBLE,
     FilingManifestItem,
@@ -178,3 +180,14 @@ def test_form_540_in_any_spelling_gets_the_block(form):
     item = FilingManifestItem(form=form, tax_year=YEAR, jurisdiction="states/ca", bottom_line=50)
     lines = next(r for r in file_and_pay([_federal("Schedule D"), item]).returns if r.jurisdiction == "states/ca").assemble
     assert _federal_copy(lines).startswith("Federal return copy: Yes.") and _GENERIC_STATE_ASSEMBLE not in lines
+
+
+@pytest.mark.parametrize("query", [
+    "540NR federal return", "attach federal return 540NR", "540NR side 6", "nonresident federal return",
+    "Form 540NR federal return", "federal return", "side 6", "attach federal return",
+])
+def test_a_federal_return_query_always_reaches_form_540nr_and_its_own_notice(query):
+    # JW2b re-verify: Form 540 Side 6 says to see the instructions; Form 540NR (2025) Side 6 prints
+    # "IMPORTANT: Attach a copy of your complete federal return." A 540NR filer's query must reach the latter.
+    urls = {s.url for s in get_sources(query, 2025, "states/ca").sources}
+    assert "https://www.ftb.ca.gov/forms/2025/2025-540nr.pdf" in urls, query

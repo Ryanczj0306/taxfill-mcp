@@ -31,7 +31,7 @@ plan for what is **not yet done**, as of **2026-10-09** (re-planned 2026-10-09 �
 
 ## Where we are (verified)
 
-Done and on `main` (**15,968 tests** — offline 12,339 + live-.gov 3629; derived
+Done and on `main` (**15,976 tests** — offline 12,347 + live-.gov 3629; derived
 by `scripts/sync_test_count.py --write` at every Phase J commit). The offline layer is green in CI and locally
 (Python 3.11, matching CI, since J0). The weekly network layer has been **RED since
 2026-08-17** — 6 of 6 freshness runs failed through run 35621846216 (2026-09-21) — on
