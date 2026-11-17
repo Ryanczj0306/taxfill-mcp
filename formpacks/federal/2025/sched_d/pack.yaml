@@ -364,8 +364,12 @@ relations:
   # page with that box checked ("1b Totals for all transactions reported on Form(s) 8949 with Box A or Box G
   # checked"), and verify_filing gives each 8949 page its own form_key, so a rule naming one page fails a filer with
   # two pages under the same box, or a page under another box.
-cross_form:
-  - "16 == f1040.7a"                 # Net capital gain/(loss) → 2025 Form 1040, line 7a (2025 f1040 pack key "7a")
+# JW2c verifier round 1: no rule against Form 1040 line 7a. The face prints "If line 16 is a gain, enter the amount
+# from line 16 on Form 1040, 1040-SR, or 1040-NR, line 7a" but "21 If line 16 is a loss, enter here and on Form 1040,
+# 1040-SR, or 1040-NR, line 7a, the smaller of: The loss on line 16; or ($3,000), or if married filing separately,
+# ($1,500)", so "16 == f1040.7a" failed every correct return with a larger loss. "21 == f1040.7a" fails every gain
+# (line 21 is then blank, read as 0), and the cap depends on filing status, which cross_form cannot read.
+cross_form: []
 identity_fields:
   - name
   - identifying_number

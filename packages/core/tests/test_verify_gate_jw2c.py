@@ -289,3 +289,24 @@ def test_the_parenthesised_column_a_boxes_subtract_under_either_sign(sign):
     assert _ca_check("B9a_A", {**values, "B9a_A": _ca_expected("B9a_A", values)}).status == "PASS"
     added = _ca_expected("B9a_A", values) + 2 * sum(abs(values[line]) for line in _CA_REDUCTIONS)
     assert _ca_check("B9a_A", {**values, "B9a_A": added}).status == "FAIL"
+
+
+@pytest.mark.parametrize("year, line_7", [(2023, "7"), (2024, "7"), (2025, "7a")])
+def test_a_capital_loss_capped_on_line_21_passes_the_filing(year, line_7):
+    # Verifier round 1: a net short-term loss of 5,000 on line 16; "21 If line 16 is a loss, enter here and on Form 1040,
+    # 1040-SR, or 1040-NR, line 7a, the smaller of: The loss on line 16; or ($3,000)". The old rule "16 == f1040.7a"
+    # failed this correct return (-5000 against -3000).
+    sched_d = load_pack(REPO_ROOT / f"formpacks/federal/{year}/sched_d/pack.yaml")
+    f1040 = load_pack(REPO_ROOT / f"formpacks/federal/{year}/f1040/pack.yaml")
+    disk = {"1b.d": 1000, "1b.e": 6000, "1b.h": -5000, "7": -5000, "16": -5000, "21": -3000}
+    report = verify_filing([
+        FilingItem(form_key="sched_d", pack=sched_d, fields=_dump(sched_d, disk)),
+        FilingItem(form_key="f1040", pack=f1040, fields=_dump(f1040, {line_7: -3000})),
+    ])
+    assert [c.detail for c in report.cross_form if c.status == "FAIL"] == []
+    assert [c.detail for c in report.relations if c.status == "FAIL" and c.relation.startswith("sched_d:")] == []
+
+
+def test_no_schedule_d_year_ties_line_16_to_form_1040():
+    for year in (2023, 2024, 2025, 2026):
+        assert load_pack(REPO_ROOT / f"formpacks/federal/{year}/sched_d/pack.yaml").cross_form == []

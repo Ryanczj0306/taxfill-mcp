@@ -305,8 +305,9 @@ def test_t3_a_joint_return_with_overtime_an_hsa_dividends_and_a_covered_loss(tmp
         "sched_1a": {"16a.i": "Demo Plant Co", "16a.ii": "12-3456789"},
         "sched_b": {"dividend_1.payer": "Demo Index Fund"},
     })
-    assert {("f1040", "10 == sched_1.26"), ("f1040", "13a == sched_1a.44"), ("sched_b", "6 == f1040.3b"),
-            ("sched_d", "16 == f1040.7a")} <= _passed(report)
+    # Schedule D carries no rule against 1040 line 7a (JW2c: line 21 caps a loss before 7a).
+    assert {("f1040", "10 == sched_1.26"), ("f1040", "13a == sched_1a.44"),
+            ("sched_b", "6 == f1040.3b")} <= _passed(report)
     item = FilingManifestItem(form="1040", tax_year=YEAR, bottom_line=refund, state="Ohio", filing_jointly=True,
                               direct_deposit=True, attached_forms=["8889"])
     ret = file_and_pay([item]).returns[0]

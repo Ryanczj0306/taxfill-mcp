@@ -302,8 +302,12 @@ relations:
   - "8b.h == 8b.d - 8b.e + 8b.g"
   - "9.h == 9.d - 9.e + 9.g"
   - "10.h == 10.d - 10.e + 10.g"
-cross_form:
-  - "16 == f1040.7"                  # Net capital gain/(loss) → Form 1040, line 7
+# JW2c verifier round 1: no rule against Form 1040 line 7. The face prints "If line 16 is a gain, enter the amount
+# from line 16 on Form 1040, 1040-SR, or 1040-NR, line 7" but "21 If line 16 is a loss, enter here and on Form 1040,
+# 1040-SR, or 1040-NR, line 7, the smaller of: The loss on line 16; or ($3,000), or if married filing separately,
+# ($1,500)", so "16 == f1040.7" failed every correct return with a larger loss. "21 == f1040.7" fails every gain
+# (line 21 is then blank, read as 0), and the cap depends on filing status, which cross_form cannot read.
+cross_form: []
 identity_fields:
   - name
   - identifying_number
