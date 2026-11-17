@@ -182,3 +182,58 @@ def test_the_result_does_not_depend_on_which_other_forms_are_present(ia_initial,
                             {"name.first": "Avery", "name.middle_initial": "J", "name.last": "Example"})
     assert _first_name_check([f1040, ia1040]).status == status
     assert _first_name_check([f1040, ia1040, form540]).status == status
+
+
+# Verifier round 1: Form 1040's "Home address (number and street)" and "Apt. no." boxes against a state that prints the
+# apartment inside the street box (ME 1040ME "Current Mailing Address (P.O. Box, street, and apartment number)", KY 740
+# "Mailing Address (Number and Street including Apartment Number or P.O. Box)").
+ONE_BOX_STREET_PACKS = ["formpacks/states/me/2025/f1040me/pack.yaml", "formpacks/states/ky/2025/form740/pack.yaml"]
+
+
+def _street_check(state_pack: str, state_street: str, f1040_street: str = "100 Main St", apt: str = "4B",
+                  f1040_first: bool = True):
+    f1040 = _shipped_item("f1040", F1040, {"mailing_address.street": f1040_street, "mailing_address.apt": apt})
+    state = _shipped_item("state", state_pack, {"mailing_address.street": state_street})
+    report = verify_filing([f1040, state] if f1040_first else [state, f1040])
+    return next(check for check in report.identity if check.field == "mailing_address.street")
+
+
+@pytest.mark.parametrize("f1040_first", [True, False], ids=["f1040-listed-first", "state-listed-first"])
+@pytest.mark.parametrize("state_pack", ONE_BOX_STREET_PACKS)
+@pytest.mark.parametrize("state_street", ["100 Main St Apt 4B", "100 Main St, Apt. 4B", "100 MAIN ST #4B",
+                                          "100 Main St Unit 4B"])
+def test_street_and_apartment_match_a_one_box_street(state_pack, state_street, f1040_first):
+    check = _street_check(state_pack, state_street, f1040_first=f1040_first)
+    assert check.status == "PASS", check.detail
+    assert "street + unit" in check.detail
+
+
+@pytest.mark.parametrize("state_pack", ONE_BOX_STREET_PACKS)
+@pytest.mark.parametrize("state_street, f1040_street, apt", [
+    ("100 Main St Apt 4C", "100 Main St", "4B"),     # a different unit
+    ("102 Main St Apt 4B", "100 Main St", "4B"),     # a different street
+    ("100 Main St Apt 4B", "100 Main St", ""),       # the 1040 leaves the unit off, the state names one
+    ("100 Main St", "100 Elm St", "4B"),             # a different street, unit on the 1040 only
+])
+def test_a_real_street_difference_still_fails(state_pack, state_street, f1040_street, apt):
+    check = _street_check(state_pack, state_street, f1040_street, apt)
+    assert check.status == "FAIL", check.detail
+
+
+def test_a_street_without_apartment_on_both_compares_as_before():
+    check = _street_check(ONE_BOX_STREET_PACKS[0], "100 Main St", apt="")
+    assert check.status == "PASS" and "street + unit" not in check.detail
+
+
+@pytest.mark.parametrize("rel_pack, unit_values", [
+    ("formpacks/states/la/2025/it540/pack.yaml",
+     {"mailing_address.unit_type": "APT", "mailing_address.unit_number": "4B"}),
+    ("formpacks/states/dc/2025/d40/pack.yaml", {"mailing_address.street2": "Apt 4B"}),
+    ("formpacks/states/ca/2025/form540/pack.yaml", {"mailing_address.apt_no": "4B"}),
+])
+def test_other_separate_unit_keys_compose_against_a_one_box_street(rel_pack, unit_values):
+    # A part-year filing: ME 1040ME (one box) beside a state that prints the unit apart.
+    me = _shipped_item("f1040me", ONE_BOX_STREET_PACKS[0], {"mailing_address.street": "100 Main St Apt 4B"})
+    other = _shipped_item("other", rel_pack, {"mailing_address.street": "100 Main St", **unit_values})
+    check = next(c for c in verify_filing([me, other]).identity if c.field == "mailing_address.street")
+    assert check.status == "PASS", check.detail

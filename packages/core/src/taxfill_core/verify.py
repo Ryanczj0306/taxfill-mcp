@@ -2505,6 +2505,31 @@ def _middle_initial_line(pack: FormPack, name: str) -> tuple[str, bool] | None:
     return None
 
 
+# JW2c verifier round 1: the separate unit box beside a street identity line. Form 1040 prints "Home address (number
+# and street)" and "Apt. no." apart (key mailing_address.apt; Form 540 "Apt. no/ste. no.", apt_no; LA IT-540 a unit
+# type and number, unit_number; DC D-40 a second address line, street2), while one-box states print the apartment
+# inside the street box: ME 1040ME "Current Mailing Address (P.O. Box, street, and apartment number)", KY 740
+# "Mailing Address (Number and Street including Apartment Number or P.O. Box)".
+_STREET_UNIT_SIBLINGS = ("apt", "apt_no", "unit_number", "street2")
+# Unit designators, dropped from both sides of a composed street comparison: "Apt. no." holds just "4B" while the
+# one-box street reads "100 Main St Apt 4B" or "100 Main St #4B".
+_UNIT_DESIGNATORS = frozenset({"apt", "apartment", "unit", "ste", "suite", "no", "number", "lot", "rm", "room"})
+
+
+def _street_unit_lines(pack: FormPack, name: str) -> list[str]:
+    """The separate unit lines this pack maps beside street identity line ``name`` (empty: a one-box street)."""
+    head, found, tail = name.rpartition("street")
+    if not found or tail:
+        return []
+    lines = {f.line for f in pack.fields}
+    return [f"{head}{unit}" for unit in _STREET_UNIT_SIBLINGS if f"{head}{unit}" in lines]
+
+
+def _street_words(value: str) -> tuple[str, ...]:
+    """A street with its unit, as case-folded words without punctuation or unit designators."""
+    return tuple(word for word in _ADDR_TOKEN_RE.findall(value.casefold()) if word not in _UNIT_DESIGNATORS)
+
+
 def _first_and_initial(value: str) -> tuple[str, str]:
     """Split 'first name and middle initial' into (first name, initial), periods dropped, spaces collapsed, case-folded.
 
@@ -2532,6 +2557,7 @@ def _identity_checks(
     for name in identity_names:
         values_by_form: dict[str, str] = {}
         initials_by_form: dict[str, str] = {}  # JW2c: the separate middle initial, for packs that map one
+        units_by_form: dict[str, str] = {}  # JW2c: the separate unit box(es) beside a street line
         blank_by_rule: list[str] = []
         for item in items:
             pack_field = next((f for f in item.pack.fields if f.line == name), None)
@@ -2546,6 +2572,14 @@ def _identity_checks(
                 initial_raw = _lookup_raw(item.pack, initial_field, fields_by_key[item.form_key]) or ""
                 initial = normalize_on_disk(initial_field, initial_raw).strip()
                 initials_by_form[item.form_key] = initial[:1] if full_middle_name else initial
+            unit_lines = _street_unit_lines(item.pack, name)
+            if unit_lines:
+                units = []
+                for unit_line in unit_lines:
+                    unit_field = next(f for f in item.pack.fields if f.line == unit_line)
+                    units.append(normalize_on_disk(
+                        unit_field, _lookup_raw(item.pack, unit_field, fields_by_key[item.form_key]) or ""))
+                units_by_form[item.form_key] = " ".join(unit for unit in units if unit)
             if not value and name not in item.pack.identity_fields:
                 # A pack that MAPS a line without DECLARING it in its own
                 # identity_fields is not promising to carry it, so a BLANK there is
@@ -2632,6 +2666,23 @@ def _identity_checks(
                 distinct = {f"{first} {initial}".strip() for first, initial in parsed}
         else:
             distinct = {value.casefold() for value in values_by_form.values()}
+            # JW2c verifier round 1 (widen only): a street that differs as printed passes when one form prints the
+            # apartment in its own box and another inside the street box, and street + unit there reads the same
+            # words as the one-box street (unit designators, punctuation and case ignored). A different street or
+            # unit still differs.
+            units = {key: units_by_form[key] for key in values_by_form if key in units_by_form}
+            if len(distinct) > 1 and 0 < len(units) < len(values_by_form):
+                with_units = {
+                    key: f"{value} {units[key]}".strip() if key in units else value
+                    for key, value in values_by_form.items()
+                }
+                if len({_street_words(value) for value in with_units.values()}) == 1:
+                    distinct = {next(iter(distinct))}
+                    composed_note = (
+                        f" (compared as street + unit: {', '.join(sorted(units))} print(s) the unit in a separate "
+                        f"box, {', '.join(key for key in values_by_form if key not in units)} inside the street "
+                        f"box; unit designators, punctuation and case ignored)"
+                    )
         if distinct == {""}:
             checks.append(
                 IdentityCheck(
