@@ -42,7 +42,8 @@ REL_14 = "14 == 13 * 0.20"
 REL_15 = "15 == min(10, 14)"
 REL_16 = "max(16, -16) == max(0, max(3, -3) - 2)"
 REL_17 = "max(17, -17) == max(0, max(7, -7) - 6)"
-ALL_RELATIONS = [REL_4, REL_5, REL_8, REL_9, REL_10, REL_13, REL_14, REL_15, REL_16, REL_17]
+REL_11 = "11 == min(11, 394600)"
+ALL_RELATIONS = [REL_4, REL_5, REL_8, REL_9, REL_10, REL_13, REL_14, REL_15, REL_16, REL_17, REL_11]
 
 # 2 = 30,000 - 4,998 = 25,002; 4 = 25,002 - 3,000 = 22,002; 5 = 4,400.4 -> 4,400. 8 = 1,212 - 200 = 1,012;
 # 9 = 202.4 -> 202; 10 = 4,602. 13 = 80,000 - 4,998 = 75,002; 14 = 15,000.4 -> 15,000; 15 = min(4,602, 15,000).
@@ -128,6 +129,21 @@ def test_a_carryforward_written_on_the_wrong_side_of_zero_still_fails_a_wrong_to
     # Line 4 "Combine lines 2 and 3": a filler that ADDED the parenthesised loss (25,002 + 3,000) fails either sign.
     for sign in (1, -1):
         assert _check(REL_4, {**RETURN_A, "3": sign * 3_000, "4": 28_002}).status == "FAIL"
+
+
+@pytest.mark.parametrize("line_11, status", [
+    (394_600, "PASS"), (394_601, "FAIL"), (500_000, "FAIL"), (197_301, "PASS"), (-2_500, "PASS"), (None, "PASS")])
+def test_line_11_above_the_larger_printed_threshold_fails(line_11, status):
+    # The note above line 1: "at or below $197,300 ($394,600 if married filing jointly)". The face has no
+    # filing-status box, so 197,301 on a return that is not joint passes (the residual the pack header records).
+    values = {} if line_11 is None else {"11": line_11}
+    assert _check(REL_11, values).status == status
+
+
+def test_the_line_11_literal_is_the_largest_2025_threshold():
+    thresholds = load_knowledge("federal", 2025).tax.qbi_deduction.thresholds
+    assert REL_11 == f"11 == min(11, {max(thresholds.values())})"
+    assert max(thresholds, key=thresholds.get) == "married_filing_jointly"
 
 
 def _dump(pack, values: dict[str, int]) -> dict[str, str]:
@@ -288,6 +304,17 @@ def test_the_recompute_catches_a_line_the_relations_do_not_tie(tmp_path):
     report = verify_form(PACK, out, independent=r.independent)
     assert not report.ok
     assert [c.line for c in report.recompute if c.status == "FAIL"] == ["2"]
+
+
+def test_verify_form_fails_a_form_8995_above_every_threshold(tmp_path):
+    # The verifier's repro: a hand-filled Form 8995 with line 11 of 500,000 and every other line consistent.
+    values = {"name": "Avery Example", "identifying_number": "999-88-1234", "1.i.c": 100_000, "2": 100_000,
+              "4": 100_000, "5": 20_000, "10": 20_000, "11": 500_000, "13": 500_000, "14": 100_000, "15": 20_000}
+    out = tmp_path / "f8995_above.pdf"
+    fill_form(PACK, values, _cached_blank(), out)
+    report = verify_form(PACK, out, expected=values)
+    assert not report.ok
+    assert [c.relation for c in report.relations if c.status == "FAIL"] == [REL_11]
 
 
 # ── extraction: Form 1099-DIV box 5 ──────────────────────────────────────────────────────────────────────────────────

@@ -37,6 +37,9 @@
 #   line equal to one line.
 # - line 12 against Form 1040 line 3a: line 12 adds the net capital gain, which is Schedule D's smaller of lines
 #   15 or 16 or Form 1040 line 7a (Instructions, Line 12), so 12 equals 3a only when there is none.
+# - the threshold by filing status. "11 == min(11, 394600)" (below) refuses a line 11 above the larger printed
+#   figure, but the face has no filing-status box: a return that is not married filing jointly with line 11 from
+#   197,301 to 394,600 passes every relation. calc op qbi_deduction refuses that case.
 #
 # Cross-form: line 15 "Qualified business income deduction. Enter the smaller of line 10 or line 14. Also enter
 # this amount on the applicable line of your return (see instructions)"; the instructions: "Line 15 Enter this
@@ -109,6 +112,12 @@ relations:
   # "17 Total qualified REIT dividends and PTP (loss) carryforward. Combine lines 6 and 7. If greater than zero,
   # enter -0-"
   - "max(17, -17) == max(0, max(7, -7) - 6)"
+  # Who may file this form: the note above line 1, "Use this form if your taxable income, before your qualified
+  # business income deduction, is at or below $197,300 ($394,600 if married filing jointly)", and line 11 is
+  # "11 Taxable income before qualified business income deduction". 394,600 is the larger printed figure, so a
+  # line 11 above it is never a correct Form 8995 (the instructions: "If your income is more than the threshold,
+  # you must use Form 8995-A"). The filing-status residual is under NOT declared above.
+  - "11 == min(11, 394600)"
 
 cross_form:
   - "15 == f1040.13a"                 # Instructions, Line 15: "Enter this amount on your Form 1040, 1040-SR, or Form 1040-NR, line 13a"
