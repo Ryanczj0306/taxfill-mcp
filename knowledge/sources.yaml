@@ -298,18 +298,18 @@ federal:
       - url: https://www.irs.gov/forms-pubs/about-form-8995
         answers: >-
           Form 8995, the simplified section 199A qualified business income (QBI) deduction: 20% of QBI plus 20% of
-          REIT dividends and PTP income (publicly traded partnerships), with its income limitation, for a filer at
-          or below the year's taxable-income threshold; the QBI and REIT/PTP loss carryforwards.
+          REIT dividends and PTP income (publicly traded partnerships), with a taxable-income ceiling, for a filer at
+          or below the year's taxable-income threshold; the QBI and REIT/PTP carryforwards of losses.
         cadence: annual (per tax year)
       - url: https://www.irs.gov/pub/irs-pdf/i8995.pdf
         answers: >-
           Instructions for Form 8995: who uses Form 8995 and who Form 8995-A; what is QBI (wages are not); the SSTB
-          exceptions; section 199A dividends (Form 1099-DIV box 5) and their holding period; the income
-          limitation; the QBI loss tracking worksheet.
+          exceptions; section 199A dividends (Form 1099-DIV box 5) and their holding period; the worksheet for QBI
+          carryforwards.
         cadence: annual (per tax year)
       - url: https://www.irs.gov/forms-pubs/about-form-8995-a
         answers: >-
-          Form 8995-A, the QBI deduction above the Form 8995 threshold, with the W-2 wage and UBIA limits and its
+          Form 8995-A, the QBI deduction above the Form 8995 threshold, with the wage and UBIA limits and its
           Schedules A-D (taxfill computes and maps neither).
         cadence: annual (per tax year)
 

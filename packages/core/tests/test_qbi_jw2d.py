@@ -436,11 +436,19 @@ def test_qbi_queries_route_to_the_new_topic(query, year):
     ("capital gains", {"investment_income"}),
     ("net investment income", {"investment_income"}),
     ("FDAP", {"nonresident_fdap"}),
+    # Generic phrases the first wording of the topic took (the fix round's wide route probe against main):
+    ("income limitation", {"itemized_limitation_2026"}),
+    ("loss tracking", {"foreign_tax_credit", "investment_income", "ira_recharacterization_and_excess_contributions",
+                       "self_employment"}),
+    ("loss", {"foreign_tax_credit", "investment_income", "ira_recharacterization_and_excess_contributions",
+              "self_employment"}),
+    ("W-2 wage", {"wage_reporting_w2"}),
 ])
-def test_the_new_topic_does_not_steal_its_neighbours(query, expected):
+@pytest.mark.parametrize("year", [2024, 2025, 2026])
+def test_the_new_topic_does_not_steal_its_neighbours(query, expected, year):
     from taxfill_core.sources import get_sources
 
-    assert {s.topic for s in get_sources(query, 2025).sources} == expected, query
+    assert {s.topic for s in get_sources(query, year).sources} == expected, query
 
 
 @pytest.mark.parametrize("query", ["qualified dividends", "1099-DIV", "ordinary dividends", "capital gains", "wages",
