@@ -356,7 +356,8 @@ def test_the_new_topic_does_not_steal_its_neighbours(query, expected):
     assert {s.topic for s in get_sources(query, 2025).sources} == expected, query
 
 
-@pytest.mark.parametrize("query", ["qualified dividends", "1099-DIV", "ordinary dividends", "capital gains", "wages"])
+@pytest.mark.parametrize("query", ["qualified dividends", "1099-DIV", "ordinary dividends", "capital gains", "wages",
+                                   "net capital gain", "capital gain distributions"])
 def test_the_dividend_and_wage_queries_stay_where_they_were(query):
     # Their routes did not move with the topic (the route probe before and after it); the new topic is not among them.
     from taxfill_core.sources import get_sources
