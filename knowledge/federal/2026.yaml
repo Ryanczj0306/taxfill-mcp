@@ -160,6 +160,9 @@ provisional:
     Insufficient for filing in every case.
   blocks_deliberately_absent:
     - filing_thresholds
+    # Phase K JW2d (2026-11-16): the Form 8995 block (calc op qbi_deduction) ships for 2025 only; the 2026
+    # taxable-income thresholds are read off the 2026 Form 8995 and its instructions when JT6 ports the pack.
+    - qbi_deduction
 
 tax:
   # Section 1(j)(2) rate schedules for 2026, transcribed exactly as published in

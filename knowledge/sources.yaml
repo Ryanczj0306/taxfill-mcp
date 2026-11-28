@@ -292,6 +292,28 @@ federal:
           preferential-rate tax.
         cadence: annual (per tax year)
 
+    # Phase K JW2d (2026-11-16, walkthrough finding P1-01): Form 8995, the simplified QBI deduction (calc op
+    # qbi_deduction, the f8995 pack); a fund's section 199A dividends (Form 1099-DIV box 5) reach it.
+    qbi_deduction:
+      - url: https://www.irs.gov/forms-pubs/about-form-8995
+        answers: >-
+          Form 8995, the simplified section 199A qualified business income (QBI) deduction: 20% of QBI plus 20% of
+          REIT dividends and PTP income (publicly traded partnerships), limited to 20% of taxable income less net
+          capital gain, for a filer at or below the year's taxable-income threshold; the QBI and REIT/PTP loss
+          carryforwards.
+        cadence: annual (per tax year)
+      - url: https://www.irs.gov/pub/irs-pdf/i8995.pdf
+        answers: >-
+          Instructions for Form 8995: who uses Form 8995 and who Form 8995-A; what is QBI (wages are not); the SSTB
+          exceptions; section 199A dividends (Form 1099-DIV box 5) and their holding period; the income
+          limitation; the QBI loss tracking worksheet.
+        cadence: annual (per tax year)
+      - url: https://www.irs.gov/forms-pubs/about-form-8995-a
+        answers: >-
+          Form 8995-A, the QBI deduction above the Form 8995 threshold, with the W-2 wage and UBIA limits and its
+          Schedules A-D (taxfill computes and maps neither).
+        cadence: annual (per tax year)
+
     # ── Retirement ──
     retirement:
       - url: https://www.irs.gov/publications/p590a

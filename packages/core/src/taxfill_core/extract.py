@@ -1602,6 +1602,68 @@ def interp_effect(interp: Box7Interpretation, code: str) -> str:
     return (m.return_effect or m.title) if m is not None else code
 
 
+def _f8995_reit_line(tax_year: int | None) -> str | None:
+    """'Form 8995 line <n>' read off the year's face (form_lines f8995.reit_ptp) when the year's federal knowledge
+    pack carries the Form 8995 block (tax.qbi_deduction: the year whose Form 8995 and instructions were read, and the
+    only year calc op qbi_deduction computes); None otherwise, so no line number is guessed (P-015)."""
+    from taxfill_core.knowledge import FormLineError, form_line, load_knowledge  # noqa: PLC0415
+
+    if tax_year is None:
+        return None
+    try:
+        if load_knowledge("federal", tax_year).tax.qbi_deduction is None:
+            return None
+        return f"Form 8995 line {form_line(tax_year, 'f8995.reit_ptp')}"
+    except (FormLineError, FileNotFoundError, ValueError):
+        return None
+
+
+def _validate_1099div(fields: dict[str, ExtractedField], tax_year: int | None):
+    """Form 1099-DIV box 5 (Phase K JW2d, walkthrough finding P1-01): section 199A dividends are qualified REIT
+    dividends for the QBI deduction, a Form 8995 the filer otherwise never hears of; the holding period is the
+    filer's to confirm. The Form 8995 line, the 2025 instructions' sentence and the calc op are named only for a year
+    whose Form 8995 was read (see _f8995_reit_line); any other year gets the 1099-DIV's own text."""
+    box5 = _money_of(fields, "5")
+    if box5 is None or box5 <= 0:
+        return [], None
+    line = _f8995_reit_line(tax_year)
+    if line is not None:
+        where = (
+            f"They are qualified REIT dividends for {line} — the Instructions for Form 8995 (2025): qualified REIT "
+            "dividends include \"your qualified REIT dividends received from a regulated investment company (RIC). "
+            "This amount is reported to you on Form 1099-DIV, line 5.\" calc op qbi_deduction computes Form 8995 "
+            "(qualified_reit_dividends = the total of every box 5); above the year's taxable-income threshold the "
+            "filer needs Form 8995-A, which taxfill neither computes nor maps. "
+        )
+        cite_8995 = "; Instructions for Form 8995 (2025), Determining Your Qualified REIT Dividends"
+    else:
+        where = (
+            "They are qualified REIT dividends for the QBI deduction (Form 8995 or 8995-A); taxfill maps Form 8995 "
+            "and computes it (calc op qbi_deduction) only for a tax year whose Form 8995 it has read ("
+            + ("no tax_year was given" if tax_year is None else f"{tax_year} is not one")
+            + "): read that year's Form 8995 instructions. "
+        )
+        cite_8995 = ""
+    return [Finding(
+        severity="info", rule_id="V31", boxes=["5"],
+        citation=("Form 1099-DIV (Rev. January 2024), Instructions for Recipient, Box 5; Instructions for Form "
+                  "1099-DIV (Rev. January 2024), Qualified REIT dividends, Section 199A dividends and Box 5"
+                  + cite_8995),
+        message=(
+            f"box 5 shows {box5} of section 199A dividends — \"Shows the portion of the amount in box 1a that may be "
+            "eligible for the 20% qualified business income deduction under section 199A. See the instructions for "
+            "Form 8995 and Form 8995-A\" (it stays in box 1a: \"This amount is included in the amount reported in "
+            f"box 1a\"). {where}CONFIRM the holding period first: the Instructions for Form 1099-DIV say \"a "
+            "qualified REIT dividend does not include any REIT dividend received with respect to any share of REIT "
+            "stock that is held for 45 days or less during the 91-day period beginning on the date that is 45 days "
+            "before the date on which such share became ex-dividend with respect to the dividend\", a fund's section "
+            "199A dividends go to \"certain shareholders of the RIC that meet holding period requirements\" "
+            "(Regulations section 1.199A-3(d)), and box 5 may include REIT dividends \"for which it is impractical "
+            "for the REIT to determine whether the recipient has met the holding period requirement\"."
+        ),
+    )], None
+
+
 def _validate_5498(fields: dict[str, ExtractedField], tax_year: int | None):
     """Form 5498 box 4 (JR1, RC-13): a recharacterized contribution is the SAME dollars another box (or the
     first trustee's form) already reports, so it is counted once."""
@@ -1890,6 +1952,7 @@ def _validate_paystub(fields: dict[str, ExtractedField], tax_year: int | None):
 
 
 _VALIDATORS = {"W-2": _validate_w2, "paystub": _validate_paystub, "1099-B": _validate_1099b, "1099-R": _validate_1099r, "5498": _validate_5498,
+               "1099-DIV": _validate_1099div,
                "IRA custodian statement": _validate_custodian_statement, "1098-VLI": _validate_1098vli}
 
 
