@@ -2369,3 +2369,28 @@ pitfalls:
       their own instructions are read. Tests, P-038-tagged, in
       packages/core/tests/test_ca_adjustments_jw2b.py and
       packages/mcp-server/tests/test_jw2b_ca_walkthrough.py.
+  - id: P-039
+    incident: >-
+      A fund's section 199A dividends led to a form the product did not have.
+      In the first end-to-end walkthrough (2026-11-12) a single filer's Form
+      1099-DIV showed box 5 (section 199A dividends), which the 1099-DIV says
+      "may be eligible for the 20% qualified business income deduction under
+      section 199A. See the instructions for Form 8995 and Form 8995-A".
+      extract_document said only that box 5 is part of box 1a; calc had no
+      QBI op and no Form 8995 pack shipped, so the agent worked the deduction
+      from its own reading and the filer got a stamped unmapped draft with
+      blank name and SSN boxes to copy by hand (finding P1-01).
+    countermeasure: >-
+      The 2025 Form 8995 pack (f8995: every widget mapped, the face's
+      arithmetic as relations, line 15 tied to Form 1040 and 1040-NR line
+      13a), calc op qbi_deduction (the simplified computation line by line,
+      keyed by the pack's lines, REFUSING above the 2025 taxable-income
+      threshold or for a cooperative patron, where Form 8995-A applies and is
+      not mapped), and extraction finding V31 on a 1099-DIV whose box 5 is
+      over zero: qualified REIT dividends for the Form 8995 line, with the
+      1099-DIV instructions' 45-day holding period for the filer to confirm.
+      get_sources routes Form 8995, QBI and section 199A queries to the
+      qbi_deduction topic. TY2025 only; other years get the finding without a
+      line number. Tests, P-039-tagged, in
+      packages/core/tests/test_qbi_jw2d.py and
+      packages/mcp-server/tests/test_jw2d_qbi.py.
