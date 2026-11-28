@@ -215,6 +215,66 @@ def test_the_income_limitation_binds():
     assert r.income_limited is True and r.deduction == 3_800 < r.lines["10"]
 
 
+# Op cases worked by hand from the printed lines, one per branch of the op that the returns above leave untested.
+# Each pins the lines it reaches; a blank "( )" box is None (the op leaves a zero loss box out).
+OP_CASES = {
+    # 20% of 1,003 = 200.60 -> 201; of 1,008 = 201.60 -> 202; of 50,003 = 10,000.60 -> 10,001: each product rounds
+    # up, where cutting off the cents would give 200, 201 and 10,000. 10 = 201 + 202 = 403; 15 = min(403, 10,001).
+    "rounding-up": (dict(taxable_income_before_qbi=50_003, businesses=[{"name": "Example Studio", "qbi": 1_003}],
+                         qualified_reit_dividends=1_008),
+                    {"4": 1_003, "5": 201, "8": 1_008, "9": 202, "10": 403, "13": 50_003, "14": 10_001, "15": 403}),
+    # Line 6 "Enter income as a positive number and losses as a negative number": REIT 1,000 + PTP (200) = 800.
+    "ptp-loss": (dict(taxable_income_before_qbi=50_000, qualified_reit_dividends=1_000, ptp_income=-200),
+                 {"6": 800, "8": 800, "9": 160, "10": 160, "15": 160}),
+    # Line 12: "the smaller of Schedule D (Form 1040), line 15 or 16": qualified dividends 1,000 + min(5,000, 1,800).
+    "sched-d-smaller": (dict(taxable_income_before_qbi=60_000, qualified_reit_dividends=100, qualified_dividends=1_000,
+                             schedule_d_long_term=5_000, schedule_d_net=1_800),
+                        {"11": 60_000, "12": 2_800, "13": 57_200, "14": 11_440, "15": 20}),
+    # "... unless line 15 or 16 is zero or less, in which case nothing is added to the qualified dividends."
+    "sched-d-one-not-positive": (dict(taxable_income_before_qbi=60_000, qualified_reit_dividends=100,
+                                      qualified_dividends=1_000, schedule_d_long_term=5_000, schedule_d_net=-1_000),
+                                 {"12": 1_000, "13": 59_000, "14": 11_800, "15": 20}),
+    # Without Schedule D the net capital gain is "the amount reported on Form 1040 ... line 7a", which is then capital
+    # gain distributions and so never below zero. A negative input is floored at zero: this pins a defensive floor of
+    # the op, not a tax rule.
+    "no-sched-d-negative-input": (dict(taxable_income_before_qbi=40_000, qualified_reit_dividends=100,
+                                       qualified_dividends=300, net_capital_gain=-500),
+                                  {"12": 300, "13": 39_700, "14": 7_940, "15": 20}),
+    # Line 13 "Subtract line 12 from line 11. If zero or less, enter -0-": 1,000 - 1,500 -> 0, so 14 and 15 are 0.
+    "line-12-above-line-11": (dict(taxable_income_before_qbi=1_000, qualified_reit_dividends=100,
+                                   qualified_dividends=1_500),
+                              {"10": 20, "11": 1_000, "12": 1_500, "13": 0, "14": 0, "15": 0}),
+    # Line 6 = 1,000 + (3,000) = (2,000); line 7 (500). Line 8 "Combine lines 6 and 7. If zero or less, enter -0-";
+    # line 17 "Combine lines 6 and 7. If greater than zero, enter -0-": (2,000) + (500) = (2,500).
+    "line-17-negative-line-6": (dict(taxable_income_before_qbi=50_000, qualified_reit_dividends=1_000,
+                                     ptp_income=-3_000, reit_ptp_loss_carryforward=500),
+                                {"6": -2_000, "7": 500, "8": 0, "9": 0, "10": 0, "15": 0, "17": 2_500}),
+    # The same with the carryforward passed signed: the face prints the parentheses, so the sign is ignored.
+    "line-17-signed-carryforward": (dict(taxable_income_before_qbi=50_000, qualified_reit_dividends=1_000,
+                                         ptp_income=-3_000, reit_ptp_loss_carryforward=-500),
+                                    {"6": -2_000, "7": 500, "8": 0, "9": 0, "15": 0, "17": 2_500}),
+}
+
+
+@pytest.mark.parametrize("case", sorted(OP_CASES))
+def test_each_branch_of_the_op_against_lines_worked_by_hand(case):
+    kwargs, expected = OP_CASES[case]
+    r = qbi_deduction(filing_status="single", year=2025, **kwargs)
+    assert {k: r.lines.get(k) for k in expected} == expected
+    assert r.deduction == expected["15"]
+    assert [c.detail for c in relations(PACK, r.lines) if c.status != "PASS"] == []
+
+
+def test_income_limited_is_false_when_line_14_equals_line_10():
+    # 10 = 20% of 1,000 = 200; 14 = 20% of 1,000 = 200. The limitation does not lower the deduction.
+    r = qbi_deduction(1_000, "single", 2025, qualified_reit_dividends=1_000)
+    assert (r.lines["10"], r.lines["14"], r.deduction, r.income_limited) == (200, 200, 200, False)
+    r2 = qbi_deduction(999, "single", 2025, qualified_reit_dividends=1_000)
+    assert (r2.lines["14"], r2.deduction, r2.income_limited) == (200, 200, False)  # 199.80 -> 200: still a tie
+    r3 = qbi_deduction(997, "single", 2025, qualified_reit_dividends=1_000)
+    assert (r3.lines["14"], r3.deduction, r3.income_limited) == (199, 199, True)   # 199.40 -> 199
+
+
 def test_a_sixth_business_goes_on_the_statement_and_into_line_2():
     biz = [{"name": f"Example Shop {n}", "qbi": 1_000} for n in range(1, 7)]
     r = qbi_deduction(60_000, "single", 2025, businesses=biz)
